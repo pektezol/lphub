@@ -20,7 +20,7 @@ import (
 //	@license.name	GNU Affero General Public License, Version 3
 //	@license.url	https://www.gnu.org/licenses/agpl-3.0.html
 
-// @host		lp.ardapektezol.com
+// @host		lp.pektezol.dev
 // @BasePath	/api/v1
 func main() {
 	err := godotenv.Load()
@@ -47,6 +47,6 @@ func main() {
 	// router.NoRoute(func(c *gin.Context) {
 	// 	c.File("../frontend/build/index.html")
 	// })
-	router.MaxMultipartMemory = 500 << 20 // 500 mb limit for demos
+	router.MaxMultipartMemory = 250 << 20 // 250 mb limit for demos
 	router.Run(fmt.Sprintf(":%s", os.Getenv("PORT")))
 }

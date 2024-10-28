@@ -19,7 +19,7 @@ const MessageDialog: React.FC<MessageDialogProps> = ({ title, subtitle, onClose 
                     <span>{subtitle}</span>
                 </div>
                 <div className='dialog-element dialog-btns-container'>
-                    <button onClick={onClose}>Ok</button>
+                    <button onClick={onClose}>Close</button>
                 </div>
             </div>
         </div>

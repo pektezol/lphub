@@ -10,7 +10,7 @@
         },
         "version": "1.0"
     },
-    "host": "lp.ardapektezol.com",
+    "host": "lp.pektezol.dev",
     "basePath": "/api/v1",
     "paths": {
         "/chapters/{chapterid}": {

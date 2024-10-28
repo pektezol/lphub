@@ -22,6 +22,7 @@ Both `.vtf` and `.vmt` files associated with these textures can be modified.
 - Proof of your run must be recorded using demos. To start recording, type `record <demoname>` when entering the map, or use the SAR plugin with the command `sar_record_at 0`.
 - A valid demo begins when the player can move and ends when the player touches the end flags.
 - For cooperative runs, both players must submit their demos.
+- For technical reasons, there is a 250 MB limit for demo files. If you have a demo file bigger than 250 MB that you need to submit, please contact an admin in the Discord server.
 
 ### Console Commands & Cheats
 

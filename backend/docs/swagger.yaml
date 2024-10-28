@@ -545,7 +545,7 @@ definitions:
       user_name:
         type: string
     type: object
-host: lp.ardapektezol.com
+host: lp.pektezol.dev
 info:
   contact: {}
   description: Backend API endpoints for Least Portals Hub.

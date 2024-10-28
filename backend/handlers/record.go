@@ -204,7 +204,7 @@ func CreateRecordWithDemo(c *gin.Context) {
 		// 	c.JSON(http.StatusOK, models.ErrorResponse(fmt.Sprintf("Partner SteamID from demo and request does not match! Check your submission and try again.\nDemo Partner SteamID: %s\nRequest Partner SteamID: %s", convertedPartnerSteamID, record.PartnerID)))
 		// 	return
 		// }
-		if convertedHostSteamID != user.(models.User).SteamID || convertedPartnerSteamID != user.(models.User).SteamID {
+		if convertedHostSteamID != user.(models.User).SteamID && convertedPartnerSteamID != user.(models.User).SteamID {
 			deleteFile(srv, hostDemoFileID)
 			deleteFile(srv, partnerDemoFileID)
 			c.JSON(http.StatusOK, models.ErrorResponse("You are permitted to only upload your own runs!"))

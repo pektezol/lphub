@@ -63,7 +63,7 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
   };
 
   const _delete_submission = async (map_id: number, record_id: number) => {
-    const userConfirmed = await confirm("Delete record?", "This action cannot be undone");
+    const userConfirmed = await confirm("Delete Record", "Are you sure you want to delete this record?");
 
     if (!userConfirmed) {
       return;
@@ -71,9 +71,10 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
 
     const api_success = await API.delete_map_record(token!, map_id, record_id);
     if (api_success) {
-      message("Success", "Successfully deleted record");
+      await message("Delete Record", "Successfully deleted record.");
+      onDeleteRecord();
     } else {
-      message("Error", "Could not delete record");
+      await message("Delete Record", "Could not delete record.");
     }
   };
 

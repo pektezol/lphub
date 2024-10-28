@@ -3,9 +3,9 @@ import ConfirmDialog from '../components/ConfirmDialog';
 
 const useConfirm = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const [resolvePromise, setResolvePromise] = useState<((value: boolean) => void) | null>(null);
 	const [title, setTitle] = useState<string>("");
 	const [subtitle, setSubtitle] = useState<string>("");
+    const [resolvePromise, setResolvePromise] = useState<((value: boolean) => void) | null>(null);
 
     const confirm = ( titleN: string, subtitleN: string ) => {
         setIsOpen(true);

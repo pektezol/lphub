@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 import { UserProfile } from './types/Profile';
 import Sidebar from './components/Sidebar';
@@ -18,22 +18,15 @@ import { API } from './api/Api';
 import Maplist from './pages/Maplist';
 import Rankings from './pages/Rankings';
 import { get_user_id_from_token, get_user_mod_from_token } from './utils/Jwt';
-import { MapDeleteEndpoint } from './types/Map';
 
 const App: React.FC = () => {
   const [token, setToken] = React.useState<string | undefined>(undefined);
   const [profile, setProfile] = React.useState<UserProfile | undefined>(undefined);
   const [isModerator, setIsModerator] = React.useState<boolean>(false);
 
-  const [msgIsOpen, setMsgIsOpen] = React.useState<boolean>(false);
-
   const [games, setGames] = React.useState<Game[]>([]);
 
   const [uploadRunDialog, setUploadRunDialog] = React.useState<boolean>(false);
-  const [uploadRunDialogMapID, setUploadRunDialogMapID] = React.useState<number | undefined>(undefined);
-
-  const [confirmDialogOpen, setConfirmDialogOpen] = React.useState<boolean>(false);
-  const [currDeleteMapInfo, setCurrDeleteMapInfo] = React.useState<MapDeleteEndpoint>();
 
   const _fetch_token = async () => {
     const token = await API.get_token();
@@ -45,10 +38,9 @@ const App: React.FC = () => {
     setGames(games);
   };
 
-  const _set_profile = async (user_id: string | undefined) => {
-    if (user_id) {
-      setProfile({} as UserProfile); // placeholder before we call actual user profile
-      const user = await API.get_profile(token!);
+  const _set_profile = async (user_id?: string) => {
+    if (user_id && token) {
+      const user = await API.get_profile(token);
       setProfile(user);
     }
   };
@@ -58,6 +50,7 @@ const App: React.FC = () => {
       setProfile(undefined);
       setIsModerator(false);
     } else {
+      setProfile({} as UserProfile); // placeholder before we call actual user profile
       _set_profile(get_user_id_from_token(token))
       const modStatus = get_user_mod_from_token(token)
       if (modStatus) {
@@ -81,15 +74,20 @@ const App: React.FC = () => {
 
   return (
     <>
-      <UploadRunDialog token={token} open={uploadRunDialog} onClose={() => setUploadRunDialog(false)} games={games} />
+      <UploadRunDialog token={token} open={uploadRunDialog} onClose={(updateProfile) => {
+        setUploadRunDialog(false);
+        if (updateProfile) {
+          _set_profile(get_user_id_from_token(token));
+        }
+      }} games={games} />
       <Sidebar setToken={setToken} profile={profile} setProfile={setProfile} onUploadRun={() => setUploadRunDialog(true)} />
       <Routes>
         <Route path="/" element={<Homepage />} />
-        <Route path="/profile" element={<Profile profile={profile} token={token} gameData={games} onDeleteRecord={() => setConfirmDialogOpen(true)} />} />
+        <Route path="/profile" element={<Profile profile={profile} token={token} gameData={games} onDeleteRecord={() => _set_profile(get_user_id_from_token(token))} />} />
         <Route path="/users/*" element={<User profile={profile} token={token} gameData={games} />} />
         <Route path="/games" element={<Games games={games} />} />
         <Route path='/games/:id' element={<Maplist />}></Route>
-        <Route path="/maps/*" element={<Maps token={token} isModerator={isModerator} />}/>
+        <Route path="/maps/*" element={<Maps token={token} isModerator={isModerator} />} />
         <Route path="/rules" element={<Rules />} />
         <Route path="/about" element={<About />} />
         <Route path='/rankings' element={<Rankings />}></Route>

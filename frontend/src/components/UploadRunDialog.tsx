@@ -13,17 +13,14 @@ import useConfirm from '../hooks/UseConfirm';
 interface UploadRunDialogProps {
   token?: string;
   open: boolean;
-  onClose: () => void;
+  onClose: (updateProfile: boolean) => void;
   games: Game[];
 }
 
 const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose, games }) => {
 
-  const [confirmMessage, setConfirmMessage] = React.useState<string>("Are you sure you want to upload this demo?");
-
   const { message, MessageDialogComponent } = useMessage();
   const { confirm, ConfirmDialogComponent } = useConfirm();
-
 
   const navigate = useNavigate();
 
@@ -125,44 +122,41 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
     if (token) {
       if (games[selectedGameID].is_coop) {
         if (uploadRunContent.host_demo === null) {
-          message("Error", "You must select a host demo to upload.")
+          await message("Error", "You must select a host demo to upload.")
           return
         } else if (uploadRunContent.partner_demo === null) {
-          message("Error", "You must select a partner demo to upload.")
+          await message("Error", "You must select a partner demo to upload.")
           return
         }
       } else {
         if (uploadRunContent.host_demo === null) {
-          message("Error", "You must select a demo to upload.")
+          await message("Error", "You must select a demo to upload.")
           return
         }
       }
       const demo = SourceDemoParser.default()
         .setOptions({ packets: true, header: true })
         .parse(await uploadRunContent.host_demo.arrayBuffer());
-      const scoreboard = demo.findPacket<NetMessages.SvcUserMessage>((message) => {
-        return message instanceof NetMessages.SvcUserMessage && message.userMessage instanceof ScoreboardTempUpdate;
+      const scoreboard = demo.findPacket<NetMessages.SvcUserMessage>((msg) => {
+        return msg instanceof NetMessages.SvcUserMessage && msg.userMessage instanceof ScoreboardTempUpdate;
       })
 
       if (!scoreboard) {
-        message("Error", "Error while processing demo: Unable to get scoreboard result. Either there is a demo that is corrupt or haven't been recorded in challenge mode.")
+        await message("Error", "Error while processing demo: Unable to get scoreboard result. Either there is a demo that is corrupt or haven't been recorded in challenge mode.")
         return
       }
       const { portalScore, timeScore } = scoreboard.userMessage?.as<ScoreboardTempUpdate>() ?? {};
-      console.log(`Map Name: ${demo.mapName}. Portal Count: ${portalScore}. Ticks: ${timeScore}.`);
-
-      setConfirmMessage(`Map Name: ${demo.mapName}\nPortal Count: ${portalScore}\nTicks: ${timeScore}\n\nAre you sure you want to upload this demo?`)
       
-      const userConfirmed = await confirm("Upload demo?", confirmMessage);
+      const userConfirmed = await confirm("Upload Record", `Map Name: ${demo.mapName}\nPortal Count: ${portalScore}\nTicks: ${timeScore}\n\nAre you sure you want to upload this demo?`);
 
       if (!userConfirmed) {
         return;
       }
 
-      const response = await API.post_record(token, uploadRunContent);
-      await message("Message", response);
-      // navigate(0);
-      onClose();
+      const [ success, response ] = await API.post_record(token, uploadRunContent);
+      await message("Upload Record", response);
+      console.log("weweew")
+      onClose(success);
     }
   };
 
@@ -242,7 +236,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
                       </div>
                       <div className='upload-run-buttons-container'>
                         <button onClick={_upload_run}>Submit</button>
-                        <button onClick={() => onClose()}>Cancel</button>
+                        <button onClick={() => onClose(false)}>Cancel</button>
                       </div>
                     </div>
                   </>

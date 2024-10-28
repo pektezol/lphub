@@ -40,8 +40,8 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ data }) => {
 
         {data.map.is_coop ? (
           <div id='runner'>
-            <span>Host</span>
-            <span>Partner</span>
+            <span>Blue</span>
+            <span>Orange</span>
           </div>
         ) : (
           <span>Runner</span>
@@ -87,7 +87,7 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ data }) => {
 
             {r.kind === "multiplayer" ? (
               <span>
-                <button onClick={() => { window.alert(`Host demo ID: ${r.host_demo_id} \nParnter demo ID: ${r.partner_demo_id}`) }}><img src={ThreedotIcon} alt="demo_id" /></button>
+                <button onClick={() => { window.alert(`Host Demo ID: ${r.host_demo_id} \nParnter Demo ID: ${r.partner_demo_id}`) }}><img src={ThreedotIcon} alt="demo_id" /></button>
                 <button onClick={() => window.location.href = `/api/v1/demos?uuid=${r.partner_demo_id}`}><img src={DownloadIcon} alt="download" style={{ filter: "hue-rotate(160deg) contrast(60%) saturate(1000%)" }} /></button>
                 <button onClick={() => window.location.href = `/api/v1/demos?uuid=${r.host_demo_id}`}><img src={DownloadIcon} alt="download" style={{ filter: "hue-rotate(300deg) contrast(60%) saturate(1000%)" }} /></button>
               </span>

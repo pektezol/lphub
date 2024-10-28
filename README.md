@@ -34,7 +34,7 @@ There's also discussion tabs for each map to act like forum pages in order to ta
 
 ## Documentation
 
-Full API documentation can be found at https://lp.ardapektezol.com/api/v1/
+Full API documentation can be found at https://lp.pektezol.dev/api/v1/
 
 ## License
 
