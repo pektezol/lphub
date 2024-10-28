@@ -116,3 +116,33 @@ button:hover {
     width: 100%;
 }
 
+#host_demo {
+	background-color: rgba(0, 0, 0, 0);
+	display: none;
+}
+
+.upload-run-drag-area {
+	border: 2px dashed grey;
+	border-radius: 10px;
+	height: 200px;
+	cursor: pointer;
+	width: 300px;
+	transition: all 0.2s ease;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.upload-run-drag-area-highlight {
+	border: 2px dashed white;
+}
+
+.upload-run-drag-area-hidden {
+	height: fit-content;
+	text-align: left;
+	border: none;
+	align-items: flex-start;
+}
+

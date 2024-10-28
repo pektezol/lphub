@@ -49,6 +49,35 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
 
   const [loading, setLoading] = React.useState<boolean>(false);
 
+  const [dragHightlight, setDragHighlight] = React.useState<boolean>(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const _handle_file_click = () => {
+	fileInputRef.current?.click();
+  }
+
+  const _handle_drag_over = (e: React.DragEvent<HTMLDivElement>) => {
+  	e.preventDefault();
+	e.stopPropagation();
+	setDragHighlight(true);
+  }
+
+  const _handle_drag_leave = (e: React.DragEvent<HTMLDivElement>) => {
+  	e.preventDefault();
+	e.stopPropagation();
+	setDragHighlight(false);
+  }
+
+  const _handle_drop = (e: React.DragEvent<HTMLDivElement>, host: boolean) => {
+  	e.preventDefault();
+	e.stopPropagation();
+	setDragHighlight(true);
+
+	console.log(e.dataTransfer.files);
+
+	_handle_file_change(e.dataTransfer.files, host);
+  }
+
   const _handle_dropdowns = (dropdown: number) => {
     setDropdown1Vis(false);
     setDropdown2Vis(false);
@@ -75,17 +104,18 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
     setLoading(false);
   };
 
-  const _handle_file_change = async (e: React.ChangeEvent<HTMLInputElement>, host: boolean) => {
-    if (e.target.files) {
+  const _handle_file_change = async (files: FileList | null, host: boolean) => {
+  console.log(files);
+    if (files) {
       if (host) {
         setUploadRunContent({
           ...uploadRunContent,
-          host_demo: e.target.files[0],
+          host_demo: files[0],
         });
       } else {
         setUploadRunContent({
           ...uploadRunContent,
-          partner_demo: e.target.files[0],
+          partner_demo: files[0],
         });
       }
     }
@@ -130,7 +160,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
       }
 
       const response = await API.post_record(token, uploadRunContent);
-      message("Message", response);
+      await message("Message", response);
       // navigate(0);
       onClose();
     }
@@ -184,13 +214,26 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
                         </div>
                       </div>
                       <span>Host Demo</span>
-                      <input type="file" name="host_demo" id="host_demo" accept=".dem" onChange={(e) => _handle_file_change(e, true)} />
+					  <div onClick={_handle_file_click} onDragOver={(e) => {_handle_drag_over(e)}} onDrop={(e) => {_handle_drop(e, true)}} onDragLeave={(e) => {_handle_drag_leave(e)}} className={`upload-run-drag-area ${dragHightlight ? "upload-run-drag-area-highlight" : ""} ${uploadRunContent.host_demo ? "upload-run-drag-area-hidden" : ""}`}>
+                      	<input ref={fileInputRef} type="file" name="host_demo" id="host_demo" accept=".dem" onChange={(e) => _handle_file_change(e.target.files, true)} />
+						{!uploadRunContent.host_demo ? 
+						<div>
+						<span>Drag and drop</span>
+						<div>
+							<span>Or click here</span>
+							<button>Upload</button>
+						</div>
+						</div>
+						: null}
+
+						<span>{uploadRunContent.host_demo?.name}</span>
+					  </div>
                       {
                         games[selectedGameID].is_coop &&
                         (
                           <>
                             <span>Partner Demo</span>
-                            <input type="file" name="partner_demo" id="partner_demo" accept=".dem" onChange={(e) => _handle_file_change(e, false)} />
+                            <input type="file" name="partner_demo" id="partner_demo" accept=".dem" onChange={(e) => _handle_file_change(e.target.files, false)} />
                           </>
                         )
                       }

@@ -3,6 +3,7 @@ import MessageDialog from "../components/MessageDialog";
 
 const useMessage = () => {
     const [isOpen, setIsOpen] = useState(false);
+	const [resolvePromise, setResolvePromise] = useState<((value: boolean) => void) | null>(null);
 
     const [title, setTitle] = useState<string>("");
     const [subtitle, setSubtitle] = useState<string>("");
@@ -11,6 +12,9 @@ const useMessage = () => {
         setIsOpen(true);
         setTitle(title);
         setSubtitle(subtitle);
+		return new Promise((resolve) => {
+			setResolvePromise(() => resolve);
+		});
     };
 
     const handleClose = () => {
