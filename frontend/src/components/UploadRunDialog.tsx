@@ -47,30 +47,42 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
   const [loading, setLoading] = React.useState<boolean>(false);
 
   const [dragHightlight, setDragHighlight] = React.useState<boolean>(false);
+  const [dragHightlightPartner, setDragHighlightPartner] = React.useState<boolean>(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const fileInputRefPartner = React.useRef<HTMLInputElement>(null);
 
-  const _handle_file_click = () => {
-	fileInputRef.current?.click();
+  const _handle_file_click = (host: boolean) => {
+  	if (host) {
+	  fileInputRef.current?.click();
+	} else {
+	  fileInputRefPartner.current?.click();
+	}
   }
 
-  const _handle_drag_over = (e: React.DragEvent<HTMLDivElement>) => {
+  const _handle_drag_over = (e: React.DragEvent<HTMLDivElement>, host: boolean) => {
   	e.preventDefault();
 	e.stopPropagation();
-	setDragHighlight(true);
+	if (host) {
+		setDragHighlight(true);
+	} else {
+		setDragHighlightPartner(true);
+	}
   }
 
-  const _handle_drag_leave = (e: React.DragEvent<HTMLDivElement>) => {
+  const _handle_drag_leave = (e: React.DragEvent<HTMLDivElement>, host: boolean) => {
   	e.preventDefault();
 	e.stopPropagation();
-	setDragHighlight(false);
+	if (host) {
+		setDragHighlight(false);
+	} else {
+		setDragHighlightPartner(false);
+	}
   }
 
   const _handle_drop = (e: React.DragEvent<HTMLDivElement>, host: boolean) => {
   	e.preventDefault();
 	e.stopPropagation();
 	setDragHighlight(true);
-
-	console.log(e.dataTransfer.files);
 
 	_handle_file_change(e.dataTransfer.files, host);
   }
@@ -102,7 +114,6 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
   };
 
   const _handle_file_change = async (files: FileList | null, host: boolean) => {
-  console.log(files);
     if (files) {
       if (host) {
         setUploadRunContent({
@@ -155,13 +166,16 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
 
       const [ success, response ] = await API.post_record(token, uploadRunContent);
       await message("Upload Record", response);
-      console.log("weweew")
       onClose(success);
+	  navigate("/profile");
     }
   };
 
   React.useEffect(() => {
     if (open) {
+
+  	  setDragHighlightPartner(false);
+  	  setDragHighlight(false);
       _handle_game_select("1", "Portal 2 - Singleplayer"); // a different approach?.
     }
   }, [open]);
@@ -208,14 +222,14 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
                         </div>
                       </div>
                       <span>Host Demo</span>
-					  <div onClick={_handle_file_click} onDragOver={(e) => {_handle_drag_over(e)}} onDrop={(e) => {_handle_drop(e, true)}} onDragLeave={(e) => {_handle_drag_leave(e)}} className={`upload-run-drag-area ${dragHightlight ? "upload-run-drag-area-highlight" : ""} ${uploadRunContent.host_demo ? "upload-run-drag-area-hidden" : ""}`}>
+					  <div onClick={() => {_handle_file_click(true)}} onDragOver={(e) => {_handle_drag_over(e, true)}} onDrop={(e) => {_handle_drop(e, true)}} onDragLeave={(e) => {_handle_drag_leave(e, true)}} className={`upload-run-drag-area ${dragHightlight ? "upload-run-drag-area-highlight" : ""} ${uploadRunContent.host_demo ? "upload-run-drag-area-hidden" : ""}`}>
                       	<input ref={fileInputRef} type="file" name="host_demo" id="host_demo" accept=".dem" onChange={(e) => _handle_file_change(e.target.files, true)} />
 						{!uploadRunContent.host_demo ? 
 						<div>
 						<span>Drag and drop</span>
 						<div>
-							<span>Or click here</span>
-							<button>Upload</button>
+							<span style={{fontFamily: "BarlowSemiCondensed-Regular"}}>Or click here</span><br/>
+							<button style={{borderRadius: "24px", padding: "5px 8px", margin: "5px 0px"}}>Upload</button>
 						</div>
 						</div>
 						: null}
@@ -227,7 +241,19 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
                         (
                           <>
                             <span>Partner Demo</span>
-                            <input type="file" name="partner_demo" id="partner_demo" accept=".dem" onChange={(e) => _handle_file_change(e.target.files, false)} />
+							<div onClick={() => {_handle_file_click(false)}} onDragOver={(e) => {_handle_drag_over(e, false)}} onDrop={(e) => {_handle_drop(e, false)}} onDragLeave={(e) => {_handle_drag_leave(e, false)}} className={`upload-run-drag-area ${dragHightlightPartner ? "upload-run-drag-area-highlight-partner" : ""} ${uploadRunContent.partner_demo ? "upload-run-drag-area-hidden" : ""}`}>
+                            <input ref={fileInputRefPartner} type="file" name="partner_demo" id="partner_demo" accept=".dem" onChange={(e) => _handle_file_change(e.target.files, false)} />						  {!uploadRunContent.partner_demo ? 
+							<div>
+							<span>Drag and drop</span>
+							<div>
+								<span>Or click here</span><br/>
+								<button>Upload</button>
+							</div>
+							</div>
+							: null}
+
+							<span>{uploadRunContent.partner_demo?.name}</span>
+							</div>
                           </>
                         )
                       }

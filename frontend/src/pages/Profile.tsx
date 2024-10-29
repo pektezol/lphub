@@ -103,10 +103,12 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
   };
 
   return (
-    <main>
-      {ConfirmDialogComponent}
-      {MessageDialogComponent}
-      <section id='section1' className='profile'>
+  	<div>
+	{MessageDialogComponent}
+    {ConfirmDialogComponent}
+
+    <main>      
+	<section id='section1' className='profile'>
 
         {profile.profile
           ? (
@@ -266,7 +268,7 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
                         <span>{e.date.split("T")[0]}</span>
                         <span style={{ flexDirection: "row-reverse" }}>
 
-                          <button style={{ marginRight: "10px" }} onClick={() => { window.alert(`Demo ID: ${e.demo_id}`) }}><img src={ThreedotIcon} alt="demo_id" /></button>
+                          <button style={{ marginRight: "10px" }} onClick={() => { message("Demo information", `Demo ID: ${e.demo_id}`) }}><img src={ThreedotIcon} alt="demo_id" /></button>
                           <button onClick={() => { _delete_submission(r.map_id, e.record_id) }}><img src={DeleteIcon}></img></button>
                           <button onClick={() => window.location.href = `/api/v1/demos?uuid=${e.demo_id}`}><img src={DownloadIcon} alt="download" /></button>
                           {i === 0 && r.scores.length > 1 ? <button onClick={() => {
@@ -312,7 +314,7 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
                           <span>{record!.scores[i].date.split("T")[0]}</span>
                           <span style={{ flexDirection: "row-reverse" }}>
 
-                            <button onClick={() => { window.alert(`Demo ID: ${e.demo_id}`) }}><img src={ThreedotIcon} alt="demo_id" /></button>
+                            <button onClick={() => { message("Demo information", `Demo ID: ${e.demo_id}`) }}><img src={ThreedotIcon} alt="demo_id" /></button>
                             <button onClick={() => { _delete_submission(r.id, e.record_id) }}><img src={DeleteIcon}></img></button>
                             <button onClick={() => window.location.href = `/api/v1/demos?uuid=${e.demo_id}`}><img src={DownloadIcon} alt="download" /></button>
                             {i === 0 && record!.scores.length > 1 ? <button onClick={() => {
@@ -333,6 +335,7 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
         </div>
       </section>
     </main>
+	</div>
   );
 };
 

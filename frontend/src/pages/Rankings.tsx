@@ -13,6 +13,9 @@ const Rankings: React.FC = () => {
         official,
         unofficial
     }
+	const [currentRankingType, setCurrentRankingType] = React.useState<LeaderboardTypes>(LeaderboardTypes.official);
+
+	const [leaderboardLoad, setLeaderboardLoad] = React.useState<boolean>(false);
 
     enum RankingCategories {
         rankings_overall,
@@ -23,6 +26,7 @@ const Rankings: React.FC = () => {
     const [load, setLoad] = React.useState<boolean>(false);
 
     const _fetch_rankings = async () => {
+		setLeaderboardLoad(false);
         const rankings = await API.get_official_rankings();
         setLeaderboardData(rankings);
         if (currentLeaderboardType == RankingCategories.rankings_singleplayer) {
@@ -33,10 +37,12 @@ const Rankings: React.FC = () => {
             setCurrentLeaderboard(rankings.rankings_overall)
         }
         setLoad(true);
+		setLeaderboardLoad(true);
     }
 
     const __dev_fetch_unofficial_rankings = async () => {
         try {
+			setLeaderboardLoad(false);
             const rankings = await API.get_unofficial_rankings();
             setLeaderboardData(rankings);
             if (currentLeaderboardType == RankingCategories.rankings_singleplayer) {
@@ -47,6 +53,7 @@ const Rankings: React.FC = () => {
             } else {
                 setCurrentLeaderboard(rankings.rankings_overall)
             }
+			setLeaderboardLoad(true);
         } catch (e) {
             console.log(e)
         }
@@ -83,23 +90,23 @@ const Rankings: React.FC = () => {
         <main>
             <section className="nav-container nav-1">
                 <div>
-                    <button onClick={() => _fetch_rankings()} className="nav-1-btn">
+                    <button onClick={() => {_fetch_rankings(); setCurrentRankingType(LeaderboardTypes.official)}} className={`nav-1-btn ${currentRankingType == LeaderboardTypes.official ? "selected" : ""}`}>
                         <span>Official (LPHUB)</span>
                     </button>
-                    <button onClick={() => __dev_fetch_unofficial_rankings()} className="nav-1-btn">
+                    <button onClick={() => {__dev_fetch_unofficial_rankings(); setCurrentRankingType(LeaderboardTypes.unofficial)}} className={`nav-1-btn ${currentRankingType == LeaderboardTypes.unofficial ? "selected" : ""}`}>
                         <span>Unofficial (Steam)</span>
                     </button>
                 </div>
             </section>
             <section className="nav-container nav-2">
                 <div>
-                    <button onClick={() => _set_current_leaderboard(RankingCategories.rankings_singleplayer)} className="nav-2-btn">
+                    <button onClick={() => _set_current_leaderboard(RankingCategories.rankings_singleplayer)} className={`nav-2-btn ${currentLeaderboardType == RankingCategories.rankings_singleplayer ? "selected" : ""}`}>
                         <span>Singleplayer</span>
                     </button>
-                    <button onClick={() => _set_current_leaderboard(RankingCategories.rankings_multiplayer)} className="nav-2-btn">
+                    <button onClick={() => _set_current_leaderboard(RankingCategories.rankings_multiplayer)} className={`nav-2-btn ${currentLeaderboardType == RankingCategories.rankings_multiplayer ? "selected" : ""}`}>
                         <span>Cooperative</span>
                     </button>
-                    <button onClick={() => _set_current_leaderboard(RankingCategories.rankings_overall)} className="nav-2-btn">
+                    <button onClick={() => _set_current_leaderboard(RankingCategories.rankings_overall)} className={`nav-2-btn ${currentLeaderboardType == RankingCategories.rankings_overall ? "selected" : ""}`}>
                         <span>Overall</span>
                     </button>
                 </div>
@@ -116,10 +123,16 @@ const Rankings: React.FC = () => {
 
                         <div className="splitter"></div>
 
-                        {currentLeaderboard?.map((curRankingData, i) => {
+                        {leaderboardLoad && currentLeaderboard?.map((curRankingData, i) => {
                             return <RankingEntry currentLeaderboardType={currentLeaderboardType} curRankingData={curRankingData} key={i}></RankingEntry>
                         })
                         }
+
+						{leaderboardLoad ? null :
+							<div style={{display: "flex", justifyContent: "center", margin: "30px 0px"}}>
+							<span className="loader"></span>
+							</div>
+						}
                     </div>
                 </section>
                 : null}

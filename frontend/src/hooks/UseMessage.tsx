@@ -29,6 +29,10 @@ const useMessage = () => {
         <MessageDialog title={title} subtitle={subtitle} onClose={handleClose}></MessageDialog>
     );
 
+	const getDialogComponent = () => {
+		return MessageDialogComponent;
+	};
+
     return { message, MessageDialogComponent };
 }
 

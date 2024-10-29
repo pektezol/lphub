@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { DownloadIcon, ThreedotIcon } from '../images/Images';
 import { MapLeaderboard } from '../types/Map';
 import { ticks_to_time, time_ago } from '../utils/Time';
+import useMessage from "../hooks/UseMessage";
 import "../css/Maps.css"
 
 interface LeaderboardsProps {
@@ -12,6 +13,7 @@ interface LeaderboardsProps {
 
 const Leaderboards: React.FC<LeaderboardsProps> = ({ data }) => {
 
+  const { message, MessageDialogComponent } = useMessage();
   const [pageNumber, setPageNumber] = React.useState<number>(1);
 
   if (!data) {
@@ -31,6 +33,10 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ data }) => {
   };
 
   return (
+  <div>
+  	<div style={{position: "absolute", width: "100%", height: "100%", top: "0px", left: "-350px"}}>
+	{MessageDialogComponent}
+	</div>
     <section id='section6' className='summary2'>
 
       <div id='leaderboard-top'
@@ -94,7 +100,7 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ data }) => {
             ) : r.kind === "singleplayer" && (
 
               <span>
-                <button onClick={() => { window.alert(`Demo ID: ${r.demo_id}`) }}><img src={ThreedotIcon} alt="demo_id" /></button>
+                <button onClick={() => { message("Demo information", `Demo ID: ${r.demo_id}`) }}><img src={ThreedotIcon} alt="demo_id" /></button>
                 <button onClick={() => window.location.href = `/api/v1/demos?uuid=${r.demo_id}`}><img src={DownloadIcon} alt="download" /></button>
               </span>
             )}
@@ -102,6 +108,7 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ data }) => {
         ))}
       </div>
     </section>
+	</div>
   );
 };
 
