@@ -267,7 +267,7 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
 
                         <span style={{ display: "grid" }}>{e.score_count}</span>
 
-                        <span style={{ display: "grid" }}>{e.score_count - r.map_wr_count}</span>
+                        <span style={{ display: "grid" }}>{e.score_count - r.map_wr_count > 0 ? `+${e.score_count - r.map_wr_count}` : e.score_count - r.map_wr_count}</span>
                         <span style={{ display: "grid" }}>{ticks_to_time(e.score_time)}</span>
                         <span> </span>
                         {i === 0 ? <span>#{r.placement}</span> : <span> </span>}
