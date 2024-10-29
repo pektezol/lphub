@@ -37,8 +37,6 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
 
   const _fetch_map_leaderboards = async () => {
     const mapLeaderboards = await API.get_map_leaderboard(mapID);
-    console.log("lbs:")
-    console.log(mapLeaderboards);
     setMapLeaderboardData(mapLeaderboards);
   };
 
@@ -51,7 +49,7 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
     _fetch_map_summary();
     _fetch_map_leaderboards();
     _fetch_map_discussions();
-  }, []);
+  }, [mapID]);
 
   if (!mapSummaryData) {
     // loading placeholder

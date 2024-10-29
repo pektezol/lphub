@@ -10,12 +10,10 @@ export const get_map_summary = async (map_id: string): Promise<MapSummary> => {
 
 export const get_map_leaderboard = async (map_id: string): Promise<MapLeaderboard | undefined> => {
   const response = await axios.get(url(`maps/${map_id}/leaderboards`));
-  console.log(response)
   if (!response.data.success) {
     return undefined;
   }
   const data = response.data.data;
-  console.log(data.records)
   // map the kind of leaderboard
   data.records = data.records.map((record: any) => {
     if (record.host && record.partner) {
