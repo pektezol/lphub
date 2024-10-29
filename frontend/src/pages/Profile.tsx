@@ -10,6 +10,7 @@ import "../css/Profile.css";
 import { API } from '../api/Api';
 import useConfirm from '../hooks/UseConfirm';
 import useMessage from '../hooks/UseMessage';
+import useMessageLoad from "../hooks/UseMessageLoad";
 
 interface ProfileProps {
   profile?: UserProfile;
@@ -21,6 +22,7 @@ interface ProfileProps {
 const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRecord }) => {
   const { confirm, ConfirmDialogComponent } = useConfirm();
   const { message, MessageDialogComponent } = useMessage();
+  const { messageLoad, messageLoadClose, MessageDialogLoadComponent } = useMessageLoad();
   const [navState, setNavState] = React.useState(0);
   const [pageNumber, setPageNumber] = React.useState(1);
   const [pageMax, setPageMax] = React.useState(0);
@@ -69,7 +71,10 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
       return;
     }
 
+	messageLoad("Deleting...");
+
     const api_success = await API.delete_map_record(token!, map_id, record_id);
+	messageLoadClose();
     if (api_success) {
       await message("Delete Record", "Successfully deleted record.");
       onDeleteRecord();
@@ -105,6 +110,7 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
   return (
   	<div>
 	{MessageDialogComponent}
+	{MessageDialogLoadComponent}
     {ConfirmDialogComponent}
 
     <main>      

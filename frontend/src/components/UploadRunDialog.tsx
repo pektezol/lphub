@@ -9,6 +9,7 @@ import { API } from '../api/Api';
 import { useNavigate } from 'react-router-dom';
 import useMessage from '../hooks/UseMessage';
 import useConfirm from '../hooks/UseConfirm';
+import useMessageLoad from "../hooks/UseMessageLoad";
 
 interface UploadRunDialogProps {
   token?: string;
@@ -21,6 +22,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
 
   const { message, MessageDialogComponent } = useMessage();
   const { confirm, ConfirmDialogComponent } = useConfirm();
+  const { messageLoad, messageLoadClose, MessageDialogLoadComponent } = useMessageLoad();
 
   const navigate = useNavigate();
 
@@ -164,7 +166,9 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
         return;
       }
 
+	  messageLoad("Uploading...");
       const [ success, response ] = await API.post_record(token, uploadRunContent);
+	  messageLoadClose();
       await message("Upload Record", response);
       onClose(success);
 	  navigate("/profile");
@@ -185,6 +189,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
       <>
         <div id="upload-run-block" />
         {MessageDialogComponent}
+		{MessageDialogLoadComponent}
         {ConfirmDialogComponent}
         
         <div id='upload-run-menu'>
@@ -234,7 +239,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
 						</div>
 						: null}
 
-						<span>{uploadRunContent.host_demo?.name}</span>
+						<span className="upload-run-demo-name">{uploadRunContent.host_demo?.name}</span>
 					  </div>
                       {
                         games[selectedGameID].is_coop &&
@@ -246,13 +251,13 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
 							<div>
 							<span>Drag and drop</span>
 							<div>
-								<span>Or click here</span><br/>
-								<button>Upload</button>
+								<span style={{fontFamily: "BarlowSemiCondensed-Regular"}}>Or click here</span><br/>
+								<button style={{borderRadius: "24px", padding: "5px 8px", margin: "5px 0px"}}>Upload</button>
 							</div>
 							</div>
 							: null}
 
-							<span>{uploadRunContent.partner_demo?.name}</span>
+							<span className="upload-run-demo-name">{uploadRunContent.partner_demo?.name}</span>
 							</div>
                           </>
                         )

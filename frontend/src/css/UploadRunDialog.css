@@ -74,6 +74,12 @@ div#upload-run{
     display: none;
 }
 
+.upload-run-demo-name {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	width: 380px;
+}
+
 @keyframes dropdown-in {
     0% {
         opacity: 0;

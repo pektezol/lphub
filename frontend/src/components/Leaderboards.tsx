@@ -34,9 +34,7 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ data }) => {
 
   return (
   <div>
-  	<div style={{position: "absolute", width: "100%", height: "100%", top: "0px", left: "-350px"}}>
-	{MessageDialogComponent}
-	</div>
+  	{MessageDialogComponent}
     <section id='section6' className='summary2'>
 
       <div id='leaderboard-top'

@@ -1,23 +1,21 @@
 import React, { useState } from 'react';
-import MessageDialog from "../components/MessageDialog";
+import MessageDialogLoad from "../components/MessageDialogLoad";
 
-const useMessage = () => {
+const useMessageLoad = () => {
     const [isOpen, setIsOpen] = useState(false);
 
     const [title, setTitle] = useState<string>("");
-    const [subtitle, setSubtitle] = useState<string>("");
     const [resolvePromise, setResolvePromise] = useState<(() => void) | null>(null);
 
-    const message = (title: string, subtitle: string) => {
+	const messageLoad = (title: string) => {
         setIsOpen(true);
         setTitle(title);
-        setSubtitle(subtitle);
 		return new Promise((resolve) => {
 			setResolvePromise(() => resolve);
 		});
     };
 
-    const handleClose = () => {
+    const messageLoadClose = () => {
         setIsOpen(false);
         if (resolvePromise) {
             resolvePromise();
@@ -25,13 +23,13 @@ const useMessage = () => {
         }
     };
 
-    const MessageDialogComponent = isOpen && (
+    const MessageDialogLoadComponent = isOpen && (
 		<div className="dialog-container">
-        <MessageDialog title={title} subtitle={subtitle} onClose={handleClose}></MessageDialog>
+        <MessageDialogLoad title={title} onClose={messageLoadClose}></MessageDialogLoad>
 		</div>
     );
 
-    return { message, MessageDialogComponent };
+    return { messageLoad, messageLoadClose, MessageDialogLoadComponent };
 }
 
-export default useMessage;
+export default useMessageLoad;
