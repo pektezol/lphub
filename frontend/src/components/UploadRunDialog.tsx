@@ -54,39 +54,39 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
   const fileInputRefPartner = React.useRef<HTMLInputElement>(null);
 
   const _handle_file_click = (host: boolean) => {
-  	if (host) {
-	  fileInputRef.current?.click();
-	} else {
-	  fileInputRefPartner.current?.click();
-	}
+    if (host) {
+      fileInputRef.current?.click();
+    } else {
+      fileInputRefPartner.current?.click();
+    }
   }
 
   const _handle_drag_over = (e: React.DragEvent<HTMLDivElement>, host: boolean) => {
-  	e.preventDefault();
-	e.stopPropagation();
-	if (host) {
-		setDragHighlight(true);
-	} else {
-		setDragHighlightPartner(true);
-	}
+    e.preventDefault();
+    e.stopPropagation();
+    if (host) {
+      setDragHighlight(true);
+    } else {
+      setDragHighlightPartner(true);
+    }
   }
 
   const _handle_drag_leave = (e: React.DragEvent<HTMLDivElement>, host: boolean) => {
-  	e.preventDefault();
-	e.stopPropagation();
-	if (host) {
-		setDragHighlight(false);
-	} else {
-		setDragHighlightPartner(false);
-	}
+    e.preventDefault();
+    e.stopPropagation();
+    if (host) {
+      setDragHighlight(false);
+    } else {
+      setDragHighlightPartner(false);
+    }
   }
 
   const _handle_drop = (e: React.DragEvent<HTMLDivElement>, host: boolean) => {
-  	e.preventDefault();
-	e.stopPropagation();
-	setDragHighlight(true);
+    e.preventDefault();
+    e.stopPropagation();
+    setDragHighlight(true);
 
-	_handle_file_change(e.dataTransfer.files, host);
+    _handle_file_change(e.dataTransfer.files, host);
   }
 
   const _handle_dropdowns = (dropdown: number) => {
@@ -159,27 +159,29 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
         return
       }
       const { portalScore, timeScore } = scoreboard.userMessage?.as<ScoreboardTempUpdate>() ?? {};
-      
+
       const userConfirmed = await confirm("Upload Record", `Map Name: ${demo.mapName}\nPortal Count: ${portalScore}\nTicks: ${timeScore}\n\nAre you sure you want to upload this demo?`);
 
       if (!userConfirmed) {
         return;
       }
 
-	  messageLoad("Uploading...");
-      const [ success, response ] = await API.post_record(token, uploadRunContent);
-	  messageLoadClose();
+      messageLoad("Uploading...");
+      const [success, response] = await API.post_record(token, uploadRunContent);
+      messageLoadClose();
       await message("Upload Record", response);
-      onClose(success);
-	  navigate("/profile");
+      if (success) {
+        onClose(success);
+        navigate("/profile");
+      }
     }
   };
 
   React.useEffect(() => {
     if (open) {
 
-  	  setDragHighlightPartner(false);
-  	  setDragHighlight(false);
+      setDragHighlightPartner(false);
+      setDragHighlight(false);
       _handle_game_select("1", "Portal 2 - Singleplayer"); // a different approach?.
     }
   }, [open]);
@@ -189,9 +191,9 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
       <>
         <div id="upload-run-block" />
         {MessageDialogComponent}
-		{MessageDialogLoadComponent}
+        {MessageDialogLoadComponent}
         {ConfirmDialogComponent}
-        
+
         <div id='upload-run-menu'>
           <div id='upload-run-menu-add'>
             <div id='upload-run-route-category'>
@@ -227,38 +229,38 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
                         </div>
                       </div>
                       <span>Host Demo</span>
-					  <div onClick={() => {_handle_file_click(true)}} onDragOver={(e) => {_handle_drag_over(e, true)}} onDrop={(e) => {_handle_drop(e, true)}} onDragLeave={(e) => {_handle_drag_leave(e, true)}} className={`upload-run-drag-area ${dragHightlight ? "upload-run-drag-area-highlight" : ""} ${uploadRunContent.host_demo ? "upload-run-drag-area-hidden" : ""}`}>
-                      	<input ref={fileInputRef} type="file" name="host_demo" id="host_demo" accept=".dem" onChange={(e) => _handle_file_change(e.target.files, true)} />
-						{!uploadRunContent.host_demo ? 
-						<div>
-						<span>Drag and drop</span>
-						<div>
-							<span style={{fontFamily: "BarlowSemiCondensed-Regular"}}>Or click here</span><br/>
-							<button style={{borderRadius: "24px", padding: "5px 8px", margin: "5px 0px"}}>Upload</button>
-						</div>
-						</div>
-						: null}
+                      <div onClick={() => { _handle_file_click(true) }} onDragOver={(e) => { _handle_drag_over(e, true) }} onDrop={(e) => { _handle_drop(e, true) }} onDragLeave={(e) => { _handle_drag_leave(e, true) }} className={`upload-run-drag-area ${dragHightlight ? "upload-run-drag-area-highlight" : ""} ${uploadRunContent.host_demo ? "upload-run-drag-area-hidden" : ""}`}>
+                        <input ref={fileInputRef} type="file" name="host_demo" id="host_demo" accept=".dem" onChange={(e) => _handle_file_change(e.target.files, true)} />
+                        {!uploadRunContent.host_demo ?
+                          <div>
+                            <span>Drag and drop</span>
+                            <div>
+                              <span style={{ fontFamily: "BarlowSemiCondensed-Regular" }}>Or click here</span><br />
+                              <button style={{ borderRadius: "24px", padding: "5px 8px", margin: "5px 0px" }}>Upload</button>
+                            </div>
+                          </div>
+                          : null}
 
-						<span className="upload-run-demo-name">{uploadRunContent.host_demo?.name}</span>
-					  </div>
+                        <span className="upload-run-demo-name">{uploadRunContent.host_demo?.name}</span>
+                      </div>
                       {
                         games[selectedGameID].is_coop &&
                         (
                           <>
                             <span>Partner Demo</span>
-							<div onClick={() => {_handle_file_click(false)}} onDragOver={(e) => {_handle_drag_over(e, false)}} onDrop={(e) => {_handle_drop(e, false)}} onDragLeave={(e) => {_handle_drag_leave(e, false)}} className={`upload-run-drag-area ${dragHightlightPartner ? "upload-run-drag-area-highlight-partner" : ""} ${uploadRunContent.partner_demo ? "upload-run-drag-area-hidden" : ""}`}>
-                            <input ref={fileInputRefPartner} type="file" name="partner_demo" id="partner_demo" accept=".dem" onChange={(e) => _handle_file_change(e.target.files, false)} />						  {!uploadRunContent.partner_demo ? 
-							<div>
-							<span>Drag and drop</span>
-							<div>
-								<span style={{fontFamily: "BarlowSemiCondensed-Regular"}}>Or click here</span><br/>
-								<button style={{borderRadius: "24px", padding: "5px 8px", margin: "5px 0px"}}>Upload</button>
-							</div>
-							</div>
-							: null}
+                            <div onClick={() => { _handle_file_click(false) }} onDragOver={(e) => { _handle_drag_over(e, false) }} onDrop={(e) => { _handle_drop(e, false) }} onDragLeave={(e) => { _handle_drag_leave(e, false) }} className={`upload-run-drag-area ${dragHightlightPartner ? "upload-run-drag-area-highlight-partner" : ""} ${uploadRunContent.partner_demo ? "upload-run-drag-area-hidden" : ""}`}>
+                              <input ref={fileInputRefPartner} type="file" name="partner_demo" id="partner_demo" accept=".dem" onChange={(e) => _handle_file_change(e.target.files, false)} />						  {!uploadRunContent.partner_demo ?
+                                <div>
+                                  <span>Drag and drop</span>
+                                  <div>
+                                    <span style={{ fontFamily: "BarlowSemiCondensed-Regular" }}>Or click here</span><br />
+                                    <button style={{ borderRadius: "24px", padding: "5px 8px", margin: "5px 0px" }}>Upload</button>
+                                  </div>
+                                </div>
+                                : null}
 
-							<span className="upload-run-demo-name">{uploadRunContent.partner_demo?.name}</span>
-							</div>
+                              <span className="upload-run-demo-name">{uploadRunContent.partner_demo?.name}</span>
+                            </div>
                           </>
                         )
                       }
