@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"sort"
 	"strings"
 
 	"lphub/database"
@@ -64,65 +63,32 @@ func RankingsLPHUB(c *gin.Context) {
 		Overall:      []models.UserRanking{},
 	}
 	// Singleplayer rankings
-	sql := `SELECT u.steam_id, u.user_name, u.avatar_link, COUNT(DISTINCT map_id), 
-	(SELECT COUNT(maps.name) FROM maps INNER JOIN games g ON maps.game_id = g.id WHERE g."name" = 'Portal 2 - Singleplayer' AND is_disabled = false), 
-	(SELECT SUM(min_score_count) AS total_min_score_count FROM (
-			SELECT
-			user_id,
-			MIN(score_count) AS min_score_count
-			FROM records_sp WHERE is_deleted = false
-			GROUP BY user_id, map_id
-			) AS subquery
-		WHERE user_id = u.steam_id) 
-	FROM records_sp sp JOIN users u ON u.steam_id = sp.user_id WHERE is_deleted = false GROUP BY u.steam_id, u.user_name`
-	rows, err := database.DB.Query(sql)
+	rows, err := database.DB.Query(`SELECT * FROM get_rankings_singleplayer();`)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
 	for rows.Next() {
 		ranking := models.UserRanking{}
-		var currentCount int
-		var totalCount int
-		err = rows.Scan(&ranking.User.SteamID, &ranking.User.UserName, &ranking.User.AvatarLink, &currentCount, &totalCount, &ranking.TotalScore)
+		err = rows.Scan(&ranking.User.SteamID, &ranking.User.UserName, &ranking.User.AvatarLink, &ranking.TotalScore)
 		if err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
-		}
-		if currentCount != totalCount {
-			continue
 		}
 		response.Singleplayer = append(response.Singleplayer, ranking)
 	}
 	// Multiplayer rankings
-	sql = `SELECT u.steam_id, u.user_name, u.avatar_link, COUNT(DISTINCT map_id), 
-	(SELECT COUNT(maps.name) FROM maps INNER JOIN games g ON maps.game_id = g.id WHERE g."name" = 'Portal 2 - Cooperative' AND is_disabled = false),
-	(SELECT SUM(min_score_count) AS total_min_score_count FROM (
-			SELECT
-			host_id,
-			partner_id,
-			MIN(score_count) AS min_score_count
-			FROM records_mp WHERE is_deleted = false
-			GROUP BY host_id, partner_id, map_id
-			) AS subquery
-		WHERE host_id = u.steam_id OR partner_id = u.steam_id) 
-	FROM records_mp mp JOIN users u ON u.steam_id = mp.host_id OR u.steam_id = mp.partner_id WHERE is_deleted = false GROUP BY u.steam_id, u.user_name`
-	rows, err = database.DB.Query(sql)
+	rows, err = database.DB.Query(`SELECT * FROM get_rankings_multiplayer();`)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
 	for rows.Next() {
 		ranking := models.UserRanking{}
-		var currentCount int
-		var totalCount int
-		err = rows.Scan(&ranking.User.SteamID, &ranking.User.UserName, &ranking.User.AvatarLink, &currentCount, &totalCount, &ranking.TotalScore)
+		err = rows.Scan(&ranking.User.SteamID, &ranking.User.UserName, &ranking.User.AvatarLink, &ranking.TotalScore)
 		if err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
-		}
-		if currentCount != totalCount {
-			continue
 		}
 		response.Multiplayer = append(response.Multiplayer, ranking)
 	}
@@ -136,12 +102,11 @@ func RankingsLPHUB(c *gin.Context) {
 					TotalScore: totalScore,
 				}
 				response.Overall = append(response.Overall, overallRanking)
+				break
 			}
 		}
 	}
-	sort.Slice(response.Singleplayer, func(i, j int) bool {
-		return response.Singleplayer[i].TotalScore < response.Singleplayer[j].TotalScore
-	})
+
 	placement := 1
 	ties := 0
 	for index := 0; index < len(response.Singleplayer); index++ {
@@ -154,9 +119,7 @@ func RankingsLPHUB(c *gin.Context) {
 		}
 		placement++
 	}
-	sort.Slice(response.Multiplayer, func(i, j int) bool {
-		return response.Multiplayer[i].TotalScore < response.Multiplayer[j].TotalScore
-	})
+
 	placement = 1
 	ties = 0
 	for index := 0; index < len(response.Multiplayer); index++ {
@@ -169,9 +132,7 @@ func RankingsLPHUB(c *gin.Context) {
 		}
 		placement++
 	}
-	sort.Slice(response.Overall, func(i, j int) bool {
-		return response.Overall[i].TotalScore < response.Overall[j].TotalScore
-	})
+
 	placement = 1
 	ties = 0
 	for index := 0; index < len(response.Overall); index++ {
@@ -184,6 +145,7 @@ func RankingsLPHUB(c *gin.Context) {
 		}
 		placement++
 	}
+
 	c.JSON(http.StatusOK, models.Response{
 		Success: true,
 		Message: "Successfully retrieved rankings.",
