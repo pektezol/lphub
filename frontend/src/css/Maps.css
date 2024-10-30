@@ -101,7 +101,6 @@ p>span.portal-count{font-weight: bold;font-size: 100px;vertical-align: -15%;}
     background-color: #202232;
 
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 2px;
 }
 #category>span>button{

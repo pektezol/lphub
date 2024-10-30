@@ -21,13 +21,11 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
     (r[idx] as HTMLElement).style.backgroundColor = "#161723"
 
 
-    if (data && data.summary.routes.length !== 0 && data.summary.routes.length !== 0) {
-      if (category_id === 2) { idx += data.summary.routes.filter(e => e.category.id < 2).length }
-      if (category_id === 3) { idx += data.summary.routes.filter(e => e.category.id < 3).length }
-      if (category_id === 4) { idx += data.summary.routes.filter(e => e.category.id < 4).length }
+    if (data && data.summary.routes.length !== 0) {
+      idx += data.summary.routes.filter(e => e.category.id < category_id).length // lethimcook
       setSelectedRun(idx);
     }
-  }
+  };
 
   function _get_youtube_id(url: string): string {
     const urlArray = url.split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
@@ -37,7 +35,9 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
   function _category_change() {
     const btn = document.querySelectorAll("#section3 #category span button");
     btn.forEach((e) => { (e as HTMLElement).style.backgroundColor = "#2b2e46" });
-    (btn[selectedCategory - 1] as HTMLElement).style.backgroundColor = "#202232";
+    // heavenly father forgive me for i have sinned. TODO: fix this bullshit with dynamic categories
+    const idx = selectedCategory === 1 ? 0 : data.map.is_coop ? selectedCategory - 3 : selectedCategory - 1;
+    (btn[idx] as HTMLElement).style.backgroundColor = "#202232";
   };
 
   function _history_change() {
@@ -47,7 +47,7 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
   };
 
   React.useEffect(() => {
-   _history_change();
+    _history_change();
   }, [historySelected]);
 
   React.useEffect(() => {
@@ -65,15 +65,27 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
         <div id='category'
           style={data.map.image === "" ? { backgroundColor: "#202232" } : {}}>
           <img src={data.map.image} alt="" id='category-image'></img>
-          <p><span className='portal-count'>{data.summary.routes.sort((a, b) => a.category.id - b.category.id)[selectedRun].history.score_count}</span>
-            {data.summary.routes.sort((a, b) => a.category.id - b.category.id)[selectedRun].history.score_count === 1 ? ` portal` : ` portals`}</p>
-          <span>
-            <button onClick={() => setSelectedCategory(1)}>CM</button>
-            <button onClick={() => setSelectedCategory(2)}>NoSLA</button>
-            {data.map.is_coop ? <button onClick={() => setSelectedCategory(3)}>SLA</button>
-              : <button onClick={() => setSelectedCategory(3)}>Inbounds SLA</button>}
-            <button onClick={() => setSelectedCategory(4)}>Any%</button>
-          </span>
+          <p><span className='portal-count'>{data.summary.routes[selectedRun].history.score_count}</span>
+            {data.summary.routes[selectedRun].history.score_count === 1 ? ` portal` : ` portals`}</p>
+          {data.map.is_coop ? // TODO: make this part dynamic
+            (
+              <span style={{ gridTemplateColumns: "1fr 1fr 1fr" }}>
+                <button onClick={() => setSelectedCategory(1)}>CM</button>
+                <button onClick={() => setSelectedCategory(4)}>Any%</button>
+                <button onClick={() => setSelectedCategory(5)}>All Courses</button>
+              </span>
+            )
+            :
+            (
+              <span style={{ gridTemplateColumns: "1fr 1fr 1fr 1fr" }}>
+
+                <button onClick={() => setSelectedCategory(1)}>CM</button>
+                <button onClick={() => setSelectedCategory(2)}>NoSLA</button>
+                <button onClick={() => setSelectedCategory(3)}>Inbounds SLA</button>
+                <button onClick={() => setSelectedCategory(4)}>Any%</button>
+              </span>
+            )
+          }
 
         </div>
 
@@ -91,7 +103,6 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
                 <div id='records'>
 
                   {data.summary.routes
-                    .sort((a, b) => a.history.score_count - b.history.score_count)
                     .filter(e => e.category.id === selectedCategory)
                     .map((r, index) => (
                       <button className='record' key={index} onClick={() => {
@@ -125,22 +136,22 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
         </div>
 
 
-      </section>
+      </section >
       <section id='section4' className='summary1'>
         <div id='difficulty'>
           <span>Difficulty</span>
-          {data.summary.routes.sort((a, b) => a.category.id - b.category.id)[selectedRun].rating === 0 ? (<span>N/A</span>) : null}
-          {data.summary.routes.sort((a, b) => a.category.id - b.category.id)[selectedRun].rating === 1 ? (<span style={{ color: "lime" }}>Very easy</span>) : null}
-          {data.summary.routes.sort((a, b) => a.category.id - b.category.id)[selectedRun].rating === 2 ? (<span style={{ color: "green" }}>Easy</span>) : null}
-          {data.summary.routes.sort((a, b) => a.category.id - b.category.id)[selectedRun].rating === 3 ? (<span style={{ color: "yellow" }}>Medium</span>) : null}
-          {data.summary.routes.sort((a, b) => a.category.id - b.category.id)[selectedRun].rating === 4 ? (<span style={{ color: "orange" }}>Hard</span>) : null}
-          {data.summary.routes.sort((a, b) => a.category.id - b.category.id)[selectedRun].rating === 5 ? (<span style={{ color: "red" }}>Very hard</span>) : null}
+          {data.summary.routes[selectedRun].rating === 0 && (<span>N/A</span>)}
+          {data.summary.routes[selectedRun].rating === 1 && (<span style={{ color: "lime" }}>Very easy</span>)}
+          {data.summary.routes[selectedRun].rating === 2 && (<span style={{ color: "green" }}>Easy</span>)}
+          {data.summary.routes[selectedRun].rating === 3 && (<span style={{ color: "yellow" }}>Medium</span>)}
+          {data.summary.routes[selectedRun].rating === 4 && (<span style={{ color: "orange" }}>Hard</span>)}
+          {data.summary.routes[selectedRun].rating === 5 && (<span style={{ color: "red" }}>Very hard</span>)}
           <div>
-            {data.summary.routes.sort((a, b) => a.category.id - b.category.id)[selectedRun].rating === 1 ? (<div className='difficulty-rating' style={{ backgroundColor: "lime" }}></div>) : (<div className='difficulty-rating'></div>)}
-            {data.summary.routes.sort((a, b) => a.category.id - b.category.id)[selectedRun].rating === 2 ? (<div className='difficulty-rating' style={{ backgroundColor: "green" }}></div>) : (<div className='difficulty-rating'></div>)}
-            {data.summary.routes.sort((a, b) => a.category.id - b.category.id)[selectedRun].rating === 3 ? (<div className='difficulty-rating' style={{ backgroundColor: "yellow" }}></div>) : (<div className='difficulty-rating'></div>)}
-            {data.summary.routes.sort((a, b) => a.category.id - b.category.id)[selectedRun].rating === 4 ? (<div className='difficulty-rating' style={{ backgroundColor: "orange" }}></div>) : (<div className='difficulty-rating'></div>)}
-            {data.summary.routes.sort((a, b) => a.category.id - b.category.id)[selectedRun].rating === 5 ? (<div className='difficulty-rating' style={{ backgroundColor: "red" }}></div>) : (<div className='difficulty-rating'></div>)}
+            {data.summary.routes[selectedRun].rating === 1 ? (<div className='difficulty-rating' style={{ backgroundColor: "lime" }}></div>) : (<div className='difficulty-rating'></div>)}
+            {data.summary.routes[selectedRun].rating === 2 ? (<div className='difficulty-rating' style={{ backgroundColor: "green" }}></div>) : (<div className='difficulty-rating'></div>)}
+            {data.summary.routes[selectedRun].rating === 3 ? (<div className='difficulty-rating' style={{ backgroundColor: "yellow" }}></div>) : (<div className='difficulty-rating'></div>)}
+            {data.summary.routes[selectedRun].rating === 4 ? (<div className='difficulty-rating' style={{ backgroundColor: "orange" }}></div>) : (<div className='difficulty-rating'></div>)}
+            {data.summary.routes[selectedRun].rating === 5 ? (<div className='difficulty-rating' style={{ backgroundColor: "red" }}></div>) : (<div className='difficulty-rating'></div>)}
           </div>
         </div>
         <div id='count'>
@@ -151,13 +162,13 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
 
       <section id='section5' className='summary1'>
         <div id='description'>
-          {data.summary.routes.sort((a, b) => a.category.id - b.category.id)[selectedRun].showcase !== "" ?
+          {data.summary.routes[selectedRun].showcase !== "" ?
             <iframe title='Showcase video' src={"https://www.youtube.com/embed/" + _get_youtube_id(data.summary.routes[selectedRun].showcase)}> </iframe>
             : ""}
           <h3>Route Description</h3>
           <span id='description-text'>
             <ReactMarkdown>
-              {data.summary.routes.sort((a, b) => a.category.id - b.category.id)[selectedRun].description}
+              {data.summary.routes[selectedRun].description}
             </ReactMarkdown>
           </span>
         </div>
