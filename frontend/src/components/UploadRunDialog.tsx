@@ -198,7 +198,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
           <div id='upload-run-menu-add'>
             <div id='upload-run-route-category'>
               <div style={{ padding: "15px 0px" }} className='upload-run-dropdown-container'>
-                <h1 style={{ paddingBottom: "14px" }}>Select Game</h1>
+                <h2 style={{ paddingBottom: "14px" }}>Select Game</h2>
                 <div onClick={() => _handle_dropdowns(1)} style={{ display: "flex", alignItems: "center", cursor: "pointer", justifyContent: "space-between" }}>
                   <div className='dropdown-cur'>{selectedGameName}</div>
                   <i style={{ rotate: "-90deg", transform: "translate(-5px, 10px)" }} className="triangle"></i>
@@ -215,7 +215,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
                   <>
                     <div className='upload-run-map-container' style={{ paddingBottom: "10px" }}>
                       <div style={{ padding: "15px 0px" }}>
-                        <h1 style={{ paddingBottom: "14px" }}>Select Map</h1>
+                        <h2 style={{ paddingBottom: "14px" }}>Select Map</h2>
                         <div onClick={() => _handle_dropdowns(2)} style={{ display: "flex", alignItems: "center", cursor: "pointer", justifyContent: "space-between" }}>
                           <span style={{ userSelect: "none" }}>{currentMap}</span>
                           <i style={{ rotate: "-90deg", transform: "translate(-5px, 10px)" }} className="triangle"></i>
@@ -228,7 +228,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
                           ))}
                         </div>
                       </div>
-                      <h1>Host Demo</h1>
+                      <h2>Host Demo</h2>
                       <div onClick={() => { _handle_file_click(true) }} onDragOver={(e) => { _handle_drag_over(e, true) }} onDrop={(e) => { _handle_drop(e, true) }} onDragLeave={(e) => { _handle_drag_leave(e, true) }} className={`upload-run-drag-area ${dragHightlight ? "upload-run-drag-area-highlight" : ""} ${uploadRunContent.host_demo ? "upload-run-drag-area-hidden" : ""}`}>
                         <input ref={fileInputRef} type="file" name="host_demo" id="host_demo" accept=".dem" onChange={(e) => _handle_file_change(e.target.files, true)} />
                         {!uploadRunContent.host_demo ?
@@ -247,7 +247,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
                         games[selectedGameID].is_coop &&
                         (
                           <>
-                            <h1>Partner Demo</h1>
+                            <h2>Partner Demo</h2>
                             <div onClick={() => { _handle_file_click(false) }} onDragOver={(e) => { _handle_drag_over(e, false) }} onDrop={(e) => { _handle_drop(e, false) }} onDragLeave={(e) => { _handle_drag_leave(e, false) }} className={`upload-run-drag-area ${dragHightlightPartner ? "upload-run-drag-area-highlight-partner" : ""} ${uploadRunContent.partner_demo ? "upload-run-drag-area-hidden" : ""}`}>
                               <input ref={fileInputRefPartner} type="file" name="partner_demo" id="partner_demo" accept=".dem" onChange={(e) => _handle_file_change(e.target.files, false)} />						  {!uploadRunContent.partner_demo ?
                                 <div>
