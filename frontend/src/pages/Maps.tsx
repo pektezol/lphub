@@ -83,7 +83,7 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
         <section id='section1' className='summary1'>
           <div>
             <Link to="/games"><button className='nav-button' style={{ borderRadius: "20px 0px 0px 20px" }}><i className='triangle'></i><span>Games List</span></button></Link>
-            <Link to={`/games/${!mapSummaryData.map.is_coop ? "1" : "2"}?chapter=${mapSummaryData.map.chapter_name.split(" ")[1]}`}><button className='nav-button' style={{ borderRadius: "0px 20px 20px 0px", marginLeft: "2px" }}><i className='triangle'></i><span>{mapSummaryData.map.chapter_name}</span></button></Link>
+            <Link to={`/games/${mapSummaryData.map.is_coop ? "1" : "2"}?chapter=${mapSummaryData.map.chapter_name.split(" ")[1]}`}><button className='nav-button' style={{ borderRadius: "0px 20px 20px 0px", marginLeft: "2px" }}><i className='triangle'></i><span>{mapSummaryData.map.chapter_name}</span></button></Link>
             <br /><span><b>{mapSummaryData.map.map_name}</b></span>
           </div>
         </section>
