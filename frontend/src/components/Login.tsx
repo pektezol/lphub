@@ -38,7 +38,7 @@ const Login: React.FC<LoginProps> = ({ setToken, profile, setProfile }) => {
                 <>
                   <Link to="/profile" tabIndex={-1} className='login'>
                     <button className='sidebar-button'>
-                      <img src={profile.avatar_link} alt="" />
+                      <img className="avatar-img" src={profile.avatar_link} alt="" />
                       <span>{profile.user_name}</span>
                     </button>
                     <button className='logout-button' onClick={_logout}>
@@ -52,7 +52,7 @@ const Login: React.FC<LoginProps> = ({ setToken, profile, setProfile }) => {
                 <>
                   <Link to="/" tabIndex={-1} className='login'>
                     <button className='sidebar-button'>
-                      <img src={profile.avatar_link} alt="" />
+                      <img className="avatar-img" src={profile.avatar_link} alt="" />
                       <span>Loading Profile...</span>
                     </button>
                     <button disabled className='logout-button' onClick={_logout}>
@@ -68,7 +68,7 @@ const Login: React.FC<LoginProps> = ({ setToken, profile, setProfile }) => {
         (
           <Link to="/api/v1/login" tabIndex={-1} className='login' >
             <button className='sidebar-button' onClick={_login}>
-              <img src={UserIcon} alt="" />
+              <img className="avatar-img" src={UserIcon} alt="" />
               <span>
                 <img src={LoginIcon} alt="Sign in through Steam" />
               </span>

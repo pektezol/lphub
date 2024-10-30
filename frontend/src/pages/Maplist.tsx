@@ -108,7 +108,7 @@ const Maplist: React.FC = () => {
           >
             <div className="blur">
               <div className="game-header-portal-count">
-                <h2>
+                <h2 className="portal-count">
                   {
                     game?.category_portals.find(
                       (obj) => obj.category.id === catNum + 1

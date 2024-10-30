@@ -3,7 +3,7 @@ h1 {
     margin: 0px 0px;
 }
 
-h2 {
+.portal-count {
     margin: 20px 0px;
     font-family: "BarlowSemiCondensed-SemiBold";
     font-size: 96px;
@@ -101,7 +101,7 @@ h3 {
 
 .map-entry-image {
     display: flex;
-    height: 150px;
+    height: 200px;
     background-size: cover;
 }
 
