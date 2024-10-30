@@ -80,7 +80,7 @@ const Maplist: React.FC = () => {
 
   useEffect(() => {
   	const queryParams = new URLSearchParams(location.search);
-    if (gameChapters != undefined && queryParams.get("chapter") == "") {
+    if (gameChapters != undefined && !queryParams.get("chapter")) {
       _fetch_chapters(gameChapters!.chapters[0].id.toString());
     }
   }, [gameChapters])
