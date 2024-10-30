@@ -57,7 +57,7 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
 
   React.useEffect(() => {
     _select_run(0, selectedCategory);
-  }, [selectedCategory]);
+  }, []);
 
   return (
     <>
