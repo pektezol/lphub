@@ -21,7 +21,7 @@ const Maplist: React.FC = () => {
 
   const [dropdownActive, setDropdownActive] = React.useState("none");
 
-  const params = useParams<{ id: string }>();
+  const params = useParams<{ id: string, chapter: string }>();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -52,11 +52,10 @@ const Maplist: React.FC = () => {
 
     // location query params
     const queryParams = new URLSearchParams(location.search);
-    if (queryParams.get("cat")) {
-        const cat = parseFloat(queryParams.get("cat") || "");
-        setCategory(cat);
-        setCatNum(cat - 1);
-    }
+    if (queryParams.get("chapter")) {
+        const cat = parseFloat(queryParams.get("chapter") || "");
+		_fetch_chapters(cat.toString());
+	}
 
     const _fetch_game = async () => {
       const games = await API.get_games();
@@ -80,7 +79,8 @@ const Maplist: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (gameChapters != undefined) {
+  	const queryParams = new URLSearchParams(location.search);
+    if (gameChapters != undefined && queryParams.get("chapter") == "") {
       _fetch_chapters(gameChapters!.chapters[0].id.toString());
     }
   }, [gameChapters])
