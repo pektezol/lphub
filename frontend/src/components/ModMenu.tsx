@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
+import { useNavigate } from 'react-router-dom';
 
 import { MapSummary } from '../types/Map';
 import { ModMenuContent } from '../types/Content';
 import { API } from '../api/Api';
 import "../css/ModMenu.css"
-import { useNavigate } from 'react-router-dom';
+import useConfirm from '../hooks/UseConfirm';
 
 interface ModMenuProps {
   token?: string;
@@ -15,6 +16,8 @@ interface ModMenuProps {
 }
 
 const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID }) => {
+
+  const { confirm, ConfirmDialogComponent } = useConfirm();
 
   const [menu, setMenu] = React.useState<number>(0);
   const [showButton, setShowButton] = React.useState<boolean>(true);
@@ -64,7 +67,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID }) =>
   };
 
   const _edit_map_summary_image = async () => {
-    if (window.confirm("Are you sure you want to submit this to the database?")) {
+    if (await confirm("Edit Map Summary Image", "Are you sure you want to submit this to the database?")) {
       if (token) {
         const success = await API.put_map_image(token, mapID, image);
         if (success) {
@@ -77,7 +80,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID }) =>
   };
 
   const _edit_map_summary_route = async () => {
-    if (window.confirm("Are you sure you want to submit this to the database?")) {
+    if (await confirm("Edit Map Summary Route", "Are you sure you want to submit this to the database?")) {
       if (token) {
         routeContent.date += "T00:00:00Z";
         const success = await API.put_map_summary(token, mapID, routeContent);
@@ -91,7 +94,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID }) =>
   };
 
   const _create_map_summary_route = async () => {
-    if (window.confirm("Are you sure you want to submit this to the database?")) {
+    if (await confirm("Create Map Summary Route", "Are you sure you want to submit this to the database?")) {
       if (token) {
         routeContent.date += "T00:00:00Z";
         const success = await API.post_map_summary(token, mapID, routeContent);
@@ -105,8 +108,8 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID }) =>
   };
 
   const _delete_map_summary_route = async () => {
-    if (window.confirm(`Are you sure you want to delete this run from the database?
-      ${data.summary.routes[selectedRun].category.name}    ${data.summary.routes[selectedRun].history.score_count} portals    ${data.summary.routes[selectedRun].history.runner_name}`)) {
+    if (await confirm("Delete Map Summary Route", `Are you sure you want to submit this to the database?\n
+      ${data.summary.routes[selectedRun].category.name}\n${data.summary.routes[selectedRun].history.score_count} portals\n${data.summary.routes[selectedRun].history.runner_name}`)) {
       if (token) {
         const success = await API.delete_map_summary(token, mapID, data.summary.routes[selectedRun].route_id);
         if (success) {
@@ -160,6 +163,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID }) =>
 
   return (
     <>
+      {ConfirmDialogComponent}
       <div id="modview_block" />
       <div id='modview'>
         <div>

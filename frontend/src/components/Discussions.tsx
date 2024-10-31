@@ -6,6 +6,7 @@ import { time_ago } from '../utils/Time';
 import { API } from '../api/Api';
 import "../css/Maps.css"
 import { Link } from 'react-router-dom';
+import useConfirm from '../hooks/UseConfirm';
 
 interface DiscussionsProps {
   token?: string
@@ -16,6 +17,8 @@ interface DiscussionsProps {
 }
 
 const Discussions: React.FC<DiscussionsProps> = ({ token, data, isModerator, mapID, onRefresh }) => {
+
+  const { confirm, ConfirmDialogComponent } = useConfirm();
 
   const [discussionThread, setDiscussionThread] = React.useState<MapDiscussion | undefined>(undefined);
   const [discussionSearch, setDiscussionSearch] = React.useState<string>("");
@@ -48,7 +51,7 @@ const Discussions: React.FC<DiscussionsProps> = ({ token, data, isModerator, map
   };
 
   const _delete_map_discussion = async (discussion: MapDiscussionsDetail) => {
-    if (window.confirm(`Are you sure you want to remove post: ${discussion.title}?`)) {
+    if (await confirm("Delete Map Discussion", `Are you sure you want to remove post: ${discussion.title}?`)) {
       if (token) {
         await API.delete_map_discussion(token, mapID, discussion.id);
         onRefresh();
@@ -58,6 +61,7 @@ const Discussions: React.FC<DiscussionsProps> = ({ token, data, isModerator, map
 
   return (
     <section id='section7' className='summary3'>
+      {ConfirmDialogComponent}
       <div id='discussion-search'>
         <input type="text" value={discussionSearch} placeholder={"Search for posts..."} onChange={(e) => setDiscussionSearch(e.target.value)} />
         <div><button onClick={() => setCreateDiscussion(true)}>New Post</button></div>
@@ -119,9 +123,9 @@ const Discussions: React.FC<DiscussionsProps> = ({ token, data, isModerator, map
                   }
                 </div>
                 <div id='discussion-send'>
-                  <input type="text" value={createDiscussionCommentContent} placeholder={"Message"} 
-                  onKeyDown={(e) => e.key === "Enter" && _create_map_discussion_comment(discussionThread.discussion.id)} 
-                  onChange={(e) => setCreateDiscussionCommentContent(e.target.value)} />
+                  <input type="text" value={createDiscussionCommentContent} placeholder={"Message"}
+                    onKeyDown={(e) => e.key === "Enter" && _create_map_discussion_comment(discussionThread.discussion.id)}
+                    onChange={(e) => setCreateDiscussionCommentContent(e.target.value)} />
                   <div><button onClick={() => {
                     if (createDiscussionCommentContent !== "") {
                       _create_map_discussion_comment(discussionThread.discussion.id);

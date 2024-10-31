@@ -71,10 +71,10 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
       return;
     }
 
-	messageLoad("Deleting...");
+    messageLoad("Deleting...");
 
     const api_success = await API.delete_map_record(token!, map_id, record_id);
-	messageLoadClose();
+    messageLoadClose();
     if (api_success) {
       await message("Delete Record", "Successfully deleted record.");
       onDeleteRecord();
@@ -108,240 +108,240 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
   };
 
   return (
-  	<div>
-	{MessageDialogComponent}
-	{MessageDialogLoadComponent}
-    {ConfirmDialogComponent}
+    <div>
+      {MessageDialogComponent}
+      {MessageDialogLoadComponent}
+      {ConfirmDialogComponent}
 
-    <main>      
-	<section id='section1' className='profile'>
+      <main>
+        <section id='section1' className='profile'>
 
-        {profile.profile
-          ? (
-            <div id='profile-image' onClick={_update_profile}>
-              <img src={profile.avatar_link} alt="profile-image"></img>
-              <span>Refresh</span>
-            </div>
-          ) : (
+          {profile.profile
+            ? (
+              <div id='profile-image' onClick={_update_profile}>
+                <img src={profile.avatar_link} alt="profile-image"></img>
+                <span>Refresh</span>
+              </div>
+            ) : (
+              <div>
+                <img src={profile.avatar_link} alt="profile-image"></img>
+              </div>
+            )}
+
+          <div id='profile-top'>
             <div>
-              <img src={profile.avatar_link} alt="profile-image"></img>
+              <div>{profile.user_name}</div>
+              <div>
+                {profile.country_code === "XX" ? "" : <img src={`https://flagcdn.com/w80/${profile.country_code.toLowerCase()}.jpg`} alt={profile.country_code} />}
+              </div>
+              <div>
+                {profile.titles.map(e => (
+                  <span className="titles" style={{ backgroundColor: `#${e.color}` }}>
+                    {e.name}
+                  </span>
+                ))}
+              </div>
             </div>
-          )}
-
-        <div id='profile-top'>
-          <div>
-            <div>{profile.user_name}</div>
             <div>
-              {profile.country_code === "XX" ? "" : <img src={`https://flagcdn.com/w80/${profile.country_code.toLowerCase()}.jpg`} alt={profile.country_code} />}
+              {profile.links.steam === "-" ? "" : <a href={profile.links.steam}><img src={SteamIcon} alt="Steam" /></a>}
+              {profile.links.twitch === "-" ? "" : <a href={profile.links.twitch}><img src={TwitchIcon} alt="Twitch" /></a>}
+              {profile.links.youtube === "-" ? "" : <a href={profile.links.youtube}><img src={YouTubeIcon} alt="Youtube" /></a>}
+              {profile.links.p2sr === "-" ? "" : <a href={profile.links.p2sr}><img src={PortalIcon} alt="P2SR" style={{ padding: "0" }} /></a>}
+            </div>
+
+          </div>
+          <div id='profile-bottom'>
+            <div>
+              <span>Overall</span>
+              <span>{profile.rankings.overall.rank === 0 ? "N/A " : "#" + profile.rankings.overall.rank + " "}
+                <span>({profile.rankings.overall.completion_count}/{profile.rankings.overall.completion_total})</span>
+              </span>
             </div>
             <div>
-              {profile.titles.map(e => (
-                <span className="titles" style={{ backgroundColor: `#${e.color}` }}>
-                  {e.name}
-                </span>
-              ))}
+              <span>Singleplayer</span>
+              <span>{profile.rankings.singleplayer.rank === 0 ? "N/A " : "#" + profile.rankings.singleplayer.rank + " "}
+                <span>({profile.rankings.singleplayer.completion_count}/{profile.rankings.singleplayer.completion_total})</span>
+              </span>
+            </div>
+            <div>
+              <span>Cooperative</span>
+              <span>{profile.rankings.cooperative.rank === 0 ? "N/A " : "#" + profile.rankings.cooperative.rank + " "}
+                <span>({profile.rankings.cooperative.completion_count}/{profile.rankings.cooperative.completion_total})</span>
+              </span>
             </div>
           </div>
-          <div>
-            {profile.links.steam === "-" ? "" : <a href={profile.links.steam}><img src={SteamIcon} alt="Steam" /></a>}
-            {profile.links.twitch === "-" ? "" : <a href={profile.links.twitch}><img src={TwitchIcon} alt="Twitch" /></a>}
-            {profile.links.youtube === "-" ? "" : <a href={profile.links.youtube}><img src={YouTubeIcon} alt="Youtube" /></a>}
-            {profile.links.p2sr === "-" ? "" : <a href={profile.links.p2sr}><img src={PortalIcon} alt="P2SR" style={{ padding: "0" }} /></a>}
-          </div>
-
-        </div>
-        <div id='profile-bottom'>
-          <div>
-            <span>Overall</span>
-            <span>{profile.rankings.overall.rank === 0 ? "N/A " : "#" + profile.rankings.overall.rank + " "}
-              <span>({profile.rankings.overall.completion_count}/{profile.rankings.overall.completion_total})</span>
-            </span>
-          </div>
-          <div>
-            <span>Singleplayer</span>
-            <span>{profile.rankings.singleplayer.rank === 0 ? "N/A " : "#" + profile.rankings.singleplayer.rank + " "}
-              <span>({profile.rankings.singleplayer.completion_count}/{profile.rankings.singleplayer.completion_total})</span>
-            </span>
-          </div>
-          <div>
-            <span>Cooperative</span>
-            <span>{profile.rankings.cooperative.rank === 0 ? "N/A " : "#" + profile.rankings.cooperative.rank + " "}
-              <span>({profile.rankings.cooperative.completion_count}/{profile.rankings.cooperative.completion_total})</span>
-            </span>
-          </div>
-        </div>
-      </section>
+        </section>
 
 
-      <section id='section2' className='profile'>
-        <button onClick={() => setNavState(0)}><img src={FlagIcon} alt="" />&nbsp;Player Records</button>
-        <button onClick={() => setNavState(1)}><img src={StatisticsIcon} alt="" />&nbsp;Statistics</button>
-      </section>
+        <section id='section2' className='profile'>
+          <button onClick={() => setNavState(0)}><img src={FlagIcon} alt="" />&nbsp;Player Records</button>
+          <button onClick={() => setNavState(1)}><img src={StatisticsIcon} alt="" />&nbsp;Statistics</button>
+        </section>
 
 
 
 
 
-      <section id='section3' className='profile1'>
-        <div id='profileboard-nav'>
-          {gameData === null ? <select>error</select> :
+        <section id='section3' className='profile1'>
+          <div id='profileboard-nav'>
+            {gameData === null ? <select>error</select> :
 
-            <select id='select-game'
-              onChange={() => {
-                setGame((document.querySelector('#select-game') as HTMLInputElement).value);
-                setChapter("0");
-                const chapterSelect = document.querySelector('#select-chapter') as HTMLSelectElement;
-                if (chapterSelect) {
-                  chapterSelect.value = "0";
-                }
-              }}>
-              <option value={0} key={0}>All Scores</option>
-              {gameData.map((e, i) => (
-                <option value={e.id} key={i + 1}>{e.name}</option>
-              ))}</select>
-          }
-
-          {game === "0" ?
-            <select disabled>
-              <option>All Chapters</option>
-            </select>
-            : chapterData === null ? <select></select> :
-
-              <select id='select-chapter'
-                onChange={() => setChapter((document.querySelector('#select-chapter') as HTMLInputElement).value)}>
-                <option value="0" key="0">All Chapters</option>
-                {chapterData.chapters.filter(e => e.is_disabled === false).map((e, i) => (
+              <select id='select-game'
+                onChange={() => {
+                  setGame((document.querySelector('#select-game') as HTMLInputElement).value);
+                  setChapter("0");
+                  const chapterSelect = document.querySelector('#select-chapter') as HTMLSelectElement;
+                  if (chapterSelect) {
+                    chapterSelect.value = "0";
+                  }
+                }}>
+                <option value={0} key={0}>All Scores</option>
+                {gameData.map((e, i) => (
                   <option value={e.id} key={i + 1}>{e.name}</option>
                 ))}</select>
-          }
-        </div>
-        <div id='profileboard-top'>
-          <span><span>Map Name</span><img src={SortIcon} alt="" /></span>
-          <span style={{ justifyContent: 'center' }}><span>Portals</span><img src={SortIcon} alt="" /></span>
-          <span style={{ justifyContent: 'center' }}><span>WRΔ </span><img src={SortIcon} alt="" /></span>
-          <span style={{ justifyContent: 'center' }}><span>Time</span><img src={SortIcon} alt="" /></span>
-          <span> </span>
-          <span><span>Rank</span><img src={SortIcon} alt="" /></span>
-          <span><span>Date</span><img src={SortIcon} alt="" /></span>
-          <div id='page-number'>
-            <div>
-              <button onClick={() => {
-                if (pageNumber !== 1) {
-                  setPageNumber(prevPageNumber => prevPageNumber - 1);
-                  const records = document.querySelectorAll(".profileboard-record");
-                  records.forEach((r) => {
-                    (r as HTMLInputElement).style.height = "44px";
-                  });
-                }
-              }}
-              ><i className='triangle' style={{ position: 'relative', left: '-5px', }}></i> </button>
-              <span>{pageNumber}/{pageMax}</span>
-              <button onClick={() => {
-                if (pageNumber !== pageMax) {
-                  setPageNumber(prevPageNumber => prevPageNumber + 1);
-                  const records = document.querySelectorAll(".profileboard-record");
-                  records.forEach((r) => {
-                    (r as HTMLInputElement).style.height = "44px";
-                  });
-                }
-              }}
-              ><i className='triangle' style={{ position: 'relative', left: '5px', transform: 'rotate(180deg)' }}></i> </button>
+            }
+
+            {game === "0" ?
+              <select disabled>
+                <option>All Chapters</option>
+              </select>
+              : chapterData === null ? <select></select> :
+
+                <select id='select-chapter'
+                  onChange={() => setChapter((document.querySelector('#select-chapter') as HTMLInputElement).value)}>
+                  <option value="0" key="0">All Chapters</option>
+                  {chapterData.chapters.filter(e => e.is_disabled === false).map((e, i) => (
+                    <option value={e.id} key={i + 1}>{e.name}</option>
+                  ))}</select>
+            }
+          </div>
+          <div id='profileboard-top'>
+            <span><span>Map Name</span><img src={SortIcon} alt="" /></span>
+            <span style={{ justifyContent: 'center' }}><span>Portals</span><img src={SortIcon} alt="" /></span>
+            <span style={{ justifyContent: 'center' }}><span>WRΔ </span><img src={SortIcon} alt="" /></span>
+            <span style={{ justifyContent: 'center' }}><span>Time</span><img src={SortIcon} alt="" /></span>
+            <span> </span>
+            <span><span>Rank</span><img src={SortIcon} alt="" /></span>
+            <span><span>Date</span><img src={SortIcon} alt="" /></span>
+            <div id='page-number'>
+              <div>
+                <button onClick={() => {
+                  if (pageNumber !== 1) {
+                    setPageNumber(prevPageNumber => prevPageNumber - 1);
+                    const records = document.querySelectorAll(".profileboard-record");
+                    records.forEach((r) => {
+                      (r as HTMLInputElement).style.height = "44px";
+                    });
+                  }
+                }}
+                ><i className='triangle' style={{ position: 'relative', left: '-5px', }}></i> </button>
+                <span>{pageNumber}/{pageMax}</span>
+                <button onClick={() => {
+                  if (pageNumber !== pageMax) {
+                    setPageNumber(prevPageNumber => prevPageNumber + 1);
+                    const records = document.querySelectorAll(".profileboard-record");
+                    records.forEach((r) => {
+                      (r as HTMLInputElement).style.height = "44px";
+                    });
+                  }
+                }}
+                ><i className='triangle' style={{ position: 'relative', left: '5px', transform: 'rotate(180deg)' }}></i> </button>
+              </div>
             </div>
           </div>
-        </div>
-        <hr />
-        <div id='profileboard-records'>
+          <hr />
+          <div id='profileboard-records'>
 
-          {game === "0"
-            ? (
+            {game === "0"
+              ? (
 
-              profile.records.sort((a, b) => a.map_id - b.map_id)
-                .map((r, index) => (
+                profile.records.sort((a, b) => a.map_id - b.map_id)
+                  .map((r, index) => (
 
-                  Math.ceil((index + 1) / 20) === pageNumber ? (
-                    <button className="profileboard-record" key={index}>
-                      {r.scores.map((e, i) => (<>
-                        {i !== 0 ? <hr style={{ gridColumn: "1 / span 8" }} /> : ""}
-
-                        <Link to={`/maps/${r.map_id}`}><span>{r.map_name}</span></Link>
-
-                        <span style={{ display: "grid" }}>{e.score_count}</span>
-
-                        <span style={{ display: "grid" }}>{e.score_count - r.map_wr_count > 0 ? `+${e.score_count - r.map_wr_count}` : e.score_count - r.map_wr_count}</span>
-                        <span style={{ display: "grid" }}>{ticks_to_time(e.score_time)}</span>
-                        <span> </span>
-                        {i === 0 ? <span>#{r.placement}</span> : <span> </span>}
-                        <span>{e.date.split("T")[0]}</span>
-                        <span style={{ flexDirection: "row-reverse" }}>
-
-                          <button style={{ marginRight: "10px" }} onClick={() => { message("Demo information", `Demo ID: ${e.demo_id}`) }}><img src={ThreedotIcon} alt="demo_id" /></button>
-                          <button onClick={() => { _delete_submission(r.map_id, e.record_id) }}><img src={DeleteIcon}></img></button>
-                          <button onClick={() => window.location.href = `/api/v1/demos?uuid=${e.demo_id}`}><img src={DownloadIcon} alt="download" /></button>
-                          {i === 0 && r.scores.length > 1 ? <button onClick={() => {
-                            (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "44px" ||
-                              (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "" ?
-                              (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height = `${r.scores.length * 46}px` :
-                              (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height = "44px"
-                          }
-                          }><img src={HistoryIcon} alt="history" /></button> : ""}
-
-                        </span>
-                      </>))}
-
-                    </button>
-                  ) : ""
-                ))) : maps ?
-
-              maps.filter(e => e.is_disabled === false).sort((a, b) => a.id - b.id)
-                .map((r, index) => {
-                  if (Math.ceil((index + 1) / 20) === pageNumber) {
-                    let record = profile.records.find((e) => e.map_id === r.id);
-                    return record === undefined ? (
-                      <button className="profileboard-record" key={index} style={{ backgroundColor: "#1b1b20" }}>
-                        <Link to={`/maps/${r.id}`}><span>{r.name}</span></Link>
-                        <span style={{ display: "grid" }}>N/A</span>
-                        <span style={{ display: "grid" }}>N/A</span>
-                        <span>N/A</span>
-                        <span> </span>
-                        <span>N/A</span>
-                        <span>N/A</span>
-                        <span style={{ flexDirection: "row-reverse" }}></span>
-                      </button>
-                    ) : (
+                    Math.ceil((index + 1) / 20) === pageNumber ? (
                       <button className="profileboard-record" key={index}>
-                        {record.scores.map((e, i) => (<>
+                        {r.scores.map((e, i) => (<>
                           {i !== 0 ? <hr style={{ gridColumn: "1 / span 8" }} /> : ""}
-                          <Link to={`/maps/${r.id}`}><span>{r.name}</span></Link>
-                          <span style={{ display: "grid" }}>{record!.scores[i].score_count}</span>
-                          <span style={{ display: "grid" }}>{record!.scores[i].score_count - record!.map_wr_count > 0 ? `+${record!.scores[i].score_count - record!.map_wr_count}` : record!.scores[i].score_count - record!.map_wr_count}</span>
-                          <span style={{ display: "grid" }}>{ticks_to_time(record!.scores[i].score_time)}</span>
+
+                          <Link to={`/maps/${r.map_id}`}><span>{r.map_name}</span></Link>
+
+                          <span style={{ display: "grid" }}>{e.score_count}</span>
+
+                          <span style={{ display: "grid" }}>{e.score_count - r.map_wr_count > 0 ? `+${e.score_count - r.map_wr_count}` : e.score_count - r.map_wr_count}</span>
+                          <span style={{ display: "grid" }}>{ticks_to_time(e.score_time)}</span>
                           <span> </span>
-                          {i === 0 ? <span>#{record!.placement}</span> : <span> </span>}
-                          <span>{record!.scores[i].date.split("T")[0]}</span>
+                          {i === 0 ? <span>#{r.placement}</span> : <span> </span>}
+                          <span>{e.date.split("T")[0]}</span>
                           <span style={{ flexDirection: "row-reverse" }}>
 
-                            <button onClick={() => { message("Demo information", `Demo ID: ${e.demo_id}`) }}><img src={ThreedotIcon} alt="demo_id" /></button>
-                            <button onClick={() => { _delete_submission(r.id, e.record_id) }}><img src={DeleteIcon}></img></button>
+                            <button style={{ marginRight: "10px" }} onClick={() => { message("Demo Information", `Demo ID: ${e.demo_id}`) }}><img src={ThreedotIcon} alt="demo_id" /></button>
+                            <button onClick={() => { _delete_submission(r.map_id, e.record_id) }}><img src={DeleteIcon}></img></button>
                             <button onClick={() => window.location.href = `/api/v1/demos?uuid=${e.demo_id}`}><img src={DownloadIcon} alt="download" /></button>
-                            {i === 0 && record!.scores.length > 1 ? <button onClick={() => {
+                            {i === 0 && r.scores.length > 1 ? <button onClick={() => {
                               (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "44px" ||
                                 (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "" ?
-                                (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height = `${record!.scores.length * 46}px` :
+                                (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height = `${r.scores.length * 46}px` :
                                 (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height = "44px"
                             }
                             }><img src={HistoryIcon} alt="history" /></button> : ""}
 
                           </span>
                         </>))}
-                      </button>
 
-                    )
-                  } else { return null }
-                }) : (<>{console.warn(maps)}</>)}
-        </div>
-      </section>
-    </main>
-	</div>
+                      </button>
+                    ) : ""
+                  ))) : maps ?
+
+                maps.filter(e => e.is_disabled === false).sort((a, b) => a.id - b.id)
+                  .map((r, index) => {
+                    if (Math.ceil((index + 1) / 20) === pageNumber) {
+                      let record = profile.records.find((e) => e.map_id === r.id);
+                      return record === undefined ? (
+                        <button className="profileboard-record" key={index} style={{ backgroundColor: "#1b1b20" }}>
+                          <Link to={`/maps/${r.id}`}><span>{r.name}</span></Link>
+                          <span style={{ display: "grid" }}>N/A</span>
+                          <span style={{ display: "grid" }}>N/A</span>
+                          <span>N/A</span>
+                          <span> </span>
+                          <span>N/A</span>
+                          <span>N/A</span>
+                          <span style={{ flexDirection: "row-reverse" }}></span>
+                        </button>
+                      ) : (
+                        <button className="profileboard-record" key={index}>
+                          {record.scores.map((e, i) => (<>
+                            {i !== 0 ? <hr style={{ gridColumn: "1 / span 8" }} /> : ""}
+                            <Link to={`/maps/${r.id}`}><span>{r.name}</span></Link>
+                            <span style={{ display: "grid" }}>{record!.scores[i].score_count}</span>
+                            <span style={{ display: "grid" }}>{record!.scores[i].score_count - record!.map_wr_count > 0 ? `+${record!.scores[i].score_count - record!.map_wr_count}` : record!.scores[i].score_count - record!.map_wr_count}</span>
+                            <span style={{ display: "grid" }}>{ticks_to_time(record!.scores[i].score_time)}</span>
+                            <span> </span>
+                            {i === 0 ? <span>#{record!.placement}</span> : <span> </span>}
+                            <span>{record!.scores[i].date.split("T")[0]}</span>
+                            <span style={{ flexDirection: "row-reverse" }}>
+
+                              <button onClick={() => { message("Demo Information", `Demo ID: ${e.demo_id}`) }}><img src={ThreedotIcon} alt="demo_id" /></button>
+                              <button onClick={() => { _delete_submission(r.id, e.record_id) }}><img src={DeleteIcon}></img></button>
+                              <button onClick={() => window.location.href = `/api/v1/demos?uuid=${e.demo_id}`}><img src={DownloadIcon} alt="download" /></button>
+                              {i === 0 && record!.scores.length > 1 ? <button onClick={() => {
+                                (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "44px" ||
+                                  (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "" ?
+                                  (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height = `${record!.scores.length * 46}px` :
+                                  (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height = "44px"
+                              }
+                              }><img src={HistoryIcon} alt="history" /></button> : ""}
+
+                            </span>
+                          </>))}
+                        </button>
+
+                      )
+                    } else { return null }
+                  }) : (<>{console.warn(maps)}</>)}
+          </div>
+        </section>
+      </main>
+    </div>
   );
 };
 

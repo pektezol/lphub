@@ -11,7 +11,7 @@ const useConfirm = () => {
         setIsOpen(true);
 		setTitle(titleN);
 		setSubtitle(subtitleN);
-        return new Promise((resolve) => {
+        return new Promise<boolean>((resolve) => {
             setResolvePromise(() => resolve);
         });
     };

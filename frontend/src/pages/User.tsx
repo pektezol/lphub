@@ -8,6 +8,7 @@ import { Map } from '../types/Map';
 import { API } from '../api/Api';
 import { ticks_to_time } from '../utils/Time';
 import "../css/Profile.css";
+import useMessage from '../hooks/UseMessage';
 
 interface UserProps {
   profile?: UserProfile;
@@ -16,6 +17,8 @@ interface UserProps {
 }
 
 const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
+
+  const { message, MessageDialogComponent } = useMessage();
 
   const [user, setUser] = React.useState<UserProfile | undefined>(undefined);
 
@@ -89,6 +92,7 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
 
   return (
     <main>
+      {MessageDialogComponent}
       <section id='section1' className='profile'>
         <div>
           <img src={user.avatar_link} alt="profile-image"></img>
@@ -190,7 +194,7 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
           <span><span>Date</span><img src={SortIcon} alt="" /></span>
           <div id='page-number'>
             <div>
-            <button onClick={() => {
+              <button onClick={() => {
                 if (pageNumber !== 1) {
                   setPageNumber(prevPageNumber => prevPageNumber - 1);
                   const records = document.querySelectorAll(".profileboard-record");
@@ -239,7 +243,7 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
                         <span>{e.date.split("T")[0]}</span>
                         <span style={{ flexDirection: "row-reverse" }}>
 
-                          <button onClick={() => { window.alert(`Demo ID: ${e.demo_id}`) }}><img src={ThreedotIcon} alt="demo_id" /></button>
+                          <button onClick={() => { message("Demo Information", `Demo ID: ${e.demo_id}`) }}><img src={ThreedotIcon} alt="demo_id" /></button>
                           <button onClick={() => window.location.href = `/api/v1/demos?uuid=${e.demo_id}`}><img src={DownloadIcon} alt="download" /></button>
                           {i === 0 && r.scores.length > 1 ? <button onClick={() => {
                             (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "44px" ||
@@ -284,7 +288,7 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
                           <span>{record!.scores[i].date.split("T")[0]}</span>
                           <span style={{ flexDirection: "row-reverse" }}>
 
-                            <button onClick={() => { window.alert(`Demo ID: ${e.demo_id}`) }}><img src={ThreedotIcon} alt="demo_id" /></button>
+                            <button onClick={() => { message("Demo Information", `Demo ID: ${e.demo_id}`) }}><img src={ThreedotIcon} alt="demo_id" /></button>
                             <button onClick={() => window.location.href = `/api/v1/demos?uuid=${e.demo_id}`}><img src={DownloadIcon} alt="download" /></button>
                             {i === 0 && record!.scores.length > 1 ? <button onClick={() => {
                               (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "44px" ||
