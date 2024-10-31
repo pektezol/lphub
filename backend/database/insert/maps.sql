@@ -118,7 +118,7 @@ INSERT INTO maps(game_id, chapter_id, name, is_disabled, image) VALUES
 (2,15,'Propulsion Retrieval',false,''),
 (2,15,'Vault Entrance',false,''),
 -- 6
-(2,16,'Seperation',false,''),
+(2,16,'Separation',false,''),
 (2,16,'Triple Axis',false,''),
 (2,16,'Catapult Catch',false,''),
 (2,16,'Bridge Gels',false,''),

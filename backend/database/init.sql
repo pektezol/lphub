@@ -68,7 +68,7 @@ CREATE TABLE map_history (
   user_name TEXT NOT NULL,
   score_count SMALLINT NOT NULL,
   description TEXT NOT NULL,
-  showcase TEXT NOT NULL DEFAULT,
+  showcase TEXT NOT NULL DEFAULT '',
   record_date DATE NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (category_id) REFERENCES categories(id),
@@ -210,7 +210,7 @@ CREATE TABLE audit (
     old_data JSONB,
     new_data JSONB,
     changed_by TEXT NOT NULL,
-    changed_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    changed_at TIMESTAMP DEFAULT now(),
     PRIMARY KEY (id),
     FOREIGN KEY (changed_by) REFERENCES users(steam_id)
 );
