@@ -69,12 +69,7 @@ type ScoreResponse struct {
 //	@Success		200				{object}	models.Response{data=ProfileResponse}
 //	@Router			/profile [get]
 func Profile(c *gin.Context) {
-	// Check if user exists
-	user, exists := c.Get("user")
-	if !exists {
-		c.JSON(http.StatusOK, models.ErrorResponse("User not logged in."))
-		return
-	}
+	user, _ := c.Get("user")
 	// Get user links
 	links := models.Links{}
 	sql := `SELECT u.p2sr, u.steam, u.youtube, u.twitch FROM users u WHERE u.steam_id = $1`
@@ -699,15 +694,9 @@ func FetchUser(c *gin.Context) {
 //	@Success		200				{object}	models.Response{data=ProfileResponse}
 //	@Router			/profile [post]
 func UpdateUser(c *gin.Context) {
-	// Check if user exists
-	user, exists := c.Get("user")
-	if !exists {
-		c.JSON(http.StatusOK, models.ErrorResponse("User not logged in."))
-		return
-	}
+	user, _ := c.Get("user")
 	profile, err := GetPlayerSummaries(user.(models.User).SteamID, os.Getenv("API_KEY"))
 	if err != nil {
-		CreateLog(user.(models.User).SteamID, LogTypeUser, LogDescriptionUserUpdateSummaryFail, err.Error())
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
@@ -715,11 +704,9 @@ func UpdateUser(c *gin.Context) {
 	sql := `UPDATE users SET user_name = $1, avatar_link = $2, country_code = $3, updated_at = $4 WHERE steam_id = $5`
 	_, err = database.DB.Exec(sql, profile.PersonaName, profile.AvatarFull, profile.LocCountryCode, time.Now().UTC(), user.(models.User).SteamID)
 	if err != nil {
-		CreateLog(user.(models.User).SteamID, LogTypeUser, LogDescriptionUserUpdateFail, "UPDATE#users: "+err.Error())
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	CreateLog(user.(models.User).SteamID, LogTypeUser, LogDescriptionUserUpdateSuccess)
 	c.JSON(http.StatusOK, models.Response{
 		Success: true,
 		Message: "Successfully updated user.",
@@ -744,33 +731,24 @@ func UpdateUser(c *gin.Context) {
 //	@Success		200				{object}	models.Response
 //	@Router			/profile [put]
 func UpdateCountryCode(c *gin.Context) {
-	// Check if user exists
-	user, exists := c.Get("user")
-	if !exists {
-		c.JSON(http.StatusOK, models.ErrorResponse("User not logged in."))
-		return
-	}
+	user, _ := c.Get("user")
 	code := c.Query("country_code")
 	if code == "" {
-		CreateLog(user.(models.User).SteamID, LogTypeUser, LogDescriptionUserUpdateCountryFail)
 		c.JSON(http.StatusOK, models.ErrorResponse("Enter a valid country code."))
 		return
 	}
 	var validCode string
 	err := database.DB.QueryRow(`SELECT country_code FROM countries WHERE country_code = $1`, code).Scan(&validCode)
 	if err != nil {
-		CreateLog(user.(models.User).SteamID, LogTypeUser, LogDescriptionUserUpdateCountryFail)
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
 	// Valid code, update profile
 	_, err = database.DB.Exec(`UPDATE users SET country_code = $1 WHERE steam_id = $2`, validCode, user.(models.User).SteamID)
 	if err != nil {
-		CreateLog(user.(models.User).SteamID, LogTypeUser, LogDescriptionUserUpdateCountryFail)
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	CreateLog(user.(models.User).SteamID, LogTypeUser, LogDescriptionUserUpdateCountrySuccess)
 	c.JSON(http.StatusOK, models.Response{
 		Success: true,
 		Message: "Successfully updated country code.",

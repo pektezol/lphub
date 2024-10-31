@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -49,12 +48,6 @@ type EditMapImageRequest struct {
 //	@Success		200				{object}	models.Response{data=CreateMapSummaryRequest}
 //	@Router			/maps/{mapid}/summary [post]
 func CreateMapSummary(c *gin.Context) {
-	// Check if user exists
-	user, exists := c.Get("user")
-	if !exists {
-		c.JSON(http.StatusOK, models.ErrorResponse("User not logged in."))
-		return
-	}
 	mod, exists := c.Get("mod")
 	if !exists || !mod.(bool) {
 		c.JSON(http.StatusOK, models.ErrorResponse("Insufficient permissions."))
@@ -69,7 +62,6 @@ func CreateMapSummary(c *gin.Context) {
 	}
 	var request CreateMapSummaryRequest
 	if err := c.BindJSON(&request); err != nil {
-		CreateLog(user.(models.User).SteamID, LogTypeMod, LogDescriptionMapSummaryCreateFail, fmt.Sprintf("BIND: %s", err.Error()))
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
@@ -85,7 +77,6 @@ func CreateMapSummary(c *gin.Context) {
 	sql := `SELECT m.id FROM maps m WHERE m.id = $1`
 	err = database.DB.QueryRow(sql, mapID).Scan(&checkMapID)
 	if err != nil {
-		CreateLog(user.(models.User).SteamID, LogTypeMod, LogDescriptionMapSummaryCreateFail, fmt.Sprintf("SELECT#maps: %s", err.Error()))
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
@@ -98,7 +89,6 @@ func CreateMapSummary(c *gin.Context) {
 	VALUES ($1,$2,$3,$4,$5,$6,$7)`
 	_, err = tx.Exec(sql, mapID, request.CategoryID, request.UserName, *request.ScoreCount, request.Description, request.Showcase, request.RecordDate)
 	if err != nil {
-		CreateLog(user.(models.User).SteamID, LogTypeMod, LogDescriptionMapSummaryCreateFail, fmt.Sprintf("INSERT#map_history: %s", err.Error()))
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
@@ -106,7 +96,6 @@ func CreateMapSummary(c *gin.Context) {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	CreateLog(user.(models.User).SteamID, LogTypeMod, LogDescriptionMapSummaryCreateSuccess, fmt.Sprintf("MapID: %d | CategoryID: %d | ScoreCount: %d", mapID, request.CategoryID, *request.ScoreCount))
 	c.JSON(http.StatusOK, models.Response{
 		Success: true,
 		Message: "Successfully created map summary.",
@@ -125,12 +114,6 @@ func CreateMapSummary(c *gin.Context) {
 //	@Success		200				{object}	models.Response{data=EditMapSummaryRequest}
 //	@Router			/maps/{mapid}/summary [put]
 func EditMapSummary(c *gin.Context) {
-	// Check if user exists
-	user, exists := c.Get("user")
-	if !exists {
-		c.JSON(http.StatusOK, models.ErrorResponse("User not logged in."))
-		return
-	}
 	mod, exists := c.Get("mod")
 	if !exists || !mod.(bool) {
 		c.JSON(http.StatusOK, models.ErrorResponse("Insufficient permissions."))
@@ -146,7 +129,6 @@ func EditMapSummary(c *gin.Context) {
 	}
 	var request EditMapSummaryRequest
 	if err := c.BindJSON(&request); err != nil {
-		CreateLog(user.(models.User).SteamID, LogTypeMod, LogDescriptionMapSummaryEditFail, fmt.Sprintf("BIND: %s", err.Error()))
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
@@ -161,7 +143,6 @@ func EditMapSummary(c *gin.Context) {
 	sql := `UPDATE map_history SET user_name = $2, score_count = $3, record_date = $4, description = $5, showcase = $6 WHERE id = $1`
 	_, err = tx.Exec(sql, request.RouteID, request.UserName, *request.ScoreCount, request.RecordDate, request.Description, request.Showcase)
 	if err != nil {
-		CreateLog(user.(models.User).SteamID, LogTypeMod, LogDescriptionMapSummaryEditFail, fmt.Sprintf("(HistoryID: %d) UPDATE#map_history: %s", request.RouteID, err.Error()))
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
@@ -187,12 +168,6 @@ func EditMapSummary(c *gin.Context) {
 //	@Success		200				{object}	models.Response{data=DeleteMapSummaryRequest}
 //	@Router			/maps/{mapid}/summary [delete]
 func DeleteMapSummary(c *gin.Context) {
-	// Check if user exists
-	user, exists := c.Get("user")
-	if !exists {
-		c.JSON(http.StatusOK, models.ErrorResponse("User not logged in."))
-		return
-	}
 	mod, exists := c.Get("mod")
 	if !exists || !mod.(bool) {
 		c.JSON(http.StatusOK, models.ErrorResponse("Insufficient permissions."))
@@ -208,7 +183,6 @@ func DeleteMapSummary(c *gin.Context) {
 	}
 	var request DeleteMapSummaryRequest
 	if err := c.BindJSON(&request); err != nil {
-		CreateLog(user.(models.User).SteamID, LogTypeMod, LogDescriptionMapSummaryEditFail, fmt.Sprintf("(RouteID: %d) BIND: %s", request.RouteID, err.Error()))
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
@@ -223,7 +197,6 @@ func DeleteMapSummary(c *gin.Context) {
 	sql := `DELETE FROM map_history mh WHERE mh.id = $1`
 	_, err = tx.Exec(sql, request.RouteID)
 	if err != nil {
-		CreateLog(user.(models.User).SteamID, LogTypeMod, LogDescriptionMapSummaryDeleteFail, fmt.Sprintf("(HistoryID: %d) DELETE#map_history: %s", request.RouteID, err.Error()))
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
@@ -249,12 +222,6 @@ func DeleteMapSummary(c *gin.Context) {
 //	@Success		200				{object}	models.Response{data=EditMapImageRequest}
 //	@Router			/maps/{mapid}/image [put]
 func EditMapImage(c *gin.Context) {
-	// Check if user exists
-	user, exists := c.Get("user")
-	if !exists {
-		c.JSON(http.StatusOK, models.ErrorResponse("User not logged in."))
-		return
-	}
 	mod, exists := c.Get("mod")
 	if !exists || !mod.(bool) {
 		c.JSON(http.StatusOK, models.ErrorResponse("Insufficient permissions."))
@@ -269,7 +236,6 @@ func EditMapImage(c *gin.Context) {
 	}
 	var request EditMapImageRequest
 	if err := c.BindJSON(&request); err != nil {
-		CreateLog(user.(models.User).SteamID, LogTypeMod, LogDescriptionMapSummaryEditImageFail, fmt.Sprintf("BIND: %s", err.Error()))
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
@@ -277,11 +243,9 @@ func EditMapImage(c *gin.Context) {
 	sql := `UPDATE maps SET image = $2 WHERE id = $1`
 	_, err = database.DB.Exec(sql, mapID, request.Image)
 	if err != nil {
-		CreateLog(user.(models.User).SteamID, LogTypeMod, LogDescriptionMapSummaryEditImageFail, fmt.Sprintf("UPDATE#maps: %s", err.Error()))
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	CreateLog(user.(models.User).SteamID, LogTypeMod, LogDescriptionMapSummaryEditImageSuccess)
 	c.JSON(http.StatusOK, models.Response{
 		Success: true,
 		Message: "Successfully updated map image.",

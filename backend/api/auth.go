@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"time"
 
@@ -12,7 +13,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-func CheckAuth(c *gin.Context) {
+func IsAuthenticated(c *gin.Context) {
 	tokenString := c.GetHeader("Authorization")
 	// Validate token
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -22,17 +23,17 @@ func CheckAuth(c *gin.Context) {
 		return []byte(os.Getenv("SECRET_KEY")), nil
 	})
 	if token == nil {
-		c.Next()
+		c.AbortWithStatusJSON(http.StatusOK, models.ErrorResponse("Token is nil."))
 		return
 	}
 	if err != nil {
-		c.Next()
+		c.AbortWithStatusJSON(http.StatusOK, models.ErrorResponse("Token is invalid."))
 		return
 	}
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		// Check exp
 		if float64(time.Now().Unix()) > claims["exp"].(float64) {
-			c.Next()
+			c.AbortWithStatusJSON(http.StatusOK, models.ErrorResponse("Token expired."))
 			return
 		}
 		// Get user from DB
@@ -41,7 +42,7 @@ func CheckAuth(c *gin.Context) {
 			&user.SteamID, &user.UserName, &user.AvatarLink,
 			&user.CountryCode, &user.CreatedAt, &user.UpdatedAt)
 		if user.SteamID == "" {
-			c.Next()
+			c.AbortWithStatusJSON(http.StatusOK, models.ErrorResponse("Token does not match a user."))
 			return
 		}
 		// Get user titles from DB
@@ -56,11 +57,17 @@ func CheckAuth(c *gin.Context) {
 			}
 			user.Titles = append(user.Titles, title)
 		}
+		// Set user id variable in db session for audit logging
+		_, err = database.DB.Exec(fmt.Sprintf("SET app.user_id = '%s';", user.SteamID))
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusOK, models.ErrorResponse("Session failed to start."))
+			return
+		}
 		c.Set("user", user)
 		c.Set("mod", moderator)
 		c.Next()
 	} else {
-		c.Next()
+		c.AbortWithStatusJSON(http.StatusOK, models.ErrorResponse("Token is invalid."))
 		return
 	}
 }

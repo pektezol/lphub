@@ -8,82 +8,54 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-const (
-	apiPath             string = "/api"
-	v1Path              string = "/v1"
-	swaggerPath         string = "/swagger/*any"
-	indexPath           string = "/"
-	tokenPath           string = "/token"
-	loginPath           string = "/login"
-	profilePath         string = "/profile"
-	usersPath           string = "/users/:userid"
-	demosPath           string = "/demos"
-	mapSummaryPath      string = "/maps/:mapid/summary"
-	mapImagePath        string = "/maps/:mapid/image"
-	mapLeaderboardsPath string = "/maps/:mapid/leaderboards"
-	mapRecordPath       string = "/maps/:mapid/record"
-	mapRecordIDPath     string = "/maps/:mapid/record/:recordid"
-	mapDiscussionsPath  string = "/maps/:mapid/discussions"
-	mapDiscussionIDPath string = "/maps/:mapid/discussions/:discussionid"
-	rankingsLPHUBPath   string = "/rankings/lphub"
-	rankingsSteamPath   string = "/rankings/steam"
-	searchPath          string = "/search"
-	gamesPath           string = "/games"
-	chaptersPath        string = "/games/:gameid"
-	gameMapsPath        string = "/games/:gameid/maps"
-	chapterMapsPath     string = "/chapters/:chapterid"
-	scoreLogsPath       string = "/logs/score"
-	modLogsPath         string = "/logs/mod"
-)
-
 func InitRoutes(router *gin.Engine) {
-	api := router.Group(apiPath)
+	api := router.Group("/api")
 	{
-		v1 := api.Group(v1Path)
+		v1 := api.Group("/v1")
 		// Swagger
-		v1.GET(swaggerPath, ginSwagger.WrapHandler(swaggerfiles.Handler))
-		v1.GET(indexPath, func(c *gin.Context) {
+		v1.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+		v1.GET("/", func(c *gin.Context) {
 			c.File("docs/index.html")
 		})
 		// Tokens, login
-		v1.GET(tokenPath, handlers.GetCookie)
-		v1.DELETE(tokenPath, handlers.DeleteCookie)
-		v1.GET(loginPath, handlers.Login)
+		v1.GET("/token", handlers.GetCookie)
+		v1.DELETE("/token", handlers.DeleteCookie)
+		v1.GET("/login", handlers.Login)
 		// Users, profiles
-		v1.GET(profilePath, CheckAuth, handlers.Profile)
-		v1.PUT(profilePath, CheckAuth, handlers.UpdateCountryCode)
-		v1.POST(profilePath, CheckAuth, handlers.UpdateUser)
-		v1.GET(usersPath, CheckAuth, handlers.FetchUser)
+		v1.GET("/profile", IsAuthenticated, handlers.Profile)
+		v1.PUT("/profile", IsAuthenticated, handlers.UpdateCountryCode)
+		v1.POST("/profile", IsAuthenticated, handlers.UpdateUser)
+		v1.GET("/users/:userid", IsAuthenticated, handlers.FetchUser)
 		// Maps
 		// - Summary
-		v1.GET(mapSummaryPath, handlers.FetchMapSummary)
-		v1.POST(mapSummaryPath, CheckAuth, handlers.CreateMapSummary)
-		v1.PUT(mapSummaryPath, CheckAuth, handlers.EditMapSummary)
-		v1.DELETE(mapSummaryPath, CheckAuth, handlers.DeleteMapSummary)
-		v1.PUT(mapImagePath, CheckAuth, handlers.EditMapImage)
+		v1.GET("/maps/:mapid/summary", handlers.FetchMapSummary)
+		v1.POST("/maps/:mapid/summary", IsAuthenticated, handlers.CreateMapSummary)
+		v1.PUT("/maps/:mapid/summary", IsAuthenticated, handlers.EditMapSummary)
+		v1.DELETE("/maps/:mapid/summary", IsAuthenticated, handlers.DeleteMapSummary)
+		v1.PUT("/maps/:mapid/image", IsAuthenticated, handlers.EditMapImage)
 		// - Leaderboards
-		v1.GET(mapLeaderboardsPath, handlers.FetchMapLeaderboards)
-		v1.POST(mapRecordPath, CheckAuth, handlers.CreateRecordWithDemo)
-		v1.DELETE(mapRecordIDPath, CheckAuth, handlers.DeleteRecord)
-		v1.GET(demosPath, handlers.DownloadDemoWithID)
+		v1.GET("/maps/:mapid/leaderboards", handlers.FetchMapLeaderboards)
+		v1.POST("/maps/:mapid/record", IsAuthenticated, handlers.CreateRecordWithDemo)
+		v1.DELETE("/maps/:mapid/record/:recordid", IsAuthenticated, handlers.DeleteRecord)
+		v1.GET("/demos", handlers.DownloadDemoWithID)
 		// - Discussions
-		v1.GET(mapDiscussionsPath, handlers.FetchMapDiscussions)
-		v1.GET(mapDiscussionIDPath, handlers.FetchMapDiscussion)
-		v1.POST(mapDiscussionsPath, CheckAuth, handlers.CreateMapDiscussion)
-		v1.POST(mapDiscussionIDPath, CheckAuth, handlers.CreateMapDiscussionComment)
-		v1.PUT(mapDiscussionIDPath, CheckAuth, handlers.EditMapDiscussion)
-		v1.DELETE(mapDiscussionIDPath, CheckAuth, handlers.DeleteMapDiscussion)
+		v1.GET("/maps/:mapid/discussions", handlers.FetchMapDiscussions)
+		v1.GET("/maps/:mapid/discussions/:discussionid", handlers.FetchMapDiscussion)
+		v1.POST("/maps/:mapid/discussions", IsAuthenticated, handlers.CreateMapDiscussion)
+		v1.POST("/maps/:mapid/discussions/:discussionid", IsAuthenticated, handlers.CreateMapDiscussionComment)
+		v1.PUT("/maps/:mapid/discussions/:discussionid", IsAuthenticated, handlers.EditMapDiscussion)
+		v1.DELETE("/maps/:mapid/discussions/:discussionid", IsAuthenticated, handlers.DeleteMapDiscussion)
 		// Rankings, search
-		v1.GET(rankingsLPHUBPath, handlers.RankingsLPHUB)
-		v1.GET(rankingsSteamPath, handlers.RankingsSteam)
-		v1.GET(searchPath, handlers.SearchWithQuery)
+		v1.GET("/rankings/lphub", handlers.RankingsLPHUB)
+		v1.GET("/rankings/steam", handlers.RankingsSteam)
+		v1.GET("/search", handlers.SearchWithQuery)
 		// Games, chapters, maps
-		v1.GET(gamesPath, handlers.FetchGames)
-		v1.GET(chaptersPath, handlers.FetchChapters)
-		v1.GET(chapterMapsPath, handlers.FetchChapterMaps)
-		v1.GET(gameMapsPath, handlers.FetchMaps)
+		v1.GET("/games", handlers.FetchGames)
+		v1.GET("/games/:gameid", handlers.FetchChapters)
+		v1.GET("/chapters/:chapterid", handlers.FetchChapterMaps)
+		v1.GET("/games/:gameid/maps", handlers.FetchMaps)
 		// Logs
-		v1.GET(scoreLogsPath, handlers.ScoreLogs)
-		v1.GET(modLogsPath, CheckAuth, handlers.ModLogs)
+		v1.GET("/logs/score", handlers.ScoreLogs)
+		// v1.GET("/logs/mod", IsAuthenticated, handlers.ModLogs)
 	}
 }

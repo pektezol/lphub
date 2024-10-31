@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -9,42 +8,6 @@ import (
 	"lphub/models"
 
 	"github.com/gin-gonic/gin"
-)
-
-const (
-	LogTypeMod    string = "Mod"
-	LogTypeUser   string = "User"
-	LogTypeRecord string = "Record"
-
-	LogDescriptionUserLoginSuccess         string = "LoginSuccess"
-	LogDescriptionUserLoginFailToken       string = "LoginTokenFail"
-	LogDescriptionUserLoginFailValidate    string = "LoginValidateFail"
-	LogDescriptionUserLoginFailSummary     string = "LoginSummaryFail"
-	LogDescriptionUserUpdateSuccess        string = "UpdateSuccess"
-	LogDescriptionUserUpdateFail           string = "UpdateFail"
-	LogDescriptionUserUpdateSummaryFail    string = "UpdateSummaryFail"
-	LogDescriptionUserUpdateCountrySuccess string = "UpdateCountrySuccess"
-	LogDescriptionUserUpdateCountryFail    string = "UpdateCountryFail"
-
-	LogDescriptionMapSummaryCreateSuccess    string = "MapSummaryCreateSuccess"
-	LogDescriptionMapSummaryCreateFail       string = "MapSummaryCreateFail"
-	LogDescriptionMapSummaryEditSuccess      string = "MapSummaryEditSuccess"
-	LogDescriptionMapSummaryEditFail         string = "MapSummaryEditFail"
-	LogDescriptionMapSummaryEditImageSuccess string = "MapSummaryEditImageSuccess"
-	LogDescriptionMapSummaryEditImageFail    string = "MapSummaryEditImageFail"
-	LogDescriptionMapSummaryDeleteSuccess    string = "MapSummaryDeleteSuccess"
-	LogDescriptionMapSummaryDeleteFail       string = "MapSummaryDeleteFail"
-
-	LogDescriptionCreateRecordSuccess            string = "CreateRecordSuccess"
-	LogDescriptionCreateRecordInsertRecordFail   string = "InsertRecordFail"
-	LogDescriptionCreateRecordInsertDemoFail     string = "InsertDemoFail"
-	LogDescriptionCreateRecordProcessDemoFail    string = "ProcessDemoFail"
-	LogDescriptionCreateRecordCreateDemoFail     string = "CreateDemoFail"
-	LogDescriptionCreateRecordOpenDemoFail       string = "OpenDemoFail"
-	LogDescriptionCreateRecordSaveDemoFail       string = "SaveDemoFail"
-	LogDescriptionCreateRecordInvalidRequestFail string = "InvalidRequestFail"
-	LogDescriptionDeleteRecordSuccess            string = "DeleteRecordSuccess"
-	LogDescriptionDeleteRecordFail               string = "DeleteRecordFail"
 )
 
 type Log struct {
@@ -78,54 +41,6 @@ type ScoreLogsResponseDetails struct {
 	ScoreTime  int              `json:"score_time"`
 	DemoID     string           `json:"demo_id"`
 	Date       time.Time        `json:"date"`
-}
-
-// GET Mod Logs
-//
-//	@Description	Get mod logs.
-//	@Tags			logs
-//	@Produce		json
-//	@Param			Authorization	header		string	true	"JWT Token"
-//	@Success		200				{object}	models.Response{data=LogsResponse}
-//	@Router			/logs/mod [get]
-func ModLogs(c *gin.Context) {
-	mod, exists := c.Get("mod")
-	if !exists || !mod.(bool) {
-		c.JSON(http.StatusOK, models.ErrorResponse("Insufficient permissions."))
-		return
-	}
-	response := LogsResponse{Logs: []LogsResponseDetails{}}
-	sql := `SELECT u.user_name, l.user_id, l.type, l.description, l.message, l.date 
-	FROM logs l INNER JOIN users u ON l.user_id = u.steam_id WHERE type != 'Score'
-	ORDER BY l.date DESC LIMIT 100;`
-	rows, err := database.DB.Query(sql)
-	if err != nil {
-		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-		return
-	}
-	for rows.Next() {
-		log := Log{}
-		err = rows.Scan(&log.User.UserName, &log.User.SteamID, &log.Type, &log.Description, &log.Message, &log.Date)
-		if err != nil {
-			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-			return
-		}
-		detail := fmt.Sprintf("%s.%s", log.Type, log.Description)
-		response.Logs = append(response.Logs, LogsResponseDetails{
-			User: models.UserShort{
-				SteamID:  log.User.SteamID,
-				UserName: log.User.UserName,
-			},
-			Log:     detail,
-			Message: log.Message,
-			Date:    log.Date,
-		})
-	}
-	c.JSON(http.StatusOK, models.Response{
-		Success: true,
-		Message: "Successfully retrieved logs.",
-		Data:    response,
-	})
 }
 
 // GET Score Logs
@@ -185,17 +100,4 @@ func ScoreLogs(c *gin.Context) {
 		Message: "Successfully retrieved score logs.",
 		Data:    response,
 	})
-}
-
-func CreateLog(userID string, logType string, logDescription string, logMessage ...string) (err error) {
-	message := "-"
-	if len(logMessage) == 1 {
-		message = logMessage[0]
-	}
-	sql := `INSERT INTO logs (user_id, "type", description, message) VALUES($1, $2, $3, $4)`
-	_, err = database.DB.Exec(sql, userID, logType, logDescription, message)
-	if err != nil {
-		return err
-	}
-	return nil
 }

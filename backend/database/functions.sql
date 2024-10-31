@@ -1,3 +1,17 @@
+CREATE OR REPLACE FUNCTION log_audit() RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO audit (table_name, operation_type, old_data, new_data, changed_by)
+    VALUES (
+        TG_TABLE_NAME,
+        TG_OP,
+        CASE WHEN TG_OP = 'DELETE' OR TG_OP = 'UPDATE' THEN row_to_json(OLD) ELSE NULL END,
+        CASE WHEN TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN row_to_json(NEW) ELSE NULL END,
+        current_setting('app.user_id')::TEXT
+    );
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION get_rankings_singleplayer()
 RETURNS TABLE (
     steam_id TEXT,

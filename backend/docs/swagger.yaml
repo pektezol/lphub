@@ -106,24 +106,6 @@ definitions:
       token:
         type: string
     type: object
-  handlers.LogsResponse:
-    properties:
-      logs:
-        items:
-          $ref: '#/definitions/handlers.LogsResponseDetails'
-        type: array
-    type: object
-  handlers.LogsResponseDetails:
-    properties:
-      date:
-        type: string
-      detail:
-        type: string
-      message:
-        type: string
-      user:
-        $ref: '#/definitions/models.UserShort'
-    type: object
   handlers.MapDiscussion:
     properties:
       comments:
@@ -690,29 +672,6 @@ paths:
               type: object
       tags:
       - login
-  /logs/mod:
-    get:
-      description: Get mod logs.
-      parameters:
-      - description: JWT Token
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/models.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/handlers.LogsResponse'
-              type: object
-      tags:
-      - logs
   /logs/score:
     get:
       description: Get score logs of every player.

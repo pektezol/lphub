@@ -250,46 +250,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/logs/mod": {
-            "get": {
-                "description": "Get mod logs.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "logs"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "JWT Token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/handlers.LogsResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
         "/logs/score": {
             "get": {
                 "description": "Get score logs of every player.",
@@ -1533,34 +1493,6 @@ const docTemplate = `{
             "properties": {
                 "token": {
                     "type": "string"
-                }
-            }
-        },
-        "handlers.LogsResponse": {
-            "type": "object",
-            "properties": {
-                "logs": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/handlers.LogsResponseDetails"
-                    }
-                }
-            }
-        },
-        "handlers.LogsResponseDetails": {
-            "type": "object",
-            "properties": {
-                "date": {
-                    "type": "string"
-                },
-                "detail": {
-                    "type": "string"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/models.UserShort"
                 }
             }
         },

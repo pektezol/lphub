@@ -12,6 +12,10 @@ CREATE TABLE users (
   PRIMARY KEY (steam_id)
 );
 
+CREATE TRIGGER "users"
+AFTER INSERT OR UPDATE OR DELETE ON "users"
+FOR EACH ROW EXECUTE FUNCTION log_audit();
+
 CREATE TABLE games (
   id SERIAL,
   name TEXT NOT NULL,
@@ -72,6 +76,10 @@ CREATE TABLE map_history (
   UNIQUE (map_id, category_id, score_count)
 );
 
+CREATE TRIGGER "map_history"
+AFTER INSERT OR UPDATE OR DELETE ON "map_history"
+FOR EACH ROW EXECUTE FUNCTION log_audit();
+
 CREATE TABLE map_ratings (
   id SERIAL,
   map_id SMALLINT NOT NULL,
@@ -98,6 +106,10 @@ CREATE TABLE map_discussions (
   FOREIGN KEY (user_id) REFERENCES users(steam_id)
 );
 
+CREATE TRIGGER "map_discussions"
+AFTER INSERT OR UPDATE OR DELETE ON "map_discussions"
+FOR EACH ROW EXECUTE FUNCTION log_audit();
+
 CREATE TABLE map_discussions_comments (
   id SERIAL,
   discussion_id INT NOT NULL,
@@ -108,6 +120,10 @@ CREATE TABLE map_discussions_comments (
   FOREIGN KEY (discussion_id) REFERENCES map_discussions(id),
   FOREIGN KEY (user_id) REFERENCES users(steam_id)
 );
+
+CREATE TRIGGER "map_discussions_comments"
+AFTER INSERT OR UPDATE OR DELETE ON "map_discussions_comments"
+FOR EACH ROW EXECUTE FUNCTION log_audit();
 
 CREATE TABLE map_discussions_upvotes (
   id SERIAL,
@@ -140,6 +156,10 @@ CREATE TABLE records_sp (
   FOREIGN KEY (demo_id) REFERENCES demos(id)
 );
 
+CREATE TRIGGER "records_sp"
+AFTER INSERT OR UPDATE OR DELETE ON "records_sp"
+FOR EACH ROW EXECUTE FUNCTION log_audit();
+
 CREATE TABLE records_mp (
   id SERIAL,
   map_id SMALLINT NOT NULL,
@@ -158,6 +178,10 @@ CREATE TABLE records_mp (
   FOREIGN KEY (host_demo_id) REFERENCES demos(id),
   FOREIGN KEY (partner_demo_id) REFERENCES demos(id)
 );
+
+CREATE TRIGGER "records_mp"
+AFTER INSERT OR UPDATE OR DELETE ON "records_mp"
+FOR EACH ROW EXECUTE FUNCTION log_audit();
 
 CREATE TABLE titles (
   id SERIAL,
@@ -179,13 +203,14 @@ CREATE TABLE countries (
   PRIMARY KEY (country_code)
 );
 
-CREATE TABLE logs (
-  id SERIAL,
-  user_id TEXT NOT NULL,
-  type TEXT NOT NULL,
-  description TEXT NOT NULL,
-  message TEXT NOT NULL DEFAULT,
-  date TIMESTAMP NOT NULL DEFAULT now(),
-  PRIMARY KEY (id),
-  FOREIGN KEY (user_id) REFERENCES users(steam_id)
+CREATE TABLE audit (
+    id SERIAL,
+    table_name TEXT NOT NULL,
+    operation_type TEXT NOT NULL, -- 'INSERT', 'UPDATE', or 'DELETE'
+    old_data JSONB,
+    new_data JSONB,
+    changed_by TEXT NOT NULL,
+    changed_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    FOREIGN KEY (changed_by) REFERENCES users(steam_id)
 );

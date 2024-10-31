@@ -160,11 +160,7 @@ func CreateMapDiscussion(c *gin.Context) {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	user, exists := c.Get("user")
-	if !exists {
-		c.JSON(http.StatusOK, models.ErrorResponse("User not logged in."))
-		return
-	}
+	user, _ := c.Get("user")
 	var request CreateMapDiscussionRequest
 	if err := c.BindJSON(&request); err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
@@ -206,11 +202,7 @@ func CreateMapDiscussionComment(c *gin.Context) {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	user, exists := c.Get("user")
-	if !exists {
-		c.JSON(http.StatusOK, models.ErrorResponse("User not logged in."))
-		return
-	}
+	user, _ := c.Get("user")
 	var request CreateMapDiscussionCommentRequest
 	if err := c.BindJSON(&request); err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
@@ -258,11 +250,7 @@ func EditMapDiscussion(c *gin.Context) {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	user, exists := c.Get("user")
-	if !exists {
-		c.JSON(http.StatusOK, models.ErrorResponse("User not logged in."))
-		return
-	}
+	user, _ := c.Get("user")
 	var request EditMapDiscussionRequest
 	if err := c.BindJSON(&request); err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
@@ -311,11 +299,7 @@ func DeleteMapDiscussion(c *gin.Context) {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	user, exists := c.Get("user")
-	if !exists {
-		c.JSON(http.StatusOK, models.ErrorResponse("User not logged in."))
-		return
-	}
+	user, _ := c.Get("user")
 	sql := `UPDATE map_discussions SET is_deleted = true WHERE id = $1 AND map_id = $2 AND user_id = $3`
 	result, err := database.DB.Exec(sql, discussionID, mapID, user.(models.User).SteamID)
 	if err != nil {
