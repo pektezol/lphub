@@ -25,7 +25,7 @@ func InitRoutes(router *gin.Engine) {
 		v1.GET("/profile", RateLimit, IsAuthenticated, handlers.Profile)
 		v1.PUT("/profile", IsAuthenticated, handlers.UpdateCountryCode)
 		v1.POST("/profile", IsAuthenticated, handlers.UpdateUser)
-		v1.GET("/users/:userid", IsAuthenticated, handlers.FetchUser)
+		v1.GET("/users/:userid", handlers.FetchUser)
 		// Maps
 		// - Summary
 		v1.GET("/maps/:mapid/summary", RateLimit, handlers.FetchMapSummary)
