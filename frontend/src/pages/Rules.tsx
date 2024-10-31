@@ -11,7 +11,7 @@ const Rules: React.FC = () => {
         const fetchRules = async () => {
             try {
                 const response = await fetch(
-                    'https://raw.githubusercontent.com/pektezol/leastportalshub/typescript/RULES.md'
+                    'https://raw.githubusercontent.com/pektezol/lphub/typescript/RULES.md'
                 );
                 if (!response.ok) {
                     throw new Error('Failed to fetch README');

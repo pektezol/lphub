@@ -1,4 +1,4 @@
-# Rules
+# LPHUB Rules
 
 To compete on the leaderboard, you must adhere to the following rules. Failure to do so may result in warnings or bans depending on severity. 
 
@@ -36,9 +36,8 @@ Both `.vtf` and `.vmt` files associated with these textures can be modified.
 
 ## Important Note
 
-- The moderation team has the authority to remove any record they believe to be illegitimate, and/or ban any player they believe to have broken the rules.
-- If you 'accidentally' submit an illegitimate run, the moderation team will attempt to contact you, and you may receive a warning. However, ignoring their attempts to contact you, deliberately cheating, and/or receiving too many warnings may result in a ban.
-- Use common sense. You must be really pathetic if you intentionally cheat on least portals of all things.
+- The moderation team has the authority to remove any record they believe to be illegitimate, and/or issue a warning/ban to any player they believe to have broken the rules.
+- Use common sense.
 
 ## Last Updated
-2024-10-19
+2024-10-31

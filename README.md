@@ -38,7 +38,7 @@ Full API documentation can be found at https://lp.pektezol.dev/api/v1/
 
 ## License
 
-This project is licensed under the GNU Affero General Public License v3.0 - see the [LICENSE](https://github.com/pektezol/leastportalshub/blob/main/LICENSE) file for details.
+This project is licensed under the GNU Affero General Public License v3.0 - see the [LICENSE](https://github.com/pektezol/lphub/blob/main/LICENSE) file for details.
 
 ## Contact
 
@@ -73,4 +73,4 @@ By using LPHUB, you acknowledge that you have read and understood this disclaime
 
 ## Last Update
 
-2024-10-19
+2024-10-31
