@@ -277,7 +277,7 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
                           {i !== 0 ? <hr style={{ gridColumn: "1 / span 8" }} /> : ""}
                           <Link to={`/maps/${r.id}`}><span>{r.name}</span></Link>
                           <span style={{ display: "grid" }}>{record!.scores[i].score_count}</span>
-                          <span style={{ display: "grid" }}>{record!.scores[i].score_count - record!.map_wr_count}</span>
+                          <span style={{ display: "grid" }}>{record!.scores[i].score_count - record!.map_wr_count > 0 ? `+${record!.scores[i].score_count - record!.map_wr_count}` : record!.scores[i].score_count - record!.map_wr_count}</span>
                           <span style={{ display: "grid" }}>{ticks_to_time(record!.scores[i].score_time)}</span>
                           <span> </span>
                           {i === 0 ? <span>#{record!.placement}</span> : <span> </span>}
