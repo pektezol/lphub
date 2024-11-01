@@ -53,7 +53,10 @@ const Maplist: React.FC = () => {
     // location query params
     const queryParams = new URLSearchParams(location.search);
     if (queryParams.get("chapter")) {
-        const cat = parseFloat(queryParams.get("chapter") || "");
+        let cat = parseFloat(queryParams.get("chapter") || "");
+		if (gameId == 2) {
+			cat += 10;
+		}
 		_fetch_chapters(cat.toString());
 	}
 

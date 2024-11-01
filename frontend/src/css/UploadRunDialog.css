@@ -10,7 +10,7 @@ div#upload-run{
 
 #upload-run-menu{
     position: absolute;
-    left: calc(50% + 160px); top: 130px;
+    left: calc(50%); top: 130px;
     transform: translateX(-50%);
     background-color: #2b2e46;
     z-index: 3; color: white;
@@ -23,14 +23,19 @@ div#upload-run{
     outline: 8px solid #2b2e46;
     border-radius: 20px;
     font-size: 40px;
-	width: 400px;
+	text-wrap: nowrap;
 }
 
 #upload-run-menu-add>div,
 #upload-run-menu-edit>div{
-    display: grid;
+    display: flex;
     font-size: 20px;
     padding: 0px 15px;
+	gap: 2px;
+}
+
+#upload-run-menu-add>div .upload-run-item {
+	margin: 0px 20px;
 }
 
 #upload-run-block{
@@ -59,7 +64,7 @@ div#upload-run{
     animation: dropdown-in 0.2s ease;
     max-height: 300px;
     overflow-y: scroll;
-    width: calc(100% - 30px);
+    width: 400px;
 }
 
 .upload-run-dropdown div {
@@ -111,7 +116,6 @@ button:hover {
 
 .upload-run-map-container {
     display: flex;
-    flex-direction: column;
 }
 
 .upload-run-buttons-container {

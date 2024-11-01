@@ -17,7 +17,8 @@ const Login: React.FC<LoginProps> = ({ setToken, profile, setProfile }) => {
   const navigate = useNavigate();
 
   const _login = () => {
-    window.location.href = "/api/v1/login";
+    setToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzI3Nzg0NTEsIm1vZCI6ZmFsc2UsInN1YiI6Ijc2NTYxMTk5MDg4MjU3MDk4In0.MwYcAy1q463-A2qxLn3Dk4T7ECwta_x4h-CJOTB6VZY");
+    // window.location.href = "/api/v1/login";
   };
 
   const _logout = () => {
