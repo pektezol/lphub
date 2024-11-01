@@ -11,7 +11,7 @@ const About: React.FC = () => {
         const fetchReadme = async () => {
             try {
                 const response = await fetch(
-                    'https://raw.githubusercontent.com/pektezol/lphub/typescript/README.md'
+                    'https://raw.githubusercontent.com/pektezol/lphub/main/README.md'
                 );
                 if (!response.ok) {
                     throw new Error('Failed to fetch README');
