@@ -51,6 +51,7 @@ div#upload-run{
 .upload-run-dropdown-container .dropdown-cur {
     user-select: none;
     cursor: pointer;
+	width: 240px;
 }
 
 .upload-run-dropdown {
@@ -64,7 +65,7 @@ div#upload-run{
     animation: dropdown-in 0.2s ease;
     max-height: 300px;
     overflow-y: scroll;
-    width: 400px;
+    width: 260px;
 }
 
 .upload-run-dropdown div {

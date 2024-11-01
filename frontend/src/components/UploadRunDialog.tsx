@@ -198,36 +198,42 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
           <div id='upload-run-menu-add'>
             <div id='upload-run-route-category'>
               <div style={{ padding: "15px 0px" }} className='upload-run-dropdown-container upload-run-item'>
-                <h1 style={{ paddingBottom: "14px" }}>Select Game</h1>
-                <div onClick={() => _handle_dropdowns(1)} style={{ display: "flex", alignItems: "center", cursor: "pointer", justifyContent: "space-between" }}>
+                <h3 style={{ margin: "0px 0px" }}>Select Game</h3>
+                <div onClick={() => _handle_dropdowns(1)} style={{ display: "flex", alignItems: "center", cursor: "pointer", justifyContent: "space-between", margin: "10px 0px" }}>
                   <div className='dropdown-cur'>{selectedGameName}</div>
                   <i style={{ rotate: "-90deg", transform: "translate(-5px, 10px)" }} className="triangle"></i>
                 </div>
-                <div style={{top: "160px"}} className={dropdown1Vis ? "upload-run-dropdown" : "upload-run-dropdown hidden"}>
+                <div style={{top: "110px"}} className={dropdown1Vis ? "upload-run-dropdown" : "upload-run-dropdown hidden"}>
                   {games.map((game) => (
                     <div onClick={() => { _handle_game_select(game.id.toString(), game.name); _handle_dropdowns(1) }} key={game.id}>{game.name}</div>
                   ))}
                 </div>
-              </div>
-              {
-                !loading &&
-                (
-                  <>
-                    <div className='upload-run-map-container upload-run-item' style={{ paddingBottom: "10px" }}>
-                      <div style={{ padding: "15px 0px" }}>
-                        <h3 style={{ margin: "10px 0px" }}>Select Map</h3>
-                        <div onClick={() => _handle_dropdowns(2)} style={{ display: "flex", alignItems: "center", cursor: "pointer", justifyContent: "space-between" }}>
+			  {!loading && (
+				<>
+					<div style={{ padding: "25px 0px" }}>
+                        <h3 style={{ margin: "0px 0px" }}>Select Map</h3>
+                        <div onClick={() => _handle_dropdowns(2)} style={{ display: "flex", alignItems: "center", cursor: "pointer", justifyContent: "space-between", margin: "10px 0px" }}>
                           <span style={{ userSelect: "none" }}>{currentMap}</span>
                           <i style={{ rotate: "-90deg", transform: "translate(-5px, 10px)" }} className="triangle"></i>
                         </div>
                       </div>
-                        <div style={{top: "160px"}} id='dropdown2' className={dropdown2Vis ? "upload-run-dropdown" : "upload-run-dropdown hidden"}>
+                        <div style={{top: "220px"}} id='dropdown2' className={dropdown2Vis ? "upload-run-dropdown" : "upload-run-dropdown hidden"}>
                           {selectedGameMaps && selectedGameMaps.filter(gameMap => !gameMap.is_disabled).map((gameMap) => (
                             <div onClick={() => { setUploadRunContent({ ...uploadRunContent, map_id: gameMap.id }); _set_current_map(gameMap.name); _handle_dropdowns(2); }} key={gameMap.id}>{gameMap.name}</div>
                           ))}
                         </div>
-                      </div>
-                      <h1>Host Demo</h1>
+				</>
+
+			)}
+			</div>
+
+              {
+                !loading &&
+                (
+                  <>
+                      
+					  <div>
+                      <h3 style={{margin: "10px 0px"}}>Host Demo</h3>
                       <div onClick={() => { _handle_file_click(true) }} onDragOver={(e) => { _handle_drag_over(e, true) }} onDrop={(e) => { _handle_drop(e, true) }} onDragLeave={(e) => { _handle_drag_leave(e, true) }} className={`upload-run-drag-area ${dragHightlight ? "upload-run-drag-area-highlight" : ""} ${uploadRunContent.host_demo ? "upload-run-drag-area-hidden" : ""}`}>
                         <input ref={fileInputRef} type="file" name="host_demo" id="host_demo" accept=".dem" onChange={(e) => _handle_file_change(e.target.files, true)} />
                         {!uploadRunContent.host_demo ?
@@ -242,12 +248,12 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
 
                         <span className="upload-run-demo-name">{uploadRunContent.host_demo?.name}</span>
                       </div>
-					  </div><br/>
                       {
                         games[selectedGameID].is_coop &&
                         (
                           <>
-                            <h1>Partner Demo</h1>
+						  	<div>
+                            <h3 style={{margin: "10px 0px"}}>Partner Demo</h3>
                             <div onClick={() => { _handle_file_click(false) }} onDragOver={(e) => { _handle_drag_over(e, false) }} onDrop={(e) => { _handle_drop(e, false) }} onDragLeave={(e) => { _handle_drag_leave(e, false) }} className={`upload-run-drag-area ${dragHightlightPartner ? "upload-run-drag-area-highlight-partner" : ""} ${uploadRunContent.partner_demo ? "upload-run-drag-area-hidden" : ""}`}>
                               <input ref={fileInputRefPartner} type="file" name="partner_demo" id="partner_demo" accept=".dem" onChange={(e) => _handle_file_change(e.target.files, false)} />						  {!uploadRunContent.partner_demo ?
                                 <div>
@@ -265,19 +271,19 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
                           </>
                         )
                       }
+					  </div>
                       <div className='search-container'>
 
                       </div>
-					  <br/>
-                      <div className='upload-run-buttons-container'>
-                        <button onClick={_upload_run}>Submit</button>
-                        <button onClick={() => onClose(false)}>Cancel</button>
-                      </div>
-                    </div>
+                      
                   </>
                 )
               }
             </div>
+			<div className='upload-run-buttons-container'>
+                        <button onClick={_upload_run}>Submit</button>
+                        <button onClick={() => onClose(false)}>Cancel</button>
+                      </div>
           </div>
         </div>
       </>
