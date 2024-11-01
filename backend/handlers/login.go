@@ -58,8 +58,12 @@ func Login(c *gin.Context) {
 				user.LocCountryCode = "XX"
 			}
 			// Insert new user to database
-			database.DB.Exec(`INSERT INTO users (steam_id, user_name, avatar_link, country_code)
+			_, err = database.DB.Exec(`INSERT INTO users (steam_id, user_name, avatar_link, country_code)
 			VALUES ($1, $2, $3, $4)`, steamID, user.PersonaName, user.AvatarFull, user.LocCountryCode)
+			if err != nil {
+				c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+				return
+			}
 		}
 		moderator := false
 		rows, _ := database.DB.Query("SELECT title_name FROM titles t INNER JOIN user_titles ut ON t.id=ut.title_id WHERE ut.user_id = $1", steamID)
