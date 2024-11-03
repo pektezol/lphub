@@ -2,11 +2,11 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useNavigate } from 'react-router-dom';
 
-import { MapSummary } from '../types/Map';
-import { ModMenuContent } from '../types/Content';
-import { API } from '../api/Api';
-import "../css/ModMenu.css"
-import useConfirm from '../hooks/UseConfirm';
+import { MapSummary } from '@customTypes/Map';
+import { ModMenuContent } from '@customTypes/Content';
+import { API } from '@api/Api';
+import "@css/ModMenu.css"
+import useConfirm from '@hooks/UseConfirm';
 
 interface ModMenuProps {
   token?: string;

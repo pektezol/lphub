@@ -1,4 +1,4 @@
-import { Pagination } from "./Pagination";
+import type { Pagination } from "@customTypes/Pagination";
 
 export interface UserShort {
   steam_id: string;

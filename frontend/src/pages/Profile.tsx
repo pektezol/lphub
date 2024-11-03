@@ -1,16 +1,16 @@
 import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-import { SteamIcon, TwitchIcon, YouTubeIcon, PortalIcon, FlagIcon, StatisticsIcon, SortIcon, ThreedotIcon, DownloadIcon, HistoryIcon, DeleteIcon } from '../images/Images';
-import { UserProfile } from '../types/Profile';
-import { Game, GameChapters } from '../types/Game';
-import { Map } from '../types/Map';
-import { ticks_to_time } from '../utils/Time';
-import "../css/Profile.css";
-import { API } from '../api/Api';
-import useConfirm from '../hooks/UseConfirm';
-import useMessage from '../hooks/UseMessage';
-import useMessageLoad from "../hooks/UseMessageLoad";
+import { SteamIcon, TwitchIcon, YouTubeIcon, PortalIcon, FlagIcon, StatisticsIcon, SortIcon, ThreedotIcon, DownloadIcon, HistoryIcon, DeleteIcon } from '@images/Images';
+import { UserProfile } from '@customTypes/Profile';
+import { Game, GameChapters } from '@customTypes/Game';
+import { Map } from '@customTypes/Map';
+import { ticks_to_time } from '@utils/Time';
+import "@css/Profile.css";
+import { API } from '@api/Api';
+import useConfirm from '@hooks/UseConfirm';
+import useMessage from '@hooks/UseMessage';
+import useMessageLoad from "@hooks/UseMessageLoad";
 
 interface ProfileProps {
   profile?: UserProfile;

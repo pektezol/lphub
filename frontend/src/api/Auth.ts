@@ -1,5 +1,5 @@
 import axios from "axios";
-import { url } from "./Api";
+import { url } from "@api/Api";
 
 export const get_token = async (): Promise<string | undefined> => {
   const response = await axios.get(url(`token`))

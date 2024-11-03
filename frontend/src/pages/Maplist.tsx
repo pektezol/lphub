@@ -1,11 +1,10 @@
 import React, { useEffect } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
-import "../css/Maplist.css";
-import { API } from "../api/Api";
-import { Game, GameChapters } from "../types/Game";
-import { GameChapter, GamesChapters } from "../types/Chapters";
-import { Map } from "../types/Map";
+import "@css/Maplist.css";
+import { API } from "@api/Api";
+import { Game } from "@customTypes/Game";
+import { GameChapter, GamesChapters } from "@customTypes/Chapters";
 
 const Maplist: React.FC = () => {
   const [game, setGame] = React.useState<Game | null>(null);

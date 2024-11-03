@@ -1,6 +1,6 @@
 import axios from "axios";
-import { url } from "./Api";
-import { ModMenuContent } from "../types/Content";
+import { url } from "@api/Api";
+import { ModMenuContent } from "@customTypes/Content";
 
 export const put_map_image = async (token: string, map_id: string, image: string): Promise<boolean> => {
   const response = await axios.put(url(`maps/${map_id}/image`), {

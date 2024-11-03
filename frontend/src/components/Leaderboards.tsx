@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { DownloadIcon, ThreedotIcon } from '../images/Images';
-import { MapLeaderboard } from '../types/Map';
-import { ticks_to_time, time_ago } from '../utils/Time';
-import useMessage from "../hooks/UseMessage";
-import "../css/Maps.css"
+import { DownloadIcon, ThreedotIcon } from '@images/Images';
+import { MapLeaderboard } from '@customTypes/Map';
+import { ticks_to_time, time_ago } from '@utils/Time';
+import useMessage from "@hooks/UseMessage";
+import "@css/Maps.css"
 
 interface LeaderboardsProps {
   data?: MapLeaderboard;

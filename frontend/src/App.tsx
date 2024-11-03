@@ -1,22 +1,22 @@
 import React from 'react';
 import { Routes, Route } from "react-router-dom";
 
-import { UserProfile } from './types/Profile';
+import { UserProfile } from '@customTypes/Profile';
 import Sidebar from './components/Sidebar';
 import "./App.css";
 
-import Profile from './pages/Profile';
-import Games from './pages/Games';
-import Maps from './pages/Maps';
-import User from './pages/User';
-import Homepage from './pages/Homepage';
+import Profile from '@pages//Profile';
+import Games from '@pages//Games';
+import Maps from '@pages//Maps';
+import User from '@pages//User';
+import Homepage from '@pages//Homepage';
 import UploadRunDialog from './components/UploadRunDialog';
-import Rules from './pages/Rules';
-import About from './pages/About';
-import { Game } from './types/Game';
+import Rules from '@pages//Rules';
+import About from '@pages//About';
+import { Game } from '@customTypes/Game';
 import { API } from './api/Api';
-import Maplist from './pages/Maplist';
-import Rankings from './pages/Rankings';
+import Maplist from '@pages//Maplist';
+import Rankings from '@pages//Rankings';
 import { get_user_id_from_token, get_user_mod_from_token } from './utils/Jwt';
 
 const App: React.FC = () => {

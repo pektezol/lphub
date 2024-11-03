@@ -1,4 +1,4 @@
-import { Map } from './Map';
+import type { Map } from '@customTypes/Map';
 
 
 export interface Game {

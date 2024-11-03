@@ -1,5 +1,4 @@
 import React from 'react';
-import { PortalIcon } from '../images/Images';
 
 const Homepage: React.FC = () => {
 

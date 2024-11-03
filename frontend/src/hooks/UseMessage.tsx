@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import MessageDialog from "../components/MessageDialog";
+import MessageDialog from "@components/MessageDialog";
 
 const useMessage = () => {
     const [isOpen, setIsOpen] = useState(false);

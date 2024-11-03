@@ -1,12 +1,12 @@
 import React from 'react';
 
-import { MapDiscussion, MapDiscussions, MapDiscussionsDetail } from '../types/Map';
-import { MapDiscussionCommentContent, MapDiscussionContent } from '../types/Content';
-import { time_ago } from '../utils/Time';
-import { API } from '../api/Api';
-import "../css/Maps.css"
+import { MapDiscussion, MapDiscussions, MapDiscussionsDetail } from '@customTypes/Map';
+import { MapDiscussionCommentContent, MapDiscussionContent } from '@customTypes/Content';
+import { time_ago } from '@utils/Time';
+import { API } from '@api/Api';
+import "@css/Maps.css"
 import { Link } from 'react-router-dom';
-import useConfirm from '../hooks/UseConfirm';
+import useConfirm from '@hooks/UseConfirm';
 
 interface DiscussionsProps {
   token?: string

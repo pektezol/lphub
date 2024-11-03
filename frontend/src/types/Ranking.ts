@@ -1,4 +1,4 @@
-import { UserShort } from "./Profile";
+import type { UserShort } from "@customTypes/Profile";
 
 export interface RankingType {
     placement: number;
