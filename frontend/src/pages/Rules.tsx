@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 
-import '../css/Rules.css';
+import '@css/Rules.css';
 
 const Rules: React.FC = () => {
 

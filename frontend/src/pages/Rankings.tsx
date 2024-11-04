@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 
-import RankingEntry from "../components/RankingEntry";
-import { Ranking, SteamRanking, RankingType, SteamRankingType } from "../types/Ranking";
-import { API } from "../api/Api";
+import RankingEntry from "@components/RankingEntry";
+import { Ranking, SteamRanking, RankingType, SteamRankingType } from "@customTypes/Ranking";
+import { API } from "@api/Api";
 
-import "../css/Rankings.css";
+import "@css/Rankings.css";
 
 const Rankings: React.FC = () => {
     const [leaderboardData, setLeaderboardData] = React.useState<Ranking | SteamRanking>();

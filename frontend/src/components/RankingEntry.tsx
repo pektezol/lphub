@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from "react-router-dom";
-import { RankingType, SteamRanking, SteamRankingType } from '../types/Ranking';
+import { RankingType, SteamRanking, SteamRankingType } from '@customTypes/Ranking';
 
 enum RankingCategories {
     rankings_overall,

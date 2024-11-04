@@ -1,14 +1,14 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-import { PortalIcon, FlagIcon, ChatIcon } from '../images/Images';
-import Summary from '../components/Summary';
-import Leaderboards from '../components/Leaderboards';
-import Discussions from '../components/Discussions';
-import ModMenu from '../components/ModMenu';
-import { MapDiscussions, MapLeaderboard, MapSummary } from '../types/Map';
-import { API } from '../api/Api';
-import "../css/Maps.css";
+import { PortalIcon, FlagIcon, ChatIcon } from '@images/Images';
+import Summary from '@components/Summary';
+import Leaderboards from '@components/Leaderboards';
+import Discussions from '@components/Discussions';
+import ModMenu from '@components/ModMenu';
+import { MapDiscussions, MapLeaderboard, MapSummary } from '@customTypes/Map';
+import { API } from '@api/Api';
+import "@css/Maps.css";
 
 interface MapProps {
   token?: string;

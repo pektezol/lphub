@@ -1,7 +1,7 @@
 import axios from "axios";
-import { url } from "./Api";
-import { MapDiscussionContent, UploadRunContent } from "../types/Content";
-import { MapSummary, MapLeaderboard, MapDiscussions, MapDiscussion } from "../types/Map";
+import { url } from "@api/Api";
+import { MapDiscussionContent, UploadRunContent } from "@customTypes/Content";
+import { MapSummary, MapLeaderboard, MapDiscussions, MapDiscussion } from "@customTypes/Map";
 
 export const get_map_summary = async (map_id: string): Promise<MapSummary> => {
   const response = await axios.get(url(`maps/${map_id}/summary`))

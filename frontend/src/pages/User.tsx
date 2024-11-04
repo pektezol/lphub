@@ -1,14 +1,14 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-import { SteamIcon, TwitchIcon, YouTubeIcon, PortalIcon, FlagIcon, StatisticsIcon, SortIcon, ThreedotIcon, DownloadIcon, HistoryIcon } from '../images/Images';
-import { UserProfile } from '../types/Profile';
-import { Game, GameChapters } from '../types/Game';
-import { Map } from '../types/Map';
-import { API } from '../api/Api';
-import { ticks_to_time } from '../utils/Time';
-import "../css/Profile.css";
-import useMessage from '../hooks/UseMessage';
+import { SteamIcon, TwitchIcon, YouTubeIcon, PortalIcon, FlagIcon, StatisticsIcon, SortIcon, ThreedotIcon, DownloadIcon, HistoryIcon } from '@images/Images';
+import { UserProfile } from '@customTypes/Profile';
+import { Game, GameChapters } from '@customTypes/Game';
+import { Map } from '@customTypes/Map';
+import { API } from '@api/Api';
+import { ticks_to_time } from '@utils/Time';
+import "@css/Profile.css";
+import useMessage from '@hooks/UseMessage';
 
 interface UserProps {
   profile?: UserProfile;

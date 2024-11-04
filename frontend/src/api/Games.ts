@@ -1,9 +1,9 @@
 import axios from "axios";
-import { url } from "./Api";
-import { GameChapter, GamesChapters } from "../types/Chapters";
-import { Game } from "../types/Game";
-import { Map } from "../types/Map";
-import { Search } from "../types/Search";
+import { url } from "@api/Api";
+import { GameChapter, GamesChapters } from "@customTypes/Chapters";
+import { Game } from "@customTypes/Game";
+import { Map } from "@customTypes/Map";
+import { Search } from "@customTypes/Search";
 
 export const get_games = async (): Promise<Game[]> => {
   const response = await axios.get(url(`games`))

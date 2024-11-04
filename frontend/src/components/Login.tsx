@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { ExitIcon, UserIcon, LoginIcon } from '../images/Images';
-import { UserProfile } from '../types/Profile';
-import { API } from '../api/Api';
-import "../css/Login.css";
+import { ExitIcon, UserIcon, LoginIcon } from '@images/Images';
+import { UserProfile } from '@customTypes/Profile';
+import { API } from '@api/Api';
+import "@css/Login.css";
 
 interface LoginProps {
   setToken: React.Dispatch<React.SetStateAction<string | undefined>>;

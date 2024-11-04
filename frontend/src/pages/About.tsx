@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 
-import '../css/About.css';
+import '@css/About.css';
 
 const About: React.FC = () => {
 

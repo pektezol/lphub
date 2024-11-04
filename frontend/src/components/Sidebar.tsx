@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-import { BookIcon, FlagIcon, HelpIcon, HomeIcon, LogoIcon, PortalIcon, SearchIcon, UploadIcon } from '../images/Images';
-import Login from './Login';
-import { UserProfile } from '../types/Profile';
-import { Search } from '../types/Search';
-import { API } from '../api/Api';
-import "../css/Sidebar.css";
+import { BookIcon, FlagIcon, HelpIcon, HomeIcon, LogoIcon, PortalIcon, SearchIcon, UploadIcon } from '@images/Images';
+import Login from '@components/Login';
+import { UserProfile } from '@customTypes/Profile';
+import { Search } from '@customTypes/Search';
+import { API } from '@api/Api';
+import "@css/Sidebar.css";
 
 interface SidebarProps {
   setToken: React.Dispatch<React.SetStateAction<string | undefined>>;

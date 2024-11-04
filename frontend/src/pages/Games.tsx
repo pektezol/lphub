@@ -1,8 +1,8 @@
 import React from 'react';
 
-import GameEntry from '../components/GameEntry';
-import { Game } from '../types/Game';
-import "../css/Maps.css"
+import GameEntry from '@components/GameEntry';
+import { Game } from '@customTypes/Game';
+import "@css/Maps.css"
 
 interface GamesProps {
     games: Game[];
