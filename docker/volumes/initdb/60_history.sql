@@ -66,7 +66,7 @@ INSERT INTO map_history(map_id,category_id,user_name,score_count,record_date) VA
 (13,1,'LookLikeAKango',3,'2011-10-05'),
 (13,1,'Imanex',2,'2011-12-08'),
 (13,1,'jyjey',0,'2012-08-22'),
---(14,0,'?',0,'2011-04-19'),
+(14,1,'?',0,'2011-04-19'),
 (15,1,'Tyronis',2,'2011-10-05'),
 (15,1,'SuperAiderton',0,'2024-01-28'),
 (16,1,'LookLikeAKango',2,'2011-10-05'),
@@ -589,6 +589,17 @@ INSERT INTO map_history(map_id,category_id,user_name,score_count,record_date) VA
 (60,4,'Krzyhau',1,'2017-09-09'),
 
 -- Portal 2 Cooperative
+-- Chapter 0
+(61,5,'???',6,'2018-01-01'),
+(61,5,'Nidboj132 & Oryn',4,'2021-11-26'),
+(61,5,'Krzyhau',5,'2020-01-01'),
+(61,1,'Valve',0,'2011-04-19'),
+(61,4,'Nidboj132 & Oryn',2,'2024-10-13'),
+(62,5,'?',2,'2011-11-11'),
+(62,4,'Nidboj132 & Oryn',0,'2022-09-29'),
+(62,4,'Nidboj132 & Oryn',2,'2022-09-14'),
+(62,1,'Valve',0,'2011-04-19'),
+
 -- Chapter 1
 (63,1,'Mathias123961 & Sir Spawn Alot',0,'2011-08-01'),
 (64,1,'Mathias123961 & Sir Spawn Alot',3,'2011-08-01'),
