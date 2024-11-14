@@ -1,0 +1,17 @@
+INSERT INTO chapters(id, game_id, name, is_disabled, image) VALUES
+(1, 1, 'Chapter 1 - The Coutesy Call', false, ''),
+(2, 1, 'Chapter 2 - The Cold Boot', false, ''),
+(3, 1, 'Chapter 3 - The Return', false, ''),
+(4, 1, 'Chapter 4 - The Surprise', false, ''),
+(5, 1, 'Chapter 5 - The Escape', false, ''),
+(6, 1, 'Chapter 6 - The Fall', false, ''),
+(7, 1, 'Chapter 7 - The Reunion', false, ''),
+(8, 1, 'Chapter 8 - The Itch', false, ''),
+(9, 1, 'Chapter 9 - The Part Where He Kills You', false, ''),
+(10, 2, 'Course 0 - Introduction', true, ''),
+(11, 2, 'Course 1 - Team Building', false, ''),
+(12, 2, 'Course 2 - Mass And Velocity', false, ''),
+(13, 2, 'Course 3 - Hard-Light Surfaces', false, ''),
+(14, 2, 'Course 4 - Excursion Funnels', false, ''),
+(15, 2, 'Course 5 - Mobility Gels', false, ''),
+(16, 2, 'Course 6 - Art Therapy', false, '');

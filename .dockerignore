@@ -1,0 +1,18 @@
+docker/
+frontend/
+FUNDING.yml
+README.md
+LICENSE
+.gitignore
+.dockerignore
+.env.example
+
+# from .gitignore
+
+.env
+.vscode
+*.txt
+*.dem
+backend/lphub
+backend/tmp
+rankings/rankings

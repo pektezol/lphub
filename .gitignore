@@ -3,3 +3,6 @@
 *.sh
 *.txt
 *.dem
+backend/lphub
+backend/tmp
+rankings/rankings
