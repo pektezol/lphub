@@ -26,6 +26,12 @@ module.exports = {
       },
     ],
   },
+  webpack: {
+    configure: (webpackConfig, { paths }) => {
+        paths.appBuild = webpackConfig.output.path = require('path').resolve('../docker/volumes/build/app');
+        return webpackConfig;
+      },
+  },
   plugins: [
     {
       plugin: CracoAlias,

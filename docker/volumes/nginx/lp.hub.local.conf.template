@@ -11,9 +11,13 @@ server {
     ssl_prefer_server_ciphers off;
 
     location / {
-      root   /app/;
+      root   /build/app/;
       index  index.html;
       try_files $uri $uri/ =404;
+    }
+
+    location = /swagger.json {
+      root /docs/;
     }
 
     location /api {

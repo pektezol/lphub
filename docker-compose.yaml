@@ -38,5 +38,5 @@ services:
     - ./docker/volumes/ssl:/ssl:r
     - ./docker/volumes/nginx:/etc/nginx/templates
     - ./docker/volumes/logs/nginx:/var/log/nginx:rw
-    - ./frontend/build:/app:r
-    - ./backend/docs/swagger.json:/app/swagger.json:r
+    - ./docker/volumes/build:/build:r
+    - ./backend/docs/swagger.json:/docs/swagger.json:r
