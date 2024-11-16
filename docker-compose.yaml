@@ -10,6 +10,7 @@ services:
      - database:lphub.database
     volumes:
      - ./backend:/app
+     - ./rankings:/rankings:ro
   database:
     image: postgres:15.4
     container_name: lphub-db
@@ -35,8 +36,8 @@ services:
     - NGINX_HOST=lp.hub.local
     - NGINX_PORT=443
     volumes:
-    - ./docker/volumes/ssl:/ssl:r
+    - ./docker/volumes/ssl:/ssl:ro
     - ./docker/volumes/nginx:/etc/nginx/templates
     - ./docker/volumes/logs/nginx:/var/log/nginx:rw
-    - ./docker/volumes/build:/build:r
-    - ./backend/docs/swagger.json:/docs/swagger.json:r
+    - ./docker/volumes/build:/build:ro
+    - ./backend/docs/swagger.json:/docs/swagger.json:ro

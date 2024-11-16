@@ -1,8 +1,10 @@
 .env
 .vscode
+.vim
 *.sh
 *.txt
 *.dem
 backend/lphub
 backend/tmp
 rankings/rankings
+rankings/tmp
