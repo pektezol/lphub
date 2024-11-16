@@ -2,11 +2,12 @@ package main
 
 import (
 	"log"
+	"math"
 	"sort"
 )
 
-func filterRankings(spRankings, mpRankings, overallRankings *[]*Player, players *map[string]*Player) {
-	for k, p := range *players {
+func filterRankings(spRankings, mpRankings, overallRankings *[]*Player, players map[string]*Player) {
+	for k, p := range players {
 		if p.SpIterations == 51 {
 			*spRankings = append(*spRankings, p)
 		}
@@ -18,13 +19,14 @@ func filterRankings(spRankings, mpRankings, overallRankings *[]*Player, players 
 			*overallRankings = append(*overallRankings, p)
 		}
 		if p.SpIterations < 51 && p.MpIterations < 48 {
-			delete(*players, k)
+			delete(players, k)
 		}
 	}
 
-	log.Println("getting player summaries")
-	for _, v := range *players {
-		fetchPlayerInfo(v)
+	log.Println("getting player summaries for", len(players), "players")
+
+	for _, chunk := range chunkMap(players, 100) {
+		fetchPlayerInfo(chunk)
 	}
 
 	log.Println("sorting the ranks")
@@ -90,4 +92,27 @@ func filterRankings(spRankings, mpRankings, overallRankings *[]*Player, players 
 		}
 		(*overallRankings)[idx].OverallRank = rank
 	}
+}
+
+func chunkMap[T any](m map[string]*T, chunkSize int) [][]*T {
+	chunks := make([][]*T, 0, int(math.Ceil(float64(len(m))/float64(chunkSize))))
+	chunk := make([]*T, 0, chunkSize)
+
+	count := 0
+	for _, player := range m {
+		chunk = append(chunk, player)
+		count++
+
+		if count == chunkSize {
+			chunks = append(chunks, chunk)
+			chunk = make([]*T, 0, chunkSize)
+			count = 0
+		}
+	}
+
+	if len(chunk) > 0 {
+		chunks = append(chunks, chunk)
+	}
+
+	return chunks
 }

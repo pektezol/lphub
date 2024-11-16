@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-func readRecords() *[]Record {
+func readRecords() []Record {
 	recordsFile, err := os.Open("./input/records.json")
 	if err != nil {
 		log.Fatalln(err.Error())
@@ -22,10 +22,10 @@ func readRecords() *[]Record {
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
-	return &records
+	return records
 }
 
-func readOverrides() *map[string]map[string]int {
+func readOverrides() map[string]map[string]int {
 	overridesFile, err := os.Open("./input/overrides.json")
 	if err != nil {
 		log.Fatalln(err.Error())
@@ -40,5 +40,5 @@ func readOverrides() *map[string]map[string]int {
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
-	return &overrides
+	return overrides
 }
