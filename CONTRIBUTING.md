@@ -2,15 +2,17 @@
 
 ## Requirements
 
+* [Go]
+* [Node/npm]
 * [Docker Engine]
 * [mkcert]
-* [Node/npm]
 * [Steam API key]
 * [Google Service Account]
 
+[Go]: https://go.dev/doc/install
+[Node/npm]: https://nodejs.org/en/download/package-manager
 [Docker Engine]: https://docs.docker.com/engine/install
 [mkcert]: https://github.com/FiloSottile/mkcert
-[Node/npm]: https://nodejs.org/en/download/package-manager
 [Steam API key]: https://steamcommunity.com/dev/apikey
 [Google Service Account]: https://console.cloud.google.com
 
@@ -64,6 +66,16 @@ echo "GOOGLE_PRIVATE_KEY_BASE64=\"$(cat service-account-key.json | jq -j '.priva
 
 Use `npm run build:frontend` to create an optimized build which the proxy will serve.
 
+## Generate rankings locally
+
+* Install [air CLI](https://github.com/air-verse/air)
+* Run `npm run rankings` to update files in `./rankings/output`
+
+## Update docs locally
+
+* Install [swag CLI](https://github.com/swaggo/swag)
+* Run `npm run docs` to update files in `./backend/docs`
+
 ## Scripts
 
 Execute with `npm run <script>`
@@ -72,6 +84,8 @@ Execute with `npm run <script>`
 |---|---|
 |setup|Developer setup.|
 |frontend|Start frontend.|
+|rankings|Update rankings files locally.|
+|docs|Update swagger files locally.|
 |up|Start backend.|
 |down|Stop backend.|
 |build:frontend|Create build that gets served from the backend.|
