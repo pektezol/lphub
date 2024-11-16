@@ -1,11 +1,19 @@
+.devcontainer/
 docker/
 frontend/
-FUNDING.yml
-README.md
-LICENSE
-.gitignore
+rankings/
 .dockerignore
 .env.example
+.gitignore
+CONTRIBUTING.md
+docker-compose.yaml
+Dockerfile
+FUNDING.yml
+LICENSE
+package-lock.json
+package.json
+README.md
+RULES.md
 
 # from .gitignore
 
