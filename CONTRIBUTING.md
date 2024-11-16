@@ -32,13 +32,13 @@
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/pektezol/lphub)
 
-* Wait for containers to start
 * Edit `backend/.env`
+* `npm run up`
 * Backend development:
   * Navigate to `https://<CODESPACES_ID>-443.app.github.dev/api/v1/`
 * Frontend development:
   * Edit "proxy" field in package.json to point to the backend `<CODESPACES_ID>-443.app.github.dev`
-  * Run `HOST_DOMAIN=<CODESPACES_ID>-3000.app.github.dev npm run frontend`
+  * Run `HOST_DOMAIN=<CODESPACES_ID>-3000.app.github.dev npm run frontend` (2nd terminal)
   * Open frontend in the browser (VSCode will incorrectly suggest app.github.dev:3000 so remove the port at the end)
   * NOTE: Hot reloading won't work. Use Ctrl+R or F5 instead
 
@@ -53,6 +53,12 @@ Configure `backend/.env` file.
 |GOOGLE_CLIENT_EMAIL|Email of service account.|
 |GOOGLE_PRIVATE_KEY_BASE64|Private key of service account.|
 |GOOGLE_FOLDER_ID|Folder ID of shared Google Drive folder.|
+
+Configure `rankings/.env` file.
+
+|Config|Description|
+|---|---|
+|API_KEY|Steam API key for fetching profile data.|
 
 ## Login
 
