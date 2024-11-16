@@ -38,9 +38,11 @@
   * Navigate to `https://<CODESPACES_ID>-443.app.github.dev/api/v1/`
 * Frontend development:
   * Edit "proxy" field in package.json to point to the backend `<CODESPACES_ID>-443.app.github.dev`
+  * Add `127.0.0.1 <CODESPACES_ID>-3000.app.github.dev` to `/etc/hosts`
   * Run `HOST_DOMAIN=<CODESPACES_ID>-3000.app.github.dev npm run frontend` (2nd terminal)
   * Open frontend in the browser (VSCode will incorrectly suggest app.github.dev:3000 so remove the port at the end)
   * NOTE: Hot reloading won't work. Use Ctrl+R or F5 instead
+  * NOTE: The `token` cookie must be copied manually from the backend domain when trying to login
 
 ## Config
 
