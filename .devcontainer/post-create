@@ -1,0 +1,7 @@
+#!/bin/bash
+
+go install github.com/air-verse/air@latest github.com/swaggo/swag/cmd/swag@latest
+
+npm run setup
+
+docker compose up -d
