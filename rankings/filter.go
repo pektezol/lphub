@@ -31,7 +31,12 @@ func filterRankings(spRankings, mpRankings, overallRankings *[]*Player, players 
 
 	log.Println("sorting the ranks")
 	sort.Slice(*spRankings, func(i, j int) bool {
-		return (*spRankings)[i].SpScoreCount < (*spRankings)[j].SpScoreCount
+		a := (*spRankings)[i]
+		b := (*spRankings)[j]
+		if a.SpScoreCount == b.SpScoreCount {
+			return a.SteamID < b.SteamID
+		}
+		return a.SpScoreCount < b.SpScoreCount
 	})
 
 	rank := 1
@@ -52,7 +57,12 @@ func filterRankings(spRankings, mpRankings, overallRankings *[]*Player, players 
 	}
 
 	sort.Slice(*mpRankings, func(i, j int) bool {
-		return (*mpRankings)[i].MpScoreCount < (*mpRankings)[j].MpScoreCount
+		a := (*mpRankings)[i]
+		b := (*mpRankings)[j]
+		if a.MpScoreCount == b.MpScoreCount {
+			return a.SteamID < b.SteamID
+		}
+		return a.MpScoreCount < b.MpScoreCount
 	})
 
 	rank = 1
@@ -73,7 +83,12 @@ func filterRankings(spRankings, mpRankings, overallRankings *[]*Player, players 
 	}
 
 	sort.Slice(*overallRankings, func(i, j int) bool {
-		return (*overallRankings)[i].OverallScoreCount < (*overallRankings)[j].OverallScoreCount
+		a := (*overallRankings)[i]
+		b := (*overallRankings)[j]
+		if a.OverallScoreCount == b.OverallScoreCount {
+			return a.SteamID < b.SteamID
+		}
+		return a.OverallScoreCount < b.OverallScoreCount
 	})
 
 	rank = 1
