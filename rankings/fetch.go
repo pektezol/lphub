@@ -12,9 +12,9 @@ import (
 	"strings"
 )
 
-func fetchLeaderboard(records []Record, overrides map[string]map[string]int, useCache bool) map[string]*Player {
+func fetchLeaderboard(records []Record, overrides map[SteamID]map[string]int, useCache bool) map[SteamID]*Player {
 	log.Println("fetching leaderboard")
-	players := map[string]*Player{}
+	players := map[SteamID]*Player{}
 	// first init players map with records from portal gun and doors
 	fetchAnotherPage := true
 	start := 0
@@ -187,7 +187,7 @@ func fetchPlayerInfo(players []*Player) {
 
 	ids := make([]string, len(players))
 	for _, player := range players {
-		ids = append(ids, player.SteamID)
+		ids = append(ids, strconv.FormatInt(int64(player.SteamID), 10))
 	}
 
 	url := fmt.Sprintf("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=%s&steamids=%s", os.Getenv("API_KEY"), strings.Join(ids, ","))
@@ -200,9 +200,9 @@ func fetchPlayerInfo(players []*Player) {
 		log.Fatalln(err.Error())
 	}
 	type PlayerSummary struct {
-		SteamID     string `json:"steamid"`
-		PersonaName string `json:"personaname"`
-		AvatarFull  string `json:"avatarfull"`
+		SteamID     SteamID `json:"steamid"`
+		PersonaName string  `json:"personaname"`
+		AvatarFull  string  `json:"avatarfull"`
 	}
 
 	type Result struct {

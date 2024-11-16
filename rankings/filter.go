@@ -6,7 +6,7 @@ import (
 	"sort"
 )
 
-func filterRankings(spRankings, mpRankings, overallRankings *[]*Player, players map[string]*Player) {
+func filterRankings(spRankings, mpRankings, overallRankings *[]*Player, players map[SteamID]*Player) {
 	for k, p := range players {
 		if p.SpIterations == 51 {
 			*spRankings = append(*spRankings, p)
@@ -109,7 +109,7 @@ func filterRankings(spRankings, mpRankings, overallRankings *[]*Player, players 
 	}
 }
 
-func chunkMap[T any](m map[string]*T, chunkSize int) [][]*T {
+func chunkMap[T any, K comparable](m map[K]*T, chunkSize int) [][]*T {
 	chunks := make([][]*T, 0, int(math.Ceil(float64(len(m))/float64(chunkSize))))
 	chunk := make([]*T, 0, chunkSize)
 
