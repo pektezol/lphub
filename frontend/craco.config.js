@@ -15,7 +15,7 @@ module.exports = {
     port: 3000,
     https: !isCodespaces,
     allowedHosts: 'auto',
-    client: !isCodespaces,
+    client: isCodespaces ? false : undefined,
     server: {
       options: {
         key: isCodespaces ? undefined : fs.readFileSync(`../docker/volumes/ssl/${host}.key`),
