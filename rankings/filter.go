@@ -2,11 +2,12 @@ package main
 
 import (
 	"log"
+	"math"
 	"sort"
 )
 
-func filterRankings(spRankings, mpRankings, overallRankings *[]*Player, players *map[string]*Player) {
-	for k, p := range *players {
+func filterRankings(spRankings, mpRankings, overallRankings *[]*Player, players map[SteamID]*Player) {
+	for k, p := range players {
 		if p.SpIterations == 51 {
 			*spRankings = append(*spRankings, p)
 		}
@@ -18,18 +19,24 @@ func filterRankings(spRankings, mpRankings, overallRankings *[]*Player, players 
 			*overallRankings = append(*overallRankings, p)
 		}
 		if p.SpIterations < 51 && p.MpIterations < 48 {
-			delete(*players, k)
+			delete(players, k)
 		}
 	}
 
-	log.Println("getting player summaries")
-	for _, v := range *players {
-		fetchPlayerInfo(v)
+	log.Println("getting player summaries for", len(players), "players")
+
+	for _, chunk := range chunkMap(players, 100) {
+		fetchPlayerInfo(chunk)
 	}
 
 	log.Println("sorting the ranks")
 	sort.Slice(*spRankings, func(i, j int) bool {
-		return (*spRankings)[i].SpScoreCount < (*spRankings)[j].SpScoreCount
+		a := (*spRankings)[i]
+		b := (*spRankings)[j]
+		if a.SpScoreCount == b.SpScoreCount {
+			return a.SteamID < b.SteamID
+		}
+		return a.SpScoreCount < b.SpScoreCount
 	})
 
 	rank := 1
@@ -50,7 +57,12 @@ func filterRankings(spRankings, mpRankings, overallRankings *[]*Player, players 
 	}
 
 	sort.Slice(*mpRankings, func(i, j int) bool {
-		return (*mpRankings)[i].MpScoreCount < (*mpRankings)[j].MpScoreCount
+		a := (*mpRankings)[i]
+		b := (*mpRankings)[j]
+		if a.MpScoreCount == b.MpScoreCount {
+			return a.SteamID < b.SteamID
+		}
+		return a.MpScoreCount < b.MpScoreCount
 	})
 
 	rank = 1
@@ -71,7 +83,12 @@ func filterRankings(spRankings, mpRankings, overallRankings *[]*Player, players 
 	}
 
 	sort.Slice(*overallRankings, func(i, j int) bool {
-		return (*overallRankings)[i].OverallScoreCount < (*overallRankings)[j].OverallScoreCount
+		a := (*overallRankings)[i]
+		b := (*overallRankings)[j]
+		if a.OverallScoreCount == b.OverallScoreCount {
+			return a.SteamID < b.SteamID
+		}
+		return a.OverallScoreCount < b.OverallScoreCount
 	})
 
 	rank = 1
@@ -90,4 +107,27 @@ func filterRankings(spRankings, mpRankings, overallRankings *[]*Player, players 
 		}
 		(*overallRankings)[idx].OverallRank = rank
 	}
+}
+
+func chunkMap[T any, K comparable](m map[K]*T, chunkSize int) [][]*T {
+	chunks := make([][]*T, 0, int(math.Ceil(float64(len(m))/float64(chunkSize))))
+	chunk := make([]*T, 0, chunkSize)
+
+	count := 0
+	for _, player := range m {
+		chunk = append(chunk, player)
+		count++
+
+		if count == chunkSize {
+			chunks = append(chunks, chunk)
+			chunk = make([]*T, 0, chunkSize)
+			count = 0
+		}
+	}
+
+	if len(chunk) > 0 {
+		chunks = append(chunks, chunk)
+	}
+
+	return chunks
 }

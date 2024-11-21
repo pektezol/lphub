@@ -73,9 +73,9 @@ export const delete_map_discussion = async (token: string, map_id: string, discu
   return response.data.success;
 };
 
-export const post_record = async (token: string, run: UploadRunContent): Promise<[boolean, string]> => {
+export const post_record = async (token: string, run: UploadRunContent, map_id: number): Promise<[boolean, string]> => {
   if (run.partner_demo) {
-    const response = await axios.postForm(url(`maps/${run.map_id}/record`), {
+    const response = await axios.postForm(url(`maps/${map_id}/record`), {
       "host_demo": run.host_demo,
       "partner_demo": run.partner_demo,
     }, {
@@ -83,16 +83,16 @@ export const post_record = async (token: string, run: UploadRunContent): Promise
         "Authorization": token,
       }
     });
-    return [ response.data.success, response.data.message ];
+    return [response.data.success, response.data.message];
   } else {
-    const response = await axios.postForm(url(`maps/${run.map_id}/record`), {
+    const response = await axios.postForm(url(`maps/${map_id}/record`), {
       "host_demo": run.host_demo,
     }, {
       headers: {
         "Authorization": token,
       }
     });
-    return [ response.data.success, response.data.message ];
+    return [response.data.success, response.data.message];
   }
 }
 

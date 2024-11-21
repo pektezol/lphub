@@ -2,10 +2,8 @@ package handlers
 
 import (
 	"context"
-	"encoding/base64"
 	"fmt"
 	"io"
-	"log"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -16,11 +14,9 @@ import (
 	"lphub/models"
 	"lphub/parser"
 
+	"github.com/Backblaze/blazer/b2"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"golang.org/x/oauth2/google"
-	"golang.org/x/oauth2/jwt"
-	"google.golang.org/api/drive/v3"
 )
 
 type RecordRequest struct {
@@ -79,19 +75,14 @@ func CreateRecordWithDemo(c *gin.Context) {
 		return
 	}
 	// Demo files
-	demoFiles := []*multipart.FileHeader{record.HostDemo}
+	demoFileHeaders := []*multipart.FileHeader{record.HostDemo}
 	if isCoop {
-		demoFiles = append(demoFiles, record.PartnerDemo)
+		demoFileHeaders = append(demoFileHeaders, record.PartnerDemo)
 	}
-	var hostDemoUUID, hostDemoFileID, partnerDemoUUID, partnerDemoFileID string
+	var hostDemoUUID, partnerDemoUUID string
 	var hostDemoScoreCount, hostDemoScoreTime int
 	var hostSteamID, partnerSteamID string
 	var hostDemoServerNumber, partnerDemoServerNumber int
-	srv, err := drive.New(serviceAccount())
-	if err != nil {
-		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-		return
-	}
 	// Create database transaction for inserts
 	tx, err := database.DB.Begin()
 	if err != nil {
@@ -100,22 +91,16 @@ func CreateRecordWithDemo(c *gin.Context) {
 	}
 	// Defer to a rollback in case anything fails
 	defer tx.Rollback()
-	for i, header := range demoFiles {
+	for i, header := range demoFileHeaders {
 		uuid := uuid.New().String()
 		// Upload & insert into demos
-		err = c.SaveUploadedFile(header, "parser/"+uuid+".dem")
-		if err != nil {
-			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-			return
-		}
-		defer os.Remove("parser/" + uuid + ".dem")
-		f, err := os.Open("parser/" + uuid + ".dem")
+		f, err := header.Open()
 		if err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
 		}
 		defer f.Close()
-		parserResult, err := parser.ProcessDemo("parser/" + uuid + ".dem")
+		parserResult, err := parser.ProcessDemo(f)
 		if err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse("Error while processing demo: "+err.Error()))
 			return
@@ -148,23 +133,15 @@ func CreateRecordWithDemo(c *gin.Context) {
 				return
 			}
 		}
-		file, err := createFile(srv, uuid+".dem", "application/octet-stream", f, os.Getenv("GOOGLE_FOLDER_ID"))
-		if err != nil {
-			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-			return
-		}
 		if i == 0 {
-			hostDemoFileID = file.Id
 			hostDemoUUID = uuid
 			hostDemoServerNumber = parserResult.ServerNumber
 		} else if i == 1 {
-			partnerDemoFileID = file.Id
 			partnerDemoUUID = uuid
 			partnerDemoServerNumber = parserResult.ServerNumber
 		}
-		_, err = tx.Exec(`INSERT INTO demos (id,location_id) VALUES ($1,$2)`, uuid, file.Id)
+		_, err = tx.Exec(`INSERT INTO demos (id) VALUES ($1)`, uuid)
 		if err != nil {
-			deleteFile(srv, file.Id)
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
 		}
@@ -172,8 +149,6 @@ func CreateRecordWithDemo(c *gin.Context) {
 	// Insert into records
 	if isCoop {
 		if hostDemoServerNumber != partnerDemoServerNumber {
-			deleteFile(srv, hostDemoFileID)
-			deleteFile(srv, partnerDemoFileID)
 			c.JSON(http.StatusOK, models.ErrorResponse(fmt.Sprintf("Host and partner demo server numbers (%d & %d) does not match!", hostDemoServerNumber, partnerDemoServerNumber)))
 			return
 		}
@@ -192,8 +167,6 @@ func CreateRecordWithDemo(c *gin.Context) {
 		// 	return
 		// }
 		if convertedHostSteamID != user.(models.User).SteamID && convertedPartnerSteamID != user.(models.User).SteamID {
-			deleteFile(srv, hostDemoFileID)
-			deleteFile(srv, partnerDemoFileID)
 			c.JSON(http.StatusOK, models.ErrorResponse("You are permitted to only upload your own runs!"))
 			return
 		}
@@ -205,8 +178,6 @@ func CreateRecordWithDemo(c *gin.Context) {
 		}
 		database.DB.QueryRow("SELECT steam_id FROM users WHERE steam_id = $1", checkPartnerSteamID).Scan(&verifyPartnerSteamID)
 		if verifyPartnerSteamID != checkPartnerSteamID {
-			deleteFile(srv, hostDemoFileID)
-			deleteFile(srv, partnerDemoFileID)
 			c.JSON(http.StatusOK, models.ErrorResponse("Partner SteamID does not match an account on LPHUB."))
 			return
 		}
@@ -214,8 +185,6 @@ func CreateRecordWithDemo(c *gin.Context) {
 		VALUES($1, $2, $3, $4, $5, $6, $7)`
 		_, err := tx.Exec(sql, mapID, hostDemoScoreCount, hostDemoScoreTime, convertedHostSteamID, convertedPartnerSteamID, hostDemoUUID, partnerDemoUUID)
 		if err != nil {
-			deleteFile(srv, hostDemoFileID)
-			deleteFile(srv, partnerDemoFileID)
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
 		}
@@ -224,7 +193,39 @@ func CreateRecordWithDemo(c *gin.Context) {
 		VALUES($1, $2, $3, $4, $5)`
 		_, err := tx.Exec(sql, mapID, hostDemoScoreCount, hostDemoScoreTime, user.(models.User).SteamID, hostDemoUUID)
 		if err != nil {
-			deleteFile(srv, hostDemoFileID)
+			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+			return
+		}
+	}
+	// Everything is good, upload the demo files.
+	client, err := b2.NewClient(context.Background(), os.Getenv("B2_KEY_ID"), os.Getenv("B2_API_KEY"))
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	bucket, err := client.Bucket(context.Background(), os.Getenv("B2_BUCKET_NAME"))
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	for i, header := range demoFileHeaders {
+		f, err := header.Open()
+		if err != nil {
+			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+			return
+		}
+		defer f.Close()
+		var objectName string
+		if i == 0 {
+			objectName = hostDemoUUID + ".dem"
+		} else if i == 1 {
+			objectName = partnerDemoUUID + ".dem"
+		}
+		obj := bucket.Object(objectName)
+		writer := obj.NewWriter(context.Background())
+		defer writer.Close()
+		_, err = io.Copy(writer, f)
+		if err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
 		}
@@ -339,29 +340,15 @@ func DownloadDemoWithID(c *gin.Context) {
 		c.JSON(http.StatusOK, models.ErrorResponse("Invalid id given."))
 		return
 	}
-	srv, err := drive.New(serviceAccount())
+	var checkedUUID string
+	err := database.DB.QueryRow("SELECT d.id FROM demos d WHERE d.id = $1", uuid).Scan(&checkedUUID)
 	if err != nil {
-		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		c.JSON(http.StatusOK, models.ErrorResponse("Given id does not match a demo."))
 		return
 	}
 
-	// Query drive instead of finding location id from db because SOMEONE reuploaded the demos.
-	// Tbf I had to reupload and will have to do time after time. Fuck you Google.
-	// I guess there's no need to store location id of demos anymore?
-	// ALSO ALSO, Google keeps track of old deleted files so sort by createdTime to get the latest demo.
-	fileList, err := srv.Files.List().Q(fmt.Sprintf("name = '%s.dem'", uuid)).
-		Fields("files(id, name, createdTime)").OrderBy("createdTime desc").PageSize(1).Do()
-	if err != nil {
-		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-		return
-	}
-	if len(fileList.Files) == 0 {
-		c.JSON(http.StatusOK, models.ErrorResponse("Demo not found."))
-		return
-	}
-
-	url := "https://drive.google.com/uc?export=download&id=" + fileList.Files[0].Id
 	fileName := uuid + ".dem"
+	url := os.Getenv("B2_DOWNLOAD_URL") + fileName
 	output, err := os.Create(fileName)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
@@ -387,43 +374,6 @@ func DownloadDemoWithID(c *gin.Context) {
 	c.Header("Content-Type", "application/octet-stream")
 	c.File(fileName)
 	// c.FileAttachment()
-}
-
-// Use Service account
-func serviceAccount() *http.Client {
-	privateKey, _ := base64.StdEncoding.DecodeString(os.Getenv("GOOGLE_PRIVATE_KEY_BASE64"))
-	config := &jwt.Config{
-		Email:      os.Getenv("GOOGLE_CLIENT_EMAIL"),
-		PrivateKey: []byte(privateKey),
-		Scopes: []string{
-			drive.DriveScope,
-		},
-		TokenURL: google.JWTTokenURL,
-	}
-	client := config.Client(context.Background())
-	return client
-}
-
-// Create Gdrive file
-func createFile(service *drive.Service, name string, mimeType string, content io.Reader, parentId string) (*drive.File, error) {
-	f := &drive.File{
-		MimeType: mimeType,
-		Name:     name,
-		Parents:  []string{parentId},
-	}
-	file, err := service.Files.Create(f).Media(content).Do()
-
-	if err != nil {
-		log.Println("Could not create file: " + err.Error())
-		return nil, err
-	}
-
-	return file, nil
-}
-
-// Delete Gdrive file
-func deleteFile(service *drive.Service, fileId string) {
-	service.Files.Delete(fileId)
 }
 
 // Convert from SteamID64 to Legacy SteamID bits
