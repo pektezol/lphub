@@ -35,7 +35,7 @@ export const API = {
 
   post_map_discussion: (token: string, map_id: string, content: MapDiscussionContent) => post_map_discussion(token, map_id, content),
   post_map_discussion_comment: (token: string, map_id: string, discussion_id: number, comment: string) => post_map_discussion_comment(token, map_id, discussion_id, comment),
-  post_record: (token: string, run: UploadRunContent) => post_record(token, run),
+  post_record: (token: string, run: UploadRunContent, map_id: number) => post_record(token, run, map_id),
 
   delete_map_discussion: (token: string, map_id: string, discussion_id: number) => delete_map_discussion(token, map_id, discussion_id),
 
