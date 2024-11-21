@@ -54,8 +54,8 @@ Configure `backend/.env` file.
 |API_KEY|Steam API key for fetching profile data.|
 |B2_BUCKET_NAME|Bucket name from Backblaze.|
 |B2_KEY_ID|Key ID from Backblaze.|
-|B2_API_KEY|API key from Backblaze.|
-|B2_DOWNLOAD_URL|Download URL from Backblaze.|
+|B2_API_KEY|Application key from Backblaze.|
+|B2_DOWNLOAD_URL|Bucket download friendly URL from Backblaze.|
 
 Configure `rankings/.env` file.
 
@@ -71,12 +71,16 @@ Configure `rankings/.env` file.
 
 ## Demo storage
 
-* Create a Backblaze bucket and application access key
+* Create new public Backblaze bucket
+* Create new application key giving access to the bucket
 * Modify `backend/.env` and set:
   * `B2_BUCKET_NAME` name of the created bucket
-  * `B2_KEY_ID` app key ID
-  * `B2_API_KEY` app API key
-  * `B2_DOWNLOAD_URL` download URL of the bucket
+  * `B2_KEY_ID` key ID
+  * `B2_API_KEY` application key
+  * `B2_DOWNLOAD_URL` download friendly URL of the bucket
+    * Get ID from **endpoint** of the bucket e.g. `005` from `s3.us-east-005.backblazeb2.com`
+    * Get bucket name e.g. `lphub-demos`
+    * Construct the download URL e.g. `https://f005.backblazeb2.com/file/lphub-demos/`
 
 ## Build
 
