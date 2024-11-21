@@ -1,0 +1,8 @@
+#!/bin/bash
+
+npm run setup
+
+sed -i "s/^SECRET_KEY=.*/SECRET_KEY=$(openssl rand -hex 12)/" backend/.env
+
+go install github.com/air-verse/air@latest
+go install github.com/swaggo/swag/cmd/swag@latest

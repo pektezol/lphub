@@ -46,6 +46,8 @@
   },
   "devDependencies": {
     "@craco/craco": "^7.1.0",
+    "@types/craco__craco": "^6.4.3",
     "craco-alias": "^3.0.1"
-  }
+  },
+  "proxy": "https://lp.hub.local"
 }

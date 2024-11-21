@@ -1,0 +1,25 @@
+{
+    "scripts": {
+        "setup": "npm --prefix frontend install && cp .env.example .env && cp backend/.env.example backend/.env && cp rankings/.env.example rankings/.env && mkcert -cert-file docker/volumes/ssl/lp.hub.local.crt -key-file docker/volumes/ssl/lp.hub.local.key lp.hub.local",
+        "frontend": "npm --prefix frontend start",
+        "rankings": "air -log.silent 1 -root rankings -build.cmd='go build -C ./rankings .' -build.bin='cd rankings && ./rankings'",
+        "docs": "swag init -d backend -o backend/docs",
+        "up": "docker compose up",
+        "down": "docker compose down",
+        "build:frontend": "npm --prefix frontend run build",
+        "build:image": "docker compose build",
+        "reload": "docker compose up -d --force-recreate",
+        "sv:debug": "docker exec -ti lphub-server sh",
+        "sv:restart": "docker container restart lphub-server",
+        "sv:stop": "docker container stop lphub-server",
+        "proxy:debug": "docker exec -ti lphub-proxy sh",
+        "proxy:restart": "docker container restart lphub-proxy",
+        "proxy:stop": "docker container stop lphub-proxy",
+        "db": "docker exec -ti lphub-db psql -U lphub",
+        "db:debug": "docker exec -ti lphub-db bash",
+        "db:restart": "docker container restart lphub-db",
+        "db:stop": "docker container stop lphub-db",
+        "db:dump": "docker exec -ti lphub-db bash -c 'pg_dump | gzip -8 > /backups/${MARIADB_DATABASE}_dump_$(date +%Y-%m-%d-%H.%M.%S).sql.gz'",
+        "db:dump:raw": "docker exec -ti lphub-db bash -c 'pg_dump > /backups/${MARIADB_DATABASE}_dump_$(date +%Y-%m-%d-%H.%M.%S).sql'"
+    }
+}
