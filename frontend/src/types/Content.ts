@@ -18,7 +18,6 @@ export interface MapDiscussionCommentContent {
 };
 
 export interface UploadRunContent {
-  map_id: number;
   host_demo: File | null;
   partner_demo: File | null;
 };

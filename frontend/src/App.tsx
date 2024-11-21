@@ -66,12 +66,6 @@ const App: React.FC = () => {
     _fetch_games();
   }, []);
 
-  if (!games) {
-    return (
-      <></>
-    )
-  };
-
   return (
     <>
       <UploadRunDialog token={token} open={uploadRunDialog} onClose={(updateProfile) => {
