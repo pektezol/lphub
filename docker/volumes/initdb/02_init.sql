@@ -137,7 +137,6 @@ CREATE TABLE map_discussions_upvotes (
 
 CREATE TABLE demos (
   id UUID,
-  location_id TEXT NOT NULL,
   PRIMARY KEY (id)
 );
 
