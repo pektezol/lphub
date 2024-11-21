@@ -197,6 +197,45 @@ func CreateRecordWithDemo(c *gin.Context) {
 			return
 		}
 	}
+	if os.Getenv("ENV") == "DEV" {
+		if localPath := os.Getenv("LOCAL_DEMOS_PATH"); localPath != "" {
+			for i, header := range demoFileHeaders {
+				f, err := header.Open()
+				if err != nil {
+					c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+					return
+				}
+				defer f.Close()
+				var objectName string
+				if i == 0 {
+					objectName = hostDemoUUID + ".dem"
+				} else if i == 1 {
+					objectName = partnerDemoUUID + ".dem"
+				}
+				demo, err := os.Create(localPath + objectName)
+				if err != nil {
+					c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+					return
+				}
+				defer demo.Close()
+				_, err = io.Copy(demo, f)
+				if err != nil {
+					c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+					return
+				}
+			}
+			if err = tx.Commit(); err != nil {
+				c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+				return
+			}
+			c.JSON(http.StatusOK, models.Response{
+				Success: true,
+				Message: "Successfully created record.",
+				Data:    RecordResponse{ScoreCount: hostDemoScoreCount, ScoreTime: hostDemoScoreTime},
+			})
+			return
+		}
+	}
 	// Everything is good, upload the demo files.
 	client, err := b2.NewClient(context.Background(), os.Getenv("B2_KEY_ID"), os.Getenv("B2_API_KEY"))
 	if err != nil {
@@ -347,32 +386,46 @@ func DownloadDemoWithID(c *gin.Context) {
 		return
 	}
 
+	localPath := ""
+	if os.Getenv("ENV") == "DEV" {
+		localPath = os.Getenv("LOCAL_DEMOS_PATH")
+	}
+
 	fileName := uuid + ".dem"
-	url := os.Getenv("B2_DOWNLOAD_URL") + fileName
-	output, err := os.Create(fileName)
-	if err != nil {
-		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-		return
+	if localPath == "" {
+		url := os.Getenv("B2_DOWNLOAD_URL") + fileName
+		output, err := os.Create(fileName)
+		if err != nil {
+			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+			return
+		}
+		defer os.Remove(fileName)
+		defer output.Close()
+		response, err := http.Get(url)
+		if err != nil {
+			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+			return
+		}
+		defer response.Body.Close()
+		_, err = io.Copy(output, response.Body)
+		if err != nil {
+			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+			return
+		}
 	}
-	defer os.Remove(fileName)
-	defer output.Close()
-	response, err := http.Get(url)
-	if err != nil {
-		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-		return
-	}
-	defer response.Body.Close()
-	_, err = io.Copy(output, response.Body)
-	if err != nil {
-		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-		return
-	}
+
 	// Downloaded file
 	c.Header("Content-Description", "File Transfer")
 	c.Header("Content-Transfer-Encoding", "binary")
 	c.Header("Content-Disposition", "attachment; filename="+fileName)
 	c.Header("Content-Type", "application/octet-stream")
-	c.File(fileName)
+
+	if localPath == "" {
+		c.File(fileName)
+	} else {
+		c.File(localPath + fileName)
+	}
+
 	// c.FileAttachment()
 }
 
