@@ -7,14 +7,14 @@
 * [Docker Engine]
 * [mkcert]
 * [Steam API key]
-* [Google Service Account]
+* [Backblaze Account]
 
 [Go]: https://go.dev/doc/install
 [Node/npm]: https://nodejs.org/en/download/package-manager
 [Docker Engine]: https://docs.docker.com/engine/install
 [mkcert]: https://github.com/FiloSottile/mkcert
 [Steam API key]: https://steamcommunity.com/dev/apikey
-[Google Service Account]: https://console.cloud.google.com
+[Backblaze Account]: https://www.backblaze.com
 
 ## Setup
 
@@ -52,9 +52,10 @@ Configure `backend/.env` file.
 |---|---|
 |SECRET_KEY|Securely generated random secret for login tokens. Example: `openssl rand -hex 16`|
 |API_KEY|Steam API key for fetching profile data.|
-|GOOGLE_CLIENT_EMAIL|Email of service account.|
-|GOOGLE_PRIVATE_KEY_BASE64|Private key of service account.|
-|GOOGLE_FOLDER_ID|Folder ID of shared Google Drive folder.|
+|B2_BUCKET_NAME|Bucket name from Backblaze.|
+|B2_KEY_ID|Key ID from Backblaze.|
+|B2_API_KEY|API key from Backblaze.|
+|B2_DOWNLOAD_URL|Download URL from Backblaze.|
 
 Configure `rankings/.env` file.
 
@@ -68,23 +69,14 @@ Configure `rankings/.env` file.
 * Log in with Steam
 * Navigate to frontend again (port 3000)
 
-## Google Drive
+## Demo storage
 
-* Create a [Google Service Account](https://console.cloud.google.com/iam-admin/serviceaccounts)
-* Create new key in JSON format
-* Convert value of `private_key` to base64 
-* Create a new folder on Google Drive
-* Share the folder with the email from the service account
-* Navigate to the folder and copy the folder ID from the URL
+* Create a Backblaze bucket and application access key
 * Modify `backend/.env` and set:
-  * `GOOGLE_PRIVATE_KEY_BASE64` base64 value of the key
-  * `GOOGLE_CLIENT_EMAIL` service account email
-  * `GOOGLE_FOLDER_ID` folder ID
-
-```bash
-# Example using jq
-echo "GOOGLE_PRIVATE_KEY_BASE64=\"$(cat service-account-key.json | jq -j '.private_key' | base64 -w 0)\"" >> backend/.env
-```
+  * `B2_BUCKET_NAME` name of the created bucket
+  * `B2_KEY_ID` app key ID
+  * `B2_API_KEY` app API key
+  * `B2_DOWNLOAD_URL` download URL of the bucket
 
 ## Build
 
