@@ -22,7 +22,6 @@ import (
 type RecordRequest struct {
 	HostDemo    *multipart.FileHeader `json:"host_demo" form:"host_demo" binding:"required" swaggerignore:"true"`
 	PartnerDemo *multipart.FileHeader `json:"partner_demo" form:"partner_demo" swaggerignore:"true"`
-	PartnerID   string                `json:"partner_id" form:"partner_id"`
 }
 
 type RecordResponse struct {
