@@ -108,7 +108,7 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
   };
 
   return (
-    <div>
+    <div style={{position: "absolute", width: "calc(100% - 50px)", left: "350px"}}>
       {MessageDialogComponent}
       {MessageDialogLoadComponent}
       {ConfirmDialogComponent}

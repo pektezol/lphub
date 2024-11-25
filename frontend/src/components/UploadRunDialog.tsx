@@ -2,6 +2,7 @@ import React from 'react';
 import { UploadRunContent } from '@customTypes/Content';
 import { ScoreboardTempUpdate, SourceDemoParser, NetMessages } from '@nekz/sdp';
 
+import btn from "@css/Button.module.css";
 import '@css/UploadRunDialog.css';
 import { Game } from '@customTypes/Game';
 import { Map } from '@customTypes/Map';
@@ -241,7 +242,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
                             <span>Drag and drop</span>
                             <div>
                               <span style={{ fontFamily: "BarlowSemiCondensed-Regular" }}>Or click here</span><br />
-                              <button style={{ borderRadius: "24px", padding: "5px 8px", margin: "5px 0px" }}>Upload</button>
+                              <button className={btn.default}>Upload</button>
                             </div>
                           </div>
                           : null}
@@ -260,7 +261,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
                                   <span>Drag and drop</span>
                                   <div>
                                     <span style={{ fontFamily: "BarlowSemiCondensed-Regular" }}>Or click here</span><br />
-                                    <button style={{ borderRadius: "24px", padding: "5px 8px", margin: "5px 0px" }}>Upload</button>
+                                    <button className={btn.default}>Upload</button>
                                   </div>
                                 </div>
                                 : null}
@@ -281,8 +282,8 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
               }
             </div>
 			<div className='upload-run-buttons-container'>
-                        <button onClick={_upload_run}>Submit</button>
-                        <button onClick={() => onClose(false)}>Cancel</button>
+                        <button className={`${btn.defaultWide}`} onClick={_upload_run}>Submit</button>
+                        <button className={`${btn.defaultWide}`} onClick={() => onClose(false)}>Cancel</button>
                       </div>
           </div>
         </div>

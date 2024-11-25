@@ -1,0 +1,163 @@
+.sidebar {
+	display: flex;
+	width: 350px;
+	min-width: 350px;
+	height: 100vh;
+	color: var(--text-color);
+	font-family: BarlowSemiCondensed-Regular;
+	font-size: 18px;
+	background-color: var(--primary-dark);
+	flex-direction: column;
+}
+
+.logo, .logo>a {
+	height: fit-content;
+	display: flex;
+	width: calc(100% - 4px);
+	text-decoration: none;
+	padding-left: 4px;
+	background-color: var(--primary)
+}
+
+.logo>a>img {
+	padding: 12px 8px;
+	height: 80px;
+}
+
+.logo>a>div {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+
+.logo>a>div>span {
+	font-size: 36px;
+    font-family: BarlowCondensed-Regular;
+	padding-left: 8px;
+}
+
+.logoTitle {
+	display: flex;
+	height: 60px;
+	font-size: 56px;
+}
+
+/* btns */
+.btns {
+	display: flex;
+	flex-direction: column;
+	padding: 0px 8px;
+	height: 100%;
+	width: calc(100% - 16px);
+	justify-content: space-between;
+	background-color: var(--primary);
+	transition: all 0.3s ease;
+}
+
+.topBtns>span {
+	height: 28px;
+	display: flex;
+}
+
+.btns.min {
+	width: 42px;
+}
+
+.topBtns, .bottomBtns {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.topBtns {
+	padding-top: 8px;
+}
+
+.bottomBtns {
+	padding-bottom: 8px;
+}
+
+.topBtns a, .bottomBtns a {
+	width: 100%;
+}
+
+.btnsContainer {
+	display: flex;
+}
+
+/* Clusterfuck */
+.searchContainer {
+	width: 0%;
+	transition: all 0.3s ease, overflow-y 0.0s ease 0.1s;
+	opacity: 0;
+	overflow-y: hidden;
+}
+
+.searchContainer.min {
+	width: 100%;
+	transition: all 0.3s ease, opacity 0.1s ease 0.1s;
+	opacity: 1;
+	overflow-y: auto;
+}
+
+.inpContainer {
+	padding: 8px;
+}
+
+.searchResults {
+	overflow-y: auto;
+	height: calc(100% - 54px);
+}
+
+.result {
+    margin: 10px 6px 0 6px;
+    height: 80px; 
+	width: 100%;
+	max-width: 285px;
+	animation: result_in 0.2s ease;
+	animation-fill-mode: backwards;
+	overflow: hidden;
+
+    border-radius: 20px;
+    text-align: center;
+    
+    display: grid;
+
+    border: 0;
+    transition: background-color .1s;
+    background-color: #2b2e46;
+    grid-template-rows: 20% 20% 60%;
+    width: calc(100% - 15px);
+}
+.result>span{
+    color: #888;
+    font-size: 16px;
+    font-family: BarlowSemiCondensed-Regular;
+}
+.result>span:nth-child(3), .result.player span{
+    font-size: 30px;
+    color: #CDCFDF;
+}
+
+.result.player img {
+	height: 80px;
+}
+
+.result.player span {
+	display: flex;
+	text-align: left;
+	margin-left: 90px;
+	width: fit-content;
+}
+
+@keyframes result_in {
+	0% {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0px);
+	}
+}
+

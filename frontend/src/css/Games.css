@@ -11,9 +11,7 @@
 }
 
 .games-page-item-content {
-    position: absolute;
-    left: 50px;
-    width: calc(100% - 100px);
+	position: relative;
 }
 
 .games-page-item-content a {

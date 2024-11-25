@@ -25,7 +25,7 @@ const Games: React.FC<GamesProps> = ({ games }) => {
     }, []);
 
     return (
-        <div className='games-page'>
+        <main>
             <section>
                 <div className='games-page-content'>
                     <div className='games-page-item-content'>
@@ -35,7 +35,7 @@ const Games: React.FC<GamesProps> = ({ games }) => {
                     </div>
                 </div>
             </section>
-        </div>
+        </main>
     );
 };
 

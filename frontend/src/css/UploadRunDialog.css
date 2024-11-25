@@ -96,23 +96,8 @@ div#upload-run{
     }
 }
 
-button, input {
-    background-color: #2b2e46;
-    border: none;
-    font-family: BarlowSemiCondensed-Regular;
-    color: #CDCFDF;
-    font-size: 18px;
-    cursor: pointer;
-    padding: 5px 0px;
-    transition: all 0.2s ease;
-}
-
 .upload-run-buttons-container button {
     border-radius: 32px;
-}
-
-button:hover {
-    background-color: #222538;
 }
 
 .upload-run-map-container {

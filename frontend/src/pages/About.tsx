@@ -27,9 +27,9 @@ const About: React.FC = () => {
 
 
     return (
-        <div id="about">
+        <main>
             <ReactMarkdown>{aboutText}</ReactMarkdown>
-        </div>
+        </main>
     );
 };
 

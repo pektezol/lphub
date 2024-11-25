@@ -1,5 +1,6 @@
 import React from 'react';
 
+import btn from "@css/Button.module.css"
 import "@css/Dialog.css"
 
 interface MessageDialogProps {
@@ -19,7 +20,7 @@ const MessageDialog: React.FC<MessageDialogProps> = ({ title, subtitle, onClose 
                     <span>{subtitle}</span>
                 </div>
                 <div className='dialog-element dialog-btns-container'>
-                    <button onClick={onClose}>Close</button>
+                    <button className={btn.default} onClick={onClose}>Close</button>
                 </div>
             </div>
         </div>

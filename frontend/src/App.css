@@ -1,13 +1,11 @@
 main {
     overflow: auto;
     overflow-x: hidden;
-    position: relative;
 
-    width: calc(100% - 380px); 
+    width: calc(100% - 350px); 
     height: 100vh;
-    left: 350px;
 
-    padding-right: 30px;
+    padding: 0px 30px;
 
     font-size: 40px;
     font-family: BarlowSemiCondensed-Regular;
@@ -15,9 +13,28 @@ main {
 
 }
 
+button img {
+	height: 24px;
+}
+
+b {
+	font-family: BarlowCondensed-Bold;
+}
+
+* {
+	--text-color: #cdcfdf;
+	--primary: #2B2E46;
+	--primary-dark: #202232;
+}
+
+#root {
+	display: flex;
+}
+
 a {
     color: inherit;
     width: fit-content;
+	text-decoration: none;
 }
 
 body {

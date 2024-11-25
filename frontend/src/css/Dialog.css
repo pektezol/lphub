@@ -61,11 +61,6 @@
     white-space: pre-wrap;
 }
 
-.dialog-btns-container button {
-    border-radius: 24px;
-    padding: 5px 10px;
-}
-
 .dialog-btns-container button:nth-child(2):hover {
     background-color: rgb(105, 36, 36);
 }

@@ -1,0 +1,15 @@
+.sidebar {
+    background-color: #161723;
+	color: var(--text-color);
+	border: none;
+	border-radius: 300px;
+	font-family: BarlowSemiCondensed-Regular;
+	padding: 8px;
+	width: calc(100% - 16px);
+	outline: none;
+	font-size: 18px;
+}
+
+.sidebar::placehoder {
+	color: #2b2e46;
+}
