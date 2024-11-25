@@ -1,4 +1,4 @@
-# Least Portals Hub (LPHUB)
+# LPHUB - Least Portals Hub
 
 ## About LPHUB
 
@@ -10,27 +10,9 @@ In addition, we host a leaderboard section for each map where users can compare 
 
 There's also discussion tabs for each map to act like forum pages in order to talk about possible new routes, alternatives, and overall comments.
 
-## Project Team
+## Contributors
 
-* [@pektezol](https://github.com/pektezol) - Project Lead
-* [@Krzyhau](https://github.com/Krzyhau) - Visual Design
-* [@Nidboj132](https://github.com/Nidboj132) - Subject Expert & Frontend
-* [@Oryn](https://github.com/Oryn-Goia) - Subject Expert
-* [@Wolfboy248](https://github.com/Wolfboy248) - Frontend
-
-## Content Contributors
-
-* Black_Semka
-* Feliser
-* Jaio
-* Jess3n
-* Robotwars1
-* Thearus
-
-## Special Thanks
-
-* [@NeKz](https://github.com/NeKzor) - For being the inspiration of this project and the developer of the former least portals site found [here](https://github.com/NeKzor/lp). Also for creating the [@nekz/sdp](https://github.com/NeKzor/sdp) package for demo parsing in client-side for quick information.
-* [@UncraftedName](https://github.com/UncraftedName) - For being a guide to parsing demo files and helping with how to retrieve total portal count and elapsed time from the CM counter with their parser found [here](https://github.com/UncraftedName/UntitledParser).
+Full list of contributors can be found in the [CONTRIBUTORS](https://github.com/pektezol/lphub/blob/main/CONTRIBUTORS.md) file.
 
 ## Documentation
 
@@ -53,7 +35,7 @@ If you want to support the creator, you can do it via using GitHub sponsorships 
 * We store a JWT (JSON Web Token) on your device as a cookie to facilitate authentication to LPHUB.
 * We collect and store your publicly available id, username, avatar link, and country code from Steam during your first login to LPHUB. The exact date and time of your LPHUB account creation is also stored.
 * In a case of profile update, newly changed values replaces the old data, and the update time is also stored.
-* All of the demo proof submitted by users are stored in a publicly accessible Google Drive folder. By submitting demo as a proof, you agree that your demo proof becomes available to the public.
+* All of the demo proof submitted by users are stored in a publicly accessible Backblaze B2 bucket. By submitting demo as a proof, you agree that your demo proof becomes available to the public.
 * Any information, ideas, or solutions shared on LPHUB are intended to be openly accessible and available for collaborative purposes. Users should understand that the content they contribute might be viewed and used by others for the purpose of generating insights and solutions.
 * At any time, Privacy Policy may get updated to reflect changes in LPHUB. The effective date at the bottom of the README indicates when the most recent changes were made.
 
@@ -73,4 +55,4 @@ By using LPHUB, you acknowledge that you have read and understood this disclaime
 
 ## Last Update
 
-2024-10-31
+2024-11-25
