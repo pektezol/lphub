@@ -35,7 +35,7 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
   };
 
   const _fetch_map_leaderboards = async () => {
-    const mapLeaderboards = await API.get_map_leaderboard(mapID);
+    const mapLeaderboards = await API.get_map_leaderboard(mapID, "1");
     setMapLeaderboardData(mapLeaderboards);
   };
 
@@ -94,7 +94,7 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
         </section>
 
         {navState === 0 && <Summary selectedRun={selectedRun} setSelectedRun={setSelectedRun} data={mapSummaryData} />}
-        {navState === 1 && <Leaderboards data={mapLeaderboardData} />}
+        {navState === 1 && <Leaderboards mapID={mapID} />}
         {navState === 2 && <Discussions data={mapDiscussionsData} token={token} isModerator={isModerator} mapID={mapID} onRefresh={() => _fetch_map_discussions()} />}
       </main>
     </>
