@@ -49,7 +49,7 @@ export const API = {
   delete_map_summary: (token: string, map_id: string, route_id: number) => delete_map_summary(token, map_id, route_id),
 };
 
-const BASE_API_URL: string = "https://lp.portal2.sr/api/v1/"
+const BASE_API_URL: string = "/api/v1/"
 
 export function url(path: string): string {
   return BASE_API_URL + path;
