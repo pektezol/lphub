@@ -8,8 +8,8 @@ export const get_map_summary = async (map_id: string): Promise<MapSummary> => {
   return response.data.data;
 };
 
-export const get_map_leaderboard = async (map_id: string): Promise<MapLeaderboard | undefined> => {
-  const response = await axios.get(url(`maps/${map_id}/leaderboards`));
+export const get_map_leaderboard = async (map_id: string, page: string): Promise<MapLeaderboard | undefined> => {
+  const response = await axios.get(url(`maps/${map_id}/leaderboards?page=${page}`));
   if (!response.data.success) {
     return undefined;
   }

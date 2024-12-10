@@ -29,7 +29,7 @@ export const API = {
   get_unofficial_rankings: () => get_unofficial_rankings(),
   // Maps
   get_map_summary: (map_id: string) => get_map_summary(map_id),
-  get_map_leaderboard: (map_id: string) => get_map_leaderboard(map_id),
+  get_map_leaderboard: (map_id: string, page: string) => get_map_leaderboard(map_id, page),
   get_map_discussions: (map_id: string) => get_map_discussions(map_id),
   get_map_discussion: (map_id: string, discussion_id: number) => get_map_discussion(map_id, discussion_id),
 
