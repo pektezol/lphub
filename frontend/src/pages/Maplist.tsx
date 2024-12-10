@@ -87,7 +87,13 @@ const Maplist: React.FC = () => {
     }
   }, [gameChapters])
 
-
+  useEffect(() => {
+	  const queryParams = new URLSearchParams(location.search);
+	  const cat = queryParams.get("cat");
+	  if (cat != null) {
+		  setCatNum(parseFloat(cat) - 1);
+	  }
+  }, [location])
 
   return (
     <main>
