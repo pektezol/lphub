@@ -1,0 +1,61 @@
+.content {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	gap: 24px;
+	margin-top: 24px;
+}
+
+.content a {
+	position: relative;
+	width: 100%;
+}
+
+.game {
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	overflow: hidden;
+	border-radius: 24px;
+	background-color: var(--primary-dark);
+}
+
+.header {
+	display: flex;
+	overflow: hidden;
+	position: relative;
+	flex: 1;
+}
+
+.header span {
+	position: relative;
+	z-index: 2;
+	display: flex;
+	text-align: center;
+	justify-content: center;
+	width: 100%;
+	padding: 24px 0px;
+	text-wrap: nowrap;
+}
+
+.header div {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 1;
+	background-size: cover;
+	filter: blur(4px);
+}
+
+.infoBlockContainer {
+	flex: 1;
+	display: flex;
+	gap: 12px;
+	margin: 12px;
+	align-items: center;
+	justify-content: center;
+	height: 50%;
+}

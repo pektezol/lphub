@@ -123,7 +123,9 @@ const Maplist: React.FC = () => {
                     )?.portal_count
                   }
                 </h2>
-                <h3>portals</h3>
+				<h3>{game?.category_portals.find(
+					(obj) => obj.category.id === catNum + 1)!.portal_count == 1 ? "portal" : "portals"
+				}</h3>
               </div>
               <div className="game-header-categories">
                 {game?.category_portals.map((cat, index) => (
@@ -162,7 +164,7 @@ const Maplist: React.FC = () => {
                         <span>{map.is_disabled ? map.category_portals[0].portal_count : map.category_portals.find(
                           (obj) => obj.category.id === catNum + 1
                         )?.portal_count}</span>
-                        <span>portals</span>
+					<span>{map.category_portals.find((obj) => obj.category.id === catNum + 1)?.portal_count == 1 ? "portal" : "portals"}</span>
                       </div>
                     </div>
                     <div className="difficulty-bar">

@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 
 import { Game, GameCategoryPortals } from '@customTypes/Game';
 import "@css/Games.css"
+import games from "@css/Games.module.css";
+import info from "@css/Info.module.css";
 
 interface GameCategoryProps {
     game: Game;
@@ -11,11 +13,11 @@ interface GameCategoryProps {
 
 const GameCategory: React.FC<GameCategoryProps> = ({cat, game}) => {
     return (
-        <Link className="games-page-item-body-item" to={"/games/" + game.id + "?cat=" + cat.category.id}>
+        <Link className={info.infoBlock} to={"/games/" + game.id + "?cat=" + cat.category.id}>
         <div>
-              <span className='games-page-item-body-item-title'>{cat.category.name}</span>
+              <span>{cat.category.name}</span>
               <br />
-              <span className='games-page-item-body-item-num'>{cat.portal_count}</span>
+              <span>{cat.portal_count}</span>
         </div>
         </Link>
     )

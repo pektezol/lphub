@@ -1,0 +1,21 @@
+.infoBlock {
+	background-color: var(--primary);
+	display: flex;
+	width: 100%;
+	border-radius: 18px;
+	text-align: center;
+	justify-content: center;
+	padding: 4px 0px;
+	text-wrap: nowrap;
+}
+
+.infoBlock > div > span:nth-child(1) {
+	margin-top: 0px;
+	font-size: 26px;
+}
+
+.infoBlock > div > span:nth-child(3) {
+	font-size: 50px;
+	font-family: BarlowCondensed-Bold;
+}
+
