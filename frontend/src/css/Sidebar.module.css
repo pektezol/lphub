@@ -36,7 +36,7 @@
 	padding-left: 8px;
 }
 
-.logoTitle {
+.logoTitle b {
 	display: flex;
 	height: 60px;
 	font-size: 56px;
@@ -109,6 +109,7 @@
 	height: calc(100% - 54px);
 }
 
+/* this can be improved */
 .result {
     margin: 10px 6px 0 6px;
     height: 80px; 

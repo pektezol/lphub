@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from "react-router-dom";
 
 import { Game, GameCategoryPortals } from '@customTypes/Game';
-import "@css/Games.css"
 import games from "@css/Games.module.css";
 
 import GameCategory from '@components/GameCategory';

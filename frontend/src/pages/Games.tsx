@@ -2,7 +2,6 @@ import React from 'react';
 
 import GameEntry from '@components/GameEntry';
 import { Game } from '@customTypes/Game';
-import "@css/Maps.css"
 import gamesCSS from "@css/Games.module.css";
 
 interface GamesProps {
