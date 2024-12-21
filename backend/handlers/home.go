@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sort"
 	"strings"
 
 	"lphub/database"
@@ -106,6 +107,15 @@ func RankingsLPHUB(c *gin.Context) {
 			}
 		}
 	}
+	// Sort the overall rankings
+	sort.Slice(response.Overall, func(i, j int) bool {
+		a := response.Overall[i]
+		b := response.Overall[j]
+		if a.TotalScore == b.TotalScore {
+			return a.User.SteamID < b.User.SteamID
+		}
+		return a.TotalScore < b.TotalScore
+	})
 
 	placement := 1
 	ties := 0
