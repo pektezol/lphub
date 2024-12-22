@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"sort"
 	"time"
 
 	"lphub/database"
@@ -183,6 +184,15 @@ func Profile(c *gin.Context) {
 			}
 		}
 	}
+	// Sort the overall rankings
+	sort.Slice(rankingsList.Overall, func(i, j int) bool {
+		a := rankingsList.Overall[i]
+		b := rankingsList.Overall[j]
+		if a.TotalScore == b.TotalScore {
+			return a.User.SteamID < b.User.SteamID
+		}
+		return a.TotalScore < b.TotalScore
+	})
 
 	placement := 1
 	ties := 0
@@ -507,6 +517,15 @@ func FetchUser(c *gin.Context) {
 			}
 		}
 	}
+	// Sort the overall rankings
+	sort.Slice(rankingsList.Overall, func(i, j int) bool {
+		a := rankingsList.Overall[i]
+		b := rankingsList.Overall[j]
+		if a.TotalScore == b.TotalScore {
+			return a.User.SteamID < b.User.SteamID
+		}
+		return a.TotalScore < b.TotalScore
+	})
 
 	placement := 1
 	ties := 0
