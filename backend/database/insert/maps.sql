@@ -96,7 +96,7 @@ INSERT INTO maps(game_id, chapter_id, name, is_disabled, image) VALUES
 (2,13,'Catapult Block',false,''),
 (2,13,'Bridge Fling',false,''),
 (2,13,'Turret Walls',false,''),
-(2,13,'Turret Assasin',false,''),
+(2,13,'Turret Assassin',false,''),
 (2,13,'Bridge Testing',false,''),
 -- 4
 (2,14,'Cooperative Funnels',false,''),
