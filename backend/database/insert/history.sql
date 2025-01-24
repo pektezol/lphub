@@ -547,7 +547,7 @@ INSERT INTO map_history(map_id,category_id,user_name,score_count,record_date) VA
 (57,1,'Krank',5,'2012-07-29'),
 (57,1,'Krzyhau',0,'2017-10-29'),
 (58,1,'Stimich',2,'2011-10-11'),
-(58,1,'Stimich',0,'2025-01-24'),
+(58,1,'Isenstige',0,'2025-01-24'),
 (59,1,'Isimmo',7,'2011-11-04'),
 (59,1,'sicklebrick',6,'2013-03-20'),
 (60,1,'CalmlyFrenetic',7,'2011-10-19'),
