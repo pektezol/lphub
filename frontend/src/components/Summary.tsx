@@ -18,18 +18,21 @@ const Summary: React.FC<SummaryProps> = ({
   const [selectedCategory, setSelectedCategory] = React.useState<number>(1);
   const [historySelected, setHistorySelected] = React.useState<boolean>(false);
 
-  function _select_run(idx: number, category_id: number) {
-    let r = document.querySelectorAll('button.record');
-    r.forEach(e => ((e as HTMLElement).style.backgroundColor = '#2b2e46'));
-    (r[idx] as HTMLElement).style.backgroundColor = '#161723';
+  const _select_run = React.useCallback(
+    (idx: number, category_id: number) => {
+      let r = document.querySelectorAll('button.record');
+      r.forEach(e => ((e as HTMLElement).style.backgroundColor = '#2b2e46'));
+      (r[idx] as HTMLElement).style.backgroundColor = '#161723';
 
-    if (data && data.summary.routes.length !== 0) {
-      idx += data.summary.routes.filter(
-        e => e.category.id < category_id
-      ).length; // lethimcook
-      setSelectedRun(idx);
-    }
-  }
+      if (data && data.summary.routes.length !== 0) {
+        idx += data.summary.routes.filter(
+          e => e.category.id < category_id
+        ).length; // lethimcook
+        setSelectedRun(idx);
+      }
+    },
+    [data, setSelectedRun]
+  );
 
   function _get_youtube_id(url: string): string {
     const urlArray = url.split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
@@ -38,7 +41,7 @@ const Summary: React.FC<SummaryProps> = ({
       : urlArray[0];
   }
 
-  function _category_change() {
+  const _category_change = React.useCallback(() => {
     const btn = document.querySelectorAll('#section3 #category span button');
     btn.forEach(e => {
       (e as HTMLElement).style.backgroundColor = '#2b2e46';
@@ -51,9 +54,9 @@ const Summary: React.FC<SummaryProps> = ({
           ? selectedCategory - 3
           : selectedCategory - 1;
     (btn[idx] as HTMLElement).style.backgroundColor = '#202232';
-  }
+  }, [selectedCategory, data.map.is_coop]);
 
-  function _history_change() {
+  const _history_change = React.useCallback(() => {
     const btn = document.querySelectorAll('#section3 #history span button');
     btn.forEach(e => {
       (e as HTMLElement).style.backgroundColor = '#2b2e46';
@@ -62,20 +65,20 @@ const Summary: React.FC<SummaryProps> = ({
       ? (btn[1] as HTMLElement)
       : (btn[0] as HTMLElement)
     ).style.backgroundColor = '#202232';
-  }
+  }, [historySelected]);
 
   React.useEffect(() => {
     _history_change();
-  }, [historySelected]);
+  }, [historySelected, _history_change]);
 
   React.useEffect(() => {
     _category_change();
     _select_run(0, selectedCategory);
-  }, [selectedCategory]);
+  }, [selectedCategory, _category_change, _select_run]);
 
   React.useEffect(() => {
     _select_run(0, selectedCategory);
-  }, []);
+  }, [_select_run, selectedCategory]);
 
   return (
     <>
