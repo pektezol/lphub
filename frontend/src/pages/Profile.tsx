@@ -111,19 +111,19 @@ const Profile: React.FC<ProfileProps> = ({
     if (!profile) {
       navigate('/');
     }
-  }, [profile]);
+  }, [profile, navigate]);
 
   React.useEffect(() => {
     if (profile) {
       _get_game_chapters();
     }
-  }, [profile, game]);
+  }, [profile, game, _get_game_chapters]);
 
   React.useEffect(() => {
     if (profile && game !== '0') {
       _get_game_maps();
     }
-  }, [profile, game, chapter, chapterData]);
+  }, [profile, game, chapter, chapterData, _get_game_maps]);
 
   if (!profile) {
     return <></>;
