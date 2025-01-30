@@ -98,9 +98,9 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({
   const _handle_dropdowns = (dropdown: number) => {
     setDropdown1Vis(false);
     setDropdown2Vis(false);
-    if (dropdown == 1) {
+    if (dropdown === 1) {
       setDropdown1Vis(!dropdown1Vis);
-    } else if (dropdown == 2) {
+    } else if (dropdown === 2) {
       setDropdown2Vis(!dropdown2Vis);
       document.querySelector('#dropdown2')?.scrollTo(0, 0);
     }
