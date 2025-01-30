@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 import { UserProfile } from '@customTypes/Profile';
 import Sidebar from './components/Sidebar';
@@ -68,6 +69,10 @@ const App: React.FC = () => {
 
   return (
     <>
+      <Helmet>
+        <title>LPHUB</title>
+        <meta name="description" content="Least Portals Hub" />
+      </Helmet>
       <UploadRunDialog token={token} open={uploadRunDialog} onClose={(updateProfile) => {
         setUploadRunDialog(false);
         if (updateProfile) {

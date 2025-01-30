@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 
 import { PortalIcon, FlagIcon, ChatIcon } from '@images/Images';
 import Summary from '@components/Summary';
@@ -53,26 +54,32 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
   if (!mapSummaryData) {
     // loading placeholder
     return (
-      <main>
-        <section id='section1' className='summary1'>
-          <div>
-            <Link to="/games"><button className='nav-button' style={{ borderRadius: "20px 20px 20px 20px" }}><i className='triangle'></i><span>Games List</span></button></Link>
-          </div>
-        </section>
+      <>
+        <main>
+          <section id='section1' className='summary1'>
+            <div>
+              <Link to="/games"><button className='nav-button' style={{ borderRadius: "20px 20px 20px 20px" }}><i className='triangle'></i><span>Games List</span></button></Link>
+            </div>
+          </section>
 
-        <section id='section2' className='summary1'>
-          <button className='nav-button'><img src={PortalIcon} alt="" /><span>Summary</span></button>
-          <button className='nav-button'><img src={FlagIcon} alt="" /><span>Leaderboards</span></button>
-          <button className='nav-button'><img src={ChatIcon} alt="" /><span>Discussions</span></button>
-        </section>
+          <section id='section2' className='summary1'>
+            <button className='nav-button'><img src={PortalIcon} alt="" /><span>Summary</span></button>
+            <button className='nav-button'><img src={FlagIcon} alt="" /><span>Leaderboards</span></button>
+            <button className='nav-button'><img src={ChatIcon} alt="" /><span>Discussions</span></button>
+          </section>
 
-        <section id='section6' className='summary2' />
-      </main>
+          <section id='section6' className='summary2' />
+        </main>
+      </>
     );
   }
 
   return (
     <>
+      <Helmet>
+        <title>LPHUB | {mapSummaryData.map.map_name}</title>
+        <meta name="description" content={mapSummaryData.map.map_name} />
+      </Helmet>
       {isModerator && <ModMenu token={token} data={mapSummaryData} selectedRun={selectedRun} mapID={mapID} />}
 
       <div id='background-image'>

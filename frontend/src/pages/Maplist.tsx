@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 import "@css/Maplist.css";
 import { API } from "@api/Api";
@@ -25,9 +26,9 @@ const Maplist: React.FC = () => {
   const navigate = useNavigate();
 
   function _update_currently_selected(catNum2: number) {
-      setCurrentlySelected(catNum2);
-      navigate("/games/" + game?.id + "?cat=" + catNum2);
-      setHasClicked(true);
+    setCurrentlySelected(catNum2);
+    navigate("/games/" + game?.id + "?cat=" + catNum2);
+    setHasClicked(true);
   }
 
   const _fetch_chapters = async (chapter_id: string) => {
@@ -52,12 +53,12 @@ const Maplist: React.FC = () => {
     // location query params
     const queryParams = new URLSearchParams(location.search);
     if (queryParams.get("chapter")) {
-        let cat = parseFloat(queryParams.get("chapter") || "");
-		if (gameId == 2) {
-			cat += 10;
-		}
-		_fetch_chapters(cat.toString());
-	}
+      let cat = parseFloat(queryParams.get("chapter") || "");
+      if (gameId == 2) {
+        cat += 10;
+      }
+      _fetch_chapters(cat.toString());
+    }
 
     const _fetch_game = async () => {
       const games = await API.get_games();
@@ -68,7 +69,7 @@ const Maplist: React.FC = () => {
         setLoad(false);
       }
     };
-    
+
     const _fetch_game_chapters = async () => {
       const games_chapters = await API.get_games_chapters(gameId.toString());
       setGameChapters(games_chapters);
@@ -81,7 +82,7 @@ const Maplist: React.FC = () => {
   }, []);
 
   useEffect(() => {
-  	const queryParams = new URLSearchParams(location.search);
+    const queryParams = new URLSearchParams(location.search);
     if (gameChapters != undefined && !queryParams.get("chapter")) {
       _fetch_chapters(gameChapters!.chapters[0].id.toString());
     }
@@ -91,6 +92,9 @@ const Maplist: React.FC = () => {
 
   return (
     <main>
+      <Helmet>
+        <title>LPHUB | Maplist</title>
+      </Helmet>
       <section style={{ marginTop: "20px" }}>
         <Link to="/games">
           <button className="nav-button" style={{ borderRadius: "20px" }}>
@@ -121,7 +125,7 @@ const Maplist: React.FC = () => {
               </div>
               <div className="game-header-categories">
                 {game?.category_portals.map((cat, index) => (
-                  <button key={index} className={currentlySelected == cat.category.id || cat.category.id - 1 == catNum && !hasClicked ? "game-cat-button selected" : "game-cat-button"} onClick={() => {setCatNum(cat.category.id - 1); _update_currently_selected(cat.category.id)}}>
+                  <button key={index} className={currentlySelected == cat.category.id || cat.category.id - 1 == catNum && !hasClicked ? "game-cat-button selected" : "game-cat-button"} onClick={() => { setCatNum(cat.category.id - 1); _update_currently_selected(cat.category.id) }}>
                     <span>{cat.category.name}</span>
                   </button>
                 ))}
@@ -132,26 +136,26 @@ const Maplist: React.FC = () => {
           <div>
             <section className="chapter-select-container">
               <div>
-                <span style={{fontSize: "18px", transform: "translateY(5px)", display: "block", marginTop: "10px"}}>{curChapter?.chapter.name.split(" - ")[0]}</span>
+                <span style={{ fontSize: "18px", transform: "translateY(5px)", display: "block", marginTop: "10px" }}>{curChapter?.chapter.name.split(" - ")[0]}</span>
               </div>
               <div onClick={_handle_dropdown_click} className="dropdown">
                 <span>{curChapter?.chapter.name.split(" - ")[1]}</span>
                 <i className="triangle"></i>
               </div>
-              <div className="dropdown-elements" style={{display: dropdownActive}}>
+              <div className="dropdown-elements" style={{ display: dropdownActive }}>
                 {gameChapters?.chapters.map((chapter, i) => {
-                  return <div className="dropdown-element" onClick={() => {_fetch_chapters(chapter.id.toString()); _handle_dropdown_click()}}>{chapter.name}</div>
+                  return <div className="dropdown-element" onClick={() => { _fetch_chapters(chapter.id.toString()); _handle_dropdown_click() }}>{chapter.name}</div>
                 })
 
                 }
               </div>
             </section>
             <section className="maplist">
-                {curChapter?.maps.map((map, i) => {
-                  return <div className="maplist-entry">
-                    <Link to={`/maps/${map.id}`}>
+              {curChapter?.maps.map((map, i) => {
+                return <div className="maplist-entry">
+                  <Link to={`/maps/${map.id}`}>
                     <span>{map.name}</span>
-                    <div className="map-entry-image" style={{backgroundImage: `url(${map.image})`}}>
+                    <div className="map-entry-image" style={{ backgroundImage: `url(${map.image})` }}>
                       <div className="blur map">
                         <span>{map.is_disabled ? map.category_portals[0].portal_count : map.category_portals.find(
                           (obj) => obj.category.id === catNum + 1
@@ -169,9 +173,9 @@ const Maplist: React.FC = () => {
                         <div className="difficulty-point"></div>
                       </div>
                     </div>
-                    </Link>
-                  </div>
-                })}
+                  </Link>
+                </div>
+              })}
             </section>
           </div>
         </section>

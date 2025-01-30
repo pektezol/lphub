@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
+import { Helmet } from 'react-helmet';
 
 import '@css/About.css';
 
@@ -28,6 +29,9 @@ const About: React.FC = () => {
 
     return (
         <div id="about">
+            <Helmet>
+                <title>LPHUB | About</title>
+            </Helmet>
             <ReactMarkdown>{aboutText}</ReactMarkdown>
         </div>
     );

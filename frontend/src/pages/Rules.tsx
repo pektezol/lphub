@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
+import { Helmet } from 'react-helmet';
 
 import '@css/Rules.css';
 
@@ -29,6 +30,9 @@ const Rules: React.FC = () => {
 
     return (
         <main>
+            <Helmet>
+                <title>LPHUB | Rules</title>
+            </Helmet>
             <ReactMarkdown>{rulesText}</ReactMarkdown>
         </main>
     );
