@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { url } from '@api/Api';
+import axios from "axios";
+import { url } from "@api/Api";
 
 export const get_token = async (): Promise<string | undefined> => {
   const response = await axios.get(url(`token`));
@@ -10,5 +10,5 @@ export const get_token = async (): Promise<string | undefined> => {
 };
 
 export const delete_token = async () => {
-  await axios.delete(url('token'));
+  await axios.delete(url("token"));
 };

@@ -1,12 +1,12 @@
-import axios from 'axios';
-import { url } from '@api/Api';
-import { MapDiscussionContent, UploadRunContent } from '@customTypes/Content';
+import axios from "axios";
+import { url } from "@api/Api";
+import { MapDiscussionContent, UploadRunContent } from "@customTypes/Content";
 import {
   MapSummary,
   MapLeaderboard,
   MapDiscussions,
   MapDiscussion,
-} from '@customTypes/Map';
+} from "@customTypes/Map";
 
 export const get_map_summary = async (map_id: string): Promise<MapSummary> => {
   const response = await axios.get(url(`maps/${map_id}/summary`));
@@ -27,9 +27,9 @@ export const get_map_leaderboard = async (
   // map the kind of leaderboard
   data.records = data.records.map((record: any) => {
     if (record.host && record.partner) {
-      return { ...record, kind: 'multiplayer' };
+      return { ...record, kind: "multiplayer" };
     } else {
-      return { ...record, kind: 'singleplayer' };
+      return { ...record, kind: "singleplayer" };
     }
   });
   return data;

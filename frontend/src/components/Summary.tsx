@@ -1,8 +1,8 @@
-import React from 'react';
-import ReactMarkdown from 'react-markdown';
+import React from "react";
+import ReactMarkdown from "react-markdown";
 
-import { MapSummary } from '@customTypes/Map';
-import '@css/Maps.css';
+import { MapSummary } from "@customTypes/Map";
+import "@css/Maps.css";
 
 interface SummaryProps {
   selectedRun: number;
@@ -20,9 +20,9 @@ const Summary: React.FC<SummaryProps> = ({
 
   const _select_run = React.useCallback(
     (idx: number, category_id: number) => {
-      let r = document.querySelectorAll('button.record');
-      r.forEach(e => ((e as HTMLElement).style.backgroundColor = '#2b2e46'));
-      (r[idx] as HTMLElement).style.backgroundColor = '#161723';
+      let r = document.querySelectorAll("button.record");
+      r.forEach(e => ((e as HTMLElement).style.backgroundColor = "#2b2e46"));
+      (r[idx] as HTMLElement).style.backgroundColor = "#161723";
 
       if (data && data.summary.routes.length !== 0) {
         idx += data.summary.routes.filter(
@@ -42,9 +42,9 @@ const Summary: React.FC<SummaryProps> = ({
   }
 
   const _category_change = React.useCallback(() => {
-    const btn = document.querySelectorAll('#section3 #category span button');
+    const btn = document.querySelectorAll("#section3 #category span button");
     btn.forEach(e => {
-      (e as HTMLElement).style.backgroundColor = '#2b2e46';
+      (e as HTMLElement).style.backgroundColor = "#2b2e46";
     });
     // heavenly father forgive me for i have sinned. TODO: fix this bullshit with dynamic categories
     const idx =
@@ -53,18 +53,18 @@ const Summary: React.FC<SummaryProps> = ({
         : data.map.is_coop
           ? selectedCategory - 3
           : selectedCategory - 1;
-    (btn[idx] as HTMLElement).style.backgroundColor = '#202232';
+    (btn[idx] as HTMLElement).style.backgroundColor = "#202232";
   }, [selectedCategory, data.map.is_coop]);
 
   const _history_change = React.useCallback(() => {
-    const btn = document.querySelectorAll('#section3 #history span button');
+    const btn = document.querySelectorAll("#section3 #history span button");
     btn.forEach(e => {
-      (e as HTMLElement).style.backgroundColor = '#2b2e46';
+      (e as HTMLElement).style.backgroundColor = "#2b2e46";
     });
     (historySelected
       ? (btn[1] as HTMLElement)
       : (btn[0] as HTMLElement)
-    ).style.backgroundColor = '#202232';
+    ).style.backgroundColor = "#202232";
   }, [historySelected]);
 
   React.useEffect(() => {
@@ -85,7 +85,7 @@ const Summary: React.FC<SummaryProps> = ({
       <section id="section3" className="summary1">
         <div
           id="category"
-          style={data.map.image === '' ? { backgroundColor: '#202232' } : {}}
+          style={data.map.image === "" ? { backgroundColor: "#202232" } : {}}
         >
           <img src={data.map.image} alt="" id="category-image"></img>
           <p>
@@ -97,7 +97,7 @@ const Summary: React.FC<SummaryProps> = ({
               : ` portals`}
           </p>
           {data.map.is_coop ? ( // TODO: make this part dynamic
-            <span style={{ gridTemplateColumns: '1fr 1fr 1fr' }}>
+            <span style={{ gridTemplateColumns: "1fr 1fr 1fr" }}>
               <button onClick={() => setSelectedCategory(1)}>CM</button>
               <button onClick={() => setSelectedCategory(4)}>Any%</button>
               <button onClick={() => setSelectedCategory(5)}>
@@ -105,7 +105,7 @@ const Summary: React.FC<SummaryProps> = ({
               </button>
             </span>
           ) : (
-            <span style={{ gridTemplateColumns: '1fr 1fr 1fr 1fr' }}>
+            <span style={{ gridTemplateColumns: "1fr 1fr 1fr 1fr" }}>
               <button onClick={() => setSelectedCategory(1)}>CM</button>
               <button onClick={() => setSelectedCategory(2)}>NoSLA</button>
               <button onClick={() => setSelectedCategory(3)}>
@@ -117,7 +117,7 @@ const Summary: React.FC<SummaryProps> = ({
         </div>
 
         <div id="history">
-          <div style={{ display: historySelected ? 'none' : 'block' }}>
+          <div style={{ display: historySelected ? "none" : "block" }}>
             {data.summary.routes.filter(e => e.category.id === selectedCategory)
               .length === 0 ? (
               <h5>There are no records for this map.</h5>
@@ -142,8 +142,8 @@ const Summary: React.FC<SummaryProps> = ({
                       >
                         <span>
                           {new Date(r.history.date).toLocaleDateString(
-                            'en-US',
-                            { month: 'long', day: 'numeric', year: 'numeric' }
+                            "en-US",
+                            { month: "long", day: "numeric", year: "numeric" }
                           )}
                         </span>
                         <span>{r.history.score_count}</span>
@@ -155,7 +155,7 @@ const Summary: React.FC<SummaryProps> = ({
             )}
           </div>
 
-          <div style={{ display: historySelected ? 'block' : 'none' }}>
+          <div style={{ display: historySelected ? "block" : "none" }}>
             {data.summary.routes.filter(e => e.category.id === selectedCategory)
               .length === 0 ? (
               <h5>There are no records for this map.</h5>
@@ -178,25 +178,25 @@ const Summary: React.FC<SummaryProps> = ({
           <span>Difficulty</span>
           {data.summary.routes[selectedRun].rating === 0 && <span>N/A</span>}
           {data.summary.routes[selectedRun].rating === 1 && (
-            <span style={{ color: 'lime' }}>Very easy</span>
+            <span style={{ color: "lime" }}>Very easy</span>
           )}
           {data.summary.routes[selectedRun].rating === 2 && (
-            <span style={{ color: 'green' }}>Easy</span>
+            <span style={{ color: "green" }}>Easy</span>
           )}
           {data.summary.routes[selectedRun].rating === 3 && (
-            <span style={{ color: 'yellow' }}>Medium</span>
+            <span style={{ color: "yellow" }}>Medium</span>
           )}
           {data.summary.routes[selectedRun].rating === 4 && (
-            <span style={{ color: 'orange' }}>Hard</span>
+            <span style={{ color: "orange" }}>Hard</span>
           )}
           {data.summary.routes[selectedRun].rating === 5 && (
-            <span style={{ color: 'red' }}>Very hard</span>
+            <span style={{ color: "red" }}>Very hard</span>
           )}
           <div>
             {data.summary.routes[selectedRun].rating === 1 ? (
               <div
                 className="difficulty-rating"
-                style={{ backgroundColor: 'lime' }}
+                style={{ backgroundColor: "lime" }}
               ></div>
             ) : (
               <div className="difficulty-rating"></div>
@@ -204,7 +204,7 @@ const Summary: React.FC<SummaryProps> = ({
             {data.summary.routes[selectedRun].rating === 2 ? (
               <div
                 className="difficulty-rating"
-                style={{ backgroundColor: 'green' }}
+                style={{ backgroundColor: "green" }}
               ></div>
             ) : (
               <div className="difficulty-rating"></div>
@@ -212,7 +212,7 @@ const Summary: React.FC<SummaryProps> = ({
             {data.summary.routes[selectedRun].rating === 3 ? (
               <div
                 className="difficulty-rating"
-                style={{ backgroundColor: 'yellow' }}
+                style={{ backgroundColor: "yellow" }}
               ></div>
             ) : (
               <div className="difficulty-rating"></div>
@@ -220,7 +220,7 @@ const Summary: React.FC<SummaryProps> = ({
             {data.summary.routes[selectedRun].rating === 4 ? (
               <div
                 className="difficulty-rating"
-                style={{ backgroundColor: 'orange' }}
+                style={{ backgroundColor: "orange" }}
               ></div>
             ) : (
               <div className="difficulty-rating"></div>
@@ -228,7 +228,7 @@ const Summary: React.FC<SummaryProps> = ({
             {data.summary.routes[selectedRun].rating === 5 ? (
               <div
                 className="difficulty-rating"
-                style={{ backgroundColor: 'red' }}
+                style={{ backgroundColor: "red" }}
               ></div>
             ) : (
               <div className="difficulty-rating"></div>
@@ -243,18 +243,18 @@ const Summary: React.FC<SummaryProps> = ({
 
       <section id="section5" className="summary1">
         <div id="description">
-          {data.summary.routes[selectedRun].showcase !== '' ? (
+          {data.summary.routes[selectedRun].showcase !== "" ? (
             <iframe
               title="Showcase video"
               src={
-                'https://www.youtube.com/embed/' +
+                "https://www.youtube.com/embed/" +
                 _get_youtube_id(data.summary.routes[selectedRun].showcase)
               }
             >
-              {' '}
+              {" "}
             </iframe>
           ) : (
-            ''
+            ""
           )}
           <h3>Route Description</h3>
           <span id="description-text">

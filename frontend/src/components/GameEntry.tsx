@@ -1,10 +1,10 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
-import { Game, GameCategoryPortals } from '@customTypes/Game';
-import '@css/Games.css';
+import { Game, GameCategoryPortals } from "@customTypes/Game";
+import "@css/Games.css";
 
-import GameCategory from '@components/GameCategory';
+import GameCategory from "@components/GameCategory";
 
 interface GameEntryProps {
   game: Game;
@@ -18,7 +18,7 @@ const GameEntry: React.FC<GameEntryProps> = ({ game }) => {
   }, [game.category_portals]);
 
   return (
-    <Link to={'/games/' + game.id}>
+    <Link to={"/games/" + game.id}>
       <div className="games-page-item">
         <div className="games-page-item-header">
           <div

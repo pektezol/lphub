@@ -1,8 +1,8 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
-import { Game, GameCategoryPortals } from '@customTypes/Game';
-import '@css/Games.css';
+import { Game, GameCategoryPortals } from "@customTypes/Game";
+import "@css/Games.css";
 
 interface GameCategoryProps {
   game: Game;
@@ -13,7 +13,7 @@ const GameCategory: React.FC<GameCategoryProps> = ({ cat, game }) => {
   return (
     <Link
       className="games-page-item-body-item"
-      to={'/games/' + game.id + '?cat=' + cat.category.id}
+      to={"/games/" + game.id + "?cat=" + cat.category.id}
     >
       <div>
         <span className="games-page-item-body-item-title">

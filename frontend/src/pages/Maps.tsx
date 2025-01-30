@@ -1,15 +1,15 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
-import { PortalIcon, FlagIcon, ChatIcon } from '@images/Images';
-import Summary from '@components/Summary';
-import Leaderboards from '@components/Leaderboards';
-import Discussions from '@components/Discussions';
-import ModMenu from '@components/ModMenu';
-import { MapDiscussions, MapLeaderboard, MapSummary } from '@customTypes/Map';
-import { API } from '@api/Api';
-import '@css/Maps.css';
+import { PortalIcon, FlagIcon, ChatIcon } from "@images/Images";
+import Summary from "@components/Summary";
+import Leaderboards from "@components/Leaderboards";
+import Discussions from "@components/Discussions";
+import ModMenu from "@components/ModMenu";
+import { MapDiscussions, MapLeaderboard, MapSummary } from "@customTypes/Map";
+import { API } from "@api/Api";
+import "@css/Maps.css";
 
 interface MapProps {
   token?: string;
@@ -33,7 +33,7 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
 
   const location = useLocation();
 
-  const mapID = location.pathname.split('/')[2];
+  const mapID = location.pathname.split("/")[2];
 
   const _fetch_map_summary = React.useCallback(async () => {
     const mapSummary = await API.get_map_summary(mapID);
@@ -41,7 +41,7 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
   }, [mapID]);
 
   const _fetch_map_leaderboards = React.useCallback(async () => {
-    const mapLeaderboards = await API.get_map_leaderboard(mapID, '1');
+    const mapLeaderboards = await API.get_map_leaderboard(mapID, "1");
     setMapLeaderboardData(mapLeaderboards);
   }, [mapID]);
 
@@ -71,7 +71,7 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
               <Link to="/games">
                 <button
                   className="nav-button"
-                  style={{ borderRadius: '20px 20px 20px 20px' }}
+                  style={{ borderRadius: "20px 20px 20px 20px" }}
                 >
                   <i className="triangle"></i>
                   <span>Games List</span>
@@ -125,18 +125,18 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
             <Link to="/games">
               <button
                 className="nav-button"
-                style={{ borderRadius: '20px 0px 0px 20px' }}
+                style={{ borderRadius: "20px 0px 0px 20px" }}
               >
                 <i className="triangle"></i>
                 <span>Games List</span>
               </button>
             </Link>
             <Link
-              to={`/games/${mapSummaryData.map.is_coop ? '2' : '1'}?chapter=${mapSummaryData.map.chapter_name.split(' ')[1]}`}
+              to={`/games/${mapSummaryData.map.is_coop ? "2" : "1"}?chapter=${mapSummaryData.map.chapter_name.split(" ")[1]}`}
             >
               <button
                 className="nav-button"
-                style={{ borderRadius: '0px 20px 20px 0px', marginLeft: '2px' }}
+                style={{ borderRadius: "0px 20px 20px 0px", marginLeft: "2px" }}
               >
                 <i className="triangle"></i>
                 <span>{mapSummaryData.map.chapter_name}</span>

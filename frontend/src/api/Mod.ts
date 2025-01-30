@@ -1,6 +1,6 @@
-import axios from 'axios';
-import { url } from '@api/Api';
-import { ModMenuContent } from '@customTypes/Content';
+import axios from "axios";
+import { url } from "@api/Api";
+import { ModMenuContent } from "@customTypes/Content";
 
 export const put_map_image = async (
   token: string,

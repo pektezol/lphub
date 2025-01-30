@@ -1,5 +1,5 @@
-import type { Game } from '@customTypes/Game';
-import type { Map } from '@customTypes/Map';
+import type { Game } from "@customTypes/Game";
+import type { Map } from "@customTypes/Map";
 
 interface Chapter {
   id: number;

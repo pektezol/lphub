@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import MessageDialogLoad from '@components/MessageDialogLoad';
+import React, { useState } from "react";
+import MessageDialogLoad from "@components/MessageDialogLoad";
 
 const useMessageLoad = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const [title, setTitle] = useState<string>('');
+  const [title, setTitle] = useState<string>("");
   const [resolvePromise, setResolvePromise] = useState<(() => void) | null>(
     null
   );

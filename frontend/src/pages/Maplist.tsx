@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
+import React, { useEffect } from "react";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
-import '@css/Maplist.css';
-import { API } from '@api/Api';
-import { Game } from '@customTypes/Game';
-import { GameChapter, GamesChapters } from '@customTypes/Chapters';
+import "@css/Maplist.css";
+import { API } from "@api/Api";
+import { Game } from "@customTypes/Game";
+import { GameChapter, GamesChapters } from "@customTypes/Chapters";
 
 const Maplist: React.FC = () => {
   const [game, setGame] = React.useState<Game | null>(null);
@@ -18,7 +18,7 @@ const Maplist: React.FC = () => {
   const [curChapter, setCurChapter] = React.useState<GameChapter>();
   const [numChapters, setNumChapters] = React.useState<number>(0);
 
-  const [dropdownActive, setDropdownActive] = React.useState('none');
+  const [dropdownActive, setDropdownActive] = React.useState("none");
 
   const params = useParams<{ id: string; chapter: string }>();
   const location = useLocation();
@@ -26,7 +26,7 @@ const Maplist: React.FC = () => {
 
   function _update_currently_selected(catNum2: number) {
     setCurrentlySelected(catNum2);
-    navigate('/games/' + game?.id + '?cat=' + catNum2);
+    navigate("/games/" + game?.id + "?cat=" + catNum2);
     setHasClicked(true);
   }
 
@@ -36,23 +36,23 @@ const Maplist: React.FC = () => {
   };
 
   const _handle_dropdown_click = () => {
-    if (dropdownActive === 'none') {
-      setDropdownActive('block');
+    if (dropdownActive === "none") {
+      setDropdownActive("block");
     } else {
-      setDropdownActive('none');
+      setDropdownActive("none");
     }
   };
 
   // im sorry but im too lazy to fix this right now
   useEffect(() => {
     // gameID
-    const gameId = parseFloat(params.id || '');
+    const gameId = parseFloat(params.id || "");
     setId(gameId);
 
     // location query params
     const queryParams = new URLSearchParams(location.search);
-    if (queryParams.get('chapter')) {
-      let cat = parseFloat(queryParams.get('chapter') || '');
+    if (queryParams.get("chapter")) {
+      let cat = parseFloat(queryParams.get("chapter") || "");
       if (gameId === 2) {
         cat += 10;
       }
@@ -82,7 +82,7 @@ const Maplist: React.FC = () => {
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
-    if (gameChapters !== undefined && !queryParams.get('chapter')) {
+    if (gameChapters !== undefined && !queryParams.get("chapter")) {
       _fetch_chapters(gameChapters!.chapters[0].id.toString());
     }
   }, [gameChapters, location.search]);
@@ -92,9 +92,9 @@ const Maplist: React.FC = () => {
       <Helmet>
         <title>LPHUB | Maplist</title>
       </Helmet>
-      <section style={{ marginTop: '20px' }}>
+      <section style={{ marginTop: "20px" }}>
         <Link to="/games">
-          <button className="nav-button" style={{ borderRadius: '20px' }}>
+          <button className="nav-button" style={{ borderRadius: "20px" }}>
             <i className="triangle"></i>
             <span>Games List</span>
           </button>
@@ -127,8 +127,8 @@ const Maplist: React.FC = () => {
                     className={
                       currentlySelected === cat.category.id ||
                       (cat.category.id - 1 === catNum && !hasClicked)
-                        ? 'game-cat-button selected'
-                        : 'game-cat-button'
+                        ? "game-cat-button selected"
+                        : "game-cat-button"
                     }
                     onClick={() => {
                       setCatNum(cat.category.id - 1);
@@ -147,17 +147,17 @@ const Maplist: React.FC = () => {
               <div>
                 <span
                   style={{
-                    fontSize: '18px',
-                    transform: 'translateY(5px)',
-                    display: 'block',
-                    marginTop: '10px',
+                    fontSize: "18px",
+                    transform: "translateY(5px)",
+                    display: "block",
+                    marginTop: "10px",
                   }}
                 >
-                  {curChapter?.chapter.name.split(' - ')[0]}
+                  {curChapter?.chapter.name.split(" - ")[0]}
                 </span>
               </div>
               <div onClick={_handle_dropdown_click} className="dropdown">
-                <span>{curChapter?.chapter.name.split(' - ')[1]}</span>
+                <span>{curChapter?.chapter.name.split(" - ")[1]}</span>
                 <i className="triangle"></i>
               </div>
               <div
@@ -205,16 +205,16 @@ const Maplist: React.FC = () => {
                         <div
                           className={
                             map.difficulty === 0
-                              ? 'one'
+                              ? "one"
                               : map.difficulty === 1
-                                ? 'two'
+                                ? "two"
                                 : map.difficulty === 2
-                                  ? 'three'
+                                  ? "three"
                                   : map.difficulty === 3
-                                    ? 'four'
+                                    ? "four"
                                     : map.difficulty === 4
-                                      ? 'five'
-                                      : 'one'
+                                      ? "five"
+                                      : "one"
                           }
                         >
                           <div className="difficulty-point"></div>

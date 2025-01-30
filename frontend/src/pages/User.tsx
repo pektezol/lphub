@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
+import React from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 import {
   SteamIcon,
@@ -13,14 +13,14 @@ import {
   ThreedotIcon,
   DownloadIcon,
   HistoryIcon,
-} from '@images/Images';
-import { UserProfile } from '@customTypes/Profile';
-import { Game, GameChapters } from '@customTypes/Game';
-import { Map } from '@customTypes/Map';
-import { API } from '@api/Api';
-import { ticks_to_time } from '@utils/Time';
-import '@css/Profile.css';
-import useMessage from '@hooks/UseMessage';
+} from "@images/Images";
+import { UserProfile } from "@customTypes/Profile";
+import { Game, GameChapters } from "@customTypes/Game";
+import { Map } from "@customTypes/Map";
+import { API } from "@api/Api";
+import { ticks_to_time } from "@utils/Time";
+import "@css/Profile.css";
+import useMessage from "@hooks/UseMessage";
 
 interface UserProps {
   profile?: UserProfile;
@@ -37,8 +37,8 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
   const [pageNumber, setPageNumber] = React.useState(1);
   const [pageMax, setPageMax] = React.useState(0);
 
-  const [game, setGame] = React.useState('0');
-  const [chapter, setChapter] = React.useState('0');
+  const [game, setGame] = React.useState("0");
+  const [chapter, setChapter] = React.useState("0");
   const [chapterData, setChapterData] = React.useState<GameChapters | null>(
     null
   );
@@ -48,9 +48,9 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
   const navigate = useNavigate();
 
   const _fetch_user = React.useCallback(async () => {
-    const userID = location.pathname.split('/')[2];
+    const userID = location.pathname.split("/")[2];
     if (token && profile && profile.profile && profile.steam_id === userID) {
-      navigate('/profile');
+      navigate("/profile");
       return;
     }
     const userData = await API.get_user(userID);
@@ -58,7 +58,7 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
   }, [location.pathname, token, profile, navigate]);
 
   const _get_game_chapters = React.useCallback(async () => {
-    if (game !== '0') {
+    if (game !== "0") {
       const gameChapters = await API.get_games_chapters(game);
       setChapterData(gameChapters);
     } else {
@@ -68,7 +68,7 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
   }, [game, user]);
 
   const _get_game_maps = React.useCallback(async () => {
-    if (chapter === '0') {
+    if (chapter === "0") {
       const gameMaps = await API.get_game_maps(game);
       setMaps(gameMaps);
       setPageMax(Math.ceil(gameMaps.length / 20));
@@ -92,7 +92,7 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
   }, [user, game, location, _get_game_chapters]);
 
   React.useEffect(() => {
-    if (user && game !== '0') {
+    if (user && game !== "0") {
       _get_game_maps();
     }
   }, [user, game, chapter, location, _get_game_maps]);
@@ -116,8 +116,8 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
           <div>
             <div>{user.user_name}</div>
             <div>
-              {user.country_code === 'XX' ? (
-                ''
+              {user.country_code === "XX" ? (
+                ""
               ) : (
                 <img
                   src={`https://flagcdn.com/w80/${user.country_code.toLowerCase()}.jpg`}
@@ -137,32 +137,32 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
             </div>
           </div>
           <div>
-            {user.links.steam === '-' ? (
-              ''
+            {user.links.steam === "-" ? (
+              ""
             ) : (
               <a href={user.links.steam}>
                 <img src={SteamIcon} alt="Steam" />
               </a>
             )}
-            {user.links.twitch === '-' ? (
-              ''
+            {user.links.twitch === "-" ? (
+              ""
             ) : (
               <a href={user.links.twitch}>
                 <img src={TwitchIcon} alt="Twitch" />
               </a>
             )}
-            {user.links.youtube === '-' ? (
-              ''
+            {user.links.youtube === "-" ? (
+              ""
             ) : (
               <a href={user.links.youtube}>
                 <img src={YouTubeIcon} alt="Youtube" />
               </a>
             )}
-            {user.links.p2sr === '-' ? (
-              ''
+            {user.links.p2sr === "-" ? (
+              ""
             ) : (
               <a href={user.links.p2sr}>
-                <img src={PortalIcon} alt="P2SR" style={{ padding: '0' }} />
+                <img src={PortalIcon} alt="P2SR" style={{ padding: "0" }} />
               </a>
             )}
           </div>
@@ -172,8 +172,8 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
             <span>Overall</span>
             <span>
               {user.rankings.overall.rank === 0
-                ? 'N/A '
-                : '#' + user.rankings.overall.rank + ' '}
+                ? "N/A "
+                : "#" + user.rankings.overall.rank + " "}
               <span>
                 ({user.rankings.overall.completion_count}/
                 {user.rankings.overall.completion_total})
@@ -184,8 +184,8 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
             <span>Singleplayer</span>
             <span>
               {user.rankings.singleplayer.rank === 0
-                ? 'N/A '
-                : '#' + user.rankings.singleplayer.rank + ' '}
+                ? "N/A "
+                : "#" + user.rankings.singleplayer.rank + " "}
               <span>
                 ({user.rankings.singleplayer.completion_count}/
                 {user.rankings.singleplayer.completion_total})
@@ -196,8 +196,8 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
             <span>Cooperative</span>
             <span>
               {user.rankings.cooperative.rank === 0
-                ? 'N/A '
-                : '#' + user.rankings.cooperative.rank + ' '}
+                ? "N/A "
+                : "#" + user.rankings.cooperative.rank + " "}
               <span>
                 ({user.rankings.cooperative.completion_count}/
                 {user.rankings.cooperative.completion_total})
@@ -227,15 +227,15 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
               id="select-game"
               onChange={() => {
                 setGame(
-                  (document.querySelector('#select-game') as HTMLInputElement)
+                  (document.querySelector("#select-game") as HTMLInputElement)
                     .value
                 );
-                setChapter('0');
+                setChapter("0");
                 const chapterSelect = document.querySelector(
-                  '#select-chapter'
+                  "#select-chapter"
                 ) as HTMLSelectElement;
                 if (chapterSelect) {
-                  chapterSelect.value = '0';
+                  chapterSelect.value = "0";
                 }
               }}
             >
@@ -250,7 +250,7 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
             </select>
           )}
 
-          {game === '0' ? (
+          {game === "0" ? (
             <select disabled>
               <option>All Chapters</option>
             </select>
@@ -263,7 +263,7 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
                 setChapter(
                   (
                     document.querySelector(
-                      '#select-chapter'
+                      "#select-chapter"
                     ) as HTMLInputElement
                   ).value
                 )
@@ -287,15 +287,15 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
             <span>Map Name</span>
             <img src={SortIcon} alt="" />
           </span>
-          <span style={{ justifyContent: 'center' }}>
+          <span style={{ justifyContent: "center" }}>
             <span>Portals</span>
             <img src={SortIcon} alt="" />
           </span>
-          <span style={{ justifyContent: 'center' }}>
+          <span style={{ justifyContent: "center" }}>
             <span>WRΔ </span>
             <img src={SortIcon} alt="" />
           </span>
-          <span style={{ justifyContent: 'center' }}>
+          <span style={{ justifyContent: "center" }}>
             <span>Time</span>
             <img src={SortIcon} alt="" />
           </span>
@@ -315,18 +315,18 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
                   if (pageNumber !== 1) {
                     setPageNumber(prevPageNumber => prevPageNumber - 1);
                     const records = document.querySelectorAll(
-                      '.profileboard-record'
+                      ".profileboard-record"
                     );
                     records.forEach(r => {
-                      (r as HTMLInputElement).style.height = '44px';
+                      (r as HTMLInputElement).style.height = "44px";
                     });
                   }
                 }}
               >
                 <i
                   className="triangle"
-                  style={{ position: 'relative', left: '-5px' }}
-                ></i>{' '}
+                  style={{ position: "relative", left: "-5px" }}
+                ></i>{" "}
               </button>
               <span>
                 {pageNumber}/{pageMax}
@@ -336,10 +336,10 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
                   if (pageNumber !== pageMax) {
                     setPageNumber(prevPageNumber => prevPageNumber + 1);
                     const records = document.querySelectorAll(
-                      '.profileboard-record'
+                      ".profileboard-record"
                     );
                     records.forEach(r => {
-                      (r as HTMLInputElement).style.height = '44px';
+                      (r as HTMLInputElement).style.height = "44px";
                     });
                   }
                 }}
@@ -347,18 +347,18 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
                 <i
                   className="triangle"
                   style={{
-                    position: 'relative',
-                    left: '5px',
-                    transform: 'rotate(180deg)',
+                    position: "relative",
+                    left: "5px",
+                    transform: "rotate(180deg)",
                   }}
-                ></i>{' '}
+                ></i>{" "}
               </button>
             </div>
           </div>
         </div>
         <hr />
         <div id="profileboard-records">
-          {game === '0' ? (
+          {game === "0" ? (
             user.records
               .sort((a, b) => a.map_id - b.map_id)
               .map((r, index) =>
@@ -367,33 +367,33 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
                     {r.scores.map((e, i) => (
                       <>
                         {i !== 0 ? (
-                          <hr style={{ gridColumn: '1 / span 8' }} />
+                          <hr style={{ gridColumn: "1 / span 8" }} />
                         ) : (
-                          ''
+                          ""
                         )}
 
                         <Link to={`/maps/${r.map_id}`}>
                           <span>{r.map_name}</span>
                         </Link>
 
-                        <span style={{ display: 'grid' }}>{e.score_count}</span>
+                        <span style={{ display: "grid" }}>{e.score_count}</span>
 
-                        <span style={{ display: 'grid' }}>
+                        <span style={{ display: "grid" }}>
                           {e.score_count - r.map_wr_count > 0
                             ? `+${e.score_count - r.map_wr_count}`
                             : `-`}
                         </span>
-                        <span style={{ display: 'grid' }}>
+                        <span style={{ display: "grid" }}>
                           {ticks_to_time(e.score_time)}
                         </span>
                         <span> </span>
                         {i === 0 ? <span>#{r.placement}</span> : <span> </span>}
-                        <span>{e.date.split('T')[0]}</span>
-                        <span style={{ flexDirection: 'row-reverse' }}>
+                        <span>{e.date.split("T")[0]}</span>
+                        <span style={{ flexDirection: "row-reverse" }}>
                           <button
                             onClick={() => {
                               message(
-                                'Demo Information',
+                                "Demo Information",
                                 `Demo ID: ${e.demo_id}`
                               );
                             }}
@@ -412,38 +412,38 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
                               onClick={() => {
                                 (
                                   document.querySelectorAll(
-                                    '.profileboard-record'
+                                    ".profileboard-record"
                                   )[index % 20] as HTMLInputElement
-                                ).style.height === '44px' ||
+                                ).style.height === "44px" ||
                                 (
                                   document.querySelectorAll(
-                                    '.profileboard-record'
+                                    ".profileboard-record"
                                   )[index % 20] as HTMLInputElement
-                                ).style.height === ''
+                                ).style.height === ""
                                   ? ((
                                       document.querySelectorAll(
-                                        '.profileboard-record'
+                                        ".profileboard-record"
                                       )[index % 20] as HTMLInputElement
                                     ).style.height =
                                       `${r.scores.length * 46}px`)
                                   : ((
                                       document.querySelectorAll(
-                                        '.profileboard-record'
+                                        ".profileboard-record"
                                       )[index % 20] as HTMLInputElement
-                                    ).style.height = '44px');
+                                    ).style.height = "44px");
                               }}
                             >
                               <img src={HistoryIcon} alt="history" />
                             </button>
                           ) : (
-                            ''
+                            ""
                           )}
                         </span>
                       </>
                     ))}
                   </button>
                 ) : (
-                  ''
+                  ""
                 )
               )
           ) : maps ? (
@@ -457,42 +457,42 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
                     <button
                       className="profileboard-record"
                       key={index}
-                      style={{ backgroundColor: '#1b1b20' }}
+                      style={{ backgroundColor: "#1b1b20" }}
                     >
                       <Link to={`/maps/${r.id}`}>
                         <span>{r.name}</span>
                       </Link>
-                      <span style={{ display: 'grid' }}>N/A</span>
-                      <span style={{ display: 'grid' }}>N/A</span>
+                      <span style={{ display: "grid" }}>N/A</span>
+                      <span style={{ display: "grid" }}>N/A</span>
                       <span>N/A</span>
                       <span> </span>
                       <span>N/A</span>
                       <span>N/A</span>
-                      <span style={{ flexDirection: 'row-reverse' }}></span>
+                      <span style={{ flexDirection: "row-reverse" }}></span>
                     </button>
                   ) : (
                     <button className="profileboard-record" key={index}>
                       {record.scores.map((e, i) => (
                         <>
                           {i !== 0 ? (
-                            <hr style={{ gridColumn: '1 / span 8' }} />
+                            <hr style={{ gridColumn: "1 / span 8" }} />
                           ) : (
-                            ''
+                            ""
                           )}
                           <Link to={`/maps/${r.id}`}>
                             <span>{r.name}</span>
                           </Link>
-                          <span style={{ display: 'grid' }}>
+                          <span style={{ display: "grid" }}>
                             {record!.scores[i].score_count}
                           </span>
-                          <span style={{ display: 'grid' }}>
+                          <span style={{ display: "grid" }}>
                             {record!.scores[i].score_count -
                               record!.map_wr_count >
                             0
                               ? `+${record!.scores[i].score_count - record!.map_wr_count}`
                               : `-`}
                           </span>
-                          <span style={{ display: 'grid' }}>
+                          <span style={{ display: "grid" }}>
                             {ticks_to_time(record!.scores[i].score_time)}
                           </span>
                           <span> </span>
@@ -501,12 +501,12 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
                           ) : (
                             <span> </span>
                           )}
-                          <span>{record!.scores[i].date.split('T')[0]}</span>
-                          <span style={{ flexDirection: 'row-reverse' }}>
+                          <span>{record!.scores[i].date.split("T")[0]}</span>
+                          <span style={{ flexDirection: "row-reverse" }}>
                             <button
                               onClick={() => {
                                 message(
-                                  'Demo Information',
+                                  "Demo Information",
                                   `Demo ID: ${e.demo_id}`
                                 );
                               }}
@@ -525,31 +525,31 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
                                 onClick={() => {
                                   (
                                     document.querySelectorAll(
-                                      '.profileboard-record'
+                                      ".profileboard-record"
                                     )[index % 20] as HTMLInputElement
-                                  ).style.height === '44px' ||
+                                  ).style.height === "44px" ||
                                   (
                                     document.querySelectorAll(
-                                      '.profileboard-record'
+                                      ".profileboard-record"
                                     )[index % 20] as HTMLInputElement
-                                  ).style.height === ''
+                                  ).style.height === ""
                                     ? ((
                                         document.querySelectorAll(
-                                          '.profileboard-record'
+                                          ".profileboard-record"
                                         )[index % 20] as HTMLInputElement
                                       ).style.height =
                                         `${record!.scores.length * 46}px`)
                                     : ((
                                         document.querySelectorAll(
-                                          '.profileboard-record'
+                                          ".profileboard-record"
                                         )[index % 20] as HTMLInputElement
-                                      ).style.height = '44px');
+                                      ).style.height = "44px");
                                 }}
                               >
                                 <img src={HistoryIcon} alt="history" />
                               </button>
                             ) : (
-                              ''
+                              ""
                             )}
                           </span>
                         </>

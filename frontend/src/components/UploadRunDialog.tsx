@@ -1,15 +1,15 @@
-import React from 'react';
-import { UploadRunContent } from '@customTypes/Content';
-import { ScoreboardTempUpdate, SourceDemoParser, NetMessages } from '@nekz/sdp';
+import React from "react";
+import { UploadRunContent } from "@customTypes/Content";
+import { ScoreboardTempUpdate, SourceDemoParser, NetMessages } from "@nekz/sdp";
 
-import '@css/UploadRunDialog.css';
-import { Game } from '@customTypes/Game';
-import { API } from '@api/Api';
-import { useNavigate } from 'react-router-dom';
-import useMessage from '@hooks/UseMessage';
-import useConfirm from '@hooks/UseConfirm';
-import useMessageLoad from '@hooks/UseMessageLoad';
-import { MapNames } from '@customTypes/MapNames';
+import "@css/UploadRunDialog.css";
+import { Game } from "@customTypes/Game";
+import { API } from "@api/Api";
+import { useNavigate } from "react-router-dom";
+import useMessage from "@hooks/UseMessage";
+import useConfirm from "@hooks/UseConfirm";
+import useMessageLoad from "@hooks/UseMessageLoad";
+import { MapNames } from "@customTypes/MapNames";
 
 interface UploadRunDialogProps {
   token?: string;
@@ -38,7 +38,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({
     });
 
   const [selectedGameID, setSelectedGameID] = React.useState<number>(0);
-  const [selectedGameName, setSelectedGameName] = React.useState<string>('');
+  const [selectedGameName, setSelectedGameName] = React.useState<string>("");
 
   // dropdowns
   const [dropdown1Vis, setDropdown1Vis] = React.useState<boolean>(false);
@@ -102,7 +102,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({
       setDropdown1Vis(!dropdown1Vis);
     } else if (dropdown === 2) {
       setDropdown2Vis(!dropdown2Vis);
-      document.querySelector('#dropdown2')?.scrollTo(0, 0);
+      document.querySelector("#dropdown2")?.scrollTo(0, 0);
     }
   };
 
@@ -133,15 +133,15 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({
     if (token) {
       if (games[selectedGameID].is_coop) {
         if (uploadRunContent.host_demo === null) {
-          await message('Error', 'You must select a host demo to upload.');
+          await message("Error", "You must select a host demo to upload.");
           return;
         } else if (uploadRunContent.partner_demo === null) {
-          await message('Error', 'You must select a partner demo to upload.');
+          await message("Error", "You must select a partner demo to upload.");
           return;
         }
       } else {
         if (uploadRunContent.host_demo === null) {
-          await message('Error', 'You must select a demo to upload.');
+          await message("Error", "You must select a demo to upload.");
           return;
         }
       }
@@ -157,7 +157,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({
 
       if (!scoreboard) {
         await message(
-          'Error',
+          "Error",
           "Error while processing demo: Unable to get scoreboard result. Either there is a demo that is corrupt or haven't been recorded in challenge mode."
         );
         return;
@@ -165,22 +165,22 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({
 
       if (!demo.mapName || !MapNames[demo.mapName]) {
         await message(
-          'Error',
-          'Error while processing demo: Invalid map name.'
+          "Error",
+          "Error while processing demo: Invalid map name."
         );
         return;
       }
 
       if (selectedGameID === 0 && MapNames[demo.mapName] > 60) {
         await message(
-          'Error',
-          'Error while processing demo: Invalid cooperative demo in singleplayer submission.'
+          "Error",
+          "Error while processing demo: Invalid cooperative demo in singleplayer submission."
         );
         return;
       } else if (selectedGameID === 1 && MapNames[demo.mapName] <= 60) {
         await message(
-          'Error',
-          'Error while processing demo: Invalid singleplayer demo in cooperative submission.'
+          "Error",
+          "Error while processing demo: Invalid singleplayer demo in cooperative submission."
         );
         return;
       }
@@ -189,7 +189,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({
         scoreboard.userMessage?.as<ScoreboardTempUpdate>() ?? {};
 
       const userConfirmed = await confirm(
-        'Upload Record',
+        "Upload Record",
         `Map Name: ${demo.mapName}\nPortal Count: ${portalScore}\nTicks: ${timeScore}\n\nAre you sure you want to upload this demo?`
       );
 
@@ -197,21 +197,21 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({
         return;
       }
 
-      messageLoad('Uploading...');
+      messageLoad("Uploading...");
       const [success, response] = await API.post_record(
         token,
         uploadRunContent,
         MapNames[demo.mapName]
       );
       messageLoadClose();
-      await message('Upload Record', response);
+      await message("Upload Record", response);
       if (success) {
         setUploadRunContent({
           host_demo: null,
           partner_demo: null,
         });
         onClose(success);
-        navigate('/profile');
+        navigate("/profile");
       }
     }
   };
@@ -220,7 +220,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({
     if (open) {
       setDragHighlightPartner(false);
       setDragHighlight(false);
-      _handle_game_select('1', 'Portal 2 - Singleplayer'); // a different approach?.
+      _handle_game_select("1", "Portal 2 - Singleplayer"); // a different approach?.
     }
   }, [open]);
 
@@ -236,35 +236,35 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({
           <div id="upload-run-menu-add">
             <div id="upload-run-route-category">
               <div
-                style={{ padding: '15px 0px' }}
+                style={{ padding: "15px 0px" }}
                 className="upload-run-dropdown-container upload-run-item"
               >
-                <h3 style={{ margin: '0px 0px' }}>Select Game</h3>
+                <h3 style={{ margin: "0px 0px" }}>Select Game</h3>
                 <div
                   onClick={() => _handle_dropdowns(1)}
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    cursor: 'pointer',
-                    justifyContent: 'space-between',
-                    margin: '10px 0px',
+                    display: "flex",
+                    alignItems: "center",
+                    cursor: "pointer",
+                    justifyContent: "space-between",
+                    margin: "10px 0px",
                   }}
                 >
                   <div className="dropdown-cur">{selectedGameName}</div>
                   <i
                     style={{
-                      rotate: '-90deg',
-                      transform: 'translate(-5px, 10px)',
+                      rotate: "-90deg",
+                      transform: "translate(-5px, 10px)",
                     }}
                     className="triangle"
                   ></i>
                 </div>
                 <div
-                  style={{ top: '110px' }}
+                  style={{ top: "110px" }}
                   className={
                     dropdown1Vis
-                      ? 'upload-run-dropdown'
-                      : 'upload-run-dropdown hidden'
+                      ? "upload-run-dropdown"
+                      : "upload-run-dropdown hidden"
                   }
                 >
                   {games.map(game => (
@@ -284,7 +284,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({
               {!loading && (
                 <>
                   <div>
-                    <h3 style={{ margin: '10px 0px' }}>Host Demo</h3>
+                    <h3 style={{ margin: "10px 0px" }}>Host Demo</h3>
                     <div
                       onClick={() => {
                         _handle_file_click(true);
@@ -298,7 +298,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({
                       onDragLeave={e => {
                         _handle_drag_leave(e, true);
                       }}
-                      className={`upload-run-drag-area ${dragHightlight ? 'upload-run-drag-area-highlight' : ''} ${uploadRunContent.host_demo ? 'upload-run-drag-area-hidden' : ''}`}
+                      className={`upload-run-drag-area ${dragHightlight ? "upload-run-drag-area-highlight" : ""} ${uploadRunContent.host_demo ? "upload-run-drag-area-hidden" : ""}`}
                     >
                       <input
                         ref={fileInputRef}
@@ -316,7 +316,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({
                           <div>
                             <span
                               style={{
-                                fontFamily: 'BarlowSemiCondensed-Regular',
+                                fontFamily: "BarlowSemiCondensed-Regular",
                               }}
                             >
                               Or click here
@@ -324,9 +324,9 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({
                             <br />
                             <button
                               style={{
-                                borderRadius: '24px',
-                                padding: '5px 8px',
-                                margin: '5px 0px',
+                                borderRadius: "24px",
+                                padding: "5px 8px",
+                                margin: "5px 0px",
                               }}
                             >
                               Upload
@@ -342,7 +342,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({
                     {games[selectedGameID].is_coop && (
                       <>
                         <div>
-                          <h3 style={{ margin: '10px 0px' }}>Partner Demo</h3>
+                          <h3 style={{ margin: "10px 0px" }}>Partner Demo</h3>
                           <div
                             onClick={() => {
                               _handle_file_click(false);
@@ -356,7 +356,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({
                             onDragLeave={e => {
                               _handle_drag_leave(e, false);
                             }}
-                            className={`upload-run-drag-area ${dragHightlightPartner ? 'upload-run-drag-area-highlight-partner' : ''} ${uploadRunContent.partner_demo ? 'upload-run-drag-area-hidden' : ''}`}
+                            className={`upload-run-drag-area ${dragHightlightPartner ? "upload-run-drag-area-highlight-partner" : ""} ${uploadRunContent.partner_demo ? "upload-run-drag-area-hidden" : ""}`}
                           >
                             <input
                               ref={fileInputRefPartner}
@@ -367,14 +367,14 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({
                               onChange={e =>
                                 _handle_file_change(e.target.files, false)
                               }
-                            />{' '}
+                            />{" "}
                             {!uploadRunContent.partner_demo ? (
                               <div>
                                 <span>Drag and drop</span>
                                 <div>
                                   <span
                                     style={{
-                                      fontFamily: 'BarlowSemiCondensed-Regular',
+                                      fontFamily: "BarlowSemiCondensed-Regular",
                                     }}
                                   >
                                     Or click here
@@ -382,9 +382,9 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({
                                   <br />
                                   <button
                                     style={{
-                                      borderRadius: '24px',
-                                      padding: '5px 8px',
-                                      margin: '5px 0px',
+                                      borderRadius: "24px",
+                                      padding: "5px 8px",
+                                      margin: "5px 0px",
                                     }}
                                   >
                                     Upload

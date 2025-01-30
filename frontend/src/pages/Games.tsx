@@ -1,9 +1,9 @@
-import React from 'react';
-import { Helmet } from 'react-helmet';
+import React from "react";
+import { Helmet } from "react-helmet";
 
-import GameEntry from '@components/GameEntry';
-import { Game } from '@customTypes/Game';
-import '@css/Maps.css';
+import GameEntry from "@components/GameEntry";
+import { Game } from "@customTypes/Game";
+import "@css/Maps.css";
 
 interface GamesProps {
   games: Game[];
@@ -11,17 +11,17 @@ interface GamesProps {
 
 const Games: React.FC<GamesProps> = ({ games }) => {
   const _page_load = () => {
-    const loaders = document.querySelectorAll('.loader');
+    const loaders = document.querySelectorAll(".loader");
     loaders.forEach(loader => {
-      (loader as HTMLElement).style.display = 'none';
+      (loader as HTMLElement).style.display = "none";
     });
   };
 
   React.useEffect(() => {
     document
-      .querySelectorAll('.games-page-item-body')
+      .querySelectorAll(".games-page-item-body")
       .forEach((game, index) => {
-        game.innerHTML = '';
+        game.innerHTML = "";
       });
     _page_load();
   }, []);

@@ -1,12 +1,12 @@
-import React from 'react';
-import ReactMarkdown from 'react-markdown';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import ReactMarkdown from "react-markdown";
+import { useNavigate } from "react-router-dom";
 
-import { MapSummary } from '@customTypes/Map';
-import { ModMenuContent } from '@customTypes/Content';
-import { API } from '@api/Api';
-import '@css/ModMenu.css';
-import useConfirm from '@hooks/UseConfirm';
+import { MapSummary } from "@customTypes/Map";
+import { ModMenuContent } from "@customTypes/Content";
+import { API } from "@api/Api";
+import "@css/ModMenu.css";
+import useConfirm from "@hooks/UseConfirm";
 
 interface ModMenuProps {
   token?: string;
@@ -28,16 +28,16 @@ const ModMenu: React.FC<ModMenuProps> = ({
 
   const [routeContent, setRouteContent] = React.useState<ModMenuContent>({
     id: 0,
-    name: '',
+    name: "",
     score: 0,
-    date: '',
-    showcase: '',
-    description: 'No description available.',
+    date: "",
+    showcase: "",
+    description: "No description available.",
     category_id: 1,
   });
 
-  const [image, setImage] = React.useState<string>('');
-  const [md, setMd] = React.useState<string>('');
+  const [image, setImage] = React.useState<string>("");
+  const [md, setMd] = React.useState<string>("");
 
   const navigate = useNavigate();
 
@@ -47,7 +47,7 @@ const ModMenu: React.FC<ModMenuProps> = ({
     return new Promise(resolve => {
       reader.onload = () => {
         const img = new Image();
-        if (typeof reader.result === 'string') {
+        if (typeof reader.result === "string") {
           img.src = reader.result;
           img.onload = () => {
             let { width, height } = img;
@@ -59,10 +59,10 @@ const ModMenu: React.FC<ModMenuProps> = ({
               width *= 320 / height;
               height = 320;
             }
-            const canvas = document.createElement('canvas');
+            const canvas = document.createElement("canvas");
             canvas.width = width;
             canvas.height = height;
-            canvas.getContext('2d')!.drawImage(img, 0, 0, width, height);
+            canvas.getContext("2d")!.drawImage(img, 0, 0, width, height);
             resolve(canvas.toDataURL(file.type, 0.6));
           };
         }
@@ -73,8 +73,8 @@ const ModMenu: React.FC<ModMenuProps> = ({
   const _edit_map_summary_image = async () => {
     if (
       await confirm(
-        'Edit Map Summary Image',
-        'Are you sure you want to submit this to the database?'
+        "Edit Map Summary Image",
+        "Are you sure you want to submit this to the database?"
       )
     ) {
       if (token) {
@@ -82,7 +82,7 @@ const ModMenu: React.FC<ModMenuProps> = ({
         if (success) {
           navigate(0);
         } else {
-          alert('Error. Check logs.');
+          alert("Error. Check logs.");
         }
       }
     }
@@ -91,17 +91,17 @@ const ModMenu: React.FC<ModMenuProps> = ({
   const _edit_map_summary_route = async () => {
     if (
       await confirm(
-        'Edit Map Summary Route',
-        'Are you sure you want to submit this to the database?'
+        "Edit Map Summary Route",
+        "Are you sure you want to submit this to the database?"
       )
     ) {
       if (token) {
-        routeContent.date += 'T00:00:00Z';
+        routeContent.date += "T00:00:00Z";
         const success = await API.put_map_summary(token, mapID, routeContent);
         if (success) {
           navigate(0);
         } else {
-          alert('Error. Check logs.');
+          alert("Error. Check logs.");
         }
       }
     }
@@ -110,17 +110,17 @@ const ModMenu: React.FC<ModMenuProps> = ({
   const _create_map_summary_route = async () => {
     if (
       await confirm(
-        'Create Map Summary Route',
-        'Are you sure you want to submit this to the database?'
+        "Create Map Summary Route",
+        "Are you sure you want to submit this to the database?"
       )
     ) {
       if (token) {
-        routeContent.date += 'T00:00:00Z';
+        routeContent.date += "T00:00:00Z";
         const success = await API.post_map_summary(token, mapID, routeContent);
         if (success) {
           navigate(0);
         } else {
-          alert('Error. Check logs.');
+          alert("Error. Check logs.");
         }
       }
     }
@@ -129,7 +129,7 @@ const ModMenu: React.FC<ModMenuProps> = ({
   const _delete_map_summary_route = async () => {
     if (
       await confirm(
-        'Delete Map Summary Route',
+        "Delete Map Summary Route",
         `Are you sure you want to submit this to the database?\n
       ${data.summary.routes[selectedRun].category.name}\n${data.summary.routes[selectedRun].history.score_count} portals\n${data.summary.routes[selectedRun].history.runner_name}`
       )
@@ -143,7 +143,7 @@ const ModMenu: React.FC<ModMenuProps> = ({
         if (success) {
           navigate(0);
         } else {
-          alert('Error. Check logs.');
+          alert("Error. Check logs.");
         }
       }
     }
@@ -154,14 +154,14 @@ const ModMenu: React.FC<ModMenuProps> = ({
       // add route
       setRouteContent({
         id: 0,
-        name: '',
+        name: "",
         score: 0,
-        date: '',
-        showcase: '',
-        description: 'No description available.',
+        date: "",
+        showcase: "",
+        description: "No description available.",
         category_id: 1,
       });
-      setMd('No description available.');
+      setMd("No description available.");
     }
     if (menu === 2) {
       // edit route
@@ -169,7 +169,7 @@ const ModMenu: React.FC<ModMenuProps> = ({
         id: data.summary.routes[selectedRun].route_id,
         name: data.summary.routes[selectedRun].history.runner_name,
         score: data.summary.routes[selectedRun].history.score_count,
-        date: data.summary.routes[selectedRun].history.date.split('T')[0],
+        date: data.summary.routes[selectedRun].history.date.split("T")[0],
         showcase: data.summary.routes[selectedRun].showcase,
         description: data.summary.routes[selectedRun].description,
         category_id: data.summary.routes[selectedRun].category.id,
@@ -179,20 +179,20 @@ const ModMenu: React.FC<ModMenuProps> = ({
   }, [menu, data.summary.routes, selectedRun]);
 
   React.useEffect(() => {
-    const modview = document.querySelector('div#modview') as HTMLElement;
+    const modview = document.querySelector("div#modview") as HTMLElement;
     if (modview) {
       showButton
-        ? (modview.style.transform = 'translateY(-68%)')
-        : (modview.style.transform = 'translateY(0%)');
+        ? (modview.style.transform = "translateY(-68%)")
+        : (modview.style.transform = "translateY(0%)");
     }
 
     const modview_block = document.querySelector(
-      '#modview_block'
+      "#modview_block"
     ) as HTMLElement;
     if (modview_block) {
       showButton
-        ? (modview_block.style.display = 'none')
-        : (modview_block.style.display = 'block');
+        ? (modview_block.style.display = "none")
+        : (modview_block.style.display = "block");
     }
   }, [showButton]);
 
@@ -322,7 +322,7 @@ const ModMenu: React.FC<ModMenuProps> = ({
               </div>
               <div
                 id="modview-route-description"
-                style={{ height: '180px', gridColumn: '1 / span 5' }}
+                style={{ height: "180px", gridColumn: "1 / span 5" }}
               >
                 <span>Description:</span>
                 <textarea
@@ -337,7 +337,7 @@ const ModMenu: React.FC<ModMenuProps> = ({
                 />
               </div>
               <button
-                style={{ gridColumn: '2 / span 3', height: '40px' }}
+                style={{ gridColumn: "2 / span 3", height: "40px" }}
                 onClick={_edit_map_summary_route}
               >
                 Apply
@@ -391,8 +391,8 @@ const ModMenu: React.FC<ModMenuProps> = ({
                   <option value="2" key="2">
                     No SLA
                   </option>
-                  {data.map.game_name === 'Portal 2 - Cooperative' ? (
-                    ''
+                  {data.map.game_name === "Portal 2 - Cooperative" ? (
+                    ""
                   ) : (
                     <option value="3" key="3">
                       Inbounds SLA
@@ -457,7 +457,7 @@ const ModMenu: React.FC<ModMenuProps> = ({
               </div>
               <div
                 id="modview-route-description"
-                style={{ height: '180px', gridColumn: '1 / span 5' }}
+                style={{ height: "180px", gridColumn: "1 / span 5" }}
               >
                 <span>Description:</span>
                 <textarea
@@ -472,7 +472,7 @@ const ModMenu: React.FC<ModMenuProps> = ({
                 />
               </div>
               <button
-                style={{ gridColumn: '2 / span 3', height: '40px' }}
+                style={{ gridColumn: "2 / span 3", height: "40px" }}
                 onClick={_create_map_summary_route}
               >
                 Apply

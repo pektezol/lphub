@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { RankingType, SteamRankingType } from '@customTypes/Ranking';
+import React from "react";
+import { Link } from "react-router-dom";
+import { RankingType, SteamRankingType } from "@customTypes/Ranking";
 
 enum RankingCategories {
   rankings_overall,
@@ -14,7 +14,7 @@ interface RankingEntryProps {
 }
 
 const RankingEntry: React.FC<RankingEntryProps> = prop => {
-  if ('placement' in prop.curRankingData) {
+  if ("placement" in prop.curRankingData) {
     return (
       <div className="leaderboard-entry">
         <span>{prop.curRankingData.placement}</span>

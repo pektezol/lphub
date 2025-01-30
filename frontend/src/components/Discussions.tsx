@@ -1,16 +1,16 @@
-import React from 'react';
+import React from "react";
 
 import {
   MapDiscussion,
   MapDiscussions,
   MapDiscussionsDetail,
-} from '@customTypes/Map';
-import { MapDiscussionContent } from '@customTypes/Content';
-import { time_ago } from '@utils/Time';
-import { API } from '@api/Api';
-import '@css/Maps.css';
-import { Link } from 'react-router-dom';
-import useConfirm from '@hooks/UseConfirm';
+} from "@customTypes/Map";
+import { MapDiscussionContent } from "@customTypes/Content";
+import { time_ago } from "@utils/Time";
+import { API } from "@api/Api";
+import "@css/Maps.css";
+import { Link } from "react-router-dom";
+import useConfirm from "@hooks/UseConfirm";
 
 interface DiscussionsProps {
   token?: string;
@@ -32,17 +32,17 @@ const Discussions: React.FC<DiscussionsProps> = ({
   const [discussionThread, setDiscussionThread] = React.useState<
     MapDiscussion | undefined
   >(undefined);
-  const [discussionSearch, setDiscussionSearch] = React.useState<string>('');
+  const [discussionSearch, setDiscussionSearch] = React.useState<string>("");
 
   const [createDiscussion, setCreateDiscussion] =
     React.useState<boolean>(false);
   const [createDiscussionContent, setCreateDiscussionContent] =
     React.useState<MapDiscussionContent>({
-      title: '',
-      content: '',
+      title: "",
+      content: "",
     });
   const [createDiscussionCommentContent, setCreateDiscussionCommentContent] =
-    React.useState<string>('');
+    React.useState<string>("");
 
   const _open_map_discussion = async (discussion_id: number) => {
     const mapDiscussion = await API.get_map_discussion(mapID, discussion_id);
@@ -72,7 +72,7 @@ const Discussions: React.FC<DiscussionsProps> = ({
   const _delete_map_discussion = async (discussion: MapDiscussionsDetail) => {
     if (
       await confirm(
-        'Delete Map Discussion',
+        "Delete Map Discussion",
         `Are you sure you want to remove post: ${discussion.title}?`
       )
     ) {
@@ -90,7 +90,7 @@ const Discussions: React.FC<DiscussionsProps> = ({
         <input
           type="text"
           value={discussionSearch}
-          placeholder={'Search for posts...'}
+          placeholder={"Search for posts..."}
           onChange={e => setDiscussionSearch(e.target.value)}
         />
         <div>
@@ -104,7 +104,7 @@ const Discussions: React.FC<DiscussionsProps> = ({
           <div id="discussion-create">
             <span>Create Post</span>
             <button onClick={() => setCreateDiscussion(false)}>X</button>
-            <div style={{ gridColumn: '1 / span 2' }}>
+            <div style={{ gridColumn: "1 / span 2" }}>
               <input
                 id="discussion-create-title"
                 placeholder="Title..."
@@ -126,7 +126,7 @@ const Discussions: React.FC<DiscussionsProps> = ({
                 }
               />
             </div>
-            <div style={{ placeItems: 'end', gridColumn: '1 / span 2' }}>
+            <div style={{ placeItems: "end", gridColumn: "1 / span 2" }}>
               <button
                 id="discussion-create-button"
                 onClick={() => _create_map_discussion()}
@@ -157,8 +157,8 @@ const Discussions: React.FC<DiscussionsProps> = ({
                   {time_ago(
                     new Date(
                       discussionThread.discussion.created_at
-                        .replace('T', ' ')
-                        .replace('Z', '')
+                        .replace("T", " ")
+                        .replace("Z", "")
                     )
                   )}
                 </span>
@@ -180,7 +180,7 @@ const Discussions: React.FC<DiscussionsProps> = ({
                           <span>
                             {time_ago(
                               new Date(
-                                e.date.replace('T', ' ').replace('Z', '')
+                                e.date.replace("T", " ").replace("Z", "")
                               )
                             )}
                           </span>
@@ -188,15 +188,15 @@ const Discussions: React.FC<DiscussionsProps> = ({
                         </div>
                       </>
                     ))
-                : ''}
+                : ""}
             </div>
             <div id="discussion-send">
               <input
                 type="text"
                 value={createDiscussionCommentContent}
-                placeholder={'Message'}
+                placeholder={"Message"}
                 onKeyDown={e =>
-                  e.key === 'Enter' &&
+                  e.key === "Enter" &&
                   _create_map_discussion_comment(discussionThread.discussion.id)
                 }
                 onChange={e =>
@@ -206,11 +206,11 @@ const Discussions: React.FC<DiscussionsProps> = ({
               <div>
                 <button
                   onClick={() => {
-                    if (createDiscussionCommentContent !== '') {
+                    if (createDiscussionCommentContent !== "") {
                       _create_map_discussion_comment(
                         discussionThread.discussion.id
                       );
-                      setCreateDiscussionCommentContent('');
+                      setCreateDiscussionCommentContent("");
                     }
                   }}
                 >
@@ -248,10 +248,10 @@ const Discussions: React.FC<DiscussionsProps> = ({
                       <b>{e.creator.user_name}:</b> {e.content}
                     </span>
                     <span>
-                      Last Updated:{' '}
+                      Last Updated:{" "}
                       {time_ago(
                         new Date(
-                          e.updated_at.replace('T', ' ').replace('Z', '')
+                          e.updated_at.replace("T", " ").replace("Z", "")
                         )
                       )}
                     </span>
@@ -260,7 +260,7 @@ const Discussions: React.FC<DiscussionsProps> = ({
               ))}
           </>
         ) : (
-          <span style={{ textAlign: 'center', display: 'block' }}>
+          <span style={{ textAlign: "center", display: "block" }}>
             No Discussions...
           </span>
         )

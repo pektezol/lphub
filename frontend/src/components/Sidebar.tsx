@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useCallback } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 import {
   BookIcon,
@@ -10,12 +10,12 @@ import {
   PortalIcon,
   SearchIcon,
   UploadIcon,
-} from '@images/Images';
-import Login from '@components/Login';
-import { UserProfile } from '@customTypes/Profile';
-import { Search } from '@customTypes/Search';
-import { API } from '@api/Api';
-import '@css/Sidebar.css';
+} from "@images/Images";
+import Login from "@components/Login";
+import { UserProfile } from "@customTypes/Profile";
+import { Search } from "@customTypes/Search";
+import { API } from "@api/Api";
+import "@css/Sidebar.css";
 
 interface SidebarProps {
   setToken: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -41,81 +41,81 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const _handle_sidebar_hide = useCallback(() => {
     var btn = document.querySelectorAll(
-      'button.sidebar-button'
+      "button.sidebar-button"
     ) as NodeListOf<HTMLElement>;
     const span = document.querySelectorAll(
-      'button.sidebar-button>span'
+      "button.sidebar-button>span"
     ) as NodeListOf<HTMLElement>;
-    const side = document.querySelector('#sidebar-list') as HTMLElement;
-    const searchbar = document.querySelector('#searchbar') as HTMLInputElement;
+    const side = document.querySelector("#sidebar-list") as HTMLElement;
+    const searchbar = document.querySelector("#searchbar") as HTMLInputElement;
     const uploadRunBtn = document.querySelector(
-      '#upload-run'
+      "#upload-run"
     ) as HTMLInputElement;
     const uploadRunSpan = document.querySelector(
-      '#upload-run>span'
+      "#upload-run>span"
     ) as HTMLInputElement;
 
     if (isSidebarOpen) {
       if (profile) {
         const login = document.querySelectorAll(
-          '.login>button'
+          ".login>button"
         )[1] as HTMLElement;
-        login.style.opacity = '1';
-        uploadRunBtn.style.width = '310px';
-        uploadRunBtn.style.padding = '0.4em 0 0 11px';
-        uploadRunSpan.style.opacity = '0';
+        login.style.opacity = "1";
+        uploadRunBtn.style.width = "310px";
+        uploadRunBtn.style.padding = "0.4em 0 0 11px";
+        uploadRunSpan.style.opacity = "0";
         setTimeout(() => {
-          uploadRunSpan.style.opacity = '1';
+          uploadRunSpan.style.opacity = "1";
         }, 100);
       }
       setSidebarOpen(false);
-      side.style.width = '320px';
+      side.style.width = "320px";
       btn.forEach((e, i) => {
-        e.style.width = '310px';
-        e.style.padding = '0.4em 0 0 11px';
+        e.style.width = "310px";
+        e.style.padding = "0.4em 0 0 11px";
         setTimeout(() => {
-          span[i].style.opacity = '1';
+          span[i].style.opacity = "1";
         }, 100);
       });
-      side.style.zIndex = '2';
+      side.style.zIndex = "2";
     } else {
       if (profile) {
         const login = document.querySelectorAll(
-          '.login>button'
+          ".login>button"
         )[1] as HTMLElement;
-        login.style.opacity = '0';
-        uploadRunBtn.style.width = '40px';
-        uploadRunBtn.style.padding = '0.4em 0 0 5px';
-        uploadRunSpan.style.opacity = '0';
+        login.style.opacity = "0";
+        uploadRunBtn.style.width = "40px";
+        uploadRunBtn.style.padding = "0.4em 0 0 5px";
+        uploadRunSpan.style.opacity = "0";
       }
       setSidebarOpen(true);
-      side.style.width = '40px';
+      side.style.width = "40px";
       searchbar.focus();
       btn.forEach((e, i) => {
-        e.style.width = '40px';
-        e.style.padding = '0.4em 0 0 5px';
-        span[i].style.opacity = '0';
+        e.style.width = "40px";
+        e.style.padding = "0.4em 0 0 5px";
+        span[i].style.opacity = "0";
       });
       setTimeout(() => {
-        side.style.zIndex = '0';
+        side.style.zIndex = "0";
       }, 300);
     }
   }, [isSidebarOpen, profile]);
 
   const handle_sidebar_click = useCallback(
     (clicked_sidebar_idx: number) => {
-      const btn = document.querySelectorAll('button.sidebar-button');
+      const btn = document.querySelectorAll("button.sidebar-button");
       if (isSidebarOpen) {
         setSidebarOpen(false);
         _handle_sidebar_hide();
       }
       // clusterfuck
       btn.forEach((e, i) => {
-        btn[i].classList.remove('sidebar-button-selected');
-        btn[i].classList.add('sidebar-button-deselected');
+        btn[i].classList.remove("sidebar-button-selected");
+        btn[i].classList.add("sidebar-button-deselected");
       });
-      btn[clicked_sidebar_idx].classList.add('sidebar-button-selected');
-      btn[clicked_sidebar_idx].classList.remove('sidebar-button-deselected');
+      btn[clicked_sidebar_idx].classList.add("sidebar-button-selected");
+      btn[clicked_sidebar_idx].classList.remove("sidebar-button-deselected");
     },
     [isSidebarOpen, _handle_sidebar_hide]
   );
@@ -134,20 +134,20 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   React.useEffect(() => {
-    if (path === '/') {
+    if (path === "/") {
       handle_sidebar_click(1);
-    } else if (path.includes('games')) {
+    } else if (path.includes("games")) {
       handle_sidebar_click(2);
-    } else if (path.includes('rankings')) {
+    } else if (path.includes("rankings")) {
       handle_sidebar_click(3);
     }
     // else if (path.includes("news")) { handle_sidebar_click(4) }
     // else if (path.includes("scorelog")) { handle_sidebar_click(5) }
-    else if (path.includes('profile')) {
+    else if (path.includes("profile")) {
       handle_sidebar_click(4);
-    } else if (path.includes('rules')) {
+    } else if (path.includes("rules")) {
       handle_sidebar_click(5);
-    } else if (path.includes('about')) {
+    } else if (path.includes("about")) {
       handle_sidebar_click(6);
     }
   }, [path, handle_sidebar_click]);
@@ -156,9 +156,9 @@ const Sidebar: React.FC<SidebarProps> = ({
     <div id="sidebar">
       <Link to="/" tabIndex={-1}>
         <div id="logo">
-          {' '}
+          {" "}
           {/* logo */}
-          <img src={LogoIcon} alt="" height={'80px'} />
+          <img src={LogoIcon} alt="" height={"80px"} />
           <div id="logo-text">
             <span>
               <b>PORTAL 2</b>
@@ -169,10 +169,10 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </Link>
       <div id="sidebar-list">
-        {' '}
+        {" "}
         {/* List */}
         <div id="sidebar-toplist">
-          {' '}
+          {" "}
           {/* Top */}
           <button
             className="sidebar-button"

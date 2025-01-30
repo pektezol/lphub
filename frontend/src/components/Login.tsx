@@ -1,10 +1,10 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
 
-import { ExitIcon, UserIcon, LoginIcon } from '@images/Images';
-import { UserProfile } from '@customTypes/Profile';
-import { API } from '@api/Api';
-import '@css/Login.css';
+import { ExitIcon, UserIcon, LoginIcon } from "@images/Images";
+import { UserProfile } from "@customTypes/Profile";
+import { API } from "@api/Api";
+import "@css/Login.css";
 
 interface LoginProps {
   setToken: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -16,14 +16,14 @@ const Login: React.FC<LoginProps> = ({ setToken, profile, setProfile }) => {
   const navigate = useNavigate();
 
   const _login = () => {
-    window.location.href = '/api/v1/login';
+    window.location.href = "/api/v1/login";
   };
 
   const _logout = () => {
     setProfile(undefined);
     setToken(undefined);
     API.delete_token();
-    navigate('/');
+    navigate("/");
   };
 
   return (

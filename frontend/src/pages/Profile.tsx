@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 import {
   SteamIcon,
@@ -14,16 +14,16 @@ import {
   DownloadIcon,
   HistoryIcon,
   DeleteIcon,
-} from '@images/Images';
-import { UserProfile } from '@customTypes/Profile';
-import { Game, GameChapters } from '@customTypes/Game';
-import { Map } from '@customTypes/Map';
-import { ticks_to_time } from '@utils/Time';
-import '@css/Profile.css';
-import { API } from '@api/Api';
-import useConfirm from '@hooks/UseConfirm';
-import useMessage from '@hooks/UseMessage';
-import useMessageLoad from '@hooks/UseMessageLoad';
+} from "@images/Images";
+import { UserProfile } from "@customTypes/Profile";
+import { Game, GameChapters } from "@customTypes/Game";
+import { Map } from "@customTypes/Map";
+import { ticks_to_time } from "@utils/Time";
+import "@css/Profile.css";
+import { API } from "@api/Api";
+import useConfirm from "@hooks/UseConfirm";
+import useMessage from "@hooks/UseMessage";
+import useMessageLoad from "@hooks/UseMessageLoad";
 
 interface ProfileProps {
   profile?: UserProfile;
@@ -46,8 +46,8 @@ const Profile: React.FC<ProfileProps> = ({
   const [pageNumber, setPageNumber] = React.useState(1);
   const [pageMax, setPageMax] = React.useState(0);
 
-  const [game, setGame] = React.useState('0');
-  const [chapter, setChapter] = React.useState('0');
+  const [game, setGame] = React.useState("0");
+  const [chapter, setChapter] = React.useState("0");
   const [chapterData, setChapterData] = React.useState<GameChapters | null>(
     null
   );
@@ -62,17 +62,17 @@ const Profile: React.FC<ProfileProps> = ({
   };
 
   const _get_game_chapters = React.useCallback(async () => {
-    if (game && game !== '0') {
+    if (game && game !== "0") {
       const gameChapters = await API.get_games_chapters(game);
       setChapterData(gameChapters);
-    } else if (game && game === '0') {
+    } else if (game && game === "0") {
       setPageMax(Math.ceil(profile!.records.length / 20));
       setPageNumber(1);
     }
   }, [game, profile]);
 
   const _get_game_maps = React.useCallback(async () => {
-    if (chapter === '0') {
+    if (chapter === "0") {
       const gameMaps = await API.get_game_maps(game);
       setMaps(gameMaps);
       setPageMax(Math.ceil(gameMaps.length / 20));
@@ -87,29 +87,29 @@ const Profile: React.FC<ProfileProps> = ({
 
   const _delete_submission = async (map_id: number, record_id: number) => {
     const userConfirmed = await confirm(
-      'Delete Record',
-      'Are you sure you want to delete this record?'
+      "Delete Record",
+      "Are you sure you want to delete this record?"
     );
 
     if (!userConfirmed) {
       return;
     }
 
-    messageLoad('Deleting...');
+    messageLoad("Deleting...");
 
     const api_success = await API.delete_map_record(token!, map_id, record_id);
     messageLoadClose();
     if (api_success) {
-      await message('Delete Record', 'Successfully deleted record.');
+      await message("Delete Record", "Successfully deleted record.");
       onDeleteRecord();
     } else {
-      await message('Delete Record', 'Could not delete record.');
+      await message("Delete Record", "Could not delete record.");
     }
   };
 
   React.useEffect(() => {
     if (!profile) {
-      navigate('/');
+      navigate("/");
     }
   }, [profile, navigate]);
 
@@ -120,7 +120,7 @@ const Profile: React.FC<ProfileProps> = ({
   }, [profile, game, _get_game_chapters]);
 
   React.useEffect(() => {
-    if (profile && game !== '0') {
+    if (profile && game !== "0") {
       _get_game_maps();
     }
   }, [profile, game, chapter, chapterData, _get_game_maps]);
@@ -156,8 +156,8 @@ const Profile: React.FC<ProfileProps> = ({
             <div>
               <div>{profile.user_name}</div>
               <div>
-                {profile.country_code === 'XX' ? (
-                  ''
+                {profile.country_code === "XX" ? (
+                  ""
                 ) : (
                   <img
                     src={`https://flagcdn.com/w80/${profile.country_code.toLowerCase()}.jpg`}
@@ -177,32 +177,32 @@ const Profile: React.FC<ProfileProps> = ({
               </div>
             </div>
             <div>
-              {profile.links.steam === '-' ? (
-                ''
+              {profile.links.steam === "-" ? (
+                ""
               ) : (
                 <a href={profile.links.steam}>
                   <img src={SteamIcon} alt="Steam" />
                 </a>
               )}
-              {profile.links.twitch === '-' ? (
-                ''
+              {profile.links.twitch === "-" ? (
+                ""
               ) : (
                 <a href={profile.links.twitch}>
                   <img src={TwitchIcon} alt="Twitch" />
                 </a>
               )}
-              {profile.links.youtube === '-' ? (
-                ''
+              {profile.links.youtube === "-" ? (
+                ""
               ) : (
                 <a href={profile.links.youtube}>
                   <img src={YouTubeIcon} alt="Youtube" />
                 </a>
               )}
-              {profile.links.p2sr === '-' ? (
-                ''
+              {profile.links.p2sr === "-" ? (
+                ""
               ) : (
                 <a href={profile.links.p2sr}>
-                  <img src={PortalIcon} alt="P2SR" style={{ padding: '0' }} />
+                  <img src={PortalIcon} alt="P2SR" style={{ padding: "0" }} />
                 </a>
               )}
             </div>
@@ -212,8 +212,8 @@ const Profile: React.FC<ProfileProps> = ({
               <span>Overall</span>
               <span>
                 {profile.rankings.overall.rank === 0
-                  ? 'N/A '
-                  : '#' + profile.rankings.overall.rank + ' '}
+                  ? "N/A "
+                  : "#" + profile.rankings.overall.rank + " "}
                 <span>
                   ({profile.rankings.overall.completion_count}/
                   {profile.rankings.overall.completion_total})
@@ -224,8 +224,8 @@ const Profile: React.FC<ProfileProps> = ({
               <span>Singleplayer</span>
               <span>
                 {profile.rankings.singleplayer.rank === 0
-                  ? 'N/A '
-                  : '#' + profile.rankings.singleplayer.rank + ' '}
+                  ? "N/A "
+                  : "#" + profile.rankings.singleplayer.rank + " "}
                 <span>
                   ({profile.rankings.singleplayer.completion_count}/
                   {profile.rankings.singleplayer.completion_total})
@@ -236,8 +236,8 @@ const Profile: React.FC<ProfileProps> = ({
               <span>Cooperative</span>
               <span>
                 {profile.rankings.cooperative.rank === 0
-                  ? 'N/A '
-                  : '#' + profile.rankings.cooperative.rank + ' '}
+                  ? "N/A "
+                  : "#" + profile.rankings.cooperative.rank + " "}
                 <span>
                   ({profile.rankings.cooperative.completion_count}/
                   {profile.rankings.cooperative.completion_total})
@@ -267,15 +267,15 @@ const Profile: React.FC<ProfileProps> = ({
                 id="select-game"
                 onChange={() => {
                   setGame(
-                    (document.querySelector('#select-game') as HTMLInputElement)
+                    (document.querySelector("#select-game") as HTMLInputElement)
                       .value
                   );
-                  setChapter('0');
+                  setChapter("0");
                   const chapterSelect = document.querySelector(
-                    '#select-chapter'
+                    "#select-chapter"
                   ) as HTMLSelectElement;
                   if (chapterSelect) {
-                    chapterSelect.value = '0';
+                    chapterSelect.value = "0";
                   }
                 }}
               >
@@ -290,7 +290,7 @@ const Profile: React.FC<ProfileProps> = ({
               </select>
             )}
 
-            {game === '0' ? (
+            {game === "0" ? (
               <select disabled>
                 <option>All Chapters</option>
               </select>
@@ -303,7 +303,7 @@ const Profile: React.FC<ProfileProps> = ({
                   setChapter(
                     (
                       document.querySelector(
-                        '#select-chapter'
+                        "#select-chapter"
                       ) as HTMLInputElement
                     ).value
                   )
@@ -327,15 +327,15 @@ const Profile: React.FC<ProfileProps> = ({
               <span>Map Name</span>
               <img src={SortIcon} alt="" />
             </span>
-            <span style={{ justifyContent: 'center' }}>
+            <span style={{ justifyContent: "center" }}>
               <span>Portals</span>
               <img src={SortIcon} alt="" />
             </span>
-            <span style={{ justifyContent: 'center' }}>
+            <span style={{ justifyContent: "center" }}>
               <span>WRΔ </span>
               <img src={SortIcon} alt="" />
             </span>
-            <span style={{ justifyContent: 'center' }}>
+            <span style={{ justifyContent: "center" }}>
               <span>Time</span>
               <img src={SortIcon} alt="" />
             </span>
@@ -355,18 +355,18 @@ const Profile: React.FC<ProfileProps> = ({
                     if (pageNumber !== 1) {
                       setPageNumber(prevPageNumber => prevPageNumber - 1);
                       const records = document.querySelectorAll(
-                        '.profileboard-record'
+                        ".profileboard-record"
                       );
                       records.forEach(r => {
-                        (r as HTMLInputElement).style.height = '44px';
+                        (r as HTMLInputElement).style.height = "44px";
                       });
                     }
                   }}
                 >
                   <i
                     className="triangle"
-                    style={{ position: 'relative', left: '-5px' }}
-                  ></i>{' '}
+                    style={{ position: "relative", left: "-5px" }}
+                  ></i>{" "}
                 </button>
                 <span>
                   {pageNumber}/{pageMax}
@@ -376,10 +376,10 @@ const Profile: React.FC<ProfileProps> = ({
                     if (pageNumber !== pageMax) {
                       setPageNumber(prevPageNumber => prevPageNumber + 1);
                       const records = document.querySelectorAll(
-                        '.profileboard-record'
+                        ".profileboard-record"
                       );
                       records.forEach(r => {
-                        (r as HTMLInputElement).style.height = '44px';
+                        (r as HTMLInputElement).style.height = "44px";
                       });
                     }
                   }}
@@ -387,18 +387,18 @@ const Profile: React.FC<ProfileProps> = ({
                   <i
                     className="triangle"
                     style={{
-                      position: 'relative',
-                      left: '5px',
-                      transform: 'rotate(180deg)',
+                      position: "relative",
+                      left: "5px",
+                      transform: "rotate(180deg)",
                     }}
-                  ></i>{' '}
+                  ></i>{" "}
                 </button>
               </div>
             </div>
           </div>
           <hr />
           <div id="profileboard-records">
-            {game === '0' ? (
+            {game === "0" ? (
               profile.records
                 .sort((a, b) => a.map_id - b.map_id)
                 .map((r, index) =>
@@ -407,25 +407,25 @@ const Profile: React.FC<ProfileProps> = ({
                       {r.scores.map((e, i) => (
                         <>
                           {i !== 0 ? (
-                            <hr style={{ gridColumn: '1 / span 8' }} />
+                            <hr style={{ gridColumn: "1 / span 8" }} />
                           ) : (
-                            ''
+                            ""
                           )}
 
                           <Link to={`/maps/${r.map_id}`}>
                             <span>{r.map_name}</span>
                           </Link>
 
-                          <span style={{ display: 'grid' }}>
+                          <span style={{ display: "grid" }}>
                             {e.score_count}
                           </span>
 
-                          <span style={{ display: 'grid' }}>
+                          <span style={{ display: "grid" }}>
                             {e.score_count - r.map_wr_count > 0
                               ? `+${e.score_count - r.map_wr_count}`
                               : `-`}
                           </span>
-                          <span style={{ display: 'grid' }}>
+                          <span style={{ display: "grid" }}>
                             {ticks_to_time(e.score_time)}
                           </span>
                           <span> </span>
@@ -434,13 +434,13 @@ const Profile: React.FC<ProfileProps> = ({
                           ) : (
                             <span> </span>
                           )}
-                          <span>{e.date.split('T')[0]}</span>
-                          <span style={{ flexDirection: 'row-reverse' }}>
+                          <span>{e.date.split("T")[0]}</span>
+                          <span style={{ flexDirection: "row-reverse" }}>
                             <button
-                              style={{ marginRight: '10px' }}
+                              style={{ marginRight: "10px" }}
                               onClick={() => {
                                 message(
-                                  'Demo Information',
+                                  "Demo Information",
                                   `Demo ID: ${e.demo_id}`
                                 );
                               }}
@@ -466,38 +466,38 @@ const Profile: React.FC<ProfileProps> = ({
                                 onClick={() => {
                                   (
                                     document.querySelectorAll(
-                                      '.profileboard-record'
+                                      ".profileboard-record"
                                     )[index % 20] as HTMLInputElement
-                                  ).style.height === '44px' ||
+                                  ).style.height === "44px" ||
                                   (
                                     document.querySelectorAll(
-                                      '.profileboard-record'
+                                      ".profileboard-record"
                                     )[index % 20] as HTMLInputElement
-                                  ).style.height === ''
+                                  ).style.height === ""
                                     ? ((
                                         document.querySelectorAll(
-                                          '.profileboard-record'
+                                          ".profileboard-record"
                                         )[index % 20] as HTMLInputElement
                                       ).style.height =
                                         `${r.scores.length * 46}px`)
                                     : ((
                                         document.querySelectorAll(
-                                          '.profileboard-record'
+                                          ".profileboard-record"
                                         )[index % 20] as HTMLInputElement
-                                      ).style.height = '44px');
+                                      ).style.height = "44px");
                                 }}
                               >
                                 <img src={HistoryIcon} alt="history" />
                               </button>
                             ) : (
-                              ''
+                              ""
                             )}
                           </span>
                         </>
                       ))}
                     </button>
                   ) : (
-                    ''
+                    ""
                   )
                 )
             ) : maps ? (
@@ -511,42 +511,42 @@ const Profile: React.FC<ProfileProps> = ({
                       <button
                         className="profileboard-record"
                         key={index}
-                        style={{ backgroundColor: '#1b1b20' }}
+                        style={{ backgroundColor: "#1b1b20" }}
                       >
                         <Link to={`/maps/${r.id}`}>
                           <span>{r.name}</span>
                         </Link>
-                        <span style={{ display: 'grid' }}>N/A</span>
-                        <span style={{ display: 'grid' }}>N/A</span>
+                        <span style={{ display: "grid" }}>N/A</span>
+                        <span style={{ display: "grid" }}>N/A</span>
                         <span>N/A</span>
                         <span> </span>
                         <span>N/A</span>
                         <span>N/A</span>
-                        <span style={{ flexDirection: 'row-reverse' }}></span>
+                        <span style={{ flexDirection: "row-reverse" }}></span>
                       </button>
                     ) : (
                       <button className="profileboard-record" key={index}>
                         {record.scores.map((e, i) => (
                           <>
                             {i !== 0 ? (
-                              <hr style={{ gridColumn: '1 / span 8' }} />
+                              <hr style={{ gridColumn: "1 / span 8" }} />
                             ) : (
-                              ''
+                              ""
                             )}
                             <Link to={`/maps/${r.id}`}>
                               <span>{r.name}</span>
                             </Link>
-                            <span style={{ display: 'grid' }}>
+                            <span style={{ display: "grid" }}>
                               {record!.scores[i].score_count}
                             </span>
-                            <span style={{ display: 'grid' }}>
+                            <span style={{ display: "grid" }}>
                               {record!.scores[i].score_count -
                                 record!.map_wr_count >
                               0
                                 ? `+${record!.scores[i].score_count - record!.map_wr_count}`
                                 : `-`}
                             </span>
-                            <span style={{ display: 'grid' }}>
+                            <span style={{ display: "grid" }}>
                               {ticks_to_time(record!.scores[i].score_time)}
                             </span>
                             <span> </span>
@@ -555,12 +555,12 @@ const Profile: React.FC<ProfileProps> = ({
                             ) : (
                               <span> </span>
                             )}
-                            <span>{record!.scores[i].date.split('T')[0]}</span>
-                            <span style={{ flexDirection: 'row-reverse' }}>
+                            <span>{record!.scores[i].date.split("T")[0]}</span>
+                            <span style={{ flexDirection: "row-reverse" }}>
                               <button
                                 onClick={() => {
                                   message(
-                                    'Demo Information',
+                                    "Demo Information",
                                     `Demo ID: ${e.demo_id}`
                                   );
                                 }}
@@ -586,31 +586,31 @@ const Profile: React.FC<ProfileProps> = ({
                                   onClick={() => {
                                     (
                                       document.querySelectorAll(
-                                        '.profileboard-record'
+                                        ".profileboard-record"
                                       )[index % 20] as HTMLInputElement
-                                    ).style.height === '44px' ||
+                                    ).style.height === "44px" ||
                                     (
                                       document.querySelectorAll(
-                                        '.profileboard-record'
+                                        ".profileboard-record"
                                       )[index % 20] as HTMLInputElement
-                                    ).style.height === ''
+                                    ).style.height === ""
                                       ? ((
                                           document.querySelectorAll(
-                                            '.profileboard-record'
+                                            ".profileboard-record"
                                           )[index % 20] as HTMLInputElement
                                         ).style.height =
                                           `${record!.scores.length * 46}px`)
                                       : ((
                                           document.querySelectorAll(
-                                            '.profileboard-record'
+                                            ".profileboard-record"
                                           )[index % 20] as HTMLInputElement
-                                        ).style.height = '44px');
+                                        ).style.height = "44px");
                                   }}
                                 >
                                   <img src={HistoryIcon} alt="history" />
                                 </button>
                               ) : (
-                                ''
+                                ""
                               )}
                             </span>
                           </>

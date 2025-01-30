@@ -1,6 +1,6 @@
-import type { Category, GameCategoryPortals } from '@customTypes/Game';
-import type { Pagination } from '@customTypes/Pagination';
-import type { UserShort } from '@customTypes/Profile';
+import type { Category, GameCategoryPortals } from "@customTypes/Game";
+import type { Pagination } from "@customTypes/Pagination";
+import type { UserShort } from "@customTypes/Profile";
 
 export interface Map {
   id: number;
@@ -44,7 +44,7 @@ export interface MapLeaderboard {
 }
 
 export interface MapLeaderboardRecordSingleplayer {
-  kind: 'singleplayer';
+  kind: "singleplayer";
   placement: number;
   record_id: number;
   score_count: number;
@@ -55,7 +55,7 @@ export interface MapLeaderboardRecordSingleplayer {
 }
 
 export interface MapLeaderboardRecordMultiplayer {
-  kind: 'multiplayer';
+  kind: "multiplayer";
   placement: number;
   record_id: number;
   score_count: number;

@@ -1,16 +1,16 @@
-import React, { useEffect } from 'react';
-import { Helmet } from 'react-helmet';
+import React, { useEffect } from "react";
+import { Helmet } from "react-helmet";
 
-import RankingEntry from '@components/RankingEntry';
+import RankingEntry from "@components/RankingEntry";
 import {
   Ranking,
   SteamRanking,
   RankingType,
   SteamRankingType,
-} from '@customTypes/Ranking';
-import { API } from '@api/Api';
+} from "@customTypes/Ranking";
+import { API } from "@api/Api";
 
-import '@css/Rankings.css';
+import "@css/Rankings.css";
 
 const Rankings: React.FC = () => {
   const [leaderboardData, setLeaderboardData] = React.useState<
@@ -122,7 +122,7 @@ const Rankings: React.FC = () => {
               _fetch_rankings();
               setCurrentRankingType(LeaderboardTypes.official);
             }}
-            className={`nav-1-btn ${currentRankingType === LeaderboardTypes.official ? 'selected' : ''}`}
+            className={`nav-1-btn ${currentRankingType === LeaderboardTypes.official ? "selected" : ""}`}
           >
             <span>Official (LPHUB)</span>
           </button>
@@ -131,7 +131,7 @@ const Rankings: React.FC = () => {
               __dev_fetch_unofficial_rankings();
               setCurrentRankingType(LeaderboardTypes.unofficial);
             }}
-            className={`nav-1-btn ${currentRankingType === LeaderboardTypes.unofficial ? 'selected' : ''}`}
+            className={`nav-1-btn ${currentRankingType === LeaderboardTypes.unofficial ? "selected" : ""}`}
           >
             <span>Unofficial (Steam)</span>
           </button>
@@ -143,7 +143,7 @@ const Rankings: React.FC = () => {
             onClick={() =>
               _set_current_leaderboard(RankingCategories.rankings_singleplayer)
             }
-            className={`nav-2-btn ${currentLeaderboardType === RankingCategories.rankings_singleplayer ? 'selected' : ''}`}
+            className={`nav-2-btn ${currentLeaderboardType === RankingCategories.rankings_singleplayer ? "selected" : ""}`}
           >
             <span>Singleplayer</span>
           </button>
@@ -151,7 +151,7 @@ const Rankings: React.FC = () => {
             onClick={() =>
               _set_current_leaderboard(RankingCategories.rankings_multiplayer)
             }
-            className={`nav-2-btn ${currentLeaderboardType === RankingCategories.rankings_multiplayer ? 'selected' : ''}`}
+            className={`nav-2-btn ${currentLeaderboardType === RankingCategories.rankings_multiplayer ? "selected" : ""}`}
           >
             <span>Cooperative</span>
           </button>
@@ -159,7 +159,7 @@ const Rankings: React.FC = () => {
             onClick={() =>
               _set_current_leaderboard(RankingCategories.rankings_overall)
             }
-            className={`nav-2-btn ${currentLeaderboardType === RankingCategories.rankings_overall ? 'selected' : ''}`}
+            className={`nav-2-btn ${currentLeaderboardType === RankingCategories.rankings_overall ? "selected" : ""}`}
           >
             <span>Overall</span>
           </button>
@@ -191,9 +191,9 @@ const Rankings: React.FC = () => {
             {leaderboardLoad ? null : (
               <div
                 style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  margin: '30px 0px',
+                  display: "flex",
+                  justifyContent: "center",
+                  margin: "30px 0px",
                 }}
               >
                 <span className="loader"></span>

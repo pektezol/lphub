@@ -1,4 +1,4 @@
-import type { Map } from '@customTypes/Map';
+import type { Map } from "@customTypes/Map";
 
 export interface Game {
   id: number;
