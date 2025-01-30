@@ -20,7 +20,10 @@ const RankingEntry: React.FC<RankingEntryProps> = prop => {
         <span>{prop.curRankingData.placement}</span>
         <div>
           <Link to={`/users/${prop.curRankingData.user.steam_id}`}>
-            <img src={prop.curRankingData.user.avatar_link}></img>
+            <img
+              src={prop.curRankingData.user.avatar_link}
+              alt={`${prop.curRankingData.user.user_name}'s profile picture`}
+            ></img>
             <span>{prop.curRankingData.user.user_name}</span>
           </Link>
         </div>
