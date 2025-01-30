@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { DownloadIcon, ThreedotIcon } from '@images/Images';
@@ -17,13 +17,13 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
   const [data, setData] = React.useState<MapLeaderboard | undefined>(undefined);
   const [pageNumber, setPageNumber] = React.useState<number>(1);
 
-  const _fetch_map_leaderboards = async () => {
+  const _fetch_map_leaderboards = useCallback(async () => {
     const mapLeaderboards = await API.get_map_leaderboard(
       mapID,
       pageNumber.toString()
     );
     setData(mapLeaderboards);
-  };
+  }, [mapID, pageNumber]);
 
   const { message, MessageDialogComponent } = useMessage();
 
