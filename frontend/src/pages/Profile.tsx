@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 
 import { SteamIcon, TwitchIcon, YouTubeIcon, PortalIcon, FlagIcon, StatisticsIcon, SortIcon, ThreedotIcon, DownloadIcon, HistoryIcon, DeleteIcon } from '@images/Images';
 import { UserProfile } from '@customTypes/Profile';
@@ -109,6 +110,10 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
 
   return (
     <div>
+      <Helmet>
+        <title>LPHUB | {profile.user_name}</title>
+        <meta name="description" content={profile.user_name} />
+      </Helmet>
       {MessageDialogComponent}
       {MessageDialogLoadComponent}
       {ConfirmDialogComponent}

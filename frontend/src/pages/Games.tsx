@@ -1,4 +1,5 @@
 import React from 'react';
+import { Helmet } from 'react-helmet';
 
 import GameEntry from '@components/GameEntry';
 import { Game } from '@customTypes/Game';
@@ -11,10 +12,10 @@ interface GamesProps {
 const Games: React.FC<GamesProps> = ({ games }) => {
 
     const _page_load = () => {
-      const loaders = document.querySelectorAll(".loader");
-      loaders.forEach((loader) => {
-          (loader as HTMLElement).style.display = "none";
-      });
+        const loaders = document.querySelectorAll(".loader");
+        loaders.forEach((loader) => {
+            (loader as HTMLElement).style.display = "none";
+        });
     }
 
     React.useEffect(() => {
@@ -26,6 +27,9 @@ const Games: React.FC<GamesProps> = ({ games }) => {
 
     return (
         <div className='games-page'>
+            <Helmet>
+                <title>LPHUB | Games</title>
+            </Helmet>
             <section>
                 <div className='games-page-content'>
                     <div className='games-page-item-content'>

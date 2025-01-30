@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Helmet } from "react-helmet";
 
 import RankingEntry from "@components/RankingEntry";
 import { Ranking, SteamRanking, RankingType, SteamRankingType } from "@customTypes/Ranking";
@@ -13,9 +14,9 @@ const Rankings: React.FC = () => {
         official,
         unofficial
     }
-	const [currentRankingType, setCurrentRankingType] = React.useState<LeaderboardTypes>(LeaderboardTypes.official);
+    const [currentRankingType, setCurrentRankingType] = React.useState<LeaderboardTypes>(LeaderboardTypes.official);
 
-	const [leaderboardLoad, setLeaderboardLoad] = React.useState<boolean>(false);
+    const [leaderboardLoad, setLeaderboardLoad] = React.useState<boolean>(false);
 
     enum RankingCategories {
         rankings_overall,
@@ -26,7 +27,7 @@ const Rankings: React.FC = () => {
     const [load, setLoad] = React.useState<boolean>(false);
 
     const _fetch_rankings = async () => {
-		setLeaderboardLoad(false);
+        setLeaderboardLoad(false);
         const rankings = await API.get_official_rankings();
         setLeaderboardData(rankings);
         if (currentLeaderboardType == RankingCategories.rankings_singleplayer) {
@@ -37,12 +38,12 @@ const Rankings: React.FC = () => {
             setCurrentLeaderboard(rankings.rankings_overall)
         }
         setLoad(true);
-		setLeaderboardLoad(true);
+        setLeaderboardLoad(true);
     }
 
     const __dev_fetch_unofficial_rankings = async () => {
         try {
-			setLeaderboardLoad(false);
+            setLeaderboardLoad(false);
             const rankings = await API.get_unofficial_rankings();
             setLeaderboardData(rankings);
             if (currentLeaderboardType == RankingCategories.rankings_singleplayer) {
@@ -53,7 +54,7 @@ const Rankings: React.FC = () => {
             } else {
                 setCurrentLeaderboard(rankings.rankings_overall)
             }
-			setLeaderboardLoad(true);
+            setLeaderboardLoad(true);
         } catch (e) {
             console.log(e)
         }
@@ -88,12 +89,15 @@ const Rankings: React.FC = () => {
 
     return (
         <main>
+            <Helmet>
+                <title>LPHUB | Rankings</title>
+            </Helmet>
             <section className="nav-container nav-1">
                 <div>
-                    <button onClick={() => {_fetch_rankings(); setCurrentRankingType(LeaderboardTypes.official)}} className={`nav-1-btn ${currentRankingType == LeaderboardTypes.official ? "selected" : ""}`}>
+                    <button onClick={() => { _fetch_rankings(); setCurrentRankingType(LeaderboardTypes.official) }} className={`nav-1-btn ${currentRankingType == LeaderboardTypes.official ? "selected" : ""}`}>
                         <span>Official (LPHUB)</span>
                     </button>
-                    <button onClick={() => {__dev_fetch_unofficial_rankings(); setCurrentRankingType(LeaderboardTypes.unofficial)}} className={`nav-1-btn ${currentRankingType == LeaderboardTypes.unofficial ? "selected" : ""}`}>
+                    <button onClick={() => { __dev_fetch_unofficial_rankings(); setCurrentRankingType(LeaderboardTypes.unofficial) }} className={`nav-1-btn ${currentRankingType == LeaderboardTypes.unofficial ? "selected" : ""}`}>
                         <span>Unofficial (Steam)</span>
                     </button>
                 </div>
@@ -128,11 +132,11 @@ const Rankings: React.FC = () => {
                         })
                         }
 
-						{leaderboardLoad ? null :
-							<div style={{display: "flex", justifyContent: "center", margin: "30px 0px"}}>
-							<span className="loader"></span>
-							</div>
-						}
+                        {leaderboardLoad ? null :
+                            <div style={{ display: "flex", justifyContent: "center", margin: "30px 0px" }}>
+                                <span className="loader"></span>
+                            </div>
+                        }
                     </div>
                 </section>
                 : null}
