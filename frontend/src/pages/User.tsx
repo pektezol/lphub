@@ -47,7 +47,7 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const _fetch_user = async () => {
+  const _fetch_user = React.useCallback(async () => {
     const userID = location.pathname.split('/')[2];
     if (token && profile && profile.profile && profile.steam_id === userID) {
       navigate('/profile');
@@ -55,9 +55,9 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
     }
     const userData = await API.get_user(userID);
     setUser(userData);
-  };
+  }, [location.pathname, token, profile, navigate]);
 
-  const _get_game_chapters = async () => {
+  const _get_game_chapters = React.useCallback(async () => {
     if (game !== '0') {
       const gameChapters = await API.get_games_chapters(game);
       setChapterData(gameChapters);
@@ -65,9 +65,9 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
       setPageMax(Math.ceil(user!.records.length / 20));
       setPageNumber(1);
     }
-  };
+  }, [game, user]);
 
-  const _get_game_maps = async () => {
+  const _get_game_maps = React.useCallback(async () => {
     if (chapter === '0') {
       const gameMaps = await API.get_game_maps(game);
       setMaps(gameMaps);
@@ -79,23 +79,23 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
       setPageMax(Math.ceil(gameChapters.maps.length / 20));
       setPageNumber(1);
     }
-  };
+  }, [chapter, game]);
 
   React.useEffect(() => {
     _fetch_user();
-  }, [location]);
+  }, [location, _fetch_user]);
 
   React.useEffect(() => {
     if (user) {
       _get_game_chapters();
     }
-  }, [user, game, location]);
+  }, [user, game, location, _get_game_chapters]);
 
   React.useEffect(() => {
     if (user && game !== '0') {
       _get_game_maps();
     }
-  }, [user, game, chapter, location]);
+  }, [user, game, chapter, location, _get_game_maps]);
 
   if (!user) {
     return <></>;
