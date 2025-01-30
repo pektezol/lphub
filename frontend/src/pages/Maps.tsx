@@ -35,26 +35,31 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
 
   const mapID = location.pathname.split('/')[2];
 
-  const _fetch_map_summary = async () => {
+  const _fetch_map_summary = React.useCallback(async () => {
     const mapSummary = await API.get_map_summary(mapID);
     setMapSummaryData(mapSummary);
-  };
+  }, [mapID]);
 
-  const _fetch_map_leaderboards = async () => {
+  const _fetch_map_leaderboards = React.useCallback(async () => {
     const mapLeaderboards = await API.get_map_leaderboard(mapID, '1');
     setMapLeaderboardData(mapLeaderboards);
-  };
+  }, [mapID]);
 
-  const _fetch_map_discussions = async () => {
+  const _fetch_map_discussions = React.useCallback(async () => {
     const mapDiscussions = await API.get_map_discussions(mapID);
     setMapDiscussionsData(mapDiscussions);
-  };
+  }, [mapID]);
 
   React.useEffect(() => {
     _fetch_map_summary();
     _fetch_map_leaderboards();
     _fetch_map_discussions();
-  }, [mapID]);
+  }, [
+    mapID,
+    _fetch_map_discussions,
+    _fetch_map_leaderboards,
+    _fetch_map_summary,
+  ]);
 
   if (!mapSummaryData) {
     // loading placeholder
