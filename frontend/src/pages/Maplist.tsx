@@ -11,7 +11,6 @@ const Maplist: React.FC = () => {
   const [game, setGame] = React.useState<Game | null>(null);
   const [catNum, setCatNum] = React.useState(0);
   const [id, setId] = React.useState(0);
-  const [category, setCategory] = React.useState(0);
   const [load, setLoad] = React.useState(false);
   const [currentlySelected, setCurrentlySelected] = React.useState<number>(0);
   const [hasClicked, setHasClicked] = React.useState(false);
@@ -37,7 +36,7 @@ const Maplist: React.FC = () => {
   };
 
   const _handle_dropdown_click = () => {
-    if (dropdownActive == 'none') {
+    if (dropdownActive === 'none') {
       setDropdownActive('block');
     } else {
       setDropdownActive('none');
@@ -54,7 +53,7 @@ const Maplist: React.FC = () => {
     const queryParams = new URLSearchParams(location.search);
     if (queryParams.get('chapter')) {
       let cat = parseFloat(queryParams.get('chapter') || '');
-      if (gameId == 2) {
+      if (gameId === 2) {
         cat += 10;
       }
       _fetch_chapters(cat.toString());
@@ -79,14 +78,14 @@ const Maplist: React.FC = () => {
     setLoad(true);
     _fetch_game();
     _fetch_game_chapters();
-  }, []);
+  }, [location.search]);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
-    if (gameChapters != undefined && !queryParams.get('chapter')) {
+    if (gameChapters !== undefined && !queryParams.get('chapter')) {
       _fetch_chapters(gameChapters!.chapters[0].id.toString());
     }
-  }, [gameChapters]);
+  }, [gameChapters, location.search]);
 
   return (
     <main>
@@ -126,8 +125,8 @@ const Maplist: React.FC = () => {
                   <button
                     key={index}
                     className={
-                      currentlySelected == cat.category.id ||
-                      (cat.category.id - 1 == catNum && !hasClicked)
+                      currentlySelected === cat.category.id ||
+                      (cat.category.id - 1 === catNum && !hasClicked)
                         ? 'game-cat-button selected'
                         : 'game-cat-button'
                     }
@@ -205,15 +204,15 @@ const Maplist: React.FC = () => {
                         {/* <span>Difficulty:</span> */}
                         <div
                           className={
-                            map.difficulty == 0
+                            map.difficulty === 0
                               ? 'one'
-                              : map.difficulty == 1
+                              : map.difficulty === 1
                                 ? 'two'
-                                : map.difficulty == 2
+                                : map.difficulty === 2
                                   ? 'three'
-                                  : map.difficulty == 3
+                                  : map.difficulty === 3
                                     ? 'four'
-                                    : map.difficulty == 4
+                                    : map.difficulty === 4
                                       ? 'five'
                                       : 'one'
                           }
