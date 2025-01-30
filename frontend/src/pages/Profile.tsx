@@ -452,7 +452,7 @@ const Profile: React.FC<ProfileProps> = ({
                                 _delete_submission(r.map_id, e.record_id);
                               }}
                             >
-                              <img src={DeleteIcon}></img>
+                              <img src={DeleteIcon} alt="delete icon"></img>
                             </button>
                             <button
                               onClick={() =>
@@ -572,7 +572,7 @@ const Profile: React.FC<ProfileProps> = ({
                                   _delete_submission(r.id, e.record_id);
                                 }}
                               >
-                                <img src={DeleteIcon}></img>
+                                <img src={DeleteIcon} alt="delete icon"></img>
                               </button>
                               <button
                                 onClick={() =>
