@@ -1,12 +1,12 @@
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
-import { DownloadIcon, ThreedotIcon } from "@images/Images";
-import { MapLeaderboard } from "@customTypes/Map";
-import { ticks_to_time, time_ago } from "@utils/Time";
-import { API } from "@api/Api";
-import useMessage from "@hooks/UseMessage";
-import "@css/Maps.css";
+import { DownloadIcon, ThreedotIcon } from '@images/Images';
+import { MapLeaderboard } from '@customTypes/Map';
+import { ticks_to_time, time_ago } from '@utils/Time';
+import { API } from '@api/Api';
+import useMessage from '@hooks/UseMessage';
+import '@css/Maps.css';
 
 interface LeaderboardsProps {
   mapID: string;
@@ -35,7 +35,7 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
   if (!data) {
     return (
       <section id="section6" className="summary2">
-        <h1 style={{ textAlign: "center" }}>
+        <h1 style={{ textAlign: 'center' }}>
           Map is not available for competitive boards.
         </h1>
       </section>
@@ -45,7 +45,7 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
   if (data.records.length === 0) {
     return (
       <section id="section6" className="summary2">
-        <h1 style={{ textAlign: "center" }}>No records found.</h1>
+        <h1 style={{ textAlign: 'center' }}>No records found.</h1>
       </section>
     );
   }
@@ -58,8 +58,8 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
           id="leaderboard-top"
           style={
             data.map.is_coop
-              ? { gridTemplateColumns: "7.5% 40% 7.5% 15% 15% 15%" }
-              : { gridTemplateColumns: "7.5% 30% 10% 20% 17.5% 15%" }
+              ? { gridTemplateColumns: '7.5% 40% 7.5% 15% 15% 15%' }
+              : { gridTemplateColumns: '7.5% 30% 10% 20% 17.5% 15%' }
           }
         >
           <span>Place</span>
@@ -82,13 +82,13 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
                 onClick={() =>
                   pageNumber === 1
                     ? null
-                    : setPageNumber((prevPageNumber) => prevPageNumber - 1)
+                    : setPageNumber(prevPageNumber => prevPageNumber - 1)
                 }
               >
                 <i
                   className="triangle"
-                  style={{ position: "relative", left: "-5px" }}
-                ></i>{" "}
+                  style={{ position: 'relative', left: '-5px' }}
+                ></i>{' '}
               </button>
               <span>
                 {data.pagination.current_page}/{data.pagination.total_pages}
@@ -97,17 +97,17 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
                 onClick={() =>
                   pageNumber === data.pagination.total_pages
                     ? null
-                    : setPageNumber((prevPageNumber) => prevPageNumber + 1)
+                    : setPageNumber(prevPageNumber => prevPageNumber + 1)
                 }
               >
                 <i
                   className="triangle"
                   style={{
-                    position: "relative",
-                    left: "5px",
-                    transform: "rotate(180deg)",
+                    position: 'relative',
+                    left: '5px',
+                    transform: 'rotate(180deg)',
                   }}
-                ></i>{" "}
+                ></i>{' '}
               </button>
             </div>
           </div>
@@ -120,33 +120,33 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
               key={index}
               style={
                 data.map.is_coop
-                  ? { gridTemplateColumns: "3% 4.5% 40% 4% 3.5% 15% 15% 14.5%" }
-                  : { gridTemplateColumns: "3% 4.5% 30% 4% 6% 20% 17% 15%" }
+                  ? { gridTemplateColumns: '3% 4.5% 40% 4% 3.5% 15% 15% 14.5%' }
+                  : { gridTemplateColumns: '3% 4.5% 30% 4% 6% 20% 17% 15%' }
               }
             >
               <span>{r.placement}</span>
               <span> </span>
-              {r.kind === "multiplayer" ? (
+              {r.kind === 'multiplayer' ? (
                 <div>
                   <Link to={`/users/${r.host.steam_id}`}>
                     <span>
-                      <img src={r.host.avatar_link} alt="" /> &nbsp;{" "}
+                      <img src={r.host.avatar_link} alt="" /> &nbsp;{' '}
                       {r.host.user_name}
                     </span>
                   </Link>
                   <Link to={`/users/${r.partner.steam_id}`}>
                     <span>
-                      <img src={r.partner.avatar_link} alt="" /> &nbsp;{" "}
+                      <img src={r.partner.avatar_link} alt="" /> &nbsp;{' '}
                       {r.partner.user_name}
                     </span>
                   </Link>
                 </div>
               ) : (
-                r.kind === "singleplayer" && (
+                r.kind === 'singleplayer' && (
                   <div>
                     <Link to={`/users/${r.user.steam_id}`}>
                       <span>
-                        <img src={r.user.avatar_link} alt="" /> &nbsp;{" "}
+                        <img src={r.user.avatar_link} alt="" /> &nbsp;{' '}
                         {r.user.user_name}
                       </span>
                     </Link>
@@ -158,25 +158,25 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
               <span> </span>
               <span
                 className="hover-popup"
-                popup-text={r.score_time + " ticks"}
+                popup-text={r.score_time + ' ticks'}
               >
                 {ticks_to_time(r.score_time)}
               </span>
               <span
                 className="hover-popup"
-                popup-text={r.record_date.replace("T", " ").split(".")[0]}
+                popup-text={r.record_date.replace('T', ' ').split('.')[0]}
               >
                 {time_ago(
-                  new Date(r.record_date.replace("T", " ").replace("Z", ""))
+                  new Date(r.record_date.replace('T', ' ').replace('Z', ''))
                 )}
               </span>
 
-              {r.kind === "multiplayer" ? (
+              {r.kind === 'multiplayer' ? (
                 <span>
                   <button
                     onClick={() => {
                       message(
-                        "Demo Information",
+                        'Demo Information',
                         `Host Demo ID: ${r.host_demo_id} \nParnter Demo ID: ${r.partner_demo_id}`
                       );
                     }}
@@ -193,7 +193,7 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
                       alt="download"
                       style={{
                         filter:
-                          "hue-rotate(160deg) contrast(60%) saturate(1000%)",
+                          'hue-rotate(160deg) contrast(60%) saturate(1000%)',
                       }}
                     />
                   </button>
@@ -207,17 +207,17 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
                       alt="download"
                       style={{
                         filter:
-                          "hue-rotate(300deg) contrast(60%) saturate(1000%)",
+                          'hue-rotate(300deg) contrast(60%) saturate(1000%)',
                       }}
                     />
                   </button>
                 </span>
               ) : (
-                r.kind === "singleplayer" && (
+                r.kind === 'singleplayer' && (
                   <span>
                     <button
                       onClick={() => {
-                        message("Demo Information", `Demo ID: ${r.demo_id}`);
+                        message('Demo Information', `Demo ID: ${r.demo_id}`);
                       }}
                     >
                       <img src={ThreedotIcon} alt="demo_id" />

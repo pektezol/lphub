@@ -1,5 +1,7 @@
 // llm ahh funcs
-export function get_user_id_from_token(token: string | undefined): string | undefined {
+export function get_user_id_from_token(
+  token: string | undefined
+): string | undefined {
   if (!token) {
     return undefined;
   }
@@ -19,9 +21,11 @@ export function get_user_id_from_token(token: string | undefined): string | unde
       .join('')
   );
   return JSON.parse(jsonPayload).sub;
-};
+}
 
-export function get_user_mod_from_token(token: string | undefined): boolean | undefined {
+export function get_user_mod_from_token(
+  token: string | undefined
+): boolean | undefined {
   if (!token) {
     return undefined;
   }
@@ -41,4 +45,4 @@ export function get_user_mod_from_token(token: string | undefined): boolean | un
       .join('')
   );
   return JSON.parse(jsonPayload).mod;
-};
+}

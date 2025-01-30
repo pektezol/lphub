@@ -1,6 +1,6 @@
-import axios from "axios";
-import { url } from "@api/Api";
-import { UserProfile } from "@customTypes/Profile";
+import axios from 'axios';
+import { url } from '@api/Api';
+import { UserProfile } from '@customTypes/Profile';
 
 export const get_user = async (user_id: string): Promise<UserProfile> => {
   const response = await axios.get(url(`users/${user_id}`));

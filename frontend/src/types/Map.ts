@@ -9,15 +9,15 @@ export interface Map {
   is_disabled: boolean;
   difficulty: number;
   category_portals: GameCategoryPortals[];
-};
+}
 
 export interface MapDiscussion {
   discussion: MapDiscussionsDetail;
-};
+}
 
 export interface MapDiscussions {
   discussions: MapDiscussionsDetail[];
-};
+}
 
 export interface MapDiscussionsDetail {
   id: number;
@@ -27,22 +27,24 @@ export interface MapDiscussionsDetail {
   comments: MapDiscussionDetailComment[];
   created_at: string;
   updated_at: string;
-};
+}
 
 interface MapDiscussionDetailComment {
   comment: string;
   date: string;
   user: UserShort;
-};
+}
 
 export interface MapLeaderboard {
   map: MapSummaryMap;
-  records: MapLeaderboardRecordSingleplayer[] | MapLeaderboardRecordMultiplayer[];
+  records:
+    | MapLeaderboardRecordSingleplayer[]
+    | MapLeaderboardRecordMultiplayer[];
   pagination: Pagination;
-};
+}
 
 export interface MapLeaderboardRecordSingleplayer {
-  kind: "singleplayer";
+  kind: 'singleplayer';
   placement: number;
   record_id: number;
   score_count: number;
@@ -50,10 +52,10 @@ export interface MapLeaderboardRecordSingleplayer {
   user: UserShort;
   demo_id: string;
   record_date: string;
-};
+}
 
 export interface MapLeaderboardRecordMultiplayer {
-  kind: "multiplayer";
+  kind: 'multiplayer';
   placement: number;
   record_id: number;
   score_count: number;
@@ -63,13 +65,12 @@ export interface MapLeaderboardRecordMultiplayer {
   host_demo_id: string;
   partner_demo_id: string;
   record_date: string;
-};
-
+}
 
 export interface MapSummary {
   map: MapSummaryMap;
   summary: MapSummaryDetails;
-};
+}
 
 interface MapSummaryMap {
   id: number;
@@ -79,11 +80,11 @@ interface MapSummaryMap {
   map_name: string;
   is_coop: boolean;
   is_disabled: boolean;
-};
+}
 
 interface MapSummaryDetails {
   routes: MapSummaryDetailsRoute[];
-};
+}
 
 interface MapSummaryDetailsRoute {
   route_id: number;
@@ -93,16 +94,15 @@ interface MapSummaryDetailsRoute {
   completion_count: number;
   description: string;
   showcase: string;
-};
+}
 
 interface MapSummaryDetailsRouteHistory {
   runner_name: string;
   score_count: number;
   date: string;
-};
+}
 
 export interface MapDeleteEndpoint {
   map_id: number;
   record_id: number;
 }
-
