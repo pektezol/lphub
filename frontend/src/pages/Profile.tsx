@@ -61,7 +61,7 @@ const Profile: React.FC<ProfileProps> = ({
     }
   };
 
-  const _get_game_chapters = async () => {
+  const _get_game_chapters = React.useCallback(async () => {
     if (game && game !== '0') {
       const gameChapters = await API.get_games_chapters(game);
       setChapterData(gameChapters);
@@ -69,9 +69,9 @@ const Profile: React.FC<ProfileProps> = ({
       setPageMax(Math.ceil(profile!.records.length / 20));
       setPageNumber(1);
     }
-  };
+  }, [game, profile]);
 
-  const _get_game_maps = async () => {
+  const _get_game_maps = React.useCallback(async () => {
     if (chapter === '0') {
       const gameMaps = await API.get_game_maps(game);
       setMaps(gameMaps);
@@ -83,7 +83,7 @@ const Profile: React.FC<ProfileProps> = ({
       setPageMax(Math.ceil(gameChapters.maps.length / 20));
       setPageNumber(1);
     }
-  };
+  }, [chapter, game]);
 
   const _delete_submission = async (map_id: number, record_id: number) => {
     const userConfirmed = await confirm(
