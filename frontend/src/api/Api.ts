@@ -1,18 +1,39 @@
-import { MapDiscussionCommentContent, MapDiscussionContent, ModMenuContent } from '@customTypes/Content';
-import { delete_token, get_token } from '@api/Auth';
-import { get_user, get_profile, post_profile } from '@api/User';
-import { get_games, get_chapters, get_games_chapters, get_game_maps, get_search } from '@api/Games';
-import { get_official_rankings, get_unofficial_rankings } from '@api/Rankings';
-import { get_map_summary, get_map_leaderboard, get_map_discussions, get_map_discussion, post_map_discussion, post_map_discussion_comment, delete_map_discussion, post_record, delete_map_record } from '@api/Maps';
-import { delete_map_summary, post_map_summary, put_map_image, put_map_summary } from '@api/Mod';
-import { UploadRunContent } from '@customTypes/Content';
+import { MapDiscussionContent, ModMenuContent } from "@customTypes/Content";
+import { delete_token, get_token } from "@api/Auth";
+import { get_user, get_profile, post_profile } from "@api/User";
+import {
+  get_games,
+  get_chapters,
+  get_games_chapters,
+  get_game_maps,
+  get_search,
+} from "@api/Games";
+import { get_official_rankings, get_unofficial_rankings } from "@api/Rankings";
+import {
+  get_map_summary,
+  get_map_leaderboard,
+  get_map_discussions,
+  get_map_discussion,
+  post_map_discussion,
+  post_map_discussion_comment,
+  delete_map_discussion,
+  post_record,
+  delete_map_record,
+} from "@api/Maps";
+import {
+  delete_map_summary,
+  post_map_summary,
+  put_map_image,
+  put_map_summary,
+} from "@api/Mod";
+import { UploadRunContent } from "@customTypes/Content";
 
 // add new api call function entries here
 // example usage: API.get_games();
 export const API = {
   // Auth
   get_token: () => get_token(),
-  
+
   delete_token: () => delete_token(),
   // User
   get_user: (user_id: string) => get_user(user_id),
@@ -29,28 +50,49 @@ export const API = {
   get_unofficial_rankings: () => get_unofficial_rankings(),
   // Maps
   get_map_summary: (map_id: string) => get_map_summary(map_id),
-  get_map_leaderboard: (map_id: string, page: string) => get_map_leaderboard(map_id, page),
+  get_map_leaderboard: (map_id: string, page: string) =>
+    get_map_leaderboard(map_id, page),
   get_map_discussions: (map_id: string) => get_map_discussions(map_id),
-  get_map_discussion: (map_id: string, discussion_id: number) => get_map_discussion(map_id, discussion_id),
+  get_map_discussion: (map_id: string, discussion_id: number) =>
+    get_map_discussion(map_id, discussion_id),
 
-  post_map_discussion: (token: string, map_id: string, content: MapDiscussionContent) => post_map_discussion(token, map_id, content),
-  post_map_discussion_comment: (token: string, map_id: string, discussion_id: number, comment: string) => post_map_discussion_comment(token, map_id, discussion_id, comment),
-  post_record: (token: string, run: UploadRunContent, map_id: number) => post_record(token, run, map_id),
+  post_map_discussion: (
+    token: string,
+    map_id: string,
+    content: MapDiscussionContent
+  ) => post_map_discussion(token, map_id, content),
+  post_map_discussion_comment: (
+    token: string,
+    map_id: string,
+    discussion_id: number,
+    comment: string
+  ) => post_map_discussion_comment(token, map_id, discussion_id, comment),
+  post_record: (token: string, run: UploadRunContent, map_id: number) =>
+    post_record(token, run, map_id),
 
-  delete_map_discussion: (token: string, map_id: string, discussion_id: number) => delete_map_discussion(token, map_id, discussion_id),
+  delete_map_discussion: (
+    token: string,
+    map_id: string,
+    discussion_id: number
+  ) => delete_map_discussion(token, map_id, discussion_id),
 
-  delete_map_record: (token: string, map_id: number, record_id: number) => delete_map_record(token, map_id, record_id),
+  delete_map_record: (token: string, map_id: number, record_id: number) =>
+    delete_map_record(token, map_id, record_id),
   // Mod
-  post_map_summary: (token: string, map_id: string, content: ModMenuContent) => post_map_summary(token, map_id, content),
-  
-  put_map_image: (token: string, map_id: string, image: string) => put_map_image(token, map_id, image),
-  put_map_summary: (token: string, map_id: string, content: ModMenuContent) => put_map_summary(token, map_id, content),
-  
-  delete_map_summary: (token: string, map_id: string, route_id: number) => delete_map_summary(token, map_id, route_id),
+  post_map_summary: (token: string, map_id: string, content: ModMenuContent) =>
+    post_map_summary(token, map_id, content),
+
+  put_map_image: (token: string, map_id: string, image: string) =>
+    put_map_image(token, map_id, image),
+  put_map_summary: (token: string, map_id: string, content: ModMenuContent) =>
+    put_map_summary(token, map_id, content),
+
+  delete_map_summary: (token: string, map_id: string, route_id: number) =>
+    delete_map_summary(token, map_id, route_id),
 };
 
-const BASE_API_URL: string = "/api/v1/"
+const BASE_API_URL: string = "/api/v1/";
 
 export function url(path: string): string {
   return BASE_API_URL + path;
-};
+}

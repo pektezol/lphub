@@ -23,7 +23,7 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "craco build",
+    "build": "prettier --write 'src/**/*.{js,jsx,ts,tsx}' && craco build",
     "test": "craco test",
     "eject": "react-scripts eject"
   },
@@ -48,6 +48,7 @@
   "devDependencies": {
     "@craco/craco": "^7.1.0",
     "@types/react-helmet": "^6.1.11",
-    "craco-alias": "^3.0.1"
+    "craco-alias": "^3.0.1",
+    "prettier": "^3.4.2"
   }
 }
