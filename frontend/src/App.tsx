@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 
@@ -26,9 +26,7 @@ const App: React.FC = () => {
     undefined
   );
   const [isModerator, setIsModerator] = React.useState<boolean>(false);
-
   const [games, setGames] = React.useState<Game[]>([]);
-
   const [uploadRunDialog, setUploadRunDialog] = React.useState<boolean>(false);
 
   const _fetch_token = async () => {
@@ -41,12 +39,15 @@ const App: React.FC = () => {
     setGames(games);
   };
 
-  const _set_profile = async (user_id?: string) => {
-    if (user_id && token) {
-      const user = await API.get_profile(token);
-      setProfile(user);
-    }
-  };
+  const _set_profile = useCallback(
+    async (user_id?: string) => {
+      if (user_id && token) {
+        const user = await API.get_profile(token);
+        setProfile(user);
+      }
+    },
+    [token]
+  );
 
   React.useEffect(() => {
     if (token === undefined) {
