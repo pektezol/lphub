@@ -37,7 +37,7 @@ const Rankings: React.FC = () => {
     React.useState<RankingCategories>(RankingCategories.rankings_singleplayer);
   const [load, setLoad] = React.useState<boolean>(false);
 
-  const _fetch_rankings = async () => {
+  const _fetch_rankings = React.useCallback(async () => {
     setLeaderboardLoad(false);
     const rankings = await API.get_official_rankings();
     setLeaderboardData(rankings);
@@ -52,7 +52,7 @@ const Rankings: React.FC = () => {
     }
     setLoad(true);
     setLeaderboardLoad(true);
-  };
+  }, [currentLeaderboardType]);
 
   const __dev_fetch_unofficial_rankings = async () => {
     try {
@@ -75,17 +75,20 @@ const Rankings: React.FC = () => {
     }
   };
 
-  const _set_current_leaderboard = (ranking_cat: RankingCategories) => {
-    if (ranking_cat === RankingCategories.rankings_singleplayer) {
-      setCurrentLeaderboard(leaderboardData!.rankings_singleplayer);
-    } else if (ranking_cat === RankingCategories.rankings_multiplayer) {
-      setCurrentLeaderboard(leaderboardData!.rankings_multiplayer);
-    } else {
-      setCurrentLeaderboard(leaderboardData!.rankings_overall);
-    }
+  const _set_current_leaderboard = React.useCallback(
+    (ranking_cat: RankingCategories) => {
+      if (ranking_cat === RankingCategories.rankings_singleplayer) {
+        setCurrentLeaderboard(leaderboardData!.rankings_singleplayer);
+      } else if (ranking_cat === RankingCategories.rankings_multiplayer) {
+        setCurrentLeaderboard(leaderboardData!.rankings_multiplayer);
+      } else {
+        setCurrentLeaderboard(leaderboardData!.rankings_overall);
+      }
 
-    setCurrentLeaderboardType(ranking_cat);
-  };
+      setCurrentLeaderboardType(ranking_cat);
+    },
+    [leaderboardData]
+  );
 
   // unused func
   //   const _set_leaderboard_type = (leaderboard_type: LeaderboardTypes) => {
@@ -100,7 +103,12 @@ const Rankings: React.FC = () => {
     if (load) {
       _set_current_leaderboard(RankingCategories.rankings_singleplayer);
     }
-  }, [load, RankingCategories.rankings_singleplayer]);
+  }, [
+    load,
+    RankingCategories.rankings_singleplayer,
+    _fetch_rankings,
+    _set_current_leaderboard,
+  ]);
 
   return (
     <main>
