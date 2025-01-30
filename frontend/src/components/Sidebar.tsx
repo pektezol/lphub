@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 import {
@@ -39,22 +39,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const location = useLocation();
   const path = location.pathname;
 
-  const handle_sidebar_click = (clicked_sidebar_idx: number) => {
-    const btn = document.querySelectorAll('button.sidebar-button');
-    if (isSidebarOpen) {
-      setSidebarOpen(false);
-      _handle_sidebar_hide();
-    }
-    // clusterfuck
-    btn.forEach((e, i) => {
-      btn[i].classList.remove('sidebar-button-selected');
-      btn[i].classList.add('sidebar-button-deselected');
-    });
-    btn[clicked_sidebar_idx].classList.add('sidebar-button-selected');
-    btn[clicked_sidebar_idx].classList.remove('sidebar-button-deselected');
-  };
-
-  const _handle_sidebar_hide = () => {
+  const _handle_sidebar_hide = useCallback(() => {
     var btn = document.querySelectorAll(
       'button.sidebar-button'
     ) as NodeListOf<HTMLElement>;
@@ -115,7 +100,25 @@ const Sidebar: React.FC<SidebarProps> = ({
         side.style.zIndex = '0';
       }, 300);
     }
-  };
+  }, [isSidebarOpen, profile]);
+
+  const handle_sidebar_click = useCallback(
+    (clicked_sidebar_idx: number) => {
+      const btn = document.querySelectorAll('button.sidebar-button');
+      if (isSidebarOpen) {
+        setSidebarOpen(false);
+        _handle_sidebar_hide();
+      }
+      // clusterfuck
+      btn.forEach((e, i) => {
+        btn[i].classList.remove('sidebar-button-selected');
+        btn[i].classList.add('sidebar-button-deselected');
+      });
+      btn[clicked_sidebar_idx].classList.add('sidebar-button-selected');
+      btn[clicked_sidebar_idx].classList.remove('sidebar-button-deselected');
+    },
+    [isSidebarOpen, _handle_sidebar_hide]
+  );
 
   const _handle_sidebar_lock = () => {
     if (!isSidebarLocked) {
@@ -147,7 +150,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     } else if (path.includes('about')) {
       handle_sidebar_click(6);
     }
-  }, [path]);
+  }, [path, handle_sidebar_click]);
 
   return (
     <div id="sidebar">
