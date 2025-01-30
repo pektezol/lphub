@@ -22,7 +22,7 @@ const RankingEntry: React.FC<RankingEntryProps> = prop => {
           <Link to={`/users/${prop.curRankingData.user.steam_id}`}>
             <img
               src={prop.curRankingData.user.avatar_link}
-              alt={`${prop.curRankingData.user.user_name}'s profile picture`}
+              alt={`${prop.curRankingData.user.user_name}'s Avatar`}
             ></img>
             <span>{prop.curRankingData.user.user_name}</span>
           </Link>
@@ -34,10 +34,10 @@ const RankingEntry: React.FC<RankingEntryProps> = prop => {
     return (
       <div className="leaderboard-entry">
         <span>
-          {prop.currentLeaderboardType ==
+          {prop.currentLeaderboardType ===
           RankingCategories.rankings_singleplayer
             ? prop.curRankingData.sp_rank
-            : prop.currentLeaderboardType ==
+            : prop.currentLeaderboardType ===
                 RankingCategories.rankings_multiplayer
               ? prop.curRankingData.mp_rank
               : prop.curRankingData.overall_rank}
@@ -49,10 +49,10 @@ const RankingEntry: React.FC<RankingEntryProps> = prop => {
           </Link>
         </div>
         <span>
-          {prop.currentLeaderboardType ==
+          {prop.currentLeaderboardType ===
           RankingCategories.rankings_singleplayer
             ? prop.curRankingData.sp_score
-            : prop.currentLeaderboardType ==
+            : prop.currentLeaderboardType ===
                 RankingCategories.rankings_multiplayer
               ? prop.curRankingData.mp_score
               : prop.curRankingData.overall_score}
