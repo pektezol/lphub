@@ -41,10 +41,10 @@ const Rankings: React.FC = () => {
     setLeaderboardLoad(false);
     const rankings = await API.get_official_rankings();
     setLeaderboardData(rankings);
-    if (currentLeaderboardType == RankingCategories.rankings_singleplayer) {
+    if (currentLeaderboardType === RankingCategories.rankings_singleplayer) {
       setCurrentLeaderboard(rankings.rankings_singleplayer);
     } else if (
-      currentLeaderboardType == RankingCategories.rankings_multiplayer
+      currentLeaderboardType === RankingCategories.rankings_multiplayer
     ) {
       setCurrentLeaderboard(rankings.rankings_multiplayer);
     } else {
@@ -59,11 +59,11 @@ const Rankings: React.FC = () => {
       setLeaderboardLoad(false);
       const rankings = await API.get_unofficial_rankings();
       setLeaderboardData(rankings);
-      if (currentLeaderboardType == RankingCategories.rankings_singleplayer) {
+      if (currentLeaderboardType === RankingCategories.rankings_singleplayer) {
         // console.log(_sort_rankings_steam(unofficialRanking.rankings_singleplayer))
         setCurrentLeaderboard(rankings.rankings_singleplayer);
       } else if (
-        currentLeaderboardType == RankingCategories.rankings_multiplayer
+        currentLeaderboardType === RankingCategories.rankings_multiplayer
       ) {
         setCurrentLeaderboard(rankings.rankings_multiplayer);
       } else {
@@ -76,9 +76,9 @@ const Rankings: React.FC = () => {
   };
 
   const _set_current_leaderboard = (ranking_cat: RankingCategories) => {
-    if (ranking_cat == RankingCategories.rankings_singleplayer) {
+    if (ranking_cat === RankingCategories.rankings_singleplayer) {
       setCurrentLeaderboard(leaderboardData!.rankings_singleplayer);
-    } else if (ranking_cat == RankingCategories.rankings_multiplayer) {
+    } else if (ranking_cat === RankingCategories.rankings_multiplayer) {
       setCurrentLeaderboard(leaderboardData!.rankings_multiplayer);
     } else {
       setCurrentLeaderboard(leaderboardData!.rankings_overall);
@@ -87,19 +87,20 @@ const Rankings: React.FC = () => {
     setCurrentLeaderboardType(ranking_cat);
   };
 
-  const _set_leaderboard_type = (leaderboard_type: LeaderboardTypes) => {
-    if (leaderboard_type == LeaderboardTypes.official) {
-      _fetch_rankings();
-    } else {
-    }
-  };
+  // unused func
+  //   const _set_leaderboard_type = (leaderboard_type: LeaderboardTypes) => {
+  //     if (leaderboard_type === LeaderboardTypes.official) {
+  //       _fetch_rankings();
+  //     } else {
+  //     }
+  //   };
 
   useEffect(() => {
     _fetch_rankings();
     if (load) {
       _set_current_leaderboard(RankingCategories.rankings_singleplayer);
     }
-  }, [load]);
+  }, [load, RankingCategories.rankings_singleplayer]);
 
   return (
     <main>
@@ -113,7 +114,7 @@ const Rankings: React.FC = () => {
               _fetch_rankings();
               setCurrentRankingType(LeaderboardTypes.official);
             }}
-            className={`nav-1-btn ${currentRankingType == LeaderboardTypes.official ? 'selected' : ''}`}
+            className={`nav-1-btn ${currentRankingType === LeaderboardTypes.official ? 'selected' : ''}`}
           >
             <span>Official (LPHUB)</span>
           </button>
@@ -122,7 +123,7 @@ const Rankings: React.FC = () => {
               __dev_fetch_unofficial_rankings();
               setCurrentRankingType(LeaderboardTypes.unofficial);
             }}
-            className={`nav-1-btn ${currentRankingType == LeaderboardTypes.unofficial ? 'selected' : ''}`}
+            className={`nav-1-btn ${currentRankingType === LeaderboardTypes.unofficial ? 'selected' : ''}`}
           >
             <span>Unofficial (Steam)</span>
           </button>
@@ -134,7 +135,7 @@ const Rankings: React.FC = () => {
             onClick={() =>
               _set_current_leaderboard(RankingCategories.rankings_singleplayer)
             }
-            className={`nav-2-btn ${currentLeaderboardType == RankingCategories.rankings_singleplayer ? 'selected' : ''}`}
+            className={`nav-2-btn ${currentLeaderboardType === RankingCategories.rankings_singleplayer ? 'selected' : ''}`}
           >
             <span>Singleplayer</span>
           </button>
@@ -142,7 +143,7 @@ const Rankings: React.FC = () => {
             onClick={() =>
               _set_current_leaderboard(RankingCategories.rankings_multiplayer)
             }
-            className={`nav-2-btn ${currentLeaderboardType == RankingCategories.rankings_multiplayer ? 'selected' : ''}`}
+            className={`nav-2-btn ${currentLeaderboardType === RankingCategories.rankings_multiplayer ? 'selected' : ''}`}
           >
             <span>Cooperative</span>
           </button>
@@ -150,7 +151,7 @@ const Rankings: React.FC = () => {
             onClick={() =>
               _set_current_leaderboard(RankingCategories.rankings_overall)
             }
-            className={`nav-2-btn ${currentLeaderboardType == RankingCategories.rankings_overall ? 'selected' : ''}`}
+            className={`nav-2-btn ${currentLeaderboardType === RankingCategories.rankings_overall ? 'selected' : ''}`}
           >
             <span>Overall</span>
           </button>
