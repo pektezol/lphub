@@ -165,7 +165,7 @@ const Maplist: React.FC = () => {
                     </div>
                     <div className="difficulty-bar">
                       {/* <span>Difficulty:</span> */}
-                      <div className={map.difficulty == 0 ? "one" : map.difficulty == 1 ? "two" : map.difficulty == 2 ? "three" : map.difficulty == 3 ? "four" : map.difficulty == 4 ? "five" : "one"}>
+                      <div className={map.difficulty <= 2 ? "one" : map.difficulty <= 4 ? "two" : map.difficulty <= 6 ? "three" : map.difficulty <= 8 ? "four" : map.difficulty <= 10 ? "five" : "one"}>
                         <div className="difficulty-point"></div>
                         <div className="difficulty-point"></div>
                         <div className="difficulty-point"></div>
