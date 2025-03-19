@@ -492,6 +492,7 @@ func FetchMaps(c *gin.Context) {
 		m.id,
 		m.name, 
 		m.is_disabled,
+		m.difficulty,
 		m.image,
 		cat.id,
 		cat.name,
@@ -529,7 +530,7 @@ func FetchMaps(c *gin.Context) {
 	for rows.Next() {
 		var mapShort models.MapSelect
 		var categoryPortal models.CategoryPortal
-		if err := rows.Scan(&mapShort.ID, &mapShort.Name, &mapShort.IsDisabled, &mapShort.Image, &categoryPortal.Category.ID, &categoryPortal.Category.Name, &categoryPortal.PortalCount); err != nil {
+		if err := rows.Scan(&mapShort.ID, &mapShort.Name, &mapShort.IsDisabled, &mapShort.Difficulty, &mapShort.Image, &categoryPortal.Category.ID, &categoryPortal.Category.Name, &categoryPortal.PortalCount); err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
 		}
@@ -571,6 +572,7 @@ func FetchChapterMaps(c *gin.Context) {
 		m.name AS map_name, 
 		c.name AS chapter_name, 
 		m.is_disabled,
+		m.difficulty,
 		m.image,
 		cat.id,
 		cat.name,
@@ -610,7 +612,7 @@ func FetchChapterMaps(c *gin.Context) {
 	for rows.Next() {
 		var mapShort models.MapSelect
 		var categoryPortal models.CategoryPortal
-		if err := rows.Scan(&mapShort.ID, &mapShort.Name, &chapterName, &mapShort.IsDisabled, &mapShort.Image, &categoryPortal.Category.ID, &categoryPortal.Category.Name, &categoryPortal.PortalCount); err != nil {
+		if err := rows.Scan(&mapShort.ID, &mapShort.Name, &chapterName, &mapShort.IsDisabled, &mapShort.Difficulty, &mapShort.Image, &categoryPortal.Category.ID, &categoryPortal.Category.Name, &categoryPortal.PortalCount); err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
 		}
