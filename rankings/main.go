@@ -58,7 +58,10 @@ func run() {
 	overrides := readOverrides()
 	log.Println("loaded", len(overrides), "player overrides")
 
-	players := fetchLeaderboard(records, overrides, useCache)
+	players, err := fetchLeaderboard(records, overrides, useCache)
+	if err != nil {
+		return
+	}
 
 	spRankings := []*Player{}
 	mpRankings := []*Player{}
