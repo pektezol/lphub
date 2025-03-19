@@ -47,6 +47,7 @@ type Map struct {
 	Image       string `json:"image"`
 	IsCoop      bool   `json:"is_coop"`
 	IsDisabled  bool   `json:"is_disabled"`
+	Difficulty  int    `json:"difficulty"`
 }
 
 type MapShort struct {

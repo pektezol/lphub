@@ -77,12 +77,12 @@ func FetchMapSummary(c *gin.Context) {
 	}
 	// Get map data
 	response.Map.ID = intID
-	sql := `SELECT m.id, g.name, c.name, m.name, m.image, g.is_coop, m.is_disabled
+	sql := `SELECT m.id, g.name, c.name, m.name, m.image, g.is_coop, m.is_disabled, m.difficulty
 	FROM maps m
 	INNER JOIN games g ON m.game_id = g.id
 	INNER JOIN chapters c ON m.chapter_id = c.id
 	WHERE m.id = $1`
-	err = database.DB.QueryRow(sql, id).Scan(&response.Map.ID, &response.Map.GameName, &response.Map.ChapterName, &response.Map.MapName, &response.Map.Image, &response.Map.IsCoop, &response.Map.IsDisabled)
+	err = database.DB.QueryRow(sql, id).Scan(&response.Map.ID, &response.Map.GameName, &response.Map.ChapterName, &response.Map.MapName, &response.Map.Image, &response.Map.IsCoop, &response.Map.IsDisabled, &response.Map.Difficulty)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
