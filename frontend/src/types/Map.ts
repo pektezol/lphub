@@ -79,6 +79,7 @@ interface MapSummaryMap {
   map_name: string;
   is_coop: boolean;
   is_disabled: boolean;
+  difficulty: number;
 };
 
 interface MapSummaryDetails {
