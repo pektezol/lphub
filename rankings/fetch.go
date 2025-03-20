@@ -22,7 +22,6 @@ func fetchLeaderboard(records []Record, overrides map[SteamID]map[string]int, us
 	log.Println("fetching leaderboard")
 	players := map[SteamID]*Player{}
 	// first init players map with records from portal gun and doors
-	return nil, errLb
 	fetchAnotherPage := true
 	start := 0
 	end := 5000
