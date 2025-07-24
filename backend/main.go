@@ -11,6 +11,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	nrgin "github.com/newrelic/go-agent/v3/integrations/nrgin"
+	"github.com/newrelic/go-agent/v3/newrelic"
 )
 
 //	@title			Least Portals Hub
@@ -30,7 +32,16 @@ func main() {
 	if os.Getenv("ENV") == "PROD" {
 		gin.SetMode(gin.ReleaseMode)
 	}
+	app, err := newrelic.NewApplication(
+		newrelic.ConfigAppName("lphub"),
+		newrelic.ConfigLicense(os.Getenv("NEWRELIC_LICENSE_KEY")),
+		newrelic.ConfigAppLogForwardingEnabled(true),
+	)
+	if err != nil {
+		log.Fatal("Error instrumenting newrelic")
+	}
 	router := gin.Default()
+	router.Use(nrgin.Middleware(app))
 	database.ConnectDB()
 	api.InitRoutes(router)
 	// for debugging
