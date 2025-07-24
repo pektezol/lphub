@@ -1,20 +1,33 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { DownloadIcon, ThreedotIcon } from '@images/Images';
 import { MapLeaderboard } from '@customTypes/Map';
 import { ticks_to_time, time_ago } from '@utils/Time';
+import { API } from "@api/Api";
 import useMessage from "@hooks/UseMessage";
 import "@css/Maps.css"
 
 interface LeaderboardsProps {
-  data?: MapLeaderboard;
+	mapID: string;
 }
 
-const Leaderboards: React.FC<LeaderboardsProps> = ({ data }) => {
+const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
+  const navigate = useNavigate();
+  const [data, setData] = React.useState<MapLeaderboard | undefined>(undefined);
+  const [pageNumber, setPageNumber] = React.useState<number>(1);
+
+  const _fetch_map_leaderboards = async () => {
+    const mapLeaderboards = await API.get_map_leaderboard(mapID, pageNumber.toString());
+    setData(mapLeaderboards);
+  };
 
   const { message, MessageDialogComponent } = useMessage();
-  const [pageNumber, setPageNumber] = React.useState<number>(1);
+
+  React.useEffect(() => {
+	  _fetch_map_leaderboards();
+	  console.log(data);
+  }, [pageNumber, navigate])
 
   if (!data) {
     return (

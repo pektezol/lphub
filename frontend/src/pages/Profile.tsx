@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 
 import { SteamIcon, TwitchIcon, YouTubeIcon, PortalIcon, FlagIcon, StatisticsIcon, SortIcon, ThreedotIcon, DownloadIcon, HistoryIcon, DeleteIcon } from '@images/Images';
 import { UserProfile } from '@customTypes/Profile';
@@ -109,6 +110,10 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
 
   return (
     <div style={{position: "absolute", width: "calc(100% - 50px)", left: "350px"}}>
+      <Helmet>
+        <title>LPHUB | {profile.user_name}</title>
+        <meta name="description" content={profile.user_name} />
+      </Helmet>
       {MessageDialogComponent}
       {MessageDialogLoadComponent}
       {ConfirmDialogComponent}
@@ -267,7 +272,7 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
 
                           <span style={{ display: "grid" }}>{e.score_count}</span>
 
-                          <span style={{ display: "grid" }}>{e.score_count - r.map_wr_count > 0 ? `+${e.score_count - r.map_wr_count}` : e.score_count - r.map_wr_count}</span>
+                          <span style={{ display: "grid" }}>{e.score_count - r.map_wr_count > 0 ? `+${e.score_count - r.map_wr_count}` : `-`}</span>
                           <span style={{ display: "grid" }}>{ticks_to_time(e.score_time)}</span>
                           <span> </span>
                           {i === 0 ? <span>#{r.placement}</span> : <span> </span>}
@@ -313,7 +318,7 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
                             {i !== 0 ? <hr style={{ gridColumn: "1 / span 8" }} /> : ""}
                             <Link to={`/maps/${r.id}`}><span>{r.name}</span></Link>
                             <span style={{ display: "grid" }}>{record!.scores[i].score_count}</span>
-                            <span style={{ display: "grid" }}>{record!.scores[i].score_count - record!.map_wr_count > 0 ? `+${record!.scores[i].score_count - record!.map_wr_count}` : record!.scores[i].score_count - record!.map_wr_count}</span>
+                            <span style={{ display: "grid" }}>{record!.scores[i].score_count - record!.map_wr_count > 0 ? `+${record!.scores[i].score_count - record!.map_wr_count}` : `-`}</span>
                             <span style={{ display: "grid" }}>{ticks_to_time(record!.scores[i].score_time)}</span>
                             <span> </span>
                             {i === 0 ? <span>#{record!.placement}</span> : <span> </span>}

@@ -140,20 +140,34 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
       <section id='section4' className='summary1'>
         <div id='difficulty'>
           <span>Difficulty</span>
-          {data.summary.routes[selectedRun].rating === 0 && (<span>N/A</span>)}
-          {data.summary.routes[selectedRun].rating === 1 && (<span style={{ color: "lime" }}>Very easy</span>)}
-          {data.summary.routes[selectedRun].rating === 2 && (<span style={{ color: "green" }}>Easy</span>)}
-          {data.summary.routes[selectedRun].rating === 3 && (<span style={{ color: "yellow" }}>Medium</span>)}
-          {data.summary.routes[selectedRun].rating === 4 && (<span style={{ color: "orange" }}>Hard</span>)}
-          {data.summary.routes[selectedRun].rating === 5 && (<span style={{ color: "red" }}>Very hard</span>)}
+          {data.map.difficulty <= 2 && (<span style={{ color: "lime" }}>Very easy</span>)}
+          {data.map.difficulty > 2 && data.map.difficulty <= 4 && (<span style={{ color: "green" }}>Easy</span>)}
+          {data.map.difficulty > 4 && data.map.difficulty <= 6 && (<span style={{ color: "yellow" }}>Medium</span>)}
+          {data.map.difficulty > 6 && data.map.difficulty <= 8 && (<span style={{ color: "orange" }}>Hard</span>)}
+          {data.map.difficulty > 8 && data.map.difficulty <= 10 && (<span style={{ color: "red" }}>Very hard</span>)}
           <div>
-            {data.summary.routes[selectedRun].rating === 1 ? (<div className='difficulty-rating' style={{ backgroundColor: "lime" }}></div>) : (<div className='difficulty-rating'></div>)}
-            {data.summary.routes[selectedRun].rating === 2 ? (<div className='difficulty-rating' style={{ backgroundColor: "green" }}></div>) : (<div className='difficulty-rating'></div>)}
-            {data.summary.routes[selectedRun].rating === 3 ? (<div className='difficulty-rating' style={{ backgroundColor: "yellow" }}></div>) : (<div className='difficulty-rating'></div>)}
-            {data.summary.routes[selectedRun].rating === 4 ? (<div className='difficulty-rating' style={{ backgroundColor: "orange" }}></div>) : (<div className='difficulty-rating'></div>)}
-            {data.summary.routes[selectedRun].rating === 5 ? (<div className='difficulty-rating' style={{ backgroundColor: "red" }}></div>) : (<div className='difficulty-rating'></div>)}
+            {data.map.difficulty <= 2 ? (<div className='difficulty-rating' style={{ backgroundColor: "lime" }}></div>) : (<div className='difficulty-rating'></div>)}
+            {data.map.difficulty > 2 && data.map.difficulty <= 4 ? (<div className='difficulty-rating' style={{ backgroundColor: "green" }}></div>) : (<div className='difficulty-rating'></div>)}
+            {data.map.difficulty > 4 && data.map.difficulty <= 6 ? (<div className='difficulty-rating' style={{ backgroundColor: "yellow" }}></div>) : (<div className='difficulty-rating'></div>)}
+            {data.map.difficulty > 6 && data.map.difficulty <= 8 ? (<div className='difficulty-rating' style={{ backgroundColor: "orange" }}></div>) : (<div className='difficulty-rating'></div>)}
+            {data.map.difficulty > 8 && data.map.difficulty <= 10 ? (<div className='difficulty-rating' style={{ backgroundColor: "red" }}></div>) : (<div className='difficulty-rating'></div>)}
           </div>
         </div>
+        {/* <div id='difficulty'>
+          <span>Difficulty</span>
+          {data.summary.routes[selectedRun].rating <= 2 && (<span style={{ color: "lime" }}>Very easy</span>)}
+          {data.summary.routes[selectedRun].rating > 2 && data.summary.routes[selectedRun].rating <= 4 && (<span style={{ color: "green" }}>Easy</span>)}
+          {data.summary.routes[selectedRun].rating > 4 && data.summary.routes[selectedRun].rating <= 6 && (<span style={{ color: "yellow" }}>Medium</span>)}
+          {data.summary.routes[selectedRun].rating > 6 && data.summary.routes[selectedRun].rating <= 8 && (<span style={{ color: "orange" }}>Hard</span>)}
+          {data.summary.routes[selectedRun].rating > 8 && data.summary.routes[selectedRun].rating <= 10 && (<span style={{ color: "red" }}>Very hard</span>)}
+          <div>
+            {data.summary.routes[selectedRun].rating <= 2 ? (<div className='difficulty-rating' style={{ backgroundColor: "lime" }}></div>) : (<div className='difficulty-rating'></div>)}
+            {data.summary.routes[selectedRun].rating > 2 && data.summary.routes[selectedRun].rating <= 4 ? (<div className='difficulty-rating' style={{ backgroundColor: "green" }}></div>) : (<div className='difficulty-rating'></div>)}
+            {data.summary.routes[selectedRun].rating > 4 && data.summary.routes[selectedRun].rating <= 6 ? (<div className='difficulty-rating' style={{ backgroundColor: "yellow" }}></div>) : (<div className='difficulty-rating'></div>)}
+            {data.summary.routes[selectedRun].rating > 6 && data.summary.routes[selectedRun].rating <= 8 ? (<div className='difficulty-rating' style={{ backgroundColor: "orange" }}></div>) : (<div className='difficulty-rating'></div>)}
+            {data.summary.routes[selectedRun].rating > 8 && data.summary.routes[selectedRun].rating <= 10 ? (<div className='difficulty-rating' style={{ backgroundColor: "red" }}></div>) : (<div className='difficulty-rating'></div>)}
+          </div>
+        </div> */}
         <div id='count'>
           <span>Completion Count</span>
           <div>{data.summary.routes[selectedRun].completion_count}</div>

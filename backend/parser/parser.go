@@ -2,8 +2,8 @@ package parser
 
 import (
 	"errors"
+	"io"
 	"math"
-	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -22,13 +22,9 @@ type Result struct {
 }
 
 // Don't try to understand it, feel it.
-func ProcessDemo(filePath string) (Result, error) {
+func ProcessDemo(demoFile io.Reader) (Result, error) {
 	var result Result
-	file, err := os.Open(filePath)
-	if err != nil {
-		return Result{}, err
-	}
-	reader := bitreader.NewReader(file, true)
+	reader := bitreader.NewReader(demoFile, true)
 	demoFileStamp := reader.TryReadString()
 	demoProtocol := reader.TryReadSInt32()
 	networkProtocol := reader.TryReadSInt32()

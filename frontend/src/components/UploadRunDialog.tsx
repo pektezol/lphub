@@ -5,12 +5,12 @@ import { ScoreboardTempUpdate, SourceDemoParser, NetMessages } from '@nekz/sdp';
 import btn from "@css/Button.module.css";
 import '@css/UploadRunDialog.css';
 import { Game } from '@customTypes/Game';
-import { Map } from '@customTypes/Map';
 import { API } from '@api/Api';
 import { useNavigate } from 'react-router-dom';
 import useMessage from '@hooks/UseMessage';
 import useConfirm from '@hooks/UseConfirm';
 import useMessageLoad from "@hooks/UseMessageLoad";
+import { MapNames } from '@customTypes/MapNames';
 
 interface UploadRunDialogProps {
   token?: string;
@@ -28,19 +28,11 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
   const navigate = useNavigate();
 
   const [uploadRunContent, setUploadRunContent] = React.useState<UploadRunContent>({
-    map_id: 0,
     host_demo: null,
     partner_demo: null,
   });
 
-  const [currentMap, setCurrentMap] = React.useState<string>("");
-
-  const _set_current_map = (game_name: string) => {
-    setCurrentMap(game_name);
-  }
-
   const [selectedGameID, setSelectedGameID] = React.useState<number>(0);
-  const [selectedGameMaps, setSelectedGameMaps] = React.useState<Map[]>([]);
   const [selectedGameName, setSelectedGameName] = React.useState<string>("");
 
   // dropdowns
@@ -51,6 +43,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
 
   const [dragHightlight, setDragHighlight] = React.useState<boolean>(false);
   const [dragHightlightPartner, setDragHighlightPartner] = React.useState<boolean>(false);
+
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const fileInputRefPartner = React.useRef<HTMLInputElement>(null);
 
@@ -103,14 +96,6 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
 
   const _handle_game_select = async (game_id: string, game_name: string) => {
     setLoading(true);
-    const gameMaps = await API.get_game_maps(game_id);
-    setSelectedGameMaps(gameMaps);
-    setUploadRunContent({
-      map_id: gameMaps.find((map) => !map.is_disabled)!.id, //gameMaps[0].id,
-      host_demo: null,
-      partner_demo: null,
-    });
-    _set_current_map(gameMaps.find((map) => !map.is_disabled)!.name);
     setSelectedGameID(parseInt(game_id) - 1);
     setSelectedGameName(game_name);
     setLoading(false);
@@ -159,6 +144,20 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
         await message("Error", "Error while processing demo: Unable to get scoreboard result. Either there is a demo that is corrupt or haven't been recorded in challenge mode.")
         return
       }
+
+      if (!demo.mapName || !MapNames[demo.mapName]) {
+        await message("Error", "Error while processing demo: Invalid map name.")
+        return
+      }
+
+      if (selectedGameID === 0 && MapNames[demo.mapName] > 60) {
+        await message("Error", "Error while processing demo: Invalid cooperative demo in singleplayer submission.")
+        return
+      } else if (selectedGameID === 1 && MapNames[demo.mapName] <= 60) {
+        await message("Error", "Error while processing demo: Invalid singleplayer demo in cooperative submission.")
+        return
+      }
+
       const { portalScore, timeScore } = scoreboard.userMessage?.as<ScoreboardTempUpdate>() ?? {};
 
       const userConfirmed = await confirm("Upload Record", `Map Name: ${demo.mapName}\nPortal Count: ${portalScore}\nTicks: ${timeScore}\n\nAre you sure you want to upload this demo?`);
@@ -168,10 +167,14 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
       }
 
       messageLoad("Uploading...");
-      const [success, response] = await API.post_record(token, uploadRunContent);
+      const [success, response] = await API.post_record(token, uploadRunContent, MapNames[demo.mapName]);
       messageLoadClose();
       await message("Upload Record", response);
       if (success) {
+        setUploadRunContent({
+          host_demo: null,
+          partner_demo: null,
+        });
         onClose(success);
         navigate("/profile");
       }
@@ -180,7 +183,6 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
 
   React.useEffect(() => {
     if (open) {
-
       setDragHighlightPartner(false);
       setDragHighlight(false);
       _handle_game_select("1", "Portal 2 - Singleplayer"); // a different approach?.
@@ -204,37 +206,20 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
                   <div className='dropdown-cur'>{selectedGameName}</div>
                   <i style={{ rotate: "-90deg", transform: "translate(-5px, 10px)" }} className="triangle"></i>
                 </div>
-                <div style={{top: "110px"}} className={dropdown1Vis ? "upload-run-dropdown" : "upload-run-dropdown hidden"}>
+                <div style={{ top: "110px" }} className={dropdown1Vis ? "upload-run-dropdown" : "upload-run-dropdown hidden"}>
                   {games.map((game) => (
                     <div onClick={() => { _handle_game_select(game.id.toString(), game.name); _handle_dropdowns(1) }} key={game.id}>{game.name}</div>
                   ))}
                 </div>
-			  {!loading && (
-				<>
-					<div style={{ padding: "25px 0px" }}>
-                        <h3 style={{ margin: "0px 0px" }}>Select Map</h3>
-                        <div onClick={() => _handle_dropdowns(2)} style={{ display: "flex", alignItems: "center", cursor: "pointer", justifyContent: "space-between", margin: "10px 0px" }}>
-                          <span style={{ userSelect: "none" }}>{currentMap}</span>
-                          <i style={{ rotate: "-90deg", transform: "translate(-5px, 10px)" }} className="triangle"></i>
-                        </div>
-                      </div>
-                        <div style={{top: "220px"}} id='dropdown2' className={dropdown2Vis ? "upload-run-dropdown" : "upload-run-dropdown hidden"}>
-                          {selectedGameMaps && selectedGameMaps.filter(gameMap => !gameMap.is_disabled).map((gameMap) => (
-                            <div onClick={() => { setUploadRunContent({ ...uploadRunContent, map_id: gameMap.id }); _set_current_map(gameMap.name); _handle_dropdowns(2); }} key={gameMap.id}>{gameMap.name}</div>
-                          ))}
-                        </div>
-				</>
-
-			)}
-			</div>
+              </div>
 
               {
                 !loading &&
                 (
                   <>
-                      
-					  <div>
-                      <h3 style={{margin: "10px 0px"}}>Host Demo</h3>
+
+                    <div>
+                      <h3 style={{ margin: "10px 0px" }}>Host Demo</h3>
                       <div onClick={() => { _handle_file_click(true) }} onDragOver={(e) => { _handle_drag_over(e, true) }} onDrop={(e) => { _handle_drop(e, true) }} onDragLeave={(e) => { _handle_drag_leave(e, true) }} className={`upload-run-drag-area ${dragHightlight ? "upload-run-drag-area-highlight" : ""} ${uploadRunContent.host_demo ? "upload-run-drag-area-hidden" : ""}`}>
                         <input ref={fileInputRef} type="file" name="host_demo" id="host_demo" accept=".dem" onChange={(e) => _handle_file_change(e.target.files, true)} />
                         {!uploadRunContent.host_demo ?
@@ -253,38 +238,41 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
                         games[selectedGameID].is_coop &&
                         (
                           <>
-						  	<div>
-                            <h3 style={{margin: "10px 0px"}}>Partner Demo</h3>
-                            <div onClick={() => { _handle_file_click(false) }} onDragOver={(e) => { _handle_drag_over(e, false) }} onDrop={(e) => { _handle_drop(e, false) }} onDragLeave={(e) => { _handle_drag_leave(e, false) }} className={`upload-run-drag-area ${dragHightlightPartner ? "upload-run-drag-area-highlight-partner" : ""} ${uploadRunContent.partner_demo ? "upload-run-drag-area-hidden" : ""}`}>
-                              <input ref={fileInputRefPartner} type="file" name="partner_demo" id="partner_demo" accept=".dem" onChange={(e) => _handle_file_change(e.target.files, false)} />						  {!uploadRunContent.partner_demo ?
-                                <div>
-                                  <span>Drag and drop</span>
+                            <div>
+                              <h3 style={{ margin: "10px 0px" }}>Partner Demo</h3>
+                              <div onClick={() => { _handle_file_click(false) }} onDragOver={(e) => { _handle_drag_over(e, false) }} onDrop={(e) => { _handle_drop(e, false) }} onDragLeave={(e) => { _handle_drag_leave(e, false) }} className={`upload-run-drag-area ${dragHightlightPartner ? "upload-run-drag-area-highlight-partner" : ""} ${uploadRunContent.partner_demo ? "upload-run-drag-area-hidden" : ""}`}>
+                                <input ref={fileInputRefPartner} type="file" name="partner_demo" id="partner_demo" accept=".dem" onChange={(e) => _handle_file_change(e.target.files, false)} />						  {!uploadRunContent.partner_demo ?
                                   <div>
                                     <span style={{ fontFamily: "BarlowSemiCondensed-Regular" }}>Or click here</span><br />
                                     <button className={btn.default}>Upload</button>
                                   </div>
-                                </div>
-                                : null}
+                                  : null}
 
-                              <span className="upload-run-demo-name">{uploadRunContent.partner_demo?.name}</span>
+                                <span className="upload-run-demo-name">{uploadRunContent.partner_demo?.name}</span>
+                              </div>
                             </div>
-							</div>
                           </>
                         )
                       }
-					  </div>
-                      <div className='search-container'>
+                    </div>
+                    <div className='search-container'>
 
-                      </div>
-                      
+                    </div>
+
                   </>
                 )
               }
             </div>
-			<div className='upload-run-buttons-container'>
-                        <button className={`${btn.defaultWide}`} onClick={_upload_run}>Submit</button>
-                        <button className={`${btn.defaultWide}`} onClick={() => onClose(false)}>Cancel</button>
-                      </div>
+			      <div className='upload-run-buttons-container'>
+              <button className={`${btn.defaultWide}`} onClick={_upload_run}>Submit</button>
+              <button className={`${btn.defaultWide}`} onClick={() => {
+                onClose(false);
+                setUploadRunContent({
+                  host_demo: null,
+                  partner_demo: null,
+                });
+              }}>Cancel</button>
+            </div>
           </div>
         </div>
       </>

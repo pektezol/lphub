@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sort"
 	"strings"
 
 	"lphub/database"
@@ -106,6 +107,15 @@ func RankingsLPHUB(c *gin.Context) {
 			}
 		}
 	}
+	// Sort the overall rankings
+	sort.Slice(response.Overall, func(i, j int) bool {
+		a := response.Overall[i]
+		b := response.Overall[j]
+		if a.TotalScore == b.TotalScore {
+			return a.User.SteamID < b.User.SteamID
+		}
+		return a.TotalScore < b.TotalScore
+	})
 
 	placement := 1
 	ties := 0
@@ -317,7 +327,7 @@ func SearchWithQuery(c *gin.Context) {
 		{ID: 80, Game: "Portal 2 - Cooperative", Chapter: "Course 3 - Hard-Light Surfaces", Map: "Catapult Block"},
 		{ID: 81, Game: "Portal 2 - Cooperative", Chapter: "Course 3 - Hard-Light Surfaces", Map: "Bridge Fling"},
 		{ID: 82, Game: "Portal 2 - Cooperative", Chapter: "Course 3 - Hard-Light Surfaces", Map: "Turret Walls"},
-		{ID: 83, Game: "Portal 2 - Cooperative", Chapter: "Course 3 - Hard-Light Surfaces", Map: "Turret Assasin"},
+		{ID: 83, Game: "Portal 2 - Cooperative", Chapter: "Course 3 - Hard-Light Surfaces", Map: "Turret Assassin"},
 		{ID: 84, Game: "Portal 2 - Cooperative", Chapter: "Course 3 - Hard-Light Surfaces", Map: "Bridge Testing"},
 		{ID: 85, Game: "Portal 2 - Cooperative", Chapter: "Course 4 - Excursion Funnels", Map: "Cooperative Funnels"},
 		{ID: 86, Game: "Portal 2 - Cooperative", Chapter: "Course 4 - Excursion Funnels", Map: "Funnel Drill"},
