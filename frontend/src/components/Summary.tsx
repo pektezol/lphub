@@ -81,7 +81,7 @@ const Summary: React.FC<SummaryProps> = ({
 
   return (
     <>
-      <section id="section3" className="summary1">
+      <section id="section3" className="summary1 text-foreground">
         <div
           id="category"
           style={data.map.image === "" ? { backgroundColor: "#202232" } : {}}
@@ -174,8 +174,8 @@ const Summary: React.FC<SummaryProps> = ({
       </section>
       <section id="section4" className="summary1">
         <div id="difficulty">
-          <span>Difficulty</span>
-          {data.summary.routes[selectedRun].rating === 0 && <span>N/A</span>}
+          <span className="">Difficulty</span>
+          {data.summary.routes[selectedRun].rating === 0 && <span className="text-foreground">N/A</span>}
           {data.summary.routes[selectedRun].rating === 1 && (
             <span style={{ color: "lime" }}>Very easy</span>
           )}
@@ -255,9 +255,9 @@ const Summary: React.FC<SummaryProps> = ({
           ) : (
             ""
           )}
-          <h3>Route Description</h3>
+          <h3 className="font-semibold">Route Description</h3>
           <span id="description-text">
-            <ReactMarkdown>
+            <ReactMarkdown className="text-foreground">
               {data.summary.routes[selectedRun].description}
             </ReactMarkdown>
           </span>

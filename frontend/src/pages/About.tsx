@@ -24,11 +24,11 @@ const About: React.FC = () => {
   }, []);
 
   return (
-    <div className="p-8 text-foreground font-[--font-barlow-semicondensed-regular] prose prose-invert max-w-none">
+    <div className="ml-16 p-8 text-foreground font-[--font-barlow-semicondensed-regular] prose prose-invert max-w-none">
       <Helmet>
         <title>LPHUB | About</title>
       </Helmet>
-      <ReactMarkdown>{aboutText}</ReactMarkdown>
+      <ReactMarkdown className={"overflow-auto"}>{aboutText}</ReactMarkdown>
     </div>
   );
 };

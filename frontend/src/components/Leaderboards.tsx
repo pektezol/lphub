@@ -51,7 +51,7 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
   }
 
   return (
-    <div>
+    <div className="text-foreground">
       {MessageDialogComponent}
       <section id="section6" className="summary2">
         <div

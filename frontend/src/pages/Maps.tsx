@@ -64,37 +64,36 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
     // loading placeholder
     return (
       <>
-        <main>
+        <main className="*:text-foreground relative left-0 w-[calc(100%-20rem)] min-h-screen p-4 sm:p-8">
           <section id="section1" className="summary1">
             <div>
               <Link to="/games">
                 <button
-                  className="nav-button"
-                  style={{ borderRadius: "20px 20px 20px 20px" }}
+                  className="nav-button rounded-[20px] h-10 bg-surface border-0 text-foreground text-lg font-[--font-barlow-semicondensed-regular] transition-colors duration-100 hover:bg-surface2 flex items-center px-2"
                 >
                   <i className="triangle"></i>
-                  <span>Games List</span>
+                  <span className="px-2">Games List</span>
                 </button>
               </Link>
             </div>
           </section>
 
-          <section id="section2" className="summary1">
+          <section id="section2" className="summary1 mt-4 flex gap-2 flex-wrap">
             <button className="nav-button">
-              <img src={PortalIcon} alt="" className="w-6 h-6" />
+              <img src={PortalIcon} alt="" className="w-5 h-5 sm:w-6 sm:h-6" />
               <span>Summary</span>
             </button>
             <button className="nav-button">
-              <img src={FlagIcon} alt="" className="w-6 h-6" />
+              <img src={FlagIcon} alt="" className="w-5 h-5 sm:w-6 sm:h-6" />
               <span>Leaderboards</span>
             </button>
             <button className="nav-button">
-              <img src={ChatIcon} alt="" className="w-6 h-6" />
+              <img src={ChatIcon} alt="" className="w-5 h-5 sm:w-6 sm:h-6" />
               <span>Discussions</span>
             </button>
           </section>
 
-          <section id="section6" className="summary2" />
+          <section id="section6" className="summary2 mt-4" />
         </main>
       </>
     );
@@ -118,47 +117,45 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
       <div id="background-image">
         <img src={mapSummaryData.map.image} alt="" />
       </div>
-      <main>
+      <main className="relative left-0 w-full sm:ml-80 sm:w-[calc(100%-20rem)] min-h-screen max-h-screen overflow-y-auto p-4 sm:p-8 scrollbar-thin scrollbar-track-surface scrollbar-thumb-muted hover:scrollbar-thumb-surface1">
         <section id="section1" className="summary1">
           <div>
             <Link to="/games">
               <button
-                className="nav-button"
-                style={{ borderRadius: "20px 0px 0px 20px" }}
+                className="nav-button rounded-[20px] h-10 bg-surface border-0 text-foreground text-lg font-[--font-barlow-semicondensed-regular] transition-colors duration-100 hover:bg-surface2 flex items-center px-2"
               >
                 <i className="triangle"></i>
-                <span>Games List</span>
+                <span className="px-2">Games List</span>
               </button>
             </Link>
             <Link
               to={`/games/${mapSummaryData.map.is_coop ? "2" : "1"}?chapter=${mapSummaryData.map.chapter_name.split(" ")[1]}`}
             >
               <button
-                className="nav-button"
-                style={{ borderRadius: "0px 20px 20px 0px", marginLeft: "2px" }}
+                className="nav-button ml-2"
               >
                 <i className="triangle"></i>
-                <span>{mapSummaryData.map.chapter_name}</span>
+                <span className="px-2">{mapSummaryData.map.chapter_name}</span>
               </button>
             </Link>
             <br />
-            <span>
+            <span className="block mt-2 text-lg sm:text-xl text-foreground">
               <b>{mapSummaryData.map.map_name}</b>
             </span>
           </div>
         </section>
 
-        <section id="section2" className="summary1">
+        <section id="section2" className="summary1 mt-4 flex gap-2 flex-wrap">
           <button className="nav-button" onClick={() => setNavState(0)}>
-            <img src={PortalIcon} alt="" className="w-6 h-6" />
+            <img src={PortalIcon} alt="" className="w-5 h-5 sm:w-6 sm:h-6" />
             <span>Summary</span>
           </button>
           <button className="nav-button" onClick={() => setNavState(1)}>
-            <img src={FlagIcon} alt="" className="w-6 h-6" />
+            <img src={FlagIcon} alt="" className="w-5 h-5 sm:w-6 sm:h-6" />
             <span>Leaderboards</span>
           </button>
           <button className="nav-button" onClick={() => setNavState(2)}>
-            <img src={ChatIcon} alt="" className="w-6 h-6" />
+            <img src={ChatIcon} alt="" className="w-5 h-5 sm:w-6 sm:h-6" />
             <span>Discussions</span>
           </button>
         </section>

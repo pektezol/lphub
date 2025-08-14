@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet";
 
 const Homepage: React.FC = () => {
   return (
-    <main className="text-foreground font-[--font-barlow-semicondensed-regular]">
+    <main className="ml-12 relative left-0 w-fullmin-h-screen p-4 sm:p-8 text-foreground font-[--font-barlow-semicondensed-regular]">
       <Helmet>
         <title>LPHUB | Homepage</title>
       </Helmet>

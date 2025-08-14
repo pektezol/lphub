@@ -12,6 +12,17 @@ import { API } from "@api/Api";
 
 import "@css/Rankings.css";
 
+enum LeaderboardTypes {
+  official,
+  unofficial,
+}
+
+enum RankingCategories {
+  rankings_overall,
+  rankings_multiplayer,
+  rankings_singleplayer,
+}
+
 const Rankings: React.FC = () => {
   const [leaderboardData, setLeaderboardData] = React.useState<
     Ranking | SteamRanking
@@ -19,20 +30,11 @@ const Rankings: React.FC = () => {
   const [currentLeaderboard, setCurrentLeaderboard] = React.useState<
     RankingType[] | SteamRankingType[]
   >();
-  enum LeaderboardTypes {
-    official,
-    unofficial,
-  }
   const [currentRankingType, setCurrentRankingType] =
     React.useState<LeaderboardTypes>(LeaderboardTypes.official);
 
   const [leaderboardLoad, setLeaderboardLoad] = React.useState<boolean>(false);
 
-  enum RankingCategories {
-    rankings_overall,
-    rankings_multiplayer,
-    rankings_singleplayer,
-  }
   const [currentLeaderboardType, setCurrentLeaderboardType] =
     React.useState<RankingCategories>(RankingCategories.rankings_singleplayer);
   const [load, setLoad] = React.useState<boolean>(false);
@@ -100,18 +102,10 @@ const Rankings: React.FC = () => {
 
   useEffect(() => {
     _fetch_rankings();
-    if (load) {
-      _set_current_leaderboard(RankingCategories.rankings_singleplayer);
-    }
-  }, [
-    load,
-    RankingCategories.rankings_singleplayer,
-    _fetch_rankings,
-    _set_current_leaderboard,
-  ]);
+  }, [_fetch_rankings]);
 
   return (
-    <main>
+    <main className="*:text-foreground">
       <Helmet>
         <title>LPHUB | Rankings</title>
       </Helmet>

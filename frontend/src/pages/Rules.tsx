@@ -25,7 +25,7 @@ const Rules: React.FC = () => {
   }, []);
 
   return (
-    <main className="p-8 text-foreground font-[--font-barlow-semicondensed-regular] prose prose-invert max-w-none">
+    <main className="ml-16 p-8 text-foreground font-[--font-barlow-semicondensed-regular] prose prose-invert max-w-none">
       <Helmet>
         <title>LPHUB | Rules</title>
       </Helmet>

@@ -10,7 +10,7 @@ interface GamesProps {
 
 const Games: React.FC<GamesProps> = ({ games }) => {
   return (
-    <div className="ml-10 min-h-screen w-[calc(100%-320px)] text-foreground font-[--font-barlow-semicondensed-regular] overflow-y-auto scrollbar-thin">
+    <div className="ml-20 min-h-screen text-foreground font-[--font-barlow-semicondensed-regular] overflow-y-auto scrollbar-thin">
       <Helmet>
         <title>LPHUB | Games</title>
       </Helmet>

@@ -49,22 +49,6 @@
   --font-barlow-semicondensed-semibold: 'BarlowSemiCondensed-SemiBold';
 }
 
-main {
-    overflow: auto;
-    overflow-x: hidden;
-    position: relative;
-
-    width: calc(100% - 380px); 
-    height: 100vh;
-    left: 350px;
-
-    padding-right: 30px;
-
-    font-size: 40px;
-    font-family: var(--font-barlow-semicondensed-regular);
-    color: var(--color-text);
-
-}
 
 a {
     color: inherit;

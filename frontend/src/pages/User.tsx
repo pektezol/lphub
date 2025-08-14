@@ -97,473 +97,312 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
   }, [user, game, chapter, location, _get_game_maps]);
 
   if (!user) {
-    return <></>;
+    return (
+      <div className="flex justify-center items-center h-[50vh] text-lg text-foreground">
+        Loading...
+      </div>
+    );
   }
 
   return (
-    <main>
+    <main className="ml-20 overflow-auto overflow-x-hidden relative w-[calc(100%px)] h-screen font-[--font-barlow-semicondensed-regular] text-foreground text-xl">
       <Helmet>
         <title>LPHUB | {user.user_name}</title>
         <meta name="description" content={user.user_name} />
       </Helmet>
+      
       {MessageDialogComponent}
-      <section id="section1" className="profile">
-        <div>
-          <img src={user.avatar_link} alt="profile-image"></img>
-        </div>
-        <div id="profile-top">
+
+      <section className="m-5 bg-gradient-to-t from-[#202232] from-50% to-[#2b2e46] to-50% rounded-3xl p-[30px] mb-[30px] text-foreground">
+        <div className="grid grid-cols-[200px_1fr_auto] items-center gap-[25px] mb-[25px]">
+          <img 
+            src={user.avatar_link} 
+            alt="Profile" 
+            className="w-[120px] h-[120px] rounded-full border-[3px] border-[rgba(205,207,223,0.2)]" 
+          />
           <div>
-            <div>{user.user_name}</div>
-            <div>
-              {user.country_code === "XX" ? (
-                ""
-              ) : (
+            <h1 className="m-0 mb-[10px] text-[50px] font-bold text-white font-[--font-barlow-semicondensed-regular]">
+              {user.user_name}
+            </h1>
+            {user.country_code !== "XX" && (
+              <div className="flex items-center gap-3 mb-[15px]">
                 <img
                   src={`https://flagcdn.com/w80/${user.country_code.toLowerCase()}.jpg`}
                   alt={user.country_code}
+                  className="w-6 h-4 rounded-[10px]"
                 />
-              )}
-            </div>
-            <div>
-              {user.titles.map(e => (
+                <span>{user.country_code}</span>
+              </div>
+            )}
+            <div className="flex flex-wrap gap-2">
+              {user.titles.map((title, index) => (
                 <span
-                  className="titles"
-                  style={{ backgroundColor: `#${e.color}` }}
+                  key={index}
+                  className="py-[6px] px-5 pt-[6px] rounded-[10px] text-lg font-normal text-white"
+                  style={{ backgroundColor: `#${title.color}` }}
                 >
-                  {e.name}
+                  {title.name}
                 </span>
               ))}
             </div>
           </div>
-          <div>
-            {user.links.steam === "-" ? (
-              ""
-            ) : (
-              <a href={user.links.steam}>
-                <img src={SteamIcon} alt="Steam" />
+          <div className="flex gap-[15px] items-center pr-[10px]">
+            {user.links.steam !== "-" && (
+              <a href={user.links.steam} className="flex items-center justify-center transition-all duration-200 hover:-translate-y-0.5">
+                <img src={SteamIcon} alt="Steam" className="h-[50px] px-[5px] scale-90 brightness-200" />
               </a>
             )}
-            {user.links.twitch === "-" ? (
-              ""
-            ) : (
-              <a href={user.links.twitch}>
-                <img src={TwitchIcon} alt="Twitch" />
+            {user.links.twitch !== "-" && (
+              <a href={user.links.twitch} className="flex items-center justify-center transition-all duration-200 hover:-translate-y-0.5">
+                <img src={TwitchIcon} alt="Twitch" className="h-[50px] px-[5px] scale-90 brightness-200" />
               </a>
             )}
-            {user.links.youtube === "-" ? (
-              ""
-            ) : (
-              <a href={user.links.youtube}>
-                <img src={YouTubeIcon} alt="Youtube" />
+            {user.links.youtube !== "-" && (
+              <a href={user.links.youtube} className="flex items-center justify-center transition-all duration-200 hover:-translate-y-0.5">
+                <img src={YouTubeIcon} alt="YouTube" className="h-[50px] px-[5px] scale-90 brightness-200" />
               </a>
             )}
-            {user.links.p2sr === "-" ? (
-              ""
-            ) : (
-              <a href={user.links.p2sr}>
-                <img src={PortalIcon} alt="P2SR" style={{ padding: "0" }} />
+            {user.links.p2sr !== "-" && (
+              <a href={user.links.p2sr} className="flex items-center justify-center transition-all duration-200 hover:-translate-y-0.5">
+                <img src={PortalIcon} alt="P2SR" className="h-[50px] px-[5px] scale-90 brightness-200" />
               </a>
             )}
           </div>
         </div>
-        <div id="profile-bottom">
-          <div>
-            <span>Overall</span>
-            <span>
-              {user.rankings.overall.rank === 0
-                ? "N/A "
-                : "#" + user.rankings.overall.rank + " "}
-              <span>
-                ({user.rankings.overall.completion_count}/
-                {user.rankings.overall.completion_total})
-              </span>
-            </span>
-          </div>
-          <div>
-            <span>Singleplayer</span>
-            <span>
-              {user.rankings.singleplayer.rank === 0
-                ? "N/A "
-                : "#" + user.rankings.singleplayer.rank + " "}
-              <span>
-                ({user.rankings.singleplayer.completion_count}/
-                {user.rankings.singleplayer.completion_total})
-              </span>
-            </span>
-          </div>
-          <div>
-            <span>Cooperative</span>
-            <span>
-              {user.rankings.cooperative.rank === 0
-                ? "N/A "
-                : "#" + user.rankings.cooperative.rank + " "}
-              <span>
-                ({user.rankings.cooperative.completion_count}/
-                {user.rankings.cooperative.completion_total})
-              </span>
-            </span>
-          </div>
-        </div>
-      </section>
 
-      <section id="section2" className="profile">
-        <button onClick={() => setNavState(0)}>
-          <img src={FlagIcon} alt="" />
-          &nbsp;Player Records
-        </button>
-        <button onClick={() => setNavState(1)}>
-          <img src={StatisticsIcon} alt="" />
-          &nbsp;Statistics
-        </button>
-      </section>
-
-      <section id="section3" className="profile1">
-        <div id="profileboard-nav">
-          {gameData === null ? (
-            <select>error</select>
-          ) : (
-            <select
-              id="select-game"
-              onChange={() => {
-                setGame(
-                  (document.querySelector("#select-game") as HTMLInputElement)
-                    .value
-                );
-                setChapter("0");
-                const chapterSelect = document.querySelector(
-                  "#select-chapter"
-                ) as HTMLSelectElement;
-                if (chapterSelect) {
-                  chapterSelect.value = "0";
-                }
-              }}
-            >
-              <option value={0} key={0}>
-                All Scores
-              </option>
-              {gameData.map((e, i) => (
-                <option value={e.id} key={i + 1}>
-                  {e.name}
-                </option>
-              ))}
-            </select>
-          )}
-
-          {game === "0" ? (
-            <select disabled>
-              <option>All Chapters</option>
-            </select>
-          ) : chapterData === null ? (
-            <select></select>
-          ) : (
-            <select
-              id="select-chapter"
-              onChange={() =>
-                setChapter(
-                  (
-                    document.querySelector(
-                      "#select-chapter"
-                    ) as HTMLInputElement
-                  ).value
-                )
-              }
-            >
-              <option value="0" key="0">
-                All Chapters
-              </option>
-              {chapterData.chapters
-                .filter(e => e.is_disabled === false)
-                .map((e, i) => (
-                  <option value={e.id} key={i + 1}>
-                    {e.name}
-                  </option>
-                ))}
-            </select>
-          )}
-        </div>
-        <div id="profileboard-top">
-          <span>
-            <span>Map Name</span>
-            <img src={SortIcon} alt="" />
-          </span>
-          <span style={{ justifyContent: "center" }}>
-            <span>Portals</span>
-            <img src={SortIcon} alt="" />
-          </span>
-          <span style={{ justifyContent: "center" }}>
-            <span>WRΔ </span>
-            <img src={SortIcon} alt="" />
-          </span>
-          <span style={{ justifyContent: "center" }}>
-            <span>Time</span>
-            <img src={SortIcon} alt="" />
-          </span>
-          <span> </span>
-          <span>
-            <span>Rank</span>
-            <img src={SortIcon} alt="" />
-          </span>
-          <span>
-            <span>Date</span>
-            <img src={SortIcon} alt="" />
-          </span>
-          <div id="page-number">
-            <div>
-              <button
-                onClick={() => {
-                  if (pageNumber !== 1) {
-                    setPageNumber(prevPageNumber => prevPageNumber - 1);
-                    const records = document.querySelectorAll(
-                      ".profileboard-record"
-                    );
-                    records.forEach(r => {
-                      (r as HTMLInputElement).style.height = "44px";
-                    });
-                  }
-                }}
-              >
-                <i
-                  className="triangle"
-                  style={{ position: "relative", left: "-5px" }}
-                ></i>{" "}
-              </button>
-              <span>
-                {pageNumber}/{pageMax}
-              </span>
-              <button
-                onClick={() => {
-                  if (pageNumber !== pageMax) {
-                    setPageNumber(prevPageNumber => prevPageNumber + 1);
-                    const records = document.querySelectorAll(
-                      ".profileboard-record"
-                    );
-                    records.forEach(r => {
-                      (r as HTMLInputElement).style.height = "44px";
-                    });
-                  }
-                }}
-              >
-                <i
-                  className="triangle"
-                  style={{
-                    position: "relative",
-                    left: "5px",
-                    transform: "rotate(180deg)",
-                  }}
-                ></i>{" "}
-              </button>
+        <div className="grid grid-cols-3 gap-3 mt-24">
+          <div className="m-3 bg-[#2b2e46] rounded-[20px] p-5 text-center grid place-items-center grid-rows-[40%_50%]">
+            <div className="text-inherit text-lg">Overall</div>
+            <div className="text-white text-[40px]">
+              {user.rankings.overall.rank === 0 ? "N/A" : `#${user.rankings.overall.rank}`}
+            </div>
+            <div className="text-white text-xl">
+              {user.rankings.overall.completion_count}/{user.rankings.overall.completion_total}
+            </div>
+          </div>
+          <div className="m-3 bg-[#2b2e46] rounded-[20px] p-5 text-center grid place-items-center grid-rows-[40%_50%]">
+            <div className="text-inherit text-lg">Singleplayer</div>
+            <div className="text-white text-[40px]">
+              {user.rankings.singleplayer.rank === 0 ? "N/A" : `#${user.rankings.singleplayer.rank}`}
+            </div>
+            <div className="text-white text-xl">
+              {user.rankings.singleplayer.completion_count}/{user.rankings.singleplayer.completion_total}
+            </div>
+          </div>
+          <div className="m-3 bg-[#2b2e46] rounded-[20px] p-5 text-center grid place-items-center grid-rows-[40%_50%]">
+            <div className="text-inherit text-lg">Cooperative</div>
+            <div className="text-white text-[40px]">
+              {user.rankings.cooperative.rank === 0 ? "N/A" : `#${user.rankings.cooperative.rank}`}
+            </div>
+            <div className="text-white text-xl">
+              {user.rankings.cooperative.completion_count}/{user.rankings.cooperative.completion_total}
             </div>
           </div>
         </div>
-        <hr />
-        <div id="profileboard-records">
-          {game === "0" ? (
-            user.records
-              .sort((a, b) => a.map_id - b.map_id)
-              .map((r, index) =>
-                Math.ceil((index + 1) / 20) === pageNumber ? (
-                  <button className="profileboard-record" key={index}>
-                    {r.scores.map((e, i) => (
-                      <>
-                        {i !== 0 ? (
-                          <hr style={{ gridColumn: "1 / span 8" }} />
-                        ) : (
-                          ""
-                        )}
-
-                        <Link to={`/maps/${r.map_id}`}>
-                          <span>{r.map_name}</span>
-                        </Link>
-
-                        <span style={{ display: "grid" }}>{e.score_count}</span>
-
-                        <span style={{ display: "grid" }}>
-                          {e.score_count - r.map_wr_count > 0
-                            ? `+${e.score_count - r.map_wr_count}`
-                            : `-`}
-                        </span>
-                        <span style={{ display: "grid" }}>
-                          {ticks_to_time(e.score_time)}
-                        </span>
-                        <span> </span>
-                        {i === 0 ? <span>#{r.placement}</span> : <span> </span>}
-                        <span>{e.date.split("T")[0]}</span>
-                        <span style={{ flexDirection: "row-reverse" }}>
-                          <button
-                            onClick={() => {
-                              message(
-                                "Demo Information",
-                                `Demo ID: ${e.demo_id}`
-                              );
-                            }}
-                          >
-                            <img src={ThreedotIcon} alt="demo_id" />
-                          </button>
-                          <button
-                            onClick={() =>
-                              (window.location.href = `/api/v1/demos?uuid=${e.demo_id}`)
-                            }
-                          >
-                            <img src={DownloadIcon} alt="download" />
-                          </button>
-                          {i === 0 && r.scores.length > 1 ? (
-                            <button
-                              onClick={() => {
-                                (
-                                  document.querySelectorAll(
-                                    ".profileboard-record"
-                                  )[index % 20] as HTMLInputElement
-                                ).style.height === "44px" ||
-                                (
-                                  document.querySelectorAll(
-                                    ".profileboard-record"
-                                  )[index % 20] as HTMLInputElement
-                                ).style.height === ""
-                                  ? ((
-                                      document.querySelectorAll(
-                                        ".profileboard-record"
-                                      )[index % 20] as HTMLInputElement
-                                    ).style.height =
-                                      `${r.scores.length * 46}px`)
-                                  : ((
-                                      document.querySelectorAll(
-                                        ".profileboard-record"
-                                      )[index % 20] as HTMLInputElement
-                                    ).style.height = "44px");
-                              }}
-                            >
-                              <img src={HistoryIcon} alt="history" />
-                            </button>
-                          ) : (
-                            ""
-                          )}
-                        </span>
-                      </>
-                    ))}
-                  </button>
-                ) : (
-                  ""
-                )
-              )
-          ) : maps ? (
-            maps
-              .filter(e => e.is_disabled === false)
-              .sort((a, b) => a.id - b.id)
-              .map((r, index) => {
-                if (Math.ceil((index + 1) / 20) === pageNumber) {
-                  let record = user.records.find(e => e.map_id === r.id);
-                  return record === undefined ? (
-                    <button
-                      className="profileboard-record"
-                      key={index}
-                      style={{ backgroundColor: "#1b1b20" }}
-                    >
-                      <Link to={`/maps/${r.id}`}>
-                        <span>{r.name}</span>
-                      </Link>
-                      <span style={{ display: "grid" }}>N/A</span>
-                      <span style={{ display: "grid" }}>N/A</span>
-                      <span>N/A</span>
-                      <span> </span>
-                      <span>N/A</span>
-                      <span>N/A</span>
-                      <span style={{ flexDirection: "row-reverse" }}></span>
-                    </button>
-                  ) : (
-                    <button className="profileboard-record" key={index}>
-                      {record.scores.map((e, i) => (
-                        <>
-                          {i !== 0 ? (
-                            <hr style={{ gridColumn: "1 / span 8" }} />
-                          ) : (
-                            ""
-                          )}
-                          <Link to={`/maps/${r.id}`}>
-                            <span>{r.name}</span>
-                          </Link>
-                          <span style={{ display: "grid" }}>
-                            {record!.scores[i].score_count}
-                          </span>
-                          <span style={{ display: "grid" }}>
-                            {record!.scores[i].score_count -
-                              record!.map_wr_count >
-                            0
-                              ? `+${record!.scores[i].score_count - record!.map_wr_count}`
-                              : `-`}
-                          </span>
-                          <span style={{ display: "grid" }}>
-                            {ticks_to_time(record!.scores[i].score_time)}
-                          </span>
-                          <span> </span>
-                          {i === 0 ? (
-                            <span>#{record!.placement}</span>
-                          ) : (
-                            <span> </span>
-                          )}
-                          <span>{record!.scores[i].date.split("T")[0]}</span>
-                          <span style={{ flexDirection: "row-reverse" }}>
-                            <button
-                              onClick={() => {
-                                message(
-                                  "Demo Information",
-                                  `Demo ID: ${e.demo_id}`
-                                );
-                              }}
-                            >
-                              <img src={ThreedotIcon} alt="demo_id" />
-                            </button>
-                            <button
-                              onClick={() =>
-                                (window.location.href = `/api/v1/demos?uuid=${e.demo_id}`)
-                              }
-                            >
-                              <img src={DownloadIcon} alt="download" />
-                            </button>
-                            {i === 0 && record!.scores.length > 1 ? (
-                              <button
-                                onClick={() => {
-                                  (
-                                    document.querySelectorAll(
-                                      ".profileboard-record"
-                                    )[index % 20] as HTMLInputElement
-                                  ).style.height === "44px" ||
-                                  (
-                                    document.querySelectorAll(
-                                      ".profileboard-record"
-                                    )[index % 20] as HTMLInputElement
-                                  ).style.height === ""
-                                    ? ((
-                                        document.querySelectorAll(
-                                          ".profileboard-record"
-                                        )[index % 20] as HTMLInputElement
-                                      ).style.height =
-                                        `${record!.scores.length * 46}px`)
-                                    : ((
-                                        document.querySelectorAll(
-                                          ".profileboard-record"
-                                        )[index % 20] as HTMLInputElement
-                                      ).style.height = "44px");
-                                }}
-                              >
-                                <img src={HistoryIcon} alt="history" />
-                              </button>
-                            ) : (
-                              ""
-                            )}
-                          </span>
-                        </>
-                      ))}
-                    </button>
-                  );
-                } else {
-                  return null;
-                }
-              })
-          ) : (
-            <>{console.warn(maps)}</>
-          )}
-        </div>
       </section>
+
+      <section className="m-5 h-[60px] grid grid-cols-2">
+        <button 
+          className={`flex justify-center items-center gap-2 bg-[#2b2e46] border-0 text-inherit font-inherit text-2xl cursor-pointer transition-colors duration-100 rounded-l-3xl hover:bg-[#202232] ${
+            navState === 0 ? 'bg-[#202232]' : ''
+          }`}
+          onClick={() => setNavState(0)}
+        >
+          <img src={FlagIcon} alt="" className="w-5 h-5 scale-[1.2]" />
+          Player Records
+        </button>
+        <button 
+          className={`flex justify-center items-center gap-2 bg-[#2b2e46] border-0 text-inherit font-inherit text-2xl cursor-pointer transition-colors duration-100 rounded-r-3xl hover:bg-[#202232] ${
+            navState === 1 ? 'bg-[#202232]' : ''
+          }`}
+          onClick={() => setNavState(1)}
+        >
+          <img src={StatisticsIcon} alt="" className="w-5 h-5 scale-[1.2]" />
+          Statistics
+        </button>
+      </section>
+
+      {navState === 0 && (
+        <section className="m-5 block bg-[#202232] rounded-3xl overflow-hidden">
+          <div className="grid grid-cols-2 mx-5 my-5 mt-[10px] mb-5">
+            <select
+              className="h-[50px] rounded-3xl text-center text-inherit font-inherit text-2xl border-0 bg-[#2b2e46] mr-[10px]"
+              value={game}
+              onChange={(e) => {
+                setGame(e.target.value);
+                setChapter("0");
+              }}
+            >
+              <option value="0">All Games</option>
+              {gameData?.map((g) => (
+                <option key={g.id} value={g.id}>
+                  {g.name}
+                </option>
+              ))}
+            </select>
+
+            <select
+              className="h-[50px] rounded-3xl text-center text-inherit font-inherit text-2xl border-0 bg-[#2b2e46] mr-[10px] disabled:opacity-50"
+              value={chapter}
+              onChange={(e) => setChapter(e.target.value)}
+              disabled={game === "0"}
+            >
+              <option value="0">All Chapters</option>
+              {chapterData?.chapters
+                .filter(c => !c.is_disabled)
+                .map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+            </select>
+          </div>
+
+          <div className="h-[34px] grid text-xl pl-[60px] mx-5 my-0 grid-cols-[15%_15%_5%_15%_5%_15%_15%_15%]">
+            <div className="flex place-items-end cursor-pointer">
+              <span>Map Name</span>
+              <img src={SortIcon} alt="Sort" className="h-5 scale-[0.8]" />
+            </div>
+            <div className="flex place-items-end cursor-pointer">
+              <span>Portals</span>
+              <img src={SortIcon} alt="Sort" className="h-5 scale-[0.8]" />
+            </div>
+            <div className="flex place-items-end cursor-pointer">
+              <span>WRΔ</span>
+              <img src={SortIcon} alt="Sort" className="h-5 scale-[0.8]" />
+            </div>
+            <div className="flex place-items-end cursor-pointer">
+              <span>Time</span>
+              <img src={SortIcon} alt="Sort" className="h-5 scale-[0.8]" />
+            </div>
+            <div></div>
+            <div className="flex place-items-end cursor-pointer">
+              <span>Rank</span>
+              <img src={SortIcon} alt="Sort" className="h-5 scale-[0.8]" />
+            </div>
+            <div className="flex place-items-end cursor-pointer">
+              <span>Date</span>
+              <img src={SortIcon} alt="Sort" className="h-5 scale-[0.8]" />
+            </div>
+            <div className="flex items-center gap-[10px] justify-center">
+              <button
+                className="w-8 h-8 border border-[#2b2e46] bg-[#2b2e46] rounded cursor-pointer flex items-center justify-center text-foreground transition-colors duration-100 hover:bg-[#202232] disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={() => setPageNumber(Math.max(1, pageNumber - 1))}
+                disabled={pageNumber === 1}
+              >
+                ←
+              </button>
+              <span className="text-sm text-foreground">{pageNumber}/{pageMax}</span>
+              <button
+                className="w-8 h-8 border border-[#2b2e46] bg-[#2b2e46] rounded cursor-pointer flex items-center justify-center text-foreground transition-colors duration-100 hover:bg-[#202232] disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={() => setPageNumber(Math.min(pageMax, pageNumber + 1))}
+                disabled={pageNumber === pageMax}
+              >
+                →
+              </button>
+            </div>
+          </div>
+
+          <div>
+            {game === "0" ? (
+              user.records
+                .sort((a, b) => a.map_id - b.map_id)
+                .map((record, index) =>
+                  Math.ceil((index + 1) / 20) === pageNumber ? (
+                    <div key={index} className="w-[calc(100%-40px)] mx-5 my-0 mt-[10px] h-11 rounded-[20px] pl-[40px] text-xl text-inherit font-inherit border-0 transition-colors duration-100 bg-[#2b2e46] grid grid-cols-[15%_15%_5%_15%_5%_15%_15%_15%] overflow-hidden whitespace-nowrap cursor-pointer hover:bg-[#202232]">
+                      <Link to={`/maps/${record.map_id}`} className="text-[#3c91e6] no-underline font-inherit flex place-items-center h-11 hover:underline">
+                        {record.map_name}
+                      </Link>
+                      <span className="flex place-items-center h-11">{record.scores[0]?.score_count || 'N/A'}</span>
+                      <span className={`flex place-items-center h-11 ${record.scores[0]?.score_count - record.map_wr_count > 0 ? 'text-[#dc3545]' : ''}`}>
+                        {record.scores[0]?.score_count - record.map_wr_count > 0
+                          ? `+${record.scores[0].score_count - record.map_wr_count}`
+                          : '–'}
+                      </span>
+                      <span className="flex place-items-center h-11">{record.scores[0] ? ticks_to_time(record.scores[0].score_time) : 'N/A'}</span>
+                      <span className="flex place-items-center h-11"></span>
+                      <span className="flex place-items-center h-11 font-semibold">#{record.placement}</span>
+                      <span className="flex place-items-center h-11">{record.scores[0]?.date.split("T")[0] || 'N/A'}</span>
+                      <div className="flex gap-[5px] justify-end flex-row-reverse place-items-center h-11">
+                        <button
+                          className="bg-transparent border-0 cursor-pointer transition-colors duration-100 p-0.5 hover:bg-[rgba(32,34,50,0.5)]"
+                          onClick={() => message("Demo Information", `Demo ID: ${record.scores[0]?.demo_id}`)}
+                          title="Demo Info"
+                        >
+                          <img src={ThreedotIcon} alt="Info" className="w-4 h-4" />
+                        </button>
+                        <button
+                          className="bg-transparent border-0 cursor-pointer transition-colors duration-100 p-0.5 hover:bg-[rgba(32,34,50,0.5)]"
+                          onClick={() => window.location.href = `/api/v1/demos?uuid=${record.scores[0]?.demo_id}`}
+                          title="Download Demo"
+                        >
+                          <img src={DownloadIcon} alt="Download" className="w-4 h-4" />
+                        </button>
+                        {record.scores.length > 1 && (
+                          <button className="bg-transparent border-0 cursor-pointer transition-colors duration-100 p-0.5 hover:bg-[rgba(32,34,50,0.5)]" title="View History">
+                            <img src={HistoryIcon} alt="History" className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ) : null
+                )
+            ) : (
+              maps
+                ?.filter(map => !map.is_disabled)
+                .sort((a, b) => a.id - b.id)
+                .map((map, index) => {
+                  if (Math.ceil((index + 1) / 20) !== pageNumber) return null;
+                  
+                  const record = user.records.find(r => r.map_id === map.id);
+                  
+                  return (
+                    <div key={index} className={`w-[calc(100%-40px)] mx-5 my-0 mt-[10px] h-11 rounded-[20px] pl-[40px] text-xl text-inherit font-inherit border-0 transition-colors duration-100 bg-[#2b2e46] grid grid-cols-[15%_15%_5%_15%_5%_15%_15%_15%] overflow-hidden whitespace-nowrap cursor-pointer hover:bg-[#202232] ${!record ? 'opacity-65' : ''}`}>
+                      <Link to={`/maps/${map.id}`} className="text-[#3c91e6] no-underline font-inherit flex place-items-center h-11 hover:underline">
+                        {map.name}
+                      </Link>
+                      <span className="flex place-items-center h-11">{record?.scores[0]?.score_count || 'N/A'}</span>
+                      <span className={`flex place-items-center h-11 ${record?.scores[0]?.score_count && record.scores[0].score_count - record.map_wr_count > 0 ? 'text-[#dc3545]' : ''}`}>
+                        {record?.scores[0]?.score_count && record.scores[0].score_count - record.map_wr_count > 0
+                          ? `+${record.scores[0].score_count - record.map_wr_count}`
+                          : '–'}
+                      </span>
+                      <span className="flex place-items-center h-11">{record?.scores[0] ? ticks_to_time(record.scores[0].score_time) : 'N/A'}</span>
+                      <span className="flex place-items-center h-11"></span>
+                      <span className="flex place-items-center h-11 font-semibold">{record ? `#${record.placement}` : 'N/A'}</span>
+                      <span className="flex place-items-center h-11">{record?.scores[0]?.date.split("T")[0] || 'N/A'}</span>
+                      <div className="flex gap-[5px] justify-end flex-row-reverse place-items-center h-11">
+                        {record?.scores[0] && (
+                          <>
+                            <button
+                              className="bg-transparent border-0 cursor-pointer transition-colors duration-100 p-0.5 hover:bg-[rgba(32,34,50,0.5)]"
+                              onClick={() => message("Demo Information", `Demo ID: ${record.scores[0].demo_id}`)}
+                              title="Demo Info"
+                            >
+                              <img src={ThreedotIcon} alt="Info" className="w-4 h-4" />
+                            </button>
+                            <button
+                              className="bg-transparent border-0 cursor-pointer transition-colors duration-100 p-0.5 hover:bg-[rgba(32,34,50,0.5)]"
+                              onClick={() => window.location.href = `/api/v1/demos?uuid=${record.scores[0].demo_id}`}
+                              title="Download Demo"
+                            >
+                              <img src={DownloadIcon} alt="Download" className="w-4 h-4" />
+                            </button>
+                            {record.scores.length > 1 && (
+                              <button className="bg-transparent border-0 cursor-pointer transition-colors duration-100 p-0.5 hover:bg-[rgba(32,34,50,0.5)]" title="View History">
+                                <img src={HistoryIcon} alt="History" className="w-4 h-4" />
+                              </button>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })
+            )}
+          </div>
+        </section>
+      )}
     </main>
   );
 };
