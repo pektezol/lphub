@@ -2,8 +2,6 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import { Helmet } from "react-helmet";
 
-import "@css/Rules.css";
-
 const Rules: React.FC = () => {
   const [rulesText, setRulesText] = React.useState<string>("");
 
@@ -27,7 +25,7 @@ const Rules: React.FC = () => {
   }, []);
 
   return (
-    <main>
+    <main className="p-8 text-foreground font-[--font-barlow-semicondensed-regular] prose prose-invert max-w-none">
       <Helmet>
         <title>LPHUB | Rules</title>
       </Helmet>

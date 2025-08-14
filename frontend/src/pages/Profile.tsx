@@ -19,7 +19,6 @@ import { UserProfile } from "@customTypes/Profile";
 import { Game, GameChapters } from "@customTypes/Game";
 import { Map } from "@customTypes/Map";
 import { ticks_to_time } from "@utils/Time";
-import "@css/Profile.css";
 import { API } from "@api/Api";
 import useConfirm from "@hooks/UseConfirm";
 import useMessage from "@hooks/UseMessage";

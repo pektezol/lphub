@@ -2,8 +2,6 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import { Helmet } from "react-helmet";
 
-import "@css/About.css";
-
 const About: React.FC = () => {
   const [aboutText, setAboutText] = React.useState<string>("");
 
@@ -26,7 +24,7 @@ const About: React.FC = () => {
   }, []);
 
   return (
-    <div id="about">
+    <div className="p-8 text-foreground font-[--font-barlow-semicondensed-regular] prose prose-invert max-w-none">
       <Helmet>
         <title>LPHUB | About</title>
       </Helmet>

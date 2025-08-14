@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { Game, GameCategoryPortals } from "@customTypes/Game";
-import "@css/Games.css";
 
 interface GameCategoryProps {
   game: Game;
@@ -12,18 +11,12 @@ interface GameCategoryProps {
 const GameCategory: React.FC<GameCategoryProps> = ({ cat, game }) => {
   return (
     <Link
-      className="games-page-item-body-item"
+      className="bg-surface text-center w-full h-[100px] rounded-3xl text-foreground m-3 hover:bg-surface1 transition-colors flex flex-col justify-between p-4"
       to={"/games/" + game.id + "?cat=" + cat.category.id}
     >
-      <div>
-        <span className="games-page-item-body-item-title">
-          {cat.category.name}
-        </span>
-        <br />
-        <span className="games-page-item-body-item-num">
-          {cat.portal_count}
-        </span>
-      </div>
+      <p className="text-3xl font-semibold">{cat.category.name}</p>
+      <br />
+      <p className="font-bold text-4xl">{cat.portal_count}</p>
     </Link>
   );
 };

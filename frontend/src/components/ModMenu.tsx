@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { MapSummary } from "@customTypes/Map";
 import { ModMenuContent } from "@customTypes/Content";
 import { API } from "@api/Api";
-import "@css/ModMenu.css";
 import useConfirm from "@hooks/UseConfirm";
 
 interface ModMenuProps {

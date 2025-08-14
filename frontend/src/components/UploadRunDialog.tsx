@@ -2,7 +2,6 @@ import React from "react";
 import { UploadRunContent } from "@customTypes/Content";
 import { ScoreboardTempUpdate, SourceDemoParser, NetMessages } from "@nekz/sdp";
 
-import "@css/UploadRunDialog.css";
 import { Game } from "@customTypes/Game";
 import { API } from "@api/Api";
 import { useNavigate } from "react-router-dom";

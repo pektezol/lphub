@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
-import "@css/Maplist.css";
 import { API } from "@api/Api";
 import { Game } from "@customTypes/Game";
 import { GameChapter, GamesChapters } from "@customTypes/Chapters";
@@ -92,44 +91,52 @@ const Maplist: React.FC = () => {
       <Helmet>
         <title>LPHUB | Maplist</title>
       </Helmet>
-      <section style={{ marginTop: "20px" }}>
+      
+      <section className="mt-5">
         <Link to="/games">
-          <button className="nav-button" style={{ borderRadius: "20px" }}>
-            <i className="triangle"></i>
-            <span>Games List</span>
+          <button className="nav-button rounded-[20px] h-10 bg-surface border-0 text-foreground text-lg font-[--font-barlow-semicondensed-regular] transition-colors duration-100 hover:bg-surface2 flex items-center px-2">
+            <i className="triangle mr-2"></i>
+            <span className="px-2">Games List</span>
           </button>
         </Link>
       </section>
+
       {load ? (
         <div></div>
       ) : (
         <section>
-          <h1>{game?.name}</h1>
+          <h1 className="font-[--font-barlow-condensed-bold] text-6xl my-0 text-foreground">
+            {game?.name}
+          </h1>
+
           <div
+            className="text-center rounded-3xl overflow-hidden bg-cover bg-[25%] mt-3 relative"
             style={{ backgroundImage: `url(${game?.image})` }}
-            className="game-header"
           >
-            <div className="blur">
-              <div className="game-header-portal-count">
-                <h2 className="portal-count">
+            <div className="backdrop-blur-sm flex flex-col w-full">
+              <div className="h-full flex flex-col justify-center items-center">
+                <h2 className="my-5 font-[--font-barlow-semicondensed-semibold] text-8xl text-foreground">
                   {
                     game?.category_portals.find(
                       obj => obj.category.id === catNum + 1
                     )?.portal_count
                   }
                 </h2>
-                <h3>portals</h3>
+                <h3 className="font-[--font-barlow-semicondensed-regular] mx-2.5 text-4xl my-0 text-foreground">
+                  portals
+                </h3>
               </div>
-              <div className="game-header-categories">
+
+              <div className="flex h-12 bg-surface gap-0.5">
                 {game?.category_portals.map((cat, index) => (
                   <button
                     key={index}
-                    className={
+                    className={`border-0 text-foreground font-[--font-barlow-semicondensed-regular] text-xl cursor-pointer transition-all duration-100 w-full ${
                       currentlySelected === cat.category.id ||
                       (cat.category.id - 1 === catNum && !hasClicked)
-                        ? "game-cat-button selected"
-                        : "game-cat-button"
-                    }
+                        ? "bg-surface"
+                        : "bg-surface1 hover:bg-surface"
+                    }`}
                     onClick={() => {
                       setCatNum(cat.category.id - 1);
                       _update_currently_selected(cat.category.id);
@@ -143,31 +150,32 @@ const Maplist: React.FC = () => {
           </div>
 
           <div>
-            <section className="chapter-select-container">
+            <section>
               <div>
-                <span
-                  style={{
-                    fontSize: "18px",
-                    transform: "translateY(5px)",
-                    display: "block",
-                    marginTop: "10px",
-                  }}
-                >
+                <span className="text-lg translate-y-1.5 block mt-2.5 text-foreground">
                   {curChapter?.chapter.name.split(" - ")[0]}
                 </span>
               </div>
-              <div onClick={_handle_dropdown_click} className="dropdown">
-                <span>{curChapter?.chapter.name.split(" - ")[1]}</span>
-                <i className="triangle"></i>
+              <div 
+                onClick={_handle_dropdown_click} 
+                className="cursor-pointer select-none flex w-fit items-center"
+              >
+                <span className="text-foreground text-2xl">
+                  {curChapter?.chapter.name.split(" - ")[1]}
+                </span>
+                <i className="triangle translate-x-1.5 translate-y-2 -rotate-90"></i>
               </div>
+              \
               <div
-                className="dropdown-elements"
-                style={{ display: dropdownActive }}
+                className={`absolute z-[1000] bg-surface1 rounded-2xl overflow-hidden p-1 animate-in fade-in duration-100 ${
+                  dropdownActive === "none" ? "hidden" : "block"
+                }`}
               >
                 {gameChapters?.chapters.map((chapter, i) => {
                   return (
                     <div
-                      className="dropdown-element"
+                      key={i}
+                      className="cursor-pointer text-xl rounded-[2000px] p-1 hover:bg-surface text-foreground"
                       onClick={() => {
                         _fetch_chapters(chapter.id.toString());
                         _handle_dropdown_click();
@@ -179,49 +187,52 @@ const Maplist: React.FC = () => {
                 })}
               </div>
             </section>
-            <section className="maplist">
+
+            <section className="grid grid-cols-4 gap-5 my-5">
               {curChapter?.maps.map((map, i) => {
                 return (
-                  <div className="maplist-entry">
+                  <div key={i} className="bg-surface rounded-3xl overflow-hidden">
                     <Link to={`/maps/${map.id}`}>
-                      <span>{map.name}</span>
+                      <span className="text-center text-xl w-full block my-1.5 text-foreground">
+                        {map.name}
+                      </span>
                       <div
-                        className="map-entry-image"
+                        className="flex h-48 bg-cover relative"
                         style={{ backgroundImage: `url(${map.image})` }}
                       >
-                        <div className="blur map">
-                          <span>
+                        <div className="backdrop-blur-sm w-full flex items-center justify-center">
+                          <span className="text-4xl font-[--font-barlow-semicondensed-semibold] text-white mr-1.5">
                             {map.is_disabled
                               ? map.category_portals[0].portal_count
                               : map.category_portals.find(
                                   obj => obj.category.id === catNum + 1
                                 )?.portal_count}
                           </span>
-                          <span>portals</span>
+                          <span className="text-4xl font-[--font-barlow-semicondensed-regular] text-white">
+                            portals
+                          </span>
                         </div>
                       </div>
-                      <div className="difficulty-bar">
-                        {/* <span>Difficulty:</span> */}
-                        <div
-                          className={
-                            map.difficulty === 0
-                              ? "one"
-                              : map.difficulty === 1
-                                ? "two"
-                                : map.difficulty === 2
-                                  ? "three"
-                                  : map.difficulty === 3
-                                    ? "four"
-                                    : map.difficulty === 4
-                                      ? "five"
-                                      : "one"
-                          }
-                        >
-                          <div className="difficulty-point"></div>
-                          <div className="difficulty-point"></div>
-                          <div className="difficulty-point"></div>
-                          <div className="difficulty-point"></div>
-                          <div className="difficulty-point"></div>
+
+                      {/* Difficulty rating */}
+                      <div className="flex mx-2.5 my-4">
+                        <div className="flex w-full items-center justify-center gap-1.5 rounded-[2000px] ml-0.5 translate-y-px">
+                          {[1, 2, 3, 4, 5].map((point) => (
+                            <div
+                              key={point}
+                              className={`flex h-0.5 w-full rounded-3xl ${
+                                point <= (map.difficulty + 1)
+                                  ? map.difficulty === 0
+                                    ? "bg-green-500"
+                                    : map.difficulty === 1 || map.difficulty === 2
+                                    ? "bg-lime-500"
+                                    : map.difficulty === 3
+                                    ? "bg-red-400"
+                                    : "bg-red-600"
+                                  : "bg-surface1"
+                              }`}
+                            />
+                          ))}
                         </div>
                       </div>
                     </Link>

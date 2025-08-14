@@ -19,7 +19,6 @@ import { Game, GameChapters } from "@customTypes/Game";
 import { Map } from "@customTypes/Map";
 import { API } from "@api/Api";
 import { ticks_to_time } from "@utils/Time";
-import "@css/Profile.css";
 import useMessage from "@hooks/UseMessage";
 
 interface UserProps {

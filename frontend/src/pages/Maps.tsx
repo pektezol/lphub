@@ -2,14 +2,13 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
-import { PortalIcon, FlagIcon, ChatIcon } from "@images/Images";
+import { PortalIcon, FlagIcon, ChatIcon } from "../images/Images";
 import Summary from "@components/Summary";
 import Leaderboards from "@components/Leaderboards";
 import Discussions from "@components/Discussions";
 import ModMenu from "@components/ModMenu";
 import { MapDiscussions, MapLeaderboard, MapSummary } from "@customTypes/Map";
 import { API } from "@api/Api";
-import "@css/Maps.css";
 
 interface MapProps {
   token?: string;
@@ -82,15 +81,15 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
 
           <section id="section2" className="summary1">
             <button className="nav-button">
-              <img src={PortalIcon} alt="" />
+              <img src={PortalIcon} alt="" className="w-6 h-6" />
               <span>Summary</span>
             </button>
             <button className="nav-button">
-              <img src={FlagIcon} alt="" />
+              <img src={FlagIcon} alt="" className="w-6 h-6" />
               <span>Leaderboards</span>
             </button>
             <button className="nav-button">
-              <img src={ChatIcon} alt="" />
+              <img src={ChatIcon} alt="" className="w-6 h-6" />
               <span>Discussions</span>
             </button>
           </section>
@@ -151,15 +150,15 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
 
         <section id="section2" className="summary1">
           <button className="nav-button" onClick={() => setNavState(0)}>
-            <img src={PortalIcon} alt="" />
+            <img src={PortalIcon} alt="" className="w-6 h-6" />
             <span>Summary</span>
           </button>
           <button className="nav-button" onClick={() => setNavState(1)}>
-            <img src={FlagIcon} alt="" />
+            <img src={FlagIcon} alt="" className="w-6 h-6" />
             <span>Leaderboards</span>
           </button>
           <button className="nav-button" onClick={() => setNavState(2)}>
-            <img src={ChatIcon} alt="" />
+            <img src={ChatIcon} alt="" className="w-6 h-6" />
             <span>Discussions</span>
           </button>
         </section>

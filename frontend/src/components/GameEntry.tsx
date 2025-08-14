@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { Game, GameCategoryPortals } from "@customTypes/Game";
-import "@css/Games.css";
 
 import GameCategory from "@components/GameCategory";
 
@@ -18,23 +17,25 @@ const GameEntry: React.FC<GameEntryProps> = ({ game }) => {
   }, [game.category_portals]);
 
   return (
-    <Link to={"/games/" + game.id}>
-      <div className="games-page-item">
-        <div className="games-page-item-header">
+    <Link to={"/games/" + game.id} className="w-full">
+      <div className="w-full h-64 bg-mantle rounded-3xl overflow-hidden my-6">
+        <div className="w-full h-1/2 bg-cover overflow-hidden relative">
           <div
             style={{ backgroundImage: `url(${game.image})` }}
-            className="games-page-item-header-img"
+            className="w-full h-full backdrop-blur-sm blur-sm bg-cover"
           ></div>
-          <span>
-            <b>{game.name}</b>
+          <span className="absolute inset-0 flex justify-center items-center">
+            <b className="text-[56px] font-[--font-barlow-condensed-bold] text-white">{game.name}</b>
           </span>
         </div>
-        <div id={game.id as any as string} className="games-page-item-body">
-          {catInfo.map((cat, index) => {
-            return (
-              <GameCategory cat={cat} game={game} key={index}></GameCategory>
-            );
-          })}
+        <div className="flex justify-center items-center h-1/2">
+          <div className="flex flex-row justify-between w-full">
+            {catInfo.map((cat, index) => {
+              return (
+                <GameCategory key={index} cat={cat} game={game} />
+              );
+            })}
+          </div>
         </div>
       </div>
     </Link>

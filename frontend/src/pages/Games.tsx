@@ -3,41 +3,23 @@ import { Helmet } from "react-helmet";
 
 import GameEntry from "@components/GameEntry";
 import { Game } from "@customTypes/Game";
-import "@css/Maps.css";
 
 interface GamesProps {
   games: Game[];
 }
 
 const Games: React.FC<GamesProps> = ({ games }) => {
-  const _page_load = () => {
-    const loaders = document.querySelectorAll(".loader");
-    loaders.forEach(loader => {
-      (loader as HTMLElement).style.display = "none";
-    });
-  };
-
-  React.useEffect(() => {
-    document
-      .querySelectorAll(".games-page-item-body")
-      .forEach((game, index) => {
-        game.innerHTML = "";
-      });
-    _page_load();
-  }, []);
-
   return (
-    <div className="games-page">
+    <div className="ml-10 min-h-screen w-[calc(100%-320px)] text-foreground font-[--font-barlow-semicondensed-regular] overflow-y-auto scrollbar-thin">
       <Helmet>
         <title>LPHUB | Games</title>
       </Helmet>
-      <section>
-        <div className="games-page-content">
-          <div className="games-page-item-content">
-            {games.map((game, index) => (
-              <GameEntry game={game} key={index} />
-            ))}
-          </div>
+      <section className="py-12 px-12 w-full">
+        <h1 className="text-3xl font-bold mb-8">Games</h1>
+        <div className="flex flex-col w-full">
+          {games.map((game, index) => (
+            <GameEntry game={game} key={index} />
+          ))}
         </div>
       </section>
     </div>

@@ -36,7 +36,7 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
     return (
       <section id="section6" className="summary2">
         <h1 style={{ textAlign: "center" }}>
-          Map is not available for competitive boards.
+          Loading...
         </h1>
       </section>
     );
@@ -195,6 +195,7 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
                         filter:
                           "hue-rotate(160deg) contrast(60%) saturate(1000%)",
                       }}
+                      className="w-6 h-6 mx-4"
                     />
                   </button>
                   <button
@@ -209,6 +210,7 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
                         filter:
                           "hue-rotate(300deg) contrast(60%) saturate(1000%)",
                       }}
+                      className="w-6 h-6"
                     />
                   </button>
                 </span>
@@ -227,7 +229,7 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
                         (window.location.href = `/api/v1/demos?uuid=${r.demo_id}`)
                       }
                     >
-                      <img src={DownloadIcon} alt="download" />
+                      <img src={DownloadIcon} alt="download" className="w-6 h-6 mr-4" />
                     </button>
                   </span>
                 )

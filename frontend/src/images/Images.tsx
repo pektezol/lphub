@@ -1,5 +1,5 @@
 import logo from "./png/logo.png";
-import login from "./png/login.png";
+import { LoginIcon as Login } from "./svgs/steam.tsx";
 import img1 from "./png/1.png";
 import img2 from "./png/2.png";
 import img3 from "./png/3.png";
@@ -23,7 +23,7 @@ import img20 from "./png/20.png";
 import img21 from "./png/21.png";
 
 export const LogoIcon = logo;
-export const LoginIcon = login;
+export const LoginIcon = Login;
 
 export const SearchIcon = img1;
 export const HomeIcon = img2;

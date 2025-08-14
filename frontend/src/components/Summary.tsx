@@ -2,7 +2,6 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 
 import { MapSummary } from "@customTypes/Map";
-import "@css/Maps.css";
 
 interface SummaryProps {
   selectedRun: number;
