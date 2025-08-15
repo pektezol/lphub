@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -12,7 +13,12 @@ import (
 	"strings"
 )
 
-func fetchLeaderboard(records []Record, overrides map[SteamID]map[string]int, useCache bool) map[SteamID]*Player {
+var (
+	errLb error = errors.New("leaderboards error")
+	errPi error = errors.New("playerinfo error")
+)
+
+func fetchLeaderboard(records []Record, overrides map[SteamID]map[string]int, useCache bool) (map[SteamID]*Player, error) {
 	log.Println("fetching leaderboard")
 	players := map[SteamID]*Player{}
 	// first init players map with records from portal gun and doors
@@ -21,7 +27,10 @@ func fetchLeaderboard(records []Record, overrides map[SteamID]map[string]int, us
 	end := 5000
 
 	for fetchAnotherPage {
-		portalGunEntries := fetchRecordsFromMap(47459, 0, 5000, useCache)
+		portalGunEntries, err := fetchRecordsFromMap(47459, 0, 5000, useCache)
+		if err != nil {
+			return nil, err
+		}
 		fetchAnotherPage = portalGunEntries.needsAnotherPage(&records[0])
 		if fetchAnotherPage {
 			start = end + 1
@@ -50,7 +59,10 @@ func fetchLeaderboard(records []Record, overrides map[SteamID]map[string]int, us
 	end = 5000
 
 	for fetchAnotherPage {
-		doorsEntries := fetchRecordsFromMap(47740, start, end, useCache)
+		doorsEntries, err := fetchRecordsFromMap(47740, start, end, useCache)
+		if err != nil {
+			return nil, err
+		}
 		fetchAnotherPage = doorsEntries.needsAnotherPage(&records[51])
 		if fetchAnotherPage {
 			start = end + 1
@@ -94,7 +106,10 @@ func fetchLeaderboard(records []Record, overrides map[SteamID]map[string]int, us
 		end := 5000
 
 		for fetchAnotherPage {
-			entries := fetchRecordsFromMap(record.MapID, start, end, useCache)
+			entries, err := fetchRecordsFromMap(record.MapID, start, end, useCache)
+			if err != nil {
+				return nil, err
+			}
 			fetchAnotherPage = entries.needsAnotherPage(&record)
 			if fetchAnotherPage {
 				start = end + 1
@@ -137,10 +152,10 @@ func fetchLeaderboard(records []Record, overrides map[SteamID]map[string]int, us
 		}
 
 	}
-	return players
+	return players, nil
 }
 
-func fetchRecordsFromMap(mapID int, start int, end int, useCache bool) *Leaderboard {
+func fetchRecordsFromMap(mapID int, start int, end int, useCache bool) (*Leaderboard, error) {
 	var filename string
 	if useCache {
 		filename := fmt.Sprintf("./cache/lb_%d_%d_%d.xml", mapID, start, end)
@@ -152,25 +167,27 @@ func fetchRecordsFromMap(mapID int, start int, end int, useCache bool) *Leaderbo
 			if err != nil {
 				log.Fatalln("failed to unmarshal cache.", err.Error())
 			}
-			return &leaderboard
+			return &leaderboard, nil
 		}
 	}
 
 	url := fmt.Sprintf("https://steamcommunity.com/stats/Portal2/leaderboards/%d?xml=1&start=%d&end=%d", mapID, start, end)
 	resp, err := http.Get(url)
-	log.Println("fetched", url, ":", resp.StatusCode)
 	if err != nil {
-		log.Fatalln("failed to fetch leaderboard.", err.Error())
+		log.Println("failed to fetch leaderboard.", err.Error())
+		return nil, errLb
 	}
 	respBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalln("failed to read leadeboard body.", err.Error())
+		log.Println("failed to read leadeboard body.", err.Error())
+		return nil, errLb
 	}
 	leaderboard := Leaderboard{}
 	err = xml.Unmarshal(respBytes, &leaderboard)
 	if err != nil {
 		log.Println(string(respBytes))
-		log.Fatalln("failed to unmarshal leaderboard.", err.Error())
+		log.Println("failed to unmarshal leaderboard.", err.Error())
+		return nil, errLb
 	}
 
 	if useCache {
@@ -179,10 +196,10 @@ func fetchRecordsFromMap(mapID int, start int, end int, useCache bool) *Leaderbo
 		}
 	}
 
-	return &leaderboard
+	return &leaderboard, nil
 }
 
-func fetchPlayerInfo(players []*Player) {
+func fetchPlayerInfo(players []*Player) error {
 	log.Println("fetching info for", len(players), "players")
 
 	ids := make([]string, len(players))
@@ -193,11 +210,13 @@ func fetchPlayerInfo(players []*Player) {
 	url := fmt.Sprintf("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=%s&steamids=%s", os.Getenv("API_KEY"), strings.Join(ids, ","))
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Fatalln(err.Error())
+		log.Println(err.Error())
+		return errPi
 	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalln(err.Error())
+		log.Println(err.Error())
+		return errPi
 	}
 	type PlayerSummary struct {
 		SteamID     SteamID `json:"steamid"`
@@ -223,4 +242,5 @@ func fetchPlayerInfo(players []*Player) {
 			}
 		}
 	}
+	return nil
 }

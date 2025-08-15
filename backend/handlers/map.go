@@ -77,12 +77,12 @@ func FetchMapSummary(c *gin.Context) {
 	}
 	// Get map data
 	response.Map.ID = intID
-	sql := `SELECT m.id, g.name, c.name, m.name, m.image, g.is_coop, m.is_disabled
+	sql := `SELECT m.id, g.name, c.name, m.name, m.image, g.is_coop, m.is_disabled, m.difficulty
 	FROM maps m
 	INNER JOIN games g ON m.game_id = g.id
 	INNER JOIN chapters c ON m.chapter_id = c.id
 	WHERE m.id = $1`
-	err = database.DB.QueryRow(sql, id).Scan(&response.Map.ID, &response.Map.GameName, &response.Map.ChapterName, &response.Map.MapName, &response.Map.Image, &response.Map.IsCoop, &response.Map.IsDisabled)
+	err = database.DB.QueryRow(sql, id).Scan(&response.Map.ID, &response.Map.GameName, &response.Map.ChapterName, &response.Map.MapName, &response.Map.Image, &response.Map.IsCoop, &response.Map.IsDisabled, &response.Map.Difficulty)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
@@ -492,6 +492,7 @@ func FetchMaps(c *gin.Context) {
 		m.id,
 		m.name, 
 		m.is_disabled,
+		m.difficulty,
 		m.image,
 		cat.id,
 		cat.name,
@@ -529,7 +530,7 @@ func FetchMaps(c *gin.Context) {
 	for rows.Next() {
 		var mapShort models.MapSelect
 		var categoryPortal models.CategoryPortal
-		if err := rows.Scan(&mapShort.ID, &mapShort.Name, &mapShort.IsDisabled, &mapShort.Image, &categoryPortal.Category.ID, &categoryPortal.Category.Name, &categoryPortal.PortalCount); err != nil {
+		if err := rows.Scan(&mapShort.ID, &mapShort.Name, &mapShort.IsDisabled, &mapShort.Difficulty, &mapShort.Image, &categoryPortal.Category.ID, &categoryPortal.Category.Name, &categoryPortal.PortalCount); err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
 		}
@@ -571,6 +572,7 @@ func FetchChapterMaps(c *gin.Context) {
 		m.name AS map_name, 
 		c.name AS chapter_name, 
 		m.is_disabled,
+		m.difficulty,
 		m.image,
 		cat.id,
 		cat.name,
@@ -610,7 +612,7 @@ func FetchChapterMaps(c *gin.Context) {
 	for rows.Next() {
 		var mapShort models.MapSelect
 		var categoryPortal models.CategoryPortal
-		if err := rows.Scan(&mapShort.ID, &mapShort.Name, &chapterName, &mapShort.IsDisabled, &mapShort.Image, &categoryPortal.Category.ID, &categoryPortal.Category.Name, &categoryPortal.PortalCount); err != nil {
+		if err := rows.Scan(&mapShort.ID, &mapShort.Name, &chapterName, &mapShort.IsDisabled, &mapShort.Difficulty, &mapShort.Image, &categoryPortal.Category.ID, &categoryPortal.Category.Name, &categoryPortal.PortalCount); err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
 		}
