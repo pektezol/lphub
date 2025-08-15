@@ -191,7 +191,7 @@ const Summary: React.FC<SummaryProps> = ({
             <span style={{ color: "red" }}>Very Hard</span>
           )}
           <div>
-            {data.map.difficulty <= 2 && ? (
+            {data.map.difficulty <= 2 ? (
               <div
                 className="difficulty-rating"
                 style={{ backgroundColor: "lime" }}
@@ -199,7 +199,7 @@ const Summary: React.FC<SummaryProps> = ({
             ) : (
               <div className="difficulty-rating"></div>
             )}
-            {data.map.difficulty > 2 && data.map.difficulty <= 4 && ? (
+            {data.map.difficulty > 2 && data.map.difficulty <= 4 ? (
               <div
                 className="difficulty-rating"
                 style={{ backgroundColor: "green" }}
@@ -207,7 +207,7 @@ const Summary: React.FC<SummaryProps> = ({
             ) : (
               <div className="difficulty-rating"></div>
             )}
-            {data.map.difficulty > 4 && data.map.difficulty <= 6 && ? (
+            {data.map.difficulty > 4 && data.map.difficulty <= 6 ? (
               <div
                 className="difficulty-rating"
                 style={{ backgroundColor: "yellow" }}
@@ -215,7 +215,7 @@ const Summary: React.FC<SummaryProps> = ({
             ) : (
               <div className="difficulty-rating"></div>
             )}
-            {data.map.difficulty > 6 && data.map.difficulty <= 8 && ? (
+            {data.map.difficulty > 6 && data.map.difficulty <= 8 ? (
               <div
                 className="difficulty-rating"
                 style={{ backgroundColor: "orange" }}
@@ -223,7 +223,7 @@ const Summary: React.FC<SummaryProps> = ({
             ) : (
               <div className="difficulty-rating"></div>
             )}
-            {data.map.difficulty > 8 && data.map.difficulty <= 10 && ? (
+            {data.map.difficulty > 8 && data.map.difficulty <= 10 ? (
               <div
                 className="difficulty-rating"
                 style={{ backgroundColor: "red" }}
