@@ -23,15 +23,15 @@ interface SidebarProps {
   onUploadRun: () => void;
 }
 
-function OpenSidebarIcon(){
+function OpenSidebarIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-panel-right-close-icon lucide-panel-right-close"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M15 3v18"/><path d="m8 9 3 3-3 3"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-panel-right-close-icon lucide-panel-right-close"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M15 3v18" /><path d="m8 9 3 3-3 3" /></svg>
   )
 }
 
-function ClosedSidebarIcon(){
+function ClosedSidebarIcon() {
   return (
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-panel-right-open-icon lucide-panel-right-open"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M15 3v18"/><path d="m10 15-3-3 3-3"/></svg>  )
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-panel-right-open-icon lucide-panel-right-open"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M15 3v18" /><path d="m10 15-3-3 3-3" /></svg>)
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -43,7 +43,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [searchData, setSearchData] = React.useState<Search | undefined>(
     undefined
   );
-  const [isSidebarLocked, setIsSidebarLocked] = React.useState<boolean>(false);
+  // const [isSidebarLocked, setIsSidebarLocked] = React.useState<boolean>(false);
   const [isSidebarOpen, setSidebarOpen] = React.useState<boolean>(false);
   const [selectedButtonIndex, setSelectedButtonIndex] = React.useState<number>(1);
 
@@ -100,17 +100,16 @@ const Sidebar: React.FC<SidebarProps> = ({
   const getButtonClasses = (buttonIndex: number) => {
     const baseClasses = "flex items-center gap-3 w-full text-left bg-inherit cursor-pointer border-none rounded-lg py-3 px-3 transition-all duration-300 hover:bg-surface1";
     const selectedClasses = selectedButtonIndex === buttonIndex ? "bg-primary text-background" : "bg-transparent text-foreground";
-    
+
     return `${baseClasses} ${selectedClasses}`;
   };
 
   const iconClasses = "w-6 h-6 flex-shrink-0";
 
   return (
-    <div className={`fixed top-0 left-0 h-screen bg-surface border-r border-border transition-all duration-300 z-10 overflow-hidden ${
-      isSidebarOpen ? 'w-80' : 'w-20'
-    }`}>
-      <div className="flex items-center h-20 px-4 border-b border-border">
+    <div className={`w-80 not-md:w-full text-white bg-block
+      }`}>
+      <div className="flex items-center px-4 border-b border-border">
         <Link to="/" tabIndex={-1} className="flex items-center flex-1 cursor-pointer select-none min-w-0">
           <img src={LogoIcon} alt="Logo" className="w-12 h-12 flex-shrink-0" />
           {isSidebarOpen && (
@@ -124,7 +123,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             </div>
           )}
         </Link>
-        
+
         <button
           onClick={_handle_sidebar_toggle}
           className="ml-2 p-2 rounded-lg hover:bg-surface1 transition-colors text-foreground"
@@ -135,9 +134,9 @@ const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Sidebar Content */}
-      <div 
+      <div
         ref={sidebarRef}
-        className="flex flex-col h-[calc(100vh-80px)] overflow-y-auto overflow-x-hidden"
+        className="flex flex-col overflow-y-auto overflow-x-hidden"
       >
         {isSidebarOpen && (
           <div className="p-4 border-b border-border min-w-0">
@@ -145,7 +144,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               <img src={SearchIcon} alt="Search" className={iconClasses} />
               <span className="text-white font-[--font-barlow-semicondensed-regular] truncate">Search</span>
             </div>
-            
+
             <div className="min-w-0">
               <input
                 ref={searchbarRef}
@@ -214,7 +213,9 @@ const Sidebar: React.FC<SidebarProps> = ({
             ].map(({ to, refIndex, icon, alt, label }) => (
               <Link to={to} tabIndex={-1} key={refIndex}>
                 <button
-                  ref={el => sidebarButtonRefs.current[refIndex] = el}
+                  ref={el => {
+                    sidebarButtonRefs.current[refIndex] = el
+                  }}
                   className={getButtonClasses(refIndex)}
                   onClick={() => handle_sidebar_click(refIndex)}
                 >
@@ -254,8 +255,10 @@ const Sidebar: React.FC<SidebarProps> = ({
           </div>
 
           <Link to="/rules" tabIndex={-1}>
-            <button 
-              ref={el => sidebarButtonRefs.current[5] = el}
+            <button
+              ref={el => {
+                sidebarButtonRefs.current[5] = el
+              }}
               className={getButtonClasses(5)}
               onClick={() => handle_sidebar_click(5)}
             >
@@ -265,8 +268,10 @@ const Sidebar: React.FC<SidebarProps> = ({
           </Link>
 
           <Link to="/about" tabIndex={-1}>
-            <button 
-              ref={el => sidebarButtonRefs.current[6] = el}
+            <button
+              ref={el => {
+                sidebarButtonRefs.current[6] = el
+              }}
               className={getButtonClasses(6)}
               onClick={() => handle_sidebar_click(6)}
             >

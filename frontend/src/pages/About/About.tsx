@@ -24,7 +24,7 @@ const About: React.FC = () => {
   }, []);
 
   return (
-    <div className="ml-16 p-8 text-foreground font-[--font-barlow-semicondensed-regular] prose prose-invert max-w-none">
+    <div>
       <Helmet>
         <title>LPHUB | About</title>
       </Helmet>

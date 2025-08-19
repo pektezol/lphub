@@ -11,12 +11,12 @@ interface GameCategoryProps {
 const GameCategory: React.FC<GameCategoryProps> = ({ cat, game }) => {
   return (
     <Link
-      className="bg-surface text-center w-full h-[100px] rounded-3xl text-foreground m-3 hover:bg-surface1 transition-colors flex flex-col justify-between p-4"
+      className="bg-block text-center w-full rounded-3xl text-foreground transition-colors flex flex-col justify-between p-2"
       to={"/games/" + game.id + "?cat=" + cat.category.id}
     >
-      <p className="text-3xl font-semibold">{cat.category.name}</p>
+      <span className="text-2xl font-barlow-semicondensed-regular">{cat.category.name}</span>
       <br />
-      <p className="font-bold text-4xl">{cat.portal_count}</p>
+      <span className="text-5xl font-barlow-semicondensed-semibold">{cat.portal_count}</span>
     </Link>
   );
 };

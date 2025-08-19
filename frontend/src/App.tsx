@@ -6,18 +6,18 @@ import { UserProfile } from "@customTypes/Profile";
 import Sidebar from "./components/Sidebar";
 import "./App.css";
 
-import Profile from "@pages/Profile";
-import Games from "@pages/Games";
-import Maps from "@pages/Maps";
-import User from "@pages/User";
-import Homepage from "@pages/Homepage";
+import Profile from "@pages/Profile/Profile.tsx";
+import Games from "@pages/Games/Games.tsx";
+import Maps from "@pages/Maps/Maps.tsx";
+import User from "@pages/User/User.tsx";
+import Homepage from "@pages/Home/Homepage.tsx";
 import UploadRunDialog from "./components/UploadRunDialog";
-import Rules from "@pages/Rules";
-import About from "@pages/About";
+import Rules from "@pages/Rules/Rules.tsx";
+import About from "@pages/About/About.tsx";
 import { Game } from "@customTypes/Game";
 import { API } from "./api/Api";
-import Maplist from "@pages/Maplist";
-import Rankings from "@pages/Rankings";
+import Maplist from "@pages/Maplist/Maplist.tsx";
+import Rankings from "@pages/Rankings/Rankings.tsx";
 import { get_user_id_from_token, get_user_mod_from_token } from "./utils/Jwt";
 
 const App: React.FC = () => {
@@ -76,6 +76,7 @@ const App: React.FC = () => {
         <title>LPHUB</title>
         <meta name="description" content="Least Portals Hub" />
       </Helmet>
+
       <UploadRunDialog
         token={token}
         open={uploadRunDialog}
@@ -87,40 +88,61 @@ const App: React.FC = () => {
         }}
         games={games}
       />
-      <Sidebar
-        setToken={setToken}
-        profile={profile}
-        setProfile={setProfile}
-        onUploadRun={() => setUploadRunDialog(true)}
-      />
-      <Routes>
-        <Route path="/" element={<Homepage />} />
-        <Route
-          path="/profile"
-          element={
-            <Profile
-              profile={profile}
-              token={token}
-              gameData={games}
-              onDeleteRecord={() => _set_profile(get_user_id_from_token(token))}
+
+      <div className="flex flex-row not-md:flex-col h-[100vh]">
+
+        <Sidebar
+          setToken={setToken}
+          profile={profile}
+          setProfile={setProfile}
+          onUploadRun={() => setUploadRunDialog(true)}
+        />
+
+        <main className="w-full">
+
+          <Routes>
+            <Route path="/" element={<Homepage />} />
+
+            <Route
+              path="/profile"
+              element={
+                <Profile
+                  profile={profile}
+                  token={token}
+                  gameData={games}
+                  onDeleteRecord={() => _set_profile(get_user_id_from_token(token))}
+                />
+              }
             />
-          }
-        />
-        <Route
-          path="/users/*"
-          element={<User profile={profile} token={token} gameData={games} />}
-        />
-        <Route path="/games" element={<Games games={games} />} />
-        <Route path="/games/:id" element={<Maplist />}></Route>
-        <Route
-          path="/maps/*"
-          element={<Maps token={token} isModerator={isModerator} />}
-        />
-        <Route path="/rules" element={<Rules />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/rankings" element={<Rankings />}></Route>
-        <Route path="*" element={"404"} />
-      </Routes>
+
+            <Route
+              path="/users/*"
+              element={<User profile={profile} token={token} gameData={games} />}
+            />
+
+            <Route path="/games" element={<Games games={games} />} />
+
+            <Route path="/games/:id" element={<Maplist />}></Route>
+
+            <Route
+              path="/maps/*"
+              element={<Maps token={token} isModerator={isModerator} />}
+            />
+
+            <Route path="/rules" element={<Rules />} />
+
+            <Route path="/about" element={<About />} />
+
+            <Route path="/rankings" element={<Rankings />}></Route>
+
+            <Route path="*" element={"404"} />
+
+          </Routes>
+
+        </main>
+
+
+      </div>
     </>
   );
 };

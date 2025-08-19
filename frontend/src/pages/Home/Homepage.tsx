@@ -3,13 +3,13 @@ import { Helmet } from "react-helmet";
 
 const Homepage: React.FC = () => {
   return (
-    <main className="ml-12 relative left-0 w-fullmin-h-screen p-4 sm:p-8 text-foreground font-[--font-barlow-semicondensed-regular]">
+    <div>
       <Helmet>
         <title>LPHUB | Homepage</title>
       </Helmet>
       <section className="p-8">
         <p />
-        <h1 className="text-5xl font-[--font-barlow-condensed-bold] mb-6 text-primary">Welcome to Least Portals Hub!</h1>
+        <h1 className="text-5xl font-barlow-condensed-bold mb-6 text-primary">Welcome to Least Portals Hub!</h1>
         <p className="text-lg mb-4 leading-relaxed">
           At the moment, LPHUB is in beta state. This means that the site has
           only the core functionalities enabled for providing both collaborative
@@ -24,7 +24,7 @@ const Homepage: React.FC = () => {
           and the 'About LPHUB' pages.
         </p>
       </section>
-    </main>
+    </div>
   );
 };
 

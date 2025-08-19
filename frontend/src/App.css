@@ -1,298 +1,150 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@layer theme, base, components, utilities;
+
 @import "tailwindcss";
 
 @theme {
-  --color-rosewater: #f2d5cf;
-  --color-flamingo: #eebebe;
-  --color-pink: #f4b8e4;
-  --color-mauve: #ca9ee6;
-  --color-red: #e78284;
-  --color-maroon: #ea999c;
-  --color-peach: #ef9f76;
-  --color-yellow: #e5c890;
-  --color-green: #a6d189;
-  --color-teal: #81c8be;
-  --color-sky: #99d1db;
-  --color-sapphire: #85c1dc;
-  --color-blue: #8caaee;
-  --color-lavender: #babbf1;
-  --color-text: #c6d0f5;
-  --color-subtext1: #b5bfe2;
-  --color-subtext0: #a5adce;
-  --color-overlay2: #949cbb;
-  --color-overlay1: #838ba7;
-  --color-overlay0: #737994;
-  --color-surface2: #626880;
-  --color-surface1: #51576d;
-  --color-surface0: #414559;
-  --color-base: #303446;
-  --color-mantle: #292c3c;
-  --color-crust: #232634;
+	--color-main: #141520;
+	--color-panel: #202232;
+	--color-block: #2b2e46;
 
-  --color-primary: var(--color-mauve);
-  --color-secondary: var(--color-blue);
-  --color-accent: var(--color-peach);
-  --color-background: var(--color-base);
-  --color-surface: var(--color-surface0);
-  --color-muted: var(--color-overlay0);
-  --color-border: var(--color-surface2);
-  --color-input: var(--color-surface1);
-  --color-foreground: var(--color-text);
-  --color-success: var(--color-green);
-  --color-warning: var(--color-yellow);
-  --color-error: var(--color-red);
-  --color-info: var(--color-blue);
+	--color-white: #cdcfdf;
 
-  --font-barlow-condensed-regular: 'BarlowCondensed-Regular';
-  --font-barlow-condensed-bold: 'BarlowCondensed-Bold';
-  --font-barlow-semicondensed-regular: 'BarlowSemiCondensed-Regular';
-  --font-barlow-semicondensed-semibold: 'BarlowSemiCondensed-SemiBold';
+	--font-barlow-condensed-regular: BarlowCondensed-Regular;
+	--font-barlow-condensed-bold: BarlowCondensed-Bold;
+	--font-barlow-semicondensed-regular: BarlowSemiCondensed-Regular;
+	--font-barlow-semicondensed-semibold: BarlowSemiCondensed-SemiBold;
 }
 
+@layer utilities {}
 
 a {
-    color: inherit;
+	color: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: var(--font-barlow-condensed-bold);
+}
+
+h1 {
+	font-size: 48px;
+}
+
+h2 {
+	font-size: 32px;
+}
+
+h2 {
+	font-size: 24px;
+}
+
+h3 {
+	font-size: 20px;
+}
+
+h4 {
+	font-size: 18px;
+}
+
+h5 {
+	font-size: 16px;
+}
+
+h6 {
+	font-size: 14px;
+}
+
+p {
+	font-size: 16px;
 }
 
 body {
-    overflow: hidden;
-    background-color: var(--color-crust);
-    margin: 0;
+	overflow: hidden;
+	background-color: var(--color-main);
+	color: var(--color-white);
+	font-family: var(--font-barlow-semicondensed-regular);
+	margin: 0;
+}
+
+main {
+	overflow-y: auto;
+}
+
+main>div {
+	width: 100%;
 }
 
 .loader {
-    animation: loader 1.2s ease infinite;
-    background-size: 400% 300%;
-    background-image: linear-gradient(-90deg, var(--color-mantle) 0%, var(--color-mantle) 25%, var(--color-surface1) 50%, var(--color-mantle) 75%, var(--color-mantle) 100%);
-    user-select: none;
+	animation: loader 1.2s ease infinite;
+	background-size: 400% 300%;
+	background-image: linear-gradient(-90deg, var(--color-mantle) 0%, var(--color-mantle) 25%, var(--color-surface1) 50%, var(--color-mantle) 75%, var(--color-mantle) 100%);
+	user-select: none;
 }
 
 .loader-text {
-    animation: loader 1.2s ease infinite;
-    background-size: 400% 300%;
-    background-image: linear-gradient(-90deg, var(--color-mantle) 0%, var(--color-mantle) 25%, var(--color-surface1) 50%, var(--color-mantle) 75%, var(--color-mantle) 100%);
-    user-select: none;
-    color: #00000000;
-    border-radius: 1000px;
+	animation: loader 1.2s ease infinite;
+	background-size: 400% 300%;
+	background-image: linear-gradient(-90deg, var(--color-mantle) 0%, var(--color-mantle) 25%, var(--color-surface1) 50%, var(--color-mantle) 75%, var(--color-mantle) 100%);
+	user-select: none;
+	color: #00000000;
+	border-radius: 1000px;
 }
 
 @keyframes loader {
-    0% {
-        background-position: 100% 20%;
-    }
+	0% {
+		background-position: 100% 20%;
+	}
 
-    50% {
-        background-position: 0% 50%;
-    }
+	50% {
+		background-position: 0% 50%;
+	}
 
-    100% {
-        background-position: 0% 50%;
-    }
+	100% {
+		background-position: 0% 50%;
+	}
 }
 
 .loader {
-    width: 48px;
-    height: 48px;
-    border: 5px solid #FFF;
-    border-bottom-color: transparent;
-    border-radius: 50%;
-    display: inline-block;
-    box-sizing: border-box;
-    animation: rotation 1s linear infinite;
-    }
+	width: 48px;
+	height: 48px;
+	border: 5px solid #FFF;
+	border-bottom-color: transparent;
+	border-radius: 50%;
+	display: inline-block;
+	box-sizing: border-box;
+	animation: rotation 1s linear infinite;
+}
 
 @keyframes rotation {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
+	0% {
+		transform: rotate(0deg);
+	}
 
-/* Custom Tailwind utilities for Catppuccin Frappe theme */
-@layer utilities {
-  .bg-primary {
-    background-color: var(--color-primary);
-  }
-  
-  .bg-secondary {
-    background-color: var(--color-secondary);
-  }
-  
-  .bg-accent {
-    background-color: var(--color-accent);
-  }
-  
-  .bg-background {
-    background-color: var(--color-background);
-  }
-  
-  .bg-surface {
-    background-color: var(--color-surface);
-  }
-  
-  .bg-muted {
-    background-color: var(--color-muted);
-  }
-  
-  .text-primary {
-    color: var(--color-primary);
-  }
-  
-  .text-secondary {
-    color: var(--color-secondary);
-  }
-  
-  .text-accent {
-    color: var(--color-accent);
-  }
-  
-  .text-foreground {
-    color: var(--color-foreground);
-  }
-  
-  .text-muted {
-    color: var(--color-muted);
-  }
-  
-  .border-primary {
-    border-color: var(--color-primary);
-  }
-  
-  .border-secondary {
-    border-color: var(--color-secondary);
-  }
-  
-  .border-muted {
-    border-color: var(--color-border);
-  }
-  
-  .hover\:bg-primary:hover {
-    background-color: var(--color-primary);
-  }
-  
-  .hover\:bg-secondary:hover {
-    background-color: var(--color-secondary);
-  }
-  
-  .hover\:bg-surface:hover {
-    background-color: var(--color-surface);
-  }
-  
-  .hover\:text-primary:hover {
-    color: var(--color-primary);
-  }
-  
-  .focus\:ring-primary:focus {
-    --tw-ring-color: var(--color-primary);
-  }
-  
-  .triangle {
-    width: 0;
-    height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-bottom: 8px solid var(--color-foreground);
-    display: inline-block;
-  }
-  
-  .sidebar-button-selected {
-    background-color: var(--color-primary) !important;
-    color: var(--color-background) !important;
-  }
-  
-  .sidebar-button-deselected {
-    background-color: var(--color-surface) !important;
-    color: var(--color-foreground) !important;
-  }
-  
-  .profileboard-record {
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 0.5rem;
-    padding: 0.75rem;
-    margin-bottom: 0.5rem;
-    transition: all 0.2s ease;
-  }
-  
-  .profileboard-record:hover {
-    background-color: var(--color-surface1);
-  }
-  
-  .difficulty-rating {
-    width: 20px;
-    height: 20px;
-    background-color: var(--color-muted);
-    border-radius: 50%;
-    margin: 0 2px;
-    display: inline-block;
-  }
-  
-  .nav-button {
-    background-color: var(--color-surface);
-    color: var(--color-foreground);
-    border: 1px solid var(--color-border);
-    border-radius: 0.5rem;
-    padding: 0.5rem 1rem;
-    transition: all 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    text-decoration: none;
-  }
-  
-  .nav-button:hover {
-    background-color: var(--color-surface1);
-  }
-  
-  .record {
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 0.5rem;
-    padding: 0.5rem;
-    margin: 0.25rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  
-  .record:hover {
-    background-color: var(--color-surface1);
-  }
-  
-  .portal-count {
-    font-size: 3rem;
-    font-weight: bold;
-    color: var(--color-primary);
-  }
-  
-  .titles {
-    background-color: var(--color-accent);
-    color: var(--color-background);
-    padding: 0.25rem 0.5rem;
-    border-radius: 1rem;
-    font-size: 0.875rem;
-    margin-right: 0.5rem;
-    display: inline-block;
-  }
+	100% {
+		transform: rotate(360deg);
+	}
 }
 
 @font-face {
-    font-family: 'BarlowCondensed-Bold';
-    src: local('BarlowCondensed-Bold'), url(./fonts/BarlowCondensed-Bold.ttf) format('truetype');
+	font-family: 'BarlowCondensed-Bold';
+	src: local('BarlowCondensed-Bold'), url(./fonts/BarlowCondensed-Bold.ttf) format('truetype');
 }
 
 @font-face {
-    font-family: 'BarlowCondensed-Regular';
-    src: local('BarlowCondensed-Regular'), url(./fonts/BarlowCondensed-Regular.ttf) format('truetype');
+	font-family: 'BarlowCondensed-Regular';
+	src: local('BarlowCondensed-Regular'), url(./fonts/BarlowCondensed-Regular.ttf) format('truetype');
 }
 
 @font-face {
-    font-family: 'BarlowSemiCondensed-Regular';
-    src: local('BarlowSemiCondensed-Regular'), url(./fonts/BarlowSemiCondensed-Regular.ttf) format('truetype');
+	font-family: 'BarlowSemiCondensed-Regular';
+	src: local('BarlowSemiCondensed-Regular'), url(./fonts/BarlowSemiCondensed-Regular.ttf) format('truetype');
 }
 
 @font-face {
-    font-family: 'BarlowSemiCondensed-SemiBold';
-    src: local('BarlowSemiCondensed-Regular'), url(./fonts/BarlowSemiCondensed-SemiBold.ttf) format('truetype');
+	font-family: 'BarlowSemiCondensed-SemiBold';
+	src: local('BarlowSemiCondensed-Regular'), url(./fonts/BarlowSemiCondensed-SemiBold.ttf) format('truetype');
 }
