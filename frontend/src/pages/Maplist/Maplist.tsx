@@ -6,6 +6,8 @@ import { API } from "@api/Api.ts";
 import { Game } from "@customTypes/Game.ts";
 import { GameChapter, GamesChapters } from "@customTypes/Chapters.ts";
 
+import Map from "./Components/Map";
+
 const Maplist: React.FC = () => {
   const [game, setGame] = React.useState<Game | null>(null);
   const [catNum, setCatNum] = React.useState(0);
@@ -87,14 +89,14 @@ const Maplist: React.FC = () => {
   }, [gameChapters, location.search]);
 
   return (
-    <div>
+    <div className="px-12">
       <Helmet>
         <title>LPHUB | Maplist</title>
       </Helmet>
 
-      <section className="mt-5">
+      <section className="my-5">
         <Link to="/games">
-          <button className="nav-button rounded-[20px] h-10 bg-surface border-0 text-foreground text-lg font-[--font-barlow-semicondensed-regular] transition-colors duration-100 hover:bg-surface2 flex items-center px-2">
+          <button className="nav-button rounded-[20px] h-10 bg-surface border-0 text-foreground text-lg font-barlow-semicondensed-regular transition-colors duration-100 hover:bg-surface2 flex items-center px-2">
             <i className="triangle mr-2"></i>
             <span className="px-2">Games List</span>
           </button>
@@ -105,36 +107,36 @@ const Maplist: React.FC = () => {
         <div></div>
       ) : (
         <section>
-          <h1 className="font-[--font-barlow-condensed-bold] text-3xl sm:text-6xl my-0 text-foreground">
+          <h1 className="text-3xl sm:text-6xl my-0">
             {game?.name}
           </h1>
 
           <div
-            className="text-center rounded-3xl overflow-hidden bg-cover bg-[25%] mt-3 relative"
+            className="text-center rounded-3xl overflow-hidden bg-panel bg-[25%] mt-3 relative"
             style={{ backgroundImage: `url(${game?.image})` }}
           >
             <div className="backdrop-blur-sm flex flex-col w-full">
-              <div className="h-full flex flex-col justify-center items-center py-6">
-                <h2 className="my-5 font-[--font-barlow-semicondensed-semibold] text-4xl sm:text-8xl text-foreground">
+              <div className="h-full flex justify-center items-center py-6">
+                <span className="font-barlow-semicondensed-semibold text-8xl">
                   {
                     game?.category_portals.find(
                       obj => obj.category.id === catNum + 1
                     )?.portal_count
                   }
-                </h2>
-                <h3 className="font-[--font-barlow-semicondensed-regular] mx-2.5 text-2xl sm:text-4xl my-0 text-foreground">
+                </span>
+                <span className="font-barlow-semicondensed-regular mx-2.5 text-2xl sm:text-4xl my-0 text-foreground">
                   portals
-                </h3>
+                </span>
               </div>
 
-              <div className="flex h-12 bg-surface gap-0.5">
+              <div className="flex h-12 bg-panel gap-0.5">
                 {game?.category_portals.map((cat, index) => (
                   <button
                     key={index}
-                    className={`border-0 text-foreground font-[--font-barlow-semicondensed-regular] text-sm sm:text-xl cursor-pointer transition-all duration-100 w-full ${currentlySelected === cat.category.id ||
+                    className={`border-0 text-foreground font-barlow-semicondensed-regular text-sm sm:text-xl cursor-pointer transition-all duration-100 w-full ${currentlySelected === cat.category.id ||
                       (cat.category.id - 1 === catNum && !hasClicked)
-                      ? "bg-surface"
-                      : "bg-surface1 hover:bg-surface"
+                      ? "bg-panel"
+                      : "bg-block hover:bg-block"
                       }`}
                     onClick={() => {
                       setCatNum(cat.category.id - 1);
@@ -164,16 +166,16 @@ const Maplist: React.FC = () => {
                 </span>
                 <i className="triangle translate-x-1.5 translate-y-2 -rotate-90"></i>
               </div>
-              \
+
               <div
-                className={`absolute z-[1000] bg-surface1 rounded-2xl overflow-hidden p-1 animate-in fade-in duration-100 ${dropdownActive === "none" ? "hidden" : "block"
+                className={`absolute z-[1000] bg-panel rounded-2xl overflow-hidden p-1 animate-in fade-in duration-100 ${dropdownActive === "none" ? "hidden" : "block"
                   }`}
               >
                 {gameChapters?.chapters.map((chapter, i) => {
                   return (
                     <div
                       key={i}
-                      className="cursor-pointer text-base sm:text-xl rounded-[2000px] p-1 hover:bg-surface text-foreground"
+                      className="cursor-pointer text-base sm:text-xl rounded-[2000px] p-1 hover:bg-block text-foreground"
                       onClick={() => {
                         _fetch_chapters(chapter.id.toString());
                         _handle_dropdown_click();
@@ -189,50 +191,7 @@ const Maplist: React.FC = () => {
             <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 my-5">
               {curChapter?.maps.map((map, i) => {
                 return (
-                  <div key={i} className="bg-surface rounded-3xl overflow-hidden">
-                    <Link to={`/maps/${map.id}`}>
-                      <span className="text-center text-base sm:text-xl w-full block my-1.5 text-foreground truncate">
-                        {map.name}
-                      </span>
-                      <div
-                        className="flex h-40 sm:h-48 bg-cover relative"
-                        style={{ backgroundImage: `url(${map.image})` }}
-                      >
-                        <div className="backdrop-blur-sm w-full flex items-center justify-center">
-                          <span className="text-2xl sm:text-4xl font-[--font-barlow-semicondensed-semibold] text-white mr-1.5">
-                            {map.is_disabled
-                              ? map.category_portals[0].portal_count
-                              : map.category_portals.find(
-                                obj => obj.category.id === catNum + 1
-                              )?.portal_count}
-                          </span>
-                          <span className="text-2xl sm:text-4xl font-[--font-barlow-semicondensed-regular] text-white">
-                            portals
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex mx-2.5 my-4">
-                        <div className="flex w-full items-center justify-center gap-1.5 rounded-[2000px] ml-0.5 translate-y-px">
-                          {[1, 2, 3, 4, 5].map((point) => (
-                            <div
-                              key={point}
-                              className={`flex h-0.5 w-full rounded-3xl ${point <= (map.difficulty + 1)
-                                ? map.difficulty === 0
-                                  ? "bg-green-500"
-                                  : map.difficulty === 1 || map.difficulty === 2
-                                    ? "bg-lime-500"
-                                    : map.difficulty === 3
-                                      ? "bg-red-400"
-                                      : "bg-red-600"
-                                : "bg-surface1"
-                                }`}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    </Link>
-                  </div>
+                  <Map key={i} map={map} catNum={catNum} />
                 );
               })}
             </section>

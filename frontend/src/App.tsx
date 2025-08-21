@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
 import { UserProfile } from "@customTypes/Profile";
-import Sidebar from "./components/Sidebar";
+import Sidebar from "./components/Sidebar/Sidebar";
 import "./App.css";
 
 import Profile from "@pages/Profile/Profile.tsx";

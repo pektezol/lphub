@@ -1,0 +1,23 @@
+.button {
+    display: flex;
+    width: 100%;
+    cursor: pointer;
+    align-items: center;
+    border-radius: 2000px;
+    transition: all 0.2s ease;
+    padding: 4px 0px;
+}
+
+.button:hover {
+    background-color: var(--color-panel);
+}
+
+.button>img {
+    padding: 0px 8px;
+    height: 28px;
+}
+
+button>span {
+    font-size: 22px;
+    font-family: var(--font-barlow-semicondensed-regular);
+}
