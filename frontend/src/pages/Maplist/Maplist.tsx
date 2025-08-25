@@ -7,6 +7,7 @@ import { Game } from "@customTypes/Game.ts";
 import { GameChapter, GamesChapters } from "@customTypes/Chapters.ts";
 
 import Map from "./Components/Map";
+import BreadcrumbNav from "@components/BreadcrumbNav/BreadcrumbNav";
 
 const Maplist: React.FC = () => {
   const [game, setGame] = React.useState<Game | null>(null);
@@ -89,24 +90,17 @@ const Maplist: React.FC = () => {
   }, [gameChapters, location.search]);
 
   return (
-    <div className="px-12">
+    <div className="">
       <Helmet>
         <title>LPHUB | Maplist</title>
       </Helmet>
 
-      <section className="my-5">
-        <Link to="/games">
-          <button className="nav-button rounded-[20px] h-10 bg-surface border-0 text-foreground text-lg font-barlow-semicondensed-regular transition-colors duration-100 hover:bg-surface2 flex items-center px-2">
-            <i className="triangle mr-2"></i>
-            <span className="px-2">Games List</span>
-          </button>
-        </Link>
-      </section>
+      <BreadcrumbNav />
 
       {load ? (
         <div></div>
       ) : (
-        <section>
+        <section className="px-12">
           <h1 className="text-3xl sm:text-6xl my-0">
             {game?.name}
           </h1>

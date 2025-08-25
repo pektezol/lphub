@@ -25,12 +25,12 @@ const Rules: React.FC = () => {
   }, []);
 
   return (
-    <main className="ml-16 p-8 text-foreground font-[--font-barlow-semicondensed-regular] prose prose-invert max-w-none">
+    <div className="pl-8 pt-2">
       <Helmet>
         <title>LPHUB | Rules</title>
       </Helmet>
       <ReactMarkdown>{rulesText}</ReactMarkdown>
-    </main>
+    </div>
   );
 };
 

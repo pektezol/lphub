@@ -1,0 +1,36 @@
+.container {
+    display: flex;
+    margin-top: 42px;
+    margin-bottom: 16px;
+    margin-left: 48px;
+    gap: 2px;
+}
+
+.crumb {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background-color: var(--color-block);
+    padding: 6px 16px;
+    transition: all 0.1s ease;
+    font-size: 22px;
+}
+
+.crumb:hover {
+    background-color: var(--color-panel);
+}
+
+.crumb.first {
+    border-top-left-radius: 1000px;
+    border-bottom-left-radius: 1000px;
+}
+
+.crumb.middle {
+    border-radius: 0px;
+}
+
+.crumb.last,
+.crumb.first.last {
+    border-top-right-radius: 1000px;
+    border-bottom-right-radius: 1000px;
+}
