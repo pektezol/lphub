@@ -4,12 +4,9 @@ import { Link } from "react-router-dom";
 import styles from "./Sidebar.module.css";
 
 import { UserProfile } from "@customTypes/Profile";
-import Login from "@components/Login";
 
 import {
     UploadIcon,
-    BookIcon,
-    HelpIcon,
 } from "../../images/Images";
 
 import links from "./Links";
@@ -19,12 +16,13 @@ interface FooterProps {
     isSearching: boolean;
     selectedButtonIndex: number;
     onUploadRun: () => void;
-    setProfile: React.Dispatch<React.SetStateAction<UserProfile | undefined>>;
-    setToken: React.Dispatch<React.SetStateAction<string | undefined>>;
+    // currently unused, but needed for login component
+    // setProfile: React.Dispatch<React.SetStateAction<UserProfile | undefined>>;
+    // setToken: React.Dispatch<React.SetStateAction<string | undefined>>;
     handle_sidebar_click: (clicked_sidebar_idx: number) => void;
 };
 
-const _Footer: React.FC<FooterProps> = ({ profile, isSearching, selectedButtonIndex, onUploadRun, setToken, setProfile, handle_sidebar_click }) => {
+const _Footer: React.FC<FooterProps> = ({ profile, isSearching, selectedButtonIndex, onUploadRun, handle_sidebar_click }) => {
     const uploadRunRef = useRef<HTMLButtonElement>(null);
 
     return (

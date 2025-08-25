@@ -7,10 +7,9 @@ import { UserProfile } from "@customTypes/Profile";
 
 interface SearchProps {
     profile?: UserProfile;
-    isSearching: boolean;
 };
 
-const _Search: React.FC<SearchProps> = ({ profile, isSearching }) => {
+const _Search: React.FC<SearchProps> = ({ profile }) => {
     const [searchData, setSearchData] = React.useState<Search | undefined>(
         undefined
     );

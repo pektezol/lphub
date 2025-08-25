@@ -1,6 +1,5 @@
-import React, { useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { UserProfile } from "@customTypes/Profile";
+import React from "react";
+import { Link } from "react-router-dom";
 
 import styles from "./Sidebar.module.css";
 
@@ -11,14 +10,12 @@ import {
 import links from "./Links";
 
 interface ContentProps {
-    profile?: UserProfile;
     isSearching: boolean;
     selectedButtonIndex: number
-    isSidebarOpen: boolean;
     handle_sidebar_click: (clicked_sidebar_idx: number) => void;
 };
 
-const _Content: React.FC<ContentProps> = ({ profile, isSearching, selectedButtonIndex, isSidebarOpen, handle_sidebar_click }) => {
+const _Content: React.FC<ContentProps> = ({ isSearching, selectedButtonIndex, handle_sidebar_click }) => {
 
     return (
         <div className="h-full">

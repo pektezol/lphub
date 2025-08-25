@@ -1,5 +1,5 @@
-import React, { useCallback, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useCallback } from "react";
+import { useLocation } from "react-router-dom";
 import { UserProfile } from "@customTypes/Profile";
 
 import _Header from "./Header";
@@ -10,19 +10,18 @@ import links from "./Links";
 
 interface SidebarProps {
   setToken: React.Dispatch<React.SetStateAction<string | undefined>>;
-  profile?: UserProfile;
   setProfile: React.Dispatch<React.SetStateAction<UserProfile | undefined>>;
+  profile?: UserProfile;
   onUploadRun: () => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
   setToken,
-  profile,
   setProfile,
+  profile,
   onUploadRun,
 }) => {
   const [isSearching, setIsSearching] = React.useState<boolean>(false);
-  const [isSidebarOpen, setSidebarOpen] = React.useState<boolean>(false);
   const [selectedButtonIndex, setSelectedButtonIndex] = React.useState<number>(1);
 
   const location = useLocation();
@@ -67,14 +66,14 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className="flex flex-1 overflow-hidden w-full not-md:hidden ">
         <div className={`flex flex-col transition-all duration-300 ${isSearching ? "w-[64px]" : "w-full"}`}>
           {/* Sidebar Content */}
-          <_Content profile={profile} isSearching={isSearching} selectedButtonIndex={selectedButtonIndex} isSidebarOpen={isSidebarOpen} handle_sidebar_click={handle_sidebar_click} />
+          <_Content isSearching={isSearching} selectedButtonIndex={selectedButtonIndex} handle_sidebar_click={handle_sidebar_click} />
 
           {/* Bottom Section */}
-          <_Footer profile={profile} isSearching={isSearching} selectedButtonIndex={selectedButtonIndex} onUploadRun={onUploadRun} setToken={setToken} setProfile={setProfile} handle_sidebar_click={handle_sidebar_click} />
+          <_Footer profile={profile} isSearching={isSearching} selectedButtonIndex={selectedButtonIndex} onUploadRun={onUploadRun} handle_sidebar_click={handle_sidebar_click} />
         </div>
 
         <div className={`flex bg-panel ${isSearching ? 'w-full' : "w-0"}`}>
-          <_Search profile={profile} isSearching={isSearching} />
+          <_Search profile={profile} />
         </div>
 
       </div>
