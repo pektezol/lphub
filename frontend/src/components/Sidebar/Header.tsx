@@ -5,9 +5,9 @@ import {
     LogoIcon,
 } from "../../images/Images";
 
-const Header: React.FC = () => {
+const _Header: React.FC = () => {
     return (
-        <div className="flex justify-center px-4 py-3 bg-gradient-to-t from-block to-bright">
+        <div className="flex justify-center px-4 py-3 bg-gradient-to-t from-block to-bright md:w-80">
             <Link to="/" tabIndex={-1} className="flex gap-4">
                 <img src={LogoIcon} alt="Logo" className="h-18 translate-y-0.5" />
                 <div className="text-[#fff] flex flex-col justify-center not-md:hidden">
@@ -23,4 +23,4 @@ const Header: React.FC = () => {
     )
 }
 
-export default Header;
+export default _Header;

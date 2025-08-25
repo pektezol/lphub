@@ -12,26 +12,28 @@ import {
     HelpIcon,
 } from "../../images/Images";
 
+import links from "./Links";
+
 interface FooterProps {
     profile?: UserProfile;
+    isSearching: boolean;
+    selectedButtonIndex: number;
     onUploadRun: () => void;
     setProfile: React.Dispatch<React.SetStateAction<UserProfile | undefined>>;
     setToken: React.Dispatch<React.SetStateAction<string | undefined>>;
-    sidebarButtonRefs: React.RefObject<(HTMLButtonElement | null)[]>;
-    getButtonClasses: (buttonIndex: number) => string;
     handle_sidebar_click: (clicked_sidebar_idx: number) => void;
 };
 
-const Footer: React.FC<FooterProps> = ({ profile, onUploadRun, setToken, setProfile, sidebarButtonRefs, getButtonClasses, handle_sidebar_click }) => {
+const _Footer: React.FC<FooterProps> = ({ profile, isSearching, selectedButtonIndex, onUploadRun, setToken, setProfile, handle_sidebar_click }) => {
     const uploadRunRef = useRef<HTMLButtonElement>(null);
 
     return (
-        <div className="">
+        <div className="px-2 gap-2 flex flex-col mb-2">
             {profile && profile.profile && (
                 <button
                     ref={uploadRunRef}
                     id="upload-run"
-                    className={getButtonClasses(-1)}
+                    className={``}
                     onClick={() => onUploadRun()}
                 >
                     <img src={UploadIcon} alt="Upload" className={``} />
@@ -39,42 +41,30 @@ const Footer: React.FC<FooterProps> = ({ profile, onUploadRun, setToken, setProf
                 </button>
             )}
 
-            <div className={true ? 'min-w-0' : 'flex justify-center'}>
+            {/* <div className={true ? 'min-w-0' : 'flex justify-center'}>
                 <Login
                     setToken={setToken}
                     profile={profile}
                     setProfile={setProfile}
                     isOpen={true}
                 />
-            </div>
+            </div> */}
 
-            <Link to="/rules" tabIndex={-1}>
-                <button
-                    ref={el => {
-                        sidebarButtonRefs.current[5] = el
-                    }}
-                    className={`${styles.button}`}
-                    onClick={() => handle_sidebar_click(5)}
-                >
-                    <img src={BookIcon} alt="Rules" />
-                    {true && <span className="font-[--font-barlow-semicondensed-regular] truncate">Leaderboard Rules</span>}
-                </button>
-            </Link>
-
-            <Link to="/about" tabIndex={-1}>
-                <button
-                    ref={el => {
-                        sidebarButtonRefs.current[6] = el
-                    }}
-                    className={`${styles.button}`}
-                    onClick={() => handle_sidebar_click(6)}
-                >
-                    <img src={HelpIcon} alt="About" />
-                    {true && <span className="font-[--font-barlow-semicondensed-regular] truncate">About LPHUB</span>}
-                </button>
-            </Link>
+            {links.footer.map(({ to, icon, label }, i) => (
+                <Link to={to} tabIndex={-1} key={i}>
+                    <button
+                        className={`${styles.button} ${selectedButtonIndex == links.content.length + i + 1 ? styles["button-selected"] : ""} ${isSearching ? styles["button-hidden"] : ""}`}
+                        onClick={() => handle_sidebar_click(links.content.length + i + 1)}
+                    >
+                        <img src={icon} />
+                        <span className="">
+                            {label}
+                        </span>
+                    </button>
+                </Link>
+            ))}
         </div>
     );
 }
 
-export default Footer;
+export default _Footer;

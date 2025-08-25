@@ -6,18 +6,30 @@
     border-radius: 2000px;
     transition: all 0.2s ease;
     padding: 4px 0px;
+    height: 48px;
 }
 
-.button:hover {
+.button:hover,
+.button-selected,
+.button-selected:hover {
     background-color: var(--color-panel);
 }
 
 .button>img {
-    padding: 0px 8px;
     height: 28px;
+    width: 28px;
+    transform: translateX(10px);
 }
 
 button>span {
     font-size: 22px;
     font-family: var(--font-barlow-semicondensed-regular);
+    white-space: nowrap;
+    margin-left: 16px;
+}
+
+.button-hidden>span {
+    cursor: none;
+    pointer-events: none;
+    opacity: 0;
 }

@@ -2,9 +2,11 @@ import React, { useCallback, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { UserProfile } from "@customTypes/Profile";
 
-import Header from "./Header";
-import Footer from "./Footer";
-import Content from "./Content";
+import _Header from "./Header";
+import _Footer from "./Footer";
+import _Content from "./Content";
+import _Search from "./Search";
+import links from "./Links";
 
 interface SidebarProps {
   setToken: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -19,78 +21,60 @@ const Sidebar: React.FC<SidebarProps> = ({
   setProfile,
   onUploadRun,
 }) => {
-  // const [isSidebarLocked, setIsSidebarLocked] = React.useState<boolean>(false);
+  const [isSearching, setIsSearching] = React.useState<boolean>(false);
   const [isSidebarOpen, setSidebarOpen] = React.useState<boolean>(false);
   const [selectedButtonIndex, setSelectedButtonIndex] = React.useState<number>(1);
 
   const location = useLocation();
   const path = location.pathname;
 
-  const sidebarRef = useRef<HTMLDivElement>(null);
-  const sidebarButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
-
-  // const _handle_sidebar_toggle = useCallback(() => {
-  //   if (!sidebarRef.current) return;
-
-  //   if (isSidebarOpen) {
-  //     setSidebarOpen(false);
-  //   } else {
-  //     setSidebarOpen(true);
-  //     searchbarRef.current?.focus();
-  //   }
-  // }, [isSidebarOpen]);
-
   const handle_sidebar_click = useCallback(
     (clicked_sidebar_idx: number) => {
       setSelectedButtonIndex(clicked_sidebar_idx);
-      if (isSidebarOpen) {
-        setSidebarOpen(false);
+
+      if (clicked_sidebar_idx == 0 && !isSearching) {
+        if (!isSearching) {
+          setIsSearching(true);
+        }
+      } else {
+        setIsSearching(false);
       }
     },
-    [isSidebarOpen]
+    [isSearching]
   );
 
   React.useEffect(() => {
-    if (path === "/") {
-      setSelectedButtonIndex(1);
-    } else if (path.includes("games")) {
-      setSelectedButtonIndex(2);
-    } else if (path.includes("rankings")) {
-      setSelectedButtonIndex(3);
-    } else if (path.includes("profile")) {
-      setSelectedButtonIndex(4);
-    } else if (path.includes("rules")) {
-      setSelectedButtonIndex(5);
-    } else if (path.includes("about")) {
-      setSelectedButtonIndex(6);
-    }
+    links.content.forEach((link, i) => {
+      if (path.includes(link.to)) {
+        handle_sidebar_click(i + 1);
+      }
+    })
+
+    links.footer.forEach((link, i) => {
+      if (path.includes(link.to)) {
+        handle_sidebar_click(links.content.length + i + 1);
+      }
+    })
   }, [path]);
 
-  const getButtonClasses = (buttonIndex: number) => {
-    const baseClasses = "flex items-center gap-3 w-full text-left bg-inherit cursor-pointer border-none rounded-[2000px] py-3 px-3 transition-all duration-300 hover:bg-panel";
-    const selectedClasses = selectedButtonIndex === buttonIndex ? "bg-primary text-background" : "bg-transparent text-foreground";
-
-    return `${baseClasses} ${selectedClasses}`;
-  };
-
   return (
-    <div className={`w-80 not-md:w-full text-white bg-block flex flex-col not-md:flex-row
+    <div className={`h-screen w-80 not-md:w-full text-white bg-block flex flex-col not-md:flex-row not-md:bg-gradient-to-t not-md:from-block not-md:to-bright
       }`}>
 
       {/* Header */}
-      <Header />
+      <_Header />
 
-      <div className="flex h-full w-full">
-        <div className="flex flex-col">
+      <div className="flex flex-1 overflow-hidden w-full not-md:hidden ">
+        <div className={`flex flex-col transition-all duration-300 ${isSearching ? "w-[64px]" : "w-full"}`}>
           {/* Sidebar Content */}
-          <Content profile={profile} isSidebarOpen={isSidebarOpen} sidebarButtonRefs={sidebarButtonRefs} getButtonClasses={getButtonClasses} handle_sidebar_click={handle_sidebar_click} />
+          <_Content profile={profile} isSearching={isSearching} selectedButtonIndex={selectedButtonIndex} isSidebarOpen={isSidebarOpen} handle_sidebar_click={handle_sidebar_click} />
 
           {/* Bottom Section */}
-          <Footer profile={profile} onUploadRun={onUploadRun} setToken={setToken} setProfile={setProfile} sidebarButtonRefs={sidebarButtonRefs} getButtonClasses={getButtonClasses} handle_sidebar_click={handle_sidebar_click} />
+          <_Footer profile={profile} isSearching={isSearching} selectedButtonIndex={selectedButtonIndex} onUploadRun={onUploadRun} setToken={setToken} setProfile={setProfile} handle_sidebar_click={handle_sidebar_click} />
         </div>
 
-        <div className="w-20">
-
+        <div className={`flex bg-panel ${isSearching ? 'w-full' : "w-0"}`}>
+          <_Search profile={profile} isSearching={isSearching} />
         </div>
 
       </div>

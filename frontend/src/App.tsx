@@ -89,7 +89,7 @@ const App: React.FC = () => {
         games={games}
       />
 
-      <div className="flex flex-row not-md:flex-col h-[100vh]">
+      <div className="flex flex-row not-md:flex-col h-screen">
 
         <Sidebar
           setToken={setToken}
@@ -98,7 +98,7 @@ const App: React.FC = () => {
           onUploadRun={() => setUploadRunDialog(true)}
         />
 
-        <main className="w-full">
+        <main className="w-full h-screen">
 
           <Routes>
             <Route path="/" element={<Homepage />} />
