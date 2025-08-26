@@ -25,7 +25,7 @@ const Rules: React.FC = () => {
   }, []);
 
   return (
-    <div className="pl-8 pt-2">
+    <div className="px-12 pt-6">
       <Helmet>
         <title>LPHUB | Rules</title>
       </Helmet>

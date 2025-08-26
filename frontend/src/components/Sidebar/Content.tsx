@@ -18,7 +18,7 @@ interface ContentProps {
 const _Content: React.FC<ContentProps> = ({ isSearching, selectedButtonIndex, handle_sidebar_click }) => {
 
     return (
-        <div className="h-full">
+        <div className="md:h-full">
 
             <div className="px-2 my-2.5">
                 <button onClick={() => handle_sidebar_click(0)} className={`${styles.button} ${selectedButtonIndex == 0 ? styles["button-selected"] : ""} ${isSearching ? styles["button-hidden"] : ""}`}>

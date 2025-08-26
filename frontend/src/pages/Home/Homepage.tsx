@@ -3,11 +3,11 @@ import { Helmet } from "react-helmet";
 
 const Homepage: React.FC = () => {
   return (
-    <div>
+    <div className="px-12 pt-8">
       <Helmet>
         <title>LPHUB | Homepage</title>
       </Helmet>
-      <section className="p-8">
+      <section>
         <p />
         <h1 className="text-5xl font-barlow-condensed-bold mb-6 text-primary">Welcome to Least Portals Hub!</h1>
         <p className="text-lg mb-4 leading-relaxed">

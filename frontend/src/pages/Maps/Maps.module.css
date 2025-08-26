@@ -1,0 +1,22 @@
+.button-nav {
+    display: flex;
+    flex: 1;
+    gap: 12px;
+
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    background-color: var(--color-block);
+    transition: all 0.1s ease;
+    padding: 8px 0px;
+    font-size: 28px;
+}
+
+.button-nav:hover {
+    background-color: var(--color-panel);
+}
+
+.button-nav>span {
+    transform: translateY(-2px);
+}

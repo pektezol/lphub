@@ -19,7 +19,7 @@ const Map: React.FC<MapProps> = ({ map, catNum }) => {
                     className="flex h-40 sm:h-48 bg-cover relative"
                     style={{ backgroundImage: `url(${map.image})` }}
                 >
-                    <div className="backdrop-blur-sm w-full flex items-center justify-center">
+                    <div className="backdrop-blur-[4px] w-full flex items-center justify-center">
                         <span className="text-3xl sm:text-5xl font-barlow-semicondensed-semibold text-white mr-1.5">
                             {map.is_disabled
                                 ? map.category_portals[0].portal_count
@@ -28,7 +28,11 @@ const Map: React.FC<MapProps> = ({ map, catNum }) => {
                                 )?.portal_count}
                         </span>
                         <span className="text-2xl sm:text-4xl font-barlow-semicondensed-regular text-white">
-                            portals
+                            {map.is_disabled
+                                ? map.category_portals[0].portal_count == 1 ? "portal" : "portals"
+                                : map.category_portals.find(
+                                    obj => obj.category.id === catNum + 1
+                                )?.portal_count == 1 ? "portal" : "portals"}
                         </span>
                     </div>
                 </div>

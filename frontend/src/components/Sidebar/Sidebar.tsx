@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { UserProfile } from "@customTypes/Profile";
 
@@ -24,6 +24,8 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [isSearching, setIsSearching] = React.useState<boolean>(false);
   const [selectedButtonIndex, setSelectedButtonIndex] = React.useState<number>(1);
 
+  const searchbarRef = useRef<HTMLInputElement>(null);
+
   const location = useLocation();
   const path = location.pathname;
 
@@ -34,6 +36,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       if (clicked_sidebar_idx == 0 && !isSearching) {
         if (!isSearching) {
           setIsSearching(true);
+          searchbarRef.current?.focus();
         }
       } else {
         setIsSearching(false);
@@ -57,13 +60,13 @@ const Sidebar: React.FC<SidebarProps> = ({
   }, [path]);
 
   return (
-    <div className={`h-screen w-80 not-md:w-full text-white bg-block flex flex-col not-md:flex-row not-md:bg-gradient-to-t not-md:from-block not-md:to-bright
+    <div className={`md:h-screen w-80 not-md:w-full text-white bg-block flex flex-col not-md:flex-row not-md:bg-gradient-to-t not-md:from-block not-md:to-bright
       }`}>
 
       {/* Header */}
       <_Header />
 
-      <div className="flex flex-1 overflow-hidden w-full not-md:hidden ">
+      <div className="flex flex-1 overflow-hidden w-full">
         <div className={`flex flex-col transition-all duration-300 ${isSearching ? "w-[64px]" : "w-full"}`}>
           {/* Sidebar Content */}
           <_Content isSearching={isSearching} selectedButtonIndex={selectedButtonIndex} handle_sidebar_click={handle_sidebar_click} />
@@ -73,7 +76,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         <div className={`flex bg-panel ${isSearching ? 'w-full' : "w-0"}`}>
-          <_Search profile={profile} />
+          <_Search profile={profile} searchbarRef={searchbarRef} />
         </div>
 
       </div>

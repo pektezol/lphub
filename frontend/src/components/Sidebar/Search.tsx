@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 
 import { Search } from "@customTypes/Search";
@@ -7,21 +7,20 @@ import { UserProfile } from "@customTypes/Profile";
 
 interface SearchProps {
     profile?: UserProfile;
+    searchbarRef: React.RefObject<HTMLInputElement | null>;
 };
 
-const _Search: React.FC<SearchProps> = ({ profile }) => {
+const _Search: React.FC<SearchProps> = ({ profile, searchbarRef }) => {
     const [searchData, setSearchData] = React.useState<Search | undefined>(
         undefined
     );
-
-    const searchbarRef = useRef<HTMLInputElement>(null);
 
     const _handle_search_change = async (q: string) => {
         const searchResponse = await API.get_search(q);
         setSearchData(searchResponse);
     };
     return (
-        <div className="flex w-full flex-col justify-between p-3">
+        <div className="flex w-full flex-col p-3 not-md:absolute">
             <input
                 ref={searchbarRef}
                 type="text"

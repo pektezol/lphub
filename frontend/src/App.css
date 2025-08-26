@@ -37,15 +37,11 @@ h1 {
 }
 
 h2 {
-	font-size: 32px;
-}
-
-h2 {
-	font-size: 24px;
+	font-size: 42px;
 }
 
 h3 {
-	font-size: 20px;
+	font-size: 32px;
 }
 
 h4 {
@@ -61,7 +57,7 @@ h6 {
 }
 
 p {
-	font-size: 16px;
+	font-size: 24px;
 }
 
 body {
@@ -70,6 +66,7 @@ body {
 	color: var(--color-white);
 	font-family: var(--font-barlow-semicondensed-regular);
 	margin: 0;
+	font-size: 22px;
 }
 
 main {

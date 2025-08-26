@@ -28,7 +28,7 @@ const Maplist: React.FC = () => {
 
   function _update_currently_selected(catNum2: number) {
     setCurrentlySelected(catNum2);
-    navigate("/games/" + game?.id + "?cat=" + catNum2);
+    // navigate("/games/" + game?.id + "?cat=" + catNum2);
     setHasClicked(true);
   }
 
@@ -54,11 +54,16 @@ const Maplist: React.FC = () => {
     // location query params
     const queryParams = new URLSearchParams(location.search);
     if (queryParams.get("chapter")) {
-      let cat = parseFloat(queryParams.get("chapter") || "");
+      let chapter = parseFloat(queryParams.get("chapter") || "");
       if (gameId === 2) {
-        cat += 10;
+        chapter += 10;
       }
-      _fetch_chapters(cat.toString());
+      _fetch_chapters(chapter.toString());
+    }
+
+    if (queryParams.get("cat")) {
+      let cat = parseFloat(queryParams.get("cat") || "");
+      setCatNum(cat - 1);
     }
 
     const _fetch_game = async () => {
@@ -80,7 +85,7 @@ const Maplist: React.FC = () => {
     setLoad(true);
     _fetch_game();
     _fetch_game_chapters();
-  }, [location.search]);
+  }, [location]);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -145,7 +150,7 @@ const Maplist: React.FC = () => {
           </div>
 
           <div>
-            <section>
+            <section className="relative">
               <div>
                 <span className="text-lg sm:text-lg translate-y-1.5 block mt-2.5 text-foreground">
                   {curChapter?.chapter.name.split(" - ")[0]}
@@ -155,14 +160,14 @@ const Maplist: React.FC = () => {
                 onClick={_handle_dropdown_click}
                 className="cursor-pointer select-none flex w-fit items-center"
               >
-                <span className="text-foreground text-base sm:text-2xl">
+                <span className="sm:text-4xl font-barlow-semicondensed-semibold">
                   {curChapter?.chapter.name.split(" - ")[1]}
                 </span>
                 <i className="triangle translate-x-1.5 translate-y-2 -rotate-90"></i>
               </div>
 
               <div
-                className={`absolute z-[1000] bg-panel rounded-2xl overflow-hidden p-1 animate-in fade-in duration-100 ${dropdownActive === "none" ? "hidden" : "block"
+                className={`absolute z-10 bg-panel rounded-2xl overflow-hidden p-1 animate-in fade-in duration-100 ${dropdownActive === "none" ? "hidden" : "block"
                   }`}
               >
                 {gameChapters?.chapters.map((chapter, i) => {

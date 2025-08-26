@@ -24,7 +24,7 @@ const About: React.FC = () => {
   }, []);
 
   return (
-    <div>
+    <div className="px-12 pt-6">
       <Helmet>
         <title>LPHUB | About</title>
       </Helmet>

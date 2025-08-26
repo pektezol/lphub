@@ -2,6 +2,8 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
+import styles from "./Maps.module.css";
+
 import { PortalIcon, FlagIcon, ChatIcon } from "../../images/Images.tsx";
 import Summary from "@components/Summary.tsx";
 import Leaderboards from "@components/Leaderboards.tsx";
@@ -63,22 +65,25 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
 
   if (!mapSummaryData) {
     // loading placeholder
+    // TODO: Don't do this
     return (
       <>
         <div className="">
           <BreadcrumbNav />
 
           <div className="px-12">
+            <h1>Loading...</h1>
+
             <section id="section2" className="summary1 mt-4 flex gap-2 flex-wrap">
-              <button className="nav-button">
+              <button className={styles["button-nav"]}>
                 <img src={PortalIcon} alt="" className="w-5 h-5 sm:w-6 sm:h-6" />
                 <span>Summary</span>
               </button>
-              <button className="nav-button">
+              <button className={styles["button-nav"]}>
                 <img src={FlagIcon} alt="" className="w-5 h-5 sm:w-6 sm:h-6" />
                 <span>Leaderboards</span>
               </button>
-              <button className="nav-button">
+              <button className={styles["button-nav"]}>
                 <img src={ChatIcon} alt="" className="w-5 h-5 sm:w-6 sm:h-6" />
                 <span>Discussions</span>
               </button>
@@ -109,19 +114,21 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
       <div id="background-image">
         <img src={mapSummaryData.map.image} alt="" />
       </div>
-      <div className="">
+      <div>
         <BreadcrumbNav chapter={{ label: mapSummaryData.map.chapter_name, to: `/games/${mapSummaryData.map.is_coop ? "2" : "1"}?chapter=${mapSummaryData.map.chapter_name.split(" ")[1]}` }} />
         <div className="px-12">
-          <section id="section2" className="summary1 mt-4 flex gap-2 flex-wrap">
-            <button className="nav-button" onClick={() => setNavState(0)}>
+          <h1>{mapSummaryData.map.map_name}</h1>
+
+          <section className="mt-2 flex w-full gap-[2px] rounded-[2000px] overflow-clip">
+            <button className={styles["button-nav"]} onClick={() => setNavState(0)}>
               <img src={PortalIcon} alt="" className="w-5 h-5 sm:w-6 sm:h-6" />
               <span>Summary</span>
             </button>
-            <button className="nav-button" onClick={() => setNavState(1)}>
+            <button className={styles["button-nav"]} onClick={() => setNavState(1)}>
               <img src={FlagIcon} alt="" className="w-5 h-5 sm:w-6 sm:h-6" />
               <span>Leaderboards</span>
             </button>
-            <button className="nav-button" onClick={() => setNavState(2)}>
+            <button className={styles["button-nav"]} onClick={() => setNavState(2)}>
               <img src={ChatIcon} alt="" className="w-5 h-5 sm:w-6 sm:h-6" />
               <span>Discussions</span>
             </button>

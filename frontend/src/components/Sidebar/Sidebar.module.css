@@ -7,6 +7,7 @@
     transition: all 0.2s ease;
     padding: 4px 0px;
     height: 48px;
+    gap: 24px;
 }
 
 .button:hover,
@@ -25,7 +26,7 @@ button>span {
     font-size: 22px;
     font-family: var(--font-barlow-semicondensed-regular);
     white-space: nowrap;
-    margin-left: 16px;
+    transition: all 0.2s ease;
 }
 
 .button-hidden>span {
