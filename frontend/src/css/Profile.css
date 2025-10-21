@@ -289,12 +289,19 @@ span.titles {
 }
 
 @media screen and (max-width: 768px) {
+    * {
+        box-sizing: border-box;
+    }
+
     #section1.profile {
         margin: 20px;
         grid-template-columns: 1fr;
         height: auto;
         min-height: 300px;
         background: linear-gradient(0deg, #202232 60%, #2b2e46 40%);
+        width: calc(100% - 40px);
+        max-width: 100%;
+        box-sizing: border-box;
     }
 
     #section1.profile>div:first-child {
@@ -306,16 +313,22 @@ span.titles {
         grid-template-columns: 1fr;
         height: auto;
         text-align: center;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     #profile-top>div:nth-child(1) {
         justify-content: center;
         font-size: 32px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        flex-wrap: wrap;
     }
 
     #profile-top>div:nth-child(1)>div {
         flex-direction: column;
         height: auto;
+        max-width: 100%;
     }
 
     #profile-top>div:nth-child(2) {
@@ -326,15 +339,20 @@ span.titles {
     #profile-bottom {
         grid-template-columns: 1fr;
         height: auto;
+        width: 100%;
     }
 
     #profile-bottom>div {
         margin: 8px 12px;
+        box-sizing: border-box;
     }
 
     #section2.profile {
         margin: 20px;
         height: 50px;
+        width: calc(100% - 40px);
+        max-width: 100%;
+        box-sizing: border-box;
     }
 
     #section2.profile>button {
@@ -343,28 +361,41 @@ span.titles {
 
     #section3.profile1 {
         margin: 20px;
+        width: calc(100% - 40px);
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow-x: auto;
     }
 
     #profileboard-nav {
         grid-template-columns: 1fr;
+        width: 100%;
     }
 
     #profileboard-nav>select {
         margin: 20px;
         height: 45px;
         font-size: 18px;
+        width: calc(100% - 40px);
+        box-sizing: border-box;
     }
 
     #profileboard-top {
-        font-size: 14px;
-        padding-left: 20px;
-        grid-template-columns: 18% 18% 8% 15% 8% 10% 10% 13%;
+        font-size: 12px;
+        padding-left: 10px;
+        padding-right: 10px;
+        margin: 0 10px;
+        min-width: max-content;
     }
 
     .profileboard-record {
-        font-size: 14px;
-        padding-left: 20px;
-        grid-template-columns: 18% 18% 8% 15% 8% 10% 10% 13%;
+        font-size: 12px;
+        padding-left: 10px;
+        padding-right: 10px;
+        margin: 10px;
+        width: calc(100% - 20px);
+        min-width: max-content;
+        box-sizing: border-box;
     }
 
     span.titles {
