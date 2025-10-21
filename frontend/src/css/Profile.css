@@ -1,4 +1,4 @@
-#section1.profile{
+#section1.profile {
     margin: 20px;
     background: linear-gradient(0deg, #202232 50%, #2b2e46 50%);
     border-radius: 24px;
@@ -8,7 +8,8 @@
     grid-template-columns: 250px 1fr;
 
 }
-#section1.profile>div:first-child{
+
+#section1.profile>div:first-child {
     overflow: hidden;
     border-radius: 100%;
     display: grid;
@@ -21,76 +22,88 @@
 
 
 }
-#profile-image>img{
+
+#profile-image>img {
     border-radius: 100%;
     transition: filter 0.3s;
     cursor: pointer;
 }
 
-#profile-image>span{
+#profile-image>span {
     z-index: 1;
     position: absolute;
     opacity: 0;
-    color:white;
+    color: white;
     transition: opacity 0.3s;
     cursor: pointer;
 }
 
-#profile-image:hover > img{filter: blur(5px) brightness(60%);z-index: 1;}
-#profile-image:hover > span{opacity: 1;}
+#profile-image:hover>img {
+    filter: blur(5px) brightness(60%);
+    z-index: 1;
+}
 
-#profile-top{
+#profile-image:hover>span {
+    opacity: 1;
+}
+
+#profile-top {
     height: 100px;
     display: grid;
     grid-template-columns: 80% 20%;
 }
-#profile-top>div:nth-child(1)>div>img{
+
+#profile-top>div:nth-child(1)>div>img {
     margin: 12px;
     border-radius: 10px;
 }
 
-#profile-top>div:nth-child(1){
+#profile-top>div:nth-child(1) {
     display: flex;
     place-items: center;
     font-size: 50px;
     font-weight: bold;
     color: white;
 }
-#profile-top>div:nth-child(1)>div{
+
+#profile-top>div:nth-child(1)>div {
     display: flex;
     height: 60px;
 }
-span.titles{
+
+span.titles {
     margin: 12px 12px 12px 0;
 
     font-size: 18px;
     font-weight: 100;
-    
+
     padding: 6px 20px 0px 20px;
     border-radius: 10px;
 }
 
-#profile-top>div:nth-child(2){
+#profile-top>div:nth-child(2) {
     display: flex;
     flex-direction: row-reverse;
     align-items: center;
     padding-right: 10px;
 }
-#profile-top>div:nth-child(2)>a>img{
+
+#profile-top>div:nth-child(2)>a>img {
     height: 50px;
-    padding: 0 5px 0 5px; 
+    padding: 0 5px 0 5px;
     scale: 0.9;
-    filter: brightness(200%); 
+    filter: brightness(200%);
 
 }
 
 
-#profile-bottom{
+#profile-bottom {
     height: 100px;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
 }
-#profile-bottom>div{
+
+#profile-bottom>div {
     margin: 12px;
     background-color: #2b2e46;
     border-radius: 20px;
@@ -98,28 +111,33 @@ span.titles{
     place-items: center;
     grid-template-rows: 40% 50%;
 }
-#profile-bottom>div>span:nth-child(1){
+
+#profile-bottom>div>span:nth-child(1) {
     color: inherit;
     font-size: 18px;
 }
-#profile-bottom>div>span:nth-child(2){
+
+#profile-bottom>div>span:nth-child(2) {
     color: white;
     font-size: 40px;
 }
-#profile-bottom>div>span:nth-child(2)>span{
+
+#profile-bottom>div>span:nth-child(2)>span {
     color: white;
     font-size: 20px;
 }
+
 /* #section1.profile>div>div{outline: red 1px dashed;} */
 
 
-#section2.profile{
-    margin: 20px;   
+#section2.profile {
+    margin: 20px;
     height: 60px;
     display: grid;
-    grid-template-columns: 1fr 1fr; 
+    grid-template-columns: 1fr 1fr;
 }
-#section2.profile>button{
+
+#section2.profile>button {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -133,32 +151,42 @@ span.titles{
 
     transition: background-color .1s;
 }
-#section2.profile>button:nth-child(1){border-radius: 24px 0 0 24px;}
-#section2.profile>button:nth-child(2){border-radius: 0 24px 24px 0;}
 
-#section3.profile1>hr{border: 1px solid #2b2e46;margin: 8px 20px 0px 20px;}
-#section3.profile1{
+#section2.profile>button:nth-child(1) {
+    border-radius: 24px 0 0 24px;
+}
+
+#section2.profile>button:nth-child(2) {
+    border-radius: 0 24px 24px 0;
+}
+
+#section3.profile1>hr {
+    border: 1px solid #2b2e46;
+    margin: 8px 20px 0px 20px;
+}
+
+#section3.profile1 {
     margin: 20px;
     display: block;
-    
+
     background-color: #202232;
     border-radius: 24px;
 }
 
-#profileboard-nav{
+#profileboard-nav {
     display: grid;
     grid-template-columns: 1fr 1fr;
 }
 
-#profileboard-nav>select{
+#profileboard-nav>select {
 
     /* appearance: none; */
     margin: 10px 20px 20px 20px;
-    height: 50px; 
+    height: 50px;
 
     border-radius: 24px;
     text-align: center;
-    
+
     color: inherit;
     font-family: inherit;
     font-size: 24px;
@@ -168,9 +196,17 @@ span.titles{
 }
 
 
-#profileboard-top>span>img{height: 20px;scale: .8;}
-#profileboard-top>span>img,#profileboard-top>span>span{cursor: pointer;}
-#profileboard-top{
+#profileboard-top>span>img {
+    height: 20px;
+    scale: .8;
+}
+
+#profileboard-top>span>img,
+#profileboard-top>span>span {
+    cursor: pointer;
+}
+
+#profileboard-top {
     height: 34px;
     display: grid;
     font-size: 20px;
@@ -179,24 +215,24 @@ span.titles{
     grid-template-columns: 15% 15% 5% 15% 5% 15% 15% 15%;
 }
 
-#profileboard-top>span{
+#profileboard-top>span {
     display: flex;
     place-items: flex-end;
 }
 
-#profileboard-records{
+#profileboard-records {
     padding-bottom: 10px;
 }
 
-.profileboard-record{
+.profileboard-record {
     width: calc(100% - 40px);
     margin: 10px 20px 0px 20px;
-    height: 44px; 
+    height: 44px;
 
     border-radius: 20px;
     padding: 0 0 0 40px;
     font-size: 20px;
-    
+
     color: inherit;
     font-family: inherit;
     border: 0;
@@ -211,35 +247,128 @@ span.titles{
 }
 
 /* this right here should be illegal */
-.profileboard-record>span:nth-child(-n+8){filter: brightness(100%);}
-.profileboard-record>span{
+.profileboard-record>span:nth-child(-n+8) {
+    filter: brightness(100%);
+}
+
+.profileboard-record>span {
     display: flex;
     place-items: flex-end;
     filter: brightness(65%);
 }
 
-.profileboard-record>hr{
+.profileboard-record>hr {
     margin: 0 0 0 -60px;
     border: 0;
     height: 2px;
     background-color: #202232;
 }
 
-.profileboard-record>span:nth-child(4){display: grid;}
-.profileboard-record>span{
+.profileboard-record>span:nth-child(4) {
+    display: grid;
+}
+
+.profileboard-record>span {
 
     display: flex;
     place-items: center;
     height: 44px;
 }
-.profileboard-record>a>span{
+
+.profileboard-record>a>span {
 
     display: flex;
     place-items: center;
     height: 44px;
 }
-.profileboard-record>span>button{
+
+.profileboard-record>span>button {
     background-color: #0000;
     border: 0;
     cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+    #section1.profile {
+        margin: 20px;
+        grid-template-columns: 1fr;
+        height: auto;
+        min-height: 300px;
+        background: linear-gradient(0deg, #202232 60%, #2b2e46 40%);
+    }
+
+    #section1.profile>div:first-child {
+        margin: 15px auto;
+        grid-row: 1;
+    }
+
+    #profile-top {
+        grid-template-columns: 1fr;
+        height: auto;
+        text-align: center;
+    }
+
+    #profile-top>div:nth-child(1) {
+        justify-content: center;
+        font-size: 32px;
+    }
+
+    #profile-top>div:nth-child(1)>div {
+        flex-direction: column;
+        height: auto;
+    }
+
+    #profile-top>div:nth-child(2) {
+        justify-content: center;
+        padding: 10px 0;
+    }
+
+    #profile-bottom {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+
+    #profile-bottom>div {
+        margin: 8px 12px;
+    }
+
+    #section2.profile {
+        margin: 20px;
+        height: 50px;
+    }
+
+    #section2.profile>button {
+        font-size: 18px;
+    }
+
+    #section3.profile1 {
+        margin: 20px;
+    }
+
+    #profileboard-nav {
+        grid-template-columns: 1fr;
+    }
+
+    #profileboard-nav>select {
+        margin: 20px;
+        height: 45px;
+        font-size: 18px;
+    }
+
+    #profileboard-top {
+        font-size: 14px;
+        padding-left: 20px;
+        grid-template-columns: 18% 18% 8% 15% 8% 10% 10% 13%;
+    }
+
+    .profileboard-record {
+        font-size: 14px;
+        padding-left: 20px;
+        grid-template-columns: 18% 18% 8% 15% 8% 10% 10% 13%;
+    }
+
+    span.titles {
+        font-size: 14px;
+        padding: 4px 12px 0px 12px;
+    }
 }

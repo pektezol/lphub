@@ -72,7 +72,8 @@ h3 {
     width: 100%;
 }
 
-.game-cat-button:hover, .game-cat-button.selected {
+.game-cat-button:hover,
+.game-cat-button.selected {
     background-color: #202232;
 }
 
@@ -194,5 +195,49 @@ h3 {
 
     100% {
         opacity: 1;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    h1 {
+        font-size: 36px;
+        text-align: center;
+    }
+
+    h3 {
+        font-size: 28px;
+        margin: 0px 5px;
+    }
+
+    .portal-count {
+        font-size: 60px;
+    }
+
+    .blur.map span:nth-child(1) {
+        font-size: 40px;
+    }
+
+    .game-header-categories {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .game-cat-button {
+        font-size: 18px;
+        padding: 10px 0;
+    }
+
+    .maplist {
+        grid-template-columns: repeat(1, 1fr);
+        grid-gap: 20px;
+        margin: 20px 0px;
+    }
+
+    .maplist-entry span {
+        font-size: 16px;
+    }
+
+    .map-entry-image {
+        height: 150px;
     }
 }

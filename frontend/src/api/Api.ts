@@ -12,7 +12,7 @@ import { UploadRunContent } from '@customTypes/Content';
 export const API = {
   // Auth
   get_token: () => get_token(),
-  
+
   delete_token: () => delete_token(),
   // User
   get_user: (user_id: string) => get_user(user_id),
@@ -42,10 +42,10 @@ export const API = {
   delete_map_record: (token: string, map_id: number, record_id: number) => delete_map_record(token, map_id, record_id),
   // Mod
   post_map_summary: (token: string, map_id: string, content: ModMenuContent) => post_map_summary(token, map_id, content),
-  
+
   put_map_image: (token: string, map_id: string, image: string) => put_map_image(token, map_id, image),
   put_map_summary: (token: string, map_id: string, content: ModMenuContent) => put_map_summary(token, map_id, content),
-  
+
   delete_map_summary: (token: string, map_id: string, route_id: number) => delete_map_summary(token, map_id, route_id),
 };
 

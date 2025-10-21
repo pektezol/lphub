@@ -1,35 +1,39 @@
-div#modview{
+div#modview {
     position: absolute;
     left: 50%;
     z-index: 20;
-    width: 320px; height: auto;
+    width: 320px;
+    height: auto;
     /* background-color: red; */
 
     transform: translateY(-68%);
 }
-div#modview>div>button{
+
+div#modview>div>button {
     height: 30px;
 }
 
-div#modview>div:nth-child(1){
+div#modview>div:nth-child(1) {
     display: grid;
     grid-template-columns: 50% 50%;
 }
 
-div#modview>div:nth-child(2){
+div#modview>div:nth-child(2) {
     display: grid;
     place-items: center;
 }
 
-#modview-menu{
+#modview-menu {
     position: absolute;
-    left: calc(50% + 160px); top: 130px;
+    left: calc(50% + 160px);
+    top: 130px;
     transform: translateX(-50%);
     background-color: #2b2e46;
-    z-index: 2; color: white;
+    z-index: 2;
+    color: white;
 }
 
-#modview-menu-image{
+#modview-menu-image {
     box-shadow: 0 0 40px 16px black;
     outline: 8px solid #2b2e46;
     border-radius: 20px;
@@ -37,27 +41,43 @@ div#modview>div:nth-child(2){
     display: grid;
     grid-template-columns: 50% 50%;
     /* place-items: center; */
-    
+
 }
-#modview-menu-image>div:nth-child(1){
-    height: 400px; width: 500px;
+
+#modview-menu-image>div:nth-child(1) {
+    height: 400px;
+    width: 500px;
     display: grid;
     grid-template-rows: 30% 70%;
 }
-#modview-menu-image>div:nth-child(2){
-    height: 400px; width: 500px;
+
+#modview-menu-image>div:nth-child(2) {
+    height: 400px;
+    width: 500px;
     display: grid;
     grid-template-rows: 20% 10%;
 }
 
-#modview-menu-image>div>button{width: 300px;margin-left:100px;}
-#modview-menu-image>div>img{width: 500px;}
-#modview-menu-image>div>button{font-size: 20px;}
-#modview-menu-image>div>span>input[type="file"]{font-size: 15px;}
+#modview-menu-image>div>button {
+    width: 300px;
+    margin-left: 100px;
+}
+
+#modview-menu-image>div>img {
+    width: 500px;
+}
+
+#modview-menu-image>div>button {
+    font-size: 20px;
+}
+
+#modview-menu-image>div>span>input[type="file"] {
+    font-size: 15px;
+}
 
 
 #modview-menu-add,
-#modview-menu-edit{
+#modview-menu-edit {
     box-shadow: 0 0 40px 16px black;
     outline: 8px solid #2b2e46;
     border-radius: 20px;
@@ -67,19 +87,24 @@ div#modview>div:nth-child(2){
 }
 
 #modview-menu-add>div,
-#modview-menu-edit>div{
+#modview-menu-edit>div {
     display: grid;
     margin: 20px;
     width: 200px;
     font-size: 20px;
 }
-#modview-route-description>textarea{
+
+#modview-route-description>textarea {
     resize: none;
     height: 160px;
     width: 1160px;
 }
-#modview-route-showcase>input::placeholder{opacity: .5;}
-#modview_block{
+
+#modview-route-showcase>input::placeholder {
+    opacity: .5;
+}
+
+#modview_block {
     position: absolute;
     background-color: black;
     opacity: .3;
@@ -89,24 +114,89 @@ div#modview>div:nth-child(2){
     z-index: 2;
     cursor: no-drop;
 }
-#modview-md{
+
+#modview-md {
     box-shadow: 0 0 40px 16px black;
     background-color: #2b2e46;
     outline: 8px solid #2b2e46;
 
     border-radius: 20px;
     position: absolute;
-    padding: 10px; top: 400px;
-    width: 1180px; height: 300px;
+    padding: 10px;
+    top: 400px;
+    width: 1180px;
+    height: 300px;
     overflow-y: auto;
     word-wrap: break-word;
 }
-#modview-md>span>a{
+
+#modview-md>span>a {
     padding-left: 20px;
-    color:aqua;
+    color: aqua;
 }
-#modview-md>p{
+
+#modview-md>p {
     font-family: BarlowSemiCondensed-Regular;
     color: #cdcfdf;
     font-size: 21px;
+}
+
+@media screen and (max-width: 768px) {
+    #modview_block {
+        left: 0;
+        width: 100%;
+    }
+
+    #modview-menu {
+        left: 50%;
+        top: 80px;
+        width: 90vw;
+    }
+
+    #modview-menu-image {
+        grid-template-columns: 1fr;
+        width: 100%;
+    }
+
+    #modview-menu-image>div:nth-child(1),
+    #modview-menu-image>div:nth-child(2) {
+        width: 100%;
+        height: auto;
+    }
+
+    #modview-menu-image>div>img {
+        width: 100%;
+        max-width: 400px;
+    }
+
+    #modview-menu-image>div>button {
+        width: 80%;
+        margin-left: 10%;
+    }
+
+    #modview-menu-add,
+    #modview-menu-edit {
+        grid-template-columns: 1fr;
+        width: 90vw;
+    }
+
+    #modview-menu-add>div,
+    #modview-menu-edit>div {
+        width: 90%;
+    }
+
+    #modview-route-description>textarea {
+        width: 100%;
+        max-width: 90vw;
+    }
+
+    #modview-md {
+        width: 90vw;
+        max-width: 600px;
+        top: 300px;
+    }
+
+    div#modview {
+        width: 90vw;
+    }
 }

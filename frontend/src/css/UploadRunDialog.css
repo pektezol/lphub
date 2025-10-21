@@ -1,44 +1,47 @@
-div#upload-run{
+div#upload-run {
     position: absolute;
     left: 50%;
     z-index: 20;
-    width: 320px; height: auto;
+    width: 320px;
+    height: auto;
     /* background-color: red; */
 
     transform: translateY(-68%);
 }
 
-#upload-run-menu{
+#upload-run-menu {
     position: absolute;
-    left: calc(50%); top: 130px;
+    left: calc(50%);
+    top: 130px;
     transform: translateX(-50%);
     background-color: #2b2e46;
-    z-index: 3; color: white;
+    z-index: 3;
+    color: white;
     font-family: BarlowSemicondensed-SemiBold;
 }
 
 #upload-run-menu-add,
-#upload-run-menu-edit{
+#upload-run-menu-edit {
     box-shadow: 0 0 40px 16px black;
     outline: 8px solid #2b2e46;
     border-radius: 20px;
     font-size: 40px;
-	text-wrap: nowrap;
+    text-wrap: nowrap;
 }
 
 #upload-run-menu-add>div,
-#upload-run-menu-edit>div{
+#upload-run-menu-edit>div {
     display: flex;
     font-size: 20px;
     padding: 0px 15px;
-	gap: 2px;
+    gap: 2px;
 }
 
 #upload-run-menu-add>div .upload-run-item {
-	margin: 0px 20px;
+    margin: 0px 20px;
 }
 
-#upload-run-block{
+#upload-run-block {
     position: absolute;
     background-color: black;
     opacity: .3;
@@ -51,7 +54,7 @@ div#upload-run{
 .upload-run-dropdown-container .dropdown-cur {
     user-select: none;
     cursor: pointer;
-	width: 240px;
+    width: 240px;
 }
 
 .upload-run-dropdown {
@@ -81,9 +84,9 @@ div#upload-run{
 }
 
 .upload-run-demo-name {
-	text-overflow: ellipsis;
-	overflow: hidden;
-	width: 380px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 380px;
 }
 
 @keyframes dropdown-in {
@@ -96,7 +99,8 @@ div#upload-run{
     }
 }
 
-button, input {
+button,
+input {
     background-color: #2b2e46;
     border: none;
     font-family: BarlowSemiCondensed-Regular;
@@ -123,38 +127,84 @@ button:hover {
     display: flex;
     margin-top: 10px;
 }
+
 .upload-run-buttons-container button {
     width: 100%;
 }
 
-#host_demo, #partner_demo {
-	background-color: rgba(0, 0, 0, 0);
-	display: none;
+#host_demo,
+#partner_demo {
+    background-color: rgba(0, 0, 0, 0);
+    display: none;
 }
 
 .upload-run-drag-area {
-	border: 2px dashed grey;
-	border-radius: 10px;
-	height: 150px;
-	cursor: pointer;
-	width: 360px;
-	transition: all 0.2s ease;
-	text-align: center;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	margin: 20px 0px;
+    border: 2px dashed grey;
+    border-radius: 10px;
+    height: 150px;
+    cursor: pointer;
+    width: 360px;
+    transition: all 0.2s ease;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0px;
 }
 
-.upload-run-drag-area-highlight, .upload-run-drag-area-highlight-partner {
-	border: 2px dashed white;
+.upload-run-drag-area-highlight,
+.upload-run-drag-area-highlight-partner {
+    border: 2px dashed white;
 }
 
 .upload-run-drag-area-hidden {
-	height: fit-content;
-	text-align: left;
-	border: none;
-	align-items: flex-start;
+    height: fit-content;
+    text-align: left;
+    border: none;
+    align-items: flex-start;
 }
 
+@media screen and (max-width: 768px) {
+    div#upload-run {
+        width: 90vw;
+        max-width: 400px;
+    }
+
+    #upload-run-menu {
+        left: 50%;
+        top: 80px;
+        width: 90vw;
+    }
+
+    #upload-run-menu-add,
+    #upload-run-menu-edit {
+        font-size: 28px;
+        width: 90vw;
+    }
+
+    #upload-run-menu-add>div,
+    #upload-run-menu-edit>div {
+        flex-direction: column;
+        font-size: 18px;
+    }
+
+    .upload-run-dropdown-container .dropdown-cur {
+        width: 80vw;
+        max-width: 300px;
+    }
+
+    .upload-run-dropdown {
+        width: 80vw;
+        max-width: 320px;
+    }
+
+    .upload-run-demo-name {
+        width: 90%;
+    }
+
+    .upload-run-drag-area {
+        width: 80vw;
+        max-width: 360px;
+    }
+}

@@ -2,11 +2,13 @@ span>img {
     scale: 1.1;
     padding: 4px 0 0 8px;
 }
-.login>button>span{
+
+.login>button>span {
     max-width: 22ch;
     overflow: hidden;
 }
-.login>button:nth-child(2){
+
+.login>button:nth-child(2) {
     position: relative;
     left: 210px;
     width: 50px !important;
@@ -16,9 +18,9 @@ span>img {
     /* transition: opacity .1s; */
 }
 
-.login{
+.login {
     display: grid;
-    grid-template-columns: 50px auto 200px ;
+    grid-template-columns: 50px auto 200px;
 }
 
 button:disabled {

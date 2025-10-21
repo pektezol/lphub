@@ -97,3 +97,51 @@ span>b {
     font-size: 50px;
     font-family: BarlowCondensed-Bold;
 }
+
+@media screen and (max-width: 768px) {
+    .games-page {
+        left: 0;
+        width: 100%;
+        padding-top: 60px;
+    }
+
+    .games-page-item-content {
+        left: 20px;
+        width: calc(100% - 40px);
+    }
+
+    .games-page-header {
+        margin-top: 20px;
+        margin-left: 20px;
+    }
+
+    span>b {
+        font-size: 40px;
+    }
+
+    .games-page-item {
+        height: auto;
+        min-height: 200px;
+    }
+
+    .games-page-item-header {
+        height: 120px;
+    }
+
+    .games-page-item-body {
+        height: auto;
+        padding: 10px 0;
+    }
+
+    .games-page-item-body-item {
+        height: 80px;
+    }
+
+    .games-page-item-body-item-title {
+        font-size: 20px;
+    }
+
+    .games-page-item-body-item-num {
+        font-size: 36px;
+    }
+}
