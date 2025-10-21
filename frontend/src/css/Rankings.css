@@ -27,7 +27,8 @@
     transition: all 0.1s;
 }
 
-.nav-container button:hover, .nav-container button.selected {
+.nav-container button:hover,
+.nav-container button.selected {
     background-color: #202232;
 }
 
@@ -104,4 +105,34 @@
     background-color: #b7b9c6;
     border-radius: 200px;
     transform: translateX(10px);
+}
+
+@media screen and (max-width: 768px) {
+
+    .nav-1 div,
+    .nav-2 div {
+        width: 95%;
+    }
+
+    .nav-container button {
+        font-size: 18px;
+        padding: 8px 0px;
+    }
+
+    .ranks-container {
+        width: calc(95% - 20px);
+    }
+
+    .rankings-leaderboard {
+        font-size: 16px;
+    }
+
+    .leaderboard-entry {
+        grid-template-columns: 15% 50% 35%;
+        font-size: 14px;
+    }
+
+    .leaderboard-entry img {
+        height: 28px;
+    }
 }

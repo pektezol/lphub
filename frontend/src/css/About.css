@@ -3,7 +3,7 @@
     overflow-x: hidden;
     position: relative;
 
-    width: calc(100% - 380px); 
+    width: calc(100% - 380px);
     height: 100vh;
     left: 350px;
 
@@ -16,10 +16,27 @@
 }
 
 h1 {
-	font-size: 80px;
+    font-size: 80px;
 }
 
 h2 {
-	font-size: 60px;
+    font-size: 60px;
 }
 
+@media screen and (max-width: 768px) {
+    #about {
+        width: 100%;
+        left: 0;
+        padding: 70px 20px 20px 20px;
+        height: calc(100vh - 60px);
+        font-size: 18px;
+    }
+
+    h1 {
+        font-size: 48px;
+    }
+
+    h2 {
+        font-size: 36px;
+    }
+}
