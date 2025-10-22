@@ -47,7 +47,6 @@ const Rankings: React.FC = () => {
       const rankings = await API.get_unofficial_rankings();
       setLeaderboardData(rankings);
       if (currentLeaderboardType == RankingCategories.rankings_singleplayer) {
-        // console.log(_sort_rankings_steam(unofficialRanking.rankings_singleplayer))
         setCurrentLeaderboard(rankings.rankings_singleplayer)
       } else if (currentLeaderboardType == RankingCategories.rankings_multiplayer) {
         setCurrentLeaderboard(rankings.rankings_multiplayer)

@@ -105,6 +105,11 @@ const Sidebar: React.FC<SidebarProps> = ({ setToken, profile, setProfile, onUplo
     setIsMobileSearchOpen(false);
   };
 
+  const _close_mobile_search_and_menu = () => {
+    setIsMobileSearchOpen(false);
+    setIsMobileMenuOpen(false);
+  };
+
   const _handle_search_change = async (q: string) => {
     const searchResponse = await API.get_search(q);
     setSearchData(searchResponse);
@@ -213,7 +218,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setToken, profile, setProfile, onUplo
           <div id='search-data'>
 
             {searchData?.maps.map((q, index) => (
-              <Link to={`/maps/${q.id}`} className='search-map' key={index} onClick={_close_mobile_search}>
+              <Link to={`/maps/${q.id}`} className='search-map' key={index} onClick={_close_mobile_search_and_menu}>
                 <span>{q.game}</span>
                 <span>{q.chapter}</span>
                 <span>{q.map}</span>
@@ -224,7 +229,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setToken, profile, setProfile, onUplo
                 <Link to={
                   profile && q.steam_id === profile.steam_id ? "/profile" :
                     `/users/${q.steam_id}`
-                } className='search-player' key={index} onClick={_close_mobile_search}>
+                } className='search-player' key={index} onClick={_close_mobile_search_and_menu}>
                   <img src={q.avatar_link} alt='pfp'></img>
                   <span style={{ fontSize: `${36 - q.user_name.length * 0.8}px` }}>{q.user_name}</span>
                 </Link>

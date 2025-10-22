@@ -20,6 +20,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint .",
+    "lint-fix": "eslint . --fix",
     "type-check": "tsc -b"
   },
   "devDependencies": {
