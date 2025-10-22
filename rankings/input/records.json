@@ -323,7 +323,7 @@
 		"id": 47826,
 		"name": "Buttons",
 		"mode": 2,
-		"wr": 2
+		"wr": 0
 	},
 	{
 		"id": 47827,
@@ -371,7 +371,7 @@
 		"id": 47838,
 		"name": "Vertical Flings",
 		"mode": 2,
-		"wr": 2
+		"wr": 0
 	},
 	{
 		"id": 47839,
@@ -431,7 +431,7 @@
 		"id": 47860,
 		"name": "Turret Walls",
 		"mode": 2,
-		"wr": 2
+		"wr": 0
 	},
 	{
 		"id": 52641,
