@@ -385,7 +385,20 @@ span.titles {
         padding-left: 10px;
         padding-right: 10px;
         margin: 0 10px;
-        min-width: max-content;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    #profileboard-top>span {
+        display: none;
+    }
+
+    #profileboard-top>div#page-number {
+        display: block;
+    }
+
+    #section3.profile1>hr {
+        display: none;
     }
 
     .profileboard-record {
@@ -394,8 +407,21 @@ span.titles {
         padding-right: 10px;
         margin: 10px;
         width: calc(100% - 20px);
-        min-width: max-content;
         box-sizing: border-box;
+        grid-template-columns: 28% 14% 9% 24% 5% 18% 0%;
+    }
+
+    .profileboard-record>span:nth-child(7),
+    .profileboard-record>span:nth-child(16),
+    .profileboard-record>span:nth-child(25),
+    .profileboard-record>span:nth-child(34),
+    .profileboard-record>span:nth-child(43) {
+        display: none;
+    }
+
+    .profileboard-record>span>button:has(img[alt="download"]),
+    .profileboard-record>span>button:has(img[alt="demo_id"]) {
+        display: none;
     }
 
     span.titles {

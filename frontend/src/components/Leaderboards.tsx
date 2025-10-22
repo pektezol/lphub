@@ -9,7 +9,7 @@ import useMessage from "@hooks/UseMessage";
 import "@css/Maps.css"
 
 interface LeaderboardsProps {
-	mapID: string;
+  mapID: string;
 }
 
 const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
@@ -25,8 +25,7 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
   const { message, MessageDialogComponent } = useMessage();
 
   React.useEffect(() => {
-	  _fetch_map_leaderboards();
-	  console.log(data);
+    _fetch_map_leaderboards();
   }, [pageNumber, navigate])
 
   if (!data) {
@@ -47,7 +46,7 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
 
   return (
     <div>
-  	{MessageDialogComponent}
+      {MessageDialogComponent}
       <section id='section6' className='summary2'>
 
         <div id='leaderboard-top'

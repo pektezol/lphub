@@ -63,7 +63,6 @@ const Maplist: React.FC = () => {
     const _fetch_game = async () => {
       const games = await API.get_games();
       const foundGame = games.find((game) => game.id === gameId);
-      // console.log(foundGame)
       if (foundGame) {
         setGame(foundGame);
         setLoad(false);

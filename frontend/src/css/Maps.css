@@ -1050,7 +1050,21 @@ p>span.portal-count {
         padding-left: 10px;
         padding-right: 10px;
         margin: 0 10px;
-        min-width: max-content;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    #leaderboard-top>span,
+    #leaderboard-top>div#runner {
+        display: none;
+    }
+
+    #leaderboard-top>div#page-number {
+        display: flex;
+    }
+
+    #section6>hr {
+        display: none;
     }
 
     .leaderboard-record {
@@ -1059,8 +1073,30 @@ p>span.portal-count {
         padding-right: 10px;
         margin: 10px 10px 0 10px;
         width: calc(100% - 20px);
-        min-width: max-content;
         box-sizing: border-box;
+        grid-template-columns: 10% 0% 60% 10% 5% 15% 0% 0% !important;
+        align-items: center;
+    }
+
+    .leaderboard-record>div {
+        display: grid;
+        align-items: center;
+        height: 44px;
+    }
+
+    .leaderboard-record>div>a>span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        height: 44px;
+    }
+
+    .leaderboard-record>span:nth-child(7),
+    .leaderboard-record>span:nth-child(8) {
+        display: none;
     }
 
     .leaderboard-record:last-child {
@@ -1069,6 +1105,11 @@ p>span.portal-count {
 
     .leaderboard-record>div>a>span>img {
         height: 28px;
+    }
+
+    .leaderboard-record>span>button:has(img[alt="download"]),
+    .leaderboard-record>span>button:has(img[alt="demo_id"]) {
+        display: none;
     }
 
     #page-number>div {
