@@ -1,12 +1,12 @@
-import React from 'react';
+import React from "react";
 
-import { MapDiscussion, MapDiscussions, MapDiscussionsDetail } from '@customTypes/Map';
-import { MapDiscussionCommentContent, MapDiscussionContent } from '@customTypes/Content';
-import { time_ago } from '@utils/Time';
-import { API } from '@api/Api';
+import { MapDiscussion, MapDiscussions, MapDiscussionsDetail } from "@customTypes/Map";
+import { MapDiscussionContent } from "@customTypes/Content";
+import { time_ago } from "@utils/Time";
+import { API } from "@api/Api";
 import "@css/Maps.css"
-import { Link } from 'react-router-dom';
-import useConfirm from '@hooks/UseConfirm';
+import { Link } from "react-router-dom";
+import useConfirm from "@hooks/UseConfirm";
 
 interface DiscussionsProps {
   token?: string
@@ -141,7 +141,7 @@ const Discussions: React.FC<DiscussionsProps> = ({ token, data, isModerator, map
               data ?
                 (<>
                   {data.discussions.filter(f => f.title.includes(discussionSearch)).sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
-                    .map((e, i) => (
+                    .map((e) => (
                       <div id='discussion-post'>
                         <button key={e.id} onClick={() => _open_map_discussion(e.id)}>
                           <span>{e.title}</span>

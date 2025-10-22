@@ -13,10 +13,6 @@ export interface MapDiscussionContent {
   content: string;
 };
 
-export interface MapDiscussionCommentContent {
-  comment: string;
-};
-
 export interface UploadRunContent {
   host_demo: File | null;
   partner_demo: File | null;

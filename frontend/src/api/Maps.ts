@@ -17,9 +17,9 @@ export const get_map_leaderboard = async (map_id: string, page: string): Promise
   // map the kind of leaderboard
   data.records = data.records.map((record: any) => {
     if (record.host && record.partner) {
-      return { ...record, kind: 'multiplayer' };
+      return { ...record, kind: "multiplayer" };
     } else {
-      return { ...record, kind: 'singleplayer' };
+      return { ...record, kind: "singleplayer" };
     }
   });
   return data;

@@ -1,9 +1,9 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
 
-import { ExitIcon, UserIcon, LoginIcon } from '@images/Images';
-import { UserProfile } from '@customTypes/Profile';
-import { API } from '@api/Api';
+import { ExitIcon, UserIcon, LoginIcon } from "@images/Images";
+import { UserProfile } from "@customTypes/Profile";
+import { API } from "@api/Api";
 import "@css/Login.css";
 
 interface LoginProps {

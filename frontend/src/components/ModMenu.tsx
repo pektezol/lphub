@@ -1,12 +1,12 @@
-import React from 'react';
-import ReactMarkdown from 'react-markdown';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import ReactMarkdown from "react-markdown";
+import { useNavigate } from "react-router-dom";
 
-import { MapSummary } from '@customTypes/Map';
-import { ModMenuContent } from '@customTypes/Content';
-import { API } from '@api/Api';
+import { MapSummary } from "@customTypes/Map";
+import { ModMenuContent } from "@customTypes/Content";
+import { API } from "@api/Api";
 import "@css/ModMenu.css"
-import useConfirm from '@hooks/UseConfirm';
+import useConfirm from "@hooks/UseConfirm";
 
 interface ModMenuProps {
   token?: string;
@@ -55,10 +55,10 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID }) =>
               width *= 320 / height;
               height = 320;
             }
-            const canvas = document.createElement('canvas');
+            const canvas = document.createElement("canvas");
             canvas.width = width;
             canvas.height = height;
-            canvas.getContext('2d')!.drawImage(img, 0, 0, width, height);
+            canvas.getContext("2d")!.drawImage(img, 0, 0, width, height);
             resolve(canvas.toDataURL(file.type, 0.6));
           };
         }

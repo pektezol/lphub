@@ -1,10 +1,10 @@
-import React from 'react';
+import React from "react";
 import { Link } from "react-router-dom";
 
-import { Game, GameCategoryPortals } from '@customTypes/Game';
+import { Game, GameCategoryPortals } from "@customTypes/Game";
 import "@css/Games.css"
 
-import GameCategory from '@components/GameCategory';
+import GameCategory from "@components/GameCategory";
 
 interface GameEntryProps {
   game: Game;

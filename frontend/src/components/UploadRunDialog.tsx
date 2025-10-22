@@ -1,15 +1,15 @@
-import React from 'react';
-import { UploadRunContent } from '@customTypes/Content';
-import { ScoreboardTempUpdate, SourceDemoParser, NetMessages } from '@nekz/sdp';
+import React from "react";
+import { UploadRunContent } from "@customTypes/Content";
+import { ScoreboardTempUpdate, SourceDemoParser, NetMessages } from "@nekz/sdp";
 
-import '@css/UploadRunDialog.css';
-import { Game } from '@customTypes/Game';
-import { API } from '@api/Api';
-import { useNavigate } from 'react-router-dom';
-import useMessage from '@hooks/UseMessage';
-import useConfirm from '@hooks/UseConfirm';
+import "@css/UploadRunDialog.css";
+import { Game } from "@customTypes/Game";
+import { API } from "@api/Api";
+import { useNavigate } from "react-router-dom";
+import useMessage from "@hooks/UseMessage";
+import useConfirm from "@hooks/UseConfirm";
 import useMessageLoad from "@hooks/UseMessageLoad";
-import { MapNames } from '@customTypes/MapNames';
+import { MapNames } from "@customTypes/MapNames";
 
 interface UploadRunDialogProps {
   token?: string;
