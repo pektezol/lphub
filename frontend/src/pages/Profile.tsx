@@ -1,16 +1,16 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
-import { SteamIcon, TwitchIcon, YouTubeIcon, PortalIcon, FlagIcon, StatisticsIcon, SortIcon, ThreedotIcon, DownloadIcon, HistoryIcon, DeleteIcon } from '@images/Images';
-import { UserProfile } from '@customTypes/Profile';
-import { Game, GameChapters } from '@customTypes/Game';
-import { Map } from '@customTypes/Map';
-import { ticks_to_time } from '@utils/Time';
+import { SteamIcon, TwitchIcon, YouTubeIcon, PortalIcon, FlagIcon, StatisticsIcon, SortIcon, ThreedotIcon, DownloadIcon, HistoryIcon, DeleteIcon } from "@images/Images";
+import { UserProfile } from "@customTypes/Profile";
+import { Game, GameChapters } from "@customTypes/Game";
+import { Map } from "@customTypes/Map";
+import { ticks_to_time } from "@utils/Time";
 import "@css/Profile.css";
-import { API } from '@api/Api';
-import useConfirm from '@hooks/UseConfirm';
-import useMessage from '@hooks/UseMessage';
+import { API } from "@api/Api";
+import useConfirm from "@hooks/UseConfirm";
+import useMessage from "@hooks/UseMessage";
 import useMessageLoad from "@hooks/UseMessageLoad";
 
 interface ProfileProps {
@@ -193,9 +193,9 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
 
               <select id='select-game'
                 onChange={() => {
-                  setGame((document.querySelector('#select-game') as HTMLInputElement).value);
+                  setGame((document.querySelector("#select-game") as HTMLInputElement).value);
                   setChapter("0");
-                  const chapterSelect = document.querySelector('#select-chapter') as HTMLSelectElement;
+                  const chapterSelect = document.querySelector("#select-chapter") as HTMLSelectElement;
                   if (chapterSelect) {
                     chapterSelect.value = "0";
                   }
@@ -213,7 +213,7 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
               : chapterData === null ? <select></select> :
 
                 <select id='select-chapter'
-                  onChange={() => setChapter((document.querySelector('#select-chapter') as HTMLInputElement).value)}>
+                  onChange={() => setChapter((document.querySelector("#select-chapter") as HTMLInputElement).value)}>
                   <option value="0" key="0">All Chapters</option>
                   {chapterData.chapters.filter(e => e.is_disabled === false).map((e, i) => (
                     <option value={e.id} key={i + 1}>{e.name}</option>
@@ -222,9 +222,9 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
           </div>
           <div id='profileboard-top'>
             <span><span>Map Name</span><img src={SortIcon} alt="" /></span>
-            <span style={{ justifyContent: 'center' }}><span>Portals</span><img src={SortIcon} alt="" /></span>
-            <span style={{ justifyContent: 'center' }}><span>WRΔ </span><img src={SortIcon} alt="" /></span>
-            <span style={{ justifyContent: 'center' }}><span>Time</span><img src={SortIcon} alt="" /></span>
+            <span style={{ justifyContent: "center" }}><span>Portals</span><img src={SortIcon} alt="" /></span>
+            <span style={{ justifyContent: "center" }}><span>WRΔ </span><img src={SortIcon} alt="" /></span>
+            <span style={{ justifyContent: "center" }}><span>Time</span><img src={SortIcon} alt="" /></span>
             <span> </span>
             <span><span>Rank</span><img src={SortIcon} alt="" /></span>
             <span><span>Date</span><img src={SortIcon} alt="" /></span>
@@ -239,7 +239,7 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
                     });
                   }
                 }}
-                ><i className='triangle' style={{ position: 'relative', left: '-5px', }}></i> </button>
+                ><i className='triangle' style={{ position: "relative", left: "-5px", }}></i> </button>
                 <span>{pageNumber}/{pageMax}</span>
                 <button onClick={() => {
                   if (pageNumber !== pageMax) {
@@ -250,7 +250,7 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
                     });
                   }
                 }}
-                ><i className='triangle' style={{ position: 'relative', left: '5px', transform: 'rotate(180deg)' }}></i> </button>
+                ><i className='triangle' style={{ position: "relative", left: "5px", transform: "rotate(180deg)" }}></i> </button>
               </div>
             </div>
           </div>
@@ -272,7 +272,7 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
 
                           <span style={{ display: "grid" }}>{e.score_count}</span>
 
-                          <span style={{ display: "grid" }}>{e.score_count - r.map_wr_count > 0 ? `+${e.score_count - r.map_wr_count}` : `-`}</span>
+                          <span style={{ display: "grid" }}>{e.score_count - r.map_wr_count > 0 ? `+${e.score_count - r.map_wr_count}` : "-"}</span>
                           <span style={{ display: "grid" }}>{ticks_to_time(e.score_time)}</span>
                           <span> </span>
                           {i === 0 ? <span>#{r.placement}</span> : <span> </span>}
@@ -300,7 +300,7 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
                 maps.filter(e => e.is_disabled === false).sort((a, b) => a.id - b.id)
                   .map((r, index) => {
                     if (Math.ceil((index + 1) / 20) === pageNumber) {
-                      let record = profile.records.find((e) => e.map_id === r.id);
+                      const record = profile.records.find((e) => e.map_id === r.id);
                       return record === undefined ? (
                         <button className="profileboard-record" key={index} style={{ backgroundColor: "#1b1b20" }}>
                           <Link to={`/maps/${r.id}`}><span>{r.name}</span></Link>
@@ -318,7 +318,7 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
                             {i !== 0 ? <hr style={{ gridColumn: "1 / span 8" }} /> : ""}
                             <Link to={`/maps/${r.id}`}><span>{r.name}</span></Link>
                             <span style={{ display: "grid" }}>{record!.scores[i].score_count}</span>
-                            <span style={{ display: "grid" }}>{record!.scores[i].score_count - record!.map_wr_count > 0 ? `+${record!.scores[i].score_count - record!.map_wr_count}` : `-`}</span>
+                            <span style={{ display: "grid" }}>{record!.scores[i].score_count - record!.map_wr_count > 0 ? `+${record!.scores[i].score_count - record!.map_wr_count}` : "-"}</span>
                             <span style={{ display: "grid" }}>{ticks_to_time(record!.scores[i].score_time)}</span>
                             <span> </span>
                             {i === 0 ? <span>#{record!.placement}</span> : <span> </span>}

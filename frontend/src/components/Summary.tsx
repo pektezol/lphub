@@ -1,7 +1,7 @@
-import React from 'react';
-import ReactMarkdown from 'react-markdown';
+import React from "react";
+import ReactMarkdown from "react-markdown";
 
-import { MapSummary } from '@customTypes/Map';
+import { MapSummary } from "@customTypes/Map";
 import "@css/Maps.css"
 
 interface SummaryProps {
@@ -16,7 +16,7 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
   const [historySelected, setHistorySelected] = React.useState<boolean>(false);
 
   function _select_run(idx: number, category_id: number) {
-    let r = document.querySelectorAll("button.record");
+    const r = document.querySelectorAll("button.record");
     r.forEach(e => (e as HTMLElement).style.backgroundColor = "#2b2e46");
     (r[idx] as HTMLElement).style.backgroundColor = "#161723"
 
@@ -66,7 +66,7 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
           style={data.map.image === "" ? { backgroundColor: "#202232" } : {}}>
           <img src={data.map.image} alt="" id='category-image'></img>
           <p><span className='portal-count'>{data.summary.routes[selectedRun].history.score_count}</span>
-            {data.summary.routes[selectedRun].history.score_count === 1 ? ` portal` : ` portals`}</p>
+            {data.summary.routes[selectedRun].history.score_count === 1 ? " portal" : " portals"}</p>
           {data.map.is_coop ? // TODO: make this part dynamic
             (
               <span style={{ gridTemplateColumns: "1fr 1fr 1fr" }}>
@@ -109,7 +109,7 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
                         _select_run(index, r.category.id);
                       }}>
                         <span>{new Date(r.history.date).toLocaleDateString(
-                          "en-US", { month: 'long', day: 'numeric', year: 'numeric' }
+                          "en-US", { month: "long", day: "numeric", year: "numeric" }
                         )}</span>
                         <span>{r.history.score_count}</span>
                         <span>{r.history.runner_name}</span>

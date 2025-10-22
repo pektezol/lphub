@@ -1,11 +1,11 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
 
-import { BookIcon, FlagIcon, HelpIcon, HomeIcon, LogoIcon, PortalIcon, SearchIcon, UploadIcon } from '@images/Images';
-import Login from '@components/Login';
-import { UserProfile } from '@customTypes/Profile';
-import { Search } from '@customTypes/Search';
-import { API } from '@api/Api';
+import { BookIcon, FlagIcon, HelpIcon, HomeIcon, LogoIcon, PortalIcon, SearchIcon, UploadIcon } from "@images/Images";
+import Login from "@components/Login";
+import { UserProfile } from "@customTypes/Profile";
+import { Search } from "@customTypes/Search";
+import { API } from "@api/Api";
 import "@css/Sidebar.css";
 
 interface SidebarProps {
@@ -39,7 +39,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setToken, profile, setProfile, onUplo
   };
 
   const _handle_sidebar_hide = () => {
-    var btn = document.querySelectorAll("button.sidebar-button") as NodeListOf<HTMLElement>
+    const btn = document.querySelectorAll("button.sidebar-button") as NodeListOf<HTMLElement>
     const span = document.querySelectorAll("button.sidebar-button>span") as NodeListOf<HTMLElement>
     const side = document.querySelector("#sidebar-list") as HTMLElement;
     const searchbar = document.querySelector("#searchbar") as HTMLInputElement;
@@ -140,13 +140,13 @@ const Sidebar: React.FC<SidebarProps> = ({ setToken, profile, setProfile, onUplo
             </div>
           </div>
         </Link>
-        <button id='hamburger-menu' onClick={_toggle_mobile_menu} className={isMobileMenuOpen ? 'open' : ''}>
+        <button id='hamburger-menu' onClick={_toggle_mobile_menu} className={isMobileMenuOpen ? "open" : ""}>
           <span></span>
           <span></span>
           <span></span>
         </button>
       </div>
-      <div id='sidebar' className={isMobileMenuOpen ? 'mobile-open' : ''}>
+      <div id='sidebar' className={isMobileMenuOpen ? "mobile-open" : ""}>
         <Link to="/" tabIndex={-1}>
           <div id='logo'> {/* logo */}
             <img src={LogoIcon} alt="" height={"80px"} />
@@ -204,7 +204,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setToken, profile, setProfile, onUplo
             </Link>
           </div>
         </div>
-        <div id='search-panel' className={isMobileSearchOpen ? 'mobile-search-open' : ''}>
+        <div id='search-panel' className={isMobileSearchOpen ? "mobile-search-open" : ""}>
           <input type="text" id='searchbar' placeholder='Search for map or a player...' onChange={(e) => _handle_search_change(e.target.value)} />
           <div className='mobile-search-header'>
             <button className='mobile-search-close' onClick={_close_mobile_search}>✕</button>
@@ -220,15 +220,15 @@ const Sidebar: React.FC<SidebarProps> = ({ setToken, profile, setProfile, onUplo
               </Link>
             ))}
             {searchData?.players.map((q, index) =>
-            (
-              <Link to={
-                profile && q.steam_id === profile.steam_id ? `/profile` :
-                  `/users/${q.steam_id}`
-              } className='search-player' key={index} onClick={_close_mobile_search}>
-                <img src={q.avatar_link} alt='pfp'></img>
-                <span style={{ fontSize: `${36 - q.user_name.length * 0.8}px` }}>{q.user_name}</span>
-              </Link>
-            ))}
+              (
+                <Link to={
+                  profile && q.steam_id === profile.steam_id ? "/profile" :
+                    `/users/${q.steam_id}`
+                } className='search-player' key={index} onClick={_close_mobile_search}>
+                  <img src={q.avatar_link} alt='pfp'></img>
+                  <span style={{ fontSize: `${36 - q.user_name.length * 0.8}px` }}>{q.user_name}</span>
+                </Link>
+              ))}
 
           </div>
         </div>

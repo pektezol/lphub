@@ -1,12 +1,12 @@
-import React from 'react';
+import React from "react";
 import { Link } from "react-router-dom";
 
 const MapEntry: React.FC = () => {
-    return (
-        <div>
+  return (
+    <div>
 
-        </div>
-    )
+    </div>
+  )
 }
 
 export default MapEntry;

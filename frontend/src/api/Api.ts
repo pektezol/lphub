@@ -1,11 +1,11 @@
-import { MapDiscussionCommentContent, MapDiscussionContent, ModMenuContent } from '@customTypes/Content';
-import { delete_token, get_token } from '@api/Auth';
-import { get_user, get_profile, post_profile } from '@api/User';
-import { get_games, get_chapters, get_games_chapters, get_game_maps, get_search } from '@api/Games';
-import { get_official_rankings, get_unofficial_rankings } from '@api/Rankings';
-import { get_map_summary, get_map_leaderboard, get_map_discussions, get_map_discussion, post_map_discussion, post_map_discussion_comment, delete_map_discussion, post_record, delete_map_record } from '@api/Maps';
-import { delete_map_summary, post_map_summary, put_map_image, put_map_summary } from '@api/Mod';
-import { UploadRunContent } from '@customTypes/Content';
+import { MapDiscussionContent, ModMenuContent } from "@customTypes/Content";
+import { delete_token, get_token } from "@api/Auth";
+import { get_user, get_profile, post_profile } from "@api/User";
+import { get_games, get_chapters, get_games_chapters, get_game_maps, get_search } from "@api/Games";
+import { get_official_rankings, get_unofficial_rankings } from "@api/Rankings";
+import { get_map_summary, get_map_leaderboard, get_map_discussions, get_map_discussion, post_map_discussion, post_map_discussion_comment, delete_map_discussion, post_record, delete_map_record } from "@api/Maps";
+import { delete_map_summary, post_map_summary, put_map_image, put_map_summary } from "@api/Mod";
+import { UploadRunContent } from "@customTypes/Content";
 
 // add new api call function entries here
 // example usage: API.get_games();
@@ -49,7 +49,7 @@ export const API = {
   delete_map_summary: (token: string, map_id: string, route_id: number) => delete_map_summary(token, map_id, route_id),
 };
 
-const BASE_API_URL: string = "/api/v1/"
+const BASE_API_URL: string = "https://lp.portal2.sr/api/v1/"
 
 export function url(path: string): string {
   return BASE_API_URL + path;

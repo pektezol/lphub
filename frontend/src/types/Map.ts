@@ -1,6 +1,6 @@
-import type { Category, GameCategoryPortals } from '@customTypes/Game';
-import type { Pagination } from '@customTypes/Pagination';
-import type { UserShort } from '@customTypes/Profile';
+import type { Category, GameCategoryPortals } from "@customTypes/Game";
+import type { Pagination } from "@customTypes/Pagination";
+import type { UserShort } from "@customTypes/Profile";
 
 export interface Map {
   id: number;

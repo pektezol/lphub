@@ -6,7 +6,7 @@ import { Map } from "@customTypes/Map";
 import { Search } from "@customTypes/Search";
 
 export const get_games = async (): Promise<Game[]> => {
-  const response = await axios.get(url(`games`))
+  const response = await axios.get(url("games"))
   return response.data.data;
 };
 
