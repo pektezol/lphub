@@ -231,7 +231,8 @@ func fetchPlayerInfo(players []*Player) error {
 	}
 	var data Result
 	if err := json.Unmarshal(body, &data); err != nil {
-		log.Fatalln(err.Error())
+		log.Println(err.Error())
+		return err
 	}
 
 	for _, profile := range data.Response.Players {
