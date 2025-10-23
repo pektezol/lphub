@@ -391,11 +391,11 @@ a {
         background: #CDCFDF;
         border-radius: 10px;
         transition: all 0.3s ease;
-        transform-origin: 1px;
+        transform-origin: center;
     }
 
     #hamburger-menu.open span:nth-child(1) {
-        transform: rotate(45deg);
+        transform: translateY(8.5px) rotate(45deg);
     }
 
     #hamburger-menu.open span:nth-child(2) {
@@ -404,7 +404,7 @@ a {
     }
 
     #hamburger-menu.open span:nth-child(3) {
-        transform: rotate(-45deg);
+        transform: translateY(-8.5px) rotate(-45deg);
     }
 
     #sidebar-list {
