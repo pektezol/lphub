@@ -994,6 +994,7 @@ p>span.portal-count {
     }
 }
 
+/* 
 @media screen and (max-width: 1480px) {
     #section3.summary1 {
         grid-template-columns: auto;
@@ -1055,7 +1056,7 @@ p>span.portal-count {
     #section2.summary1>.nav-button:nth-child(3) {
         border-radius: 0 0 30px 30px;
     }
-}
+} */
 
 @media screen and (max-width: 768px) {
     * {
