@@ -477,6 +477,7 @@ p>span.portal-count {
     border: 0;
     transition: background-color .1s;
     background-color: #2b2e46;
+    box-sizing: border-box;
 }
 
 .leaderboard-record>span:nth-child(1) {
@@ -508,12 +509,19 @@ p>span.portal-count {
     display: grid;
     grid-template-columns: 50% 50%;
     place-items: left;
+    box-sizing: border-box;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .leaderboard-record>div>a>span {
     display: flex;
     place-items: center;
     height: 44px;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .leaderboard-record>span>button {
@@ -856,6 +864,134 @@ p>span.portal-count {
     border-top: 7px solid transparent;
     border-right: 8px solid #cdcfdf;
     border-bottom: 7px solid transparent;
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    #section1 {
+        margin: 18px 0 0 0;
+    }
+
+    .nav-button {
+        height: 38px;
+        font-size: 17px;
+    }
+
+    #section2 {
+        margin: 36px 0 0 0;
+        gap: 2px;
+    }
+
+    #section2>.nav-button {
+        height: 45px;
+        font-size: 20px;
+    }
+
+    #section3 {
+        margin: 36px 0 0 0;
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    #category {
+        height: 320px;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    #category>p {
+        font-size: 44px;
+    }
+
+    p>span.portal-count {
+        font-size: 88px;
+    }
+
+    #history {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    #records {
+        height: 232px;
+    }
+
+    .record-top,
+    .record {
+        font-size: 17px;
+    }
+
+    #section4 {
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin: 36px 0 0 0;
+    }
+
+    #difficulty>span:nth-child(2) {
+        font-size: 36px;
+    }
+
+    #count>div {
+        font-size: 44px;
+    }
+
+    #section5 {
+        margin: 36px 0 18px 0;
+    }
+
+    #description {
+        min-height: 300px;
+    }
+
+    #description>iframe {
+        width: 100%;
+        max-width: 100%;
+        height: 250px;
+        margin: 20px 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    #description>h3 {
+        font-size: 2.2rem;
+    }
+
+    #description-text {
+        font-size: 19px;
+    }
+
+    #section6 {
+        margin: 36px 0 18px 0;
+        min-height: 540px;
+    }
+
+    #leaderboard-top {
+        font-size: 18px;
+        padding-left: 50px;
+    }
+
+    .leaderboard-record {
+        font-size: 18px;
+        padding: 0 0 0 50px;
+        grid-template-columns: 4% 5% 38% 5% 4% 14% 14% 16%;
+    }
+
+    .leaderboard-record>div>a>span>img {
+        height: 32px;
+    }
+
+    #section7 {
+        margin: 36px 0 18px 0;
+    }
+
+    #discussion-search>input,
+    #discussion-send>input {
+        font-size: 18px;
+    }
+
+    #discussion-thread>div:nth-child(2) {
+        font-size: 18px;
+        max-height: 460px;
+    }
 }
 
 @media screen and (max-width: 1480px) {

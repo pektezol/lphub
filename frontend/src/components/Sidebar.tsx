@@ -60,7 +60,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setToken, profile, setProfile, onUplo
       setSidebarOpen(false);
       side.style.width = "320px"
       btn.forEach((e, i) => {
-        e.style.width = "310px"
+        e.style.width = (window.innerWidth > 1024) ? "310px" : "265px"
         e.style.padding = "0.4em 0 0 11px"
         setTimeout(() => {
           span[i].style.opacity = "1"
@@ -225,15 +225,15 @@ const Sidebar: React.FC<SidebarProps> = ({ setToken, profile, setProfile, onUplo
               </Link>
             ))}
             {searchData?.players.map((q, index) =>
-              (
-                <Link to={
-                  profile && q.steam_id === profile.steam_id ? "/profile" :
-                    `/users/${q.steam_id}`
-                } className='search-player' key={index} onClick={_close_mobile_search_and_menu}>
-                  <img src={q.avatar_link} alt='pfp'></img>
-                  <span style={{ fontSize: `${36 - q.user_name.length * 0.8}px` }}>{q.user_name}</span>
-                </Link>
-              ))}
+            (
+              <Link to={
+                profile && q.steam_id === profile.steam_id ? "/profile" :
+                  `/users/${q.steam_id}`
+              } className='search-player' key={index} onClick={_close_mobile_search_and_menu}>
+                <img src={q.avatar_link} alt='pfp'></img>
+                <span style={{ fontSize: `${36 - q.user_name.length * 0.8}px` }}>{q.user_name}</span>
+              </Link>
+            ))}
 
           </div>
         </div>

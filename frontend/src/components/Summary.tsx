@@ -140,11 +140,11 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
       <section id='section4' className='summary1'>
         <div id='difficulty'>
           <span>Difficulty</span>
-          {data.map.difficulty <= 2 && (<span style={{ color: "lime" }}>Very easy</span>)}
+          {data.map.difficulty <= 2 && (<span style={{ color: "lime" }}>Very Easy</span>)}
           {data.map.difficulty > 2 && data.map.difficulty <= 4 && (<span style={{ color: "green" }}>Easy</span>)}
           {data.map.difficulty > 4 && data.map.difficulty <= 6 && (<span style={{ color: "yellow" }}>Medium</span>)}
           {data.map.difficulty > 6 && data.map.difficulty <= 8 && (<span style={{ color: "orange" }}>Hard</span>)}
-          {data.map.difficulty > 8 && data.map.difficulty <= 10 && (<span style={{ color: "red" }}>Very hard</span>)}
+          {data.map.difficulty > 8 && data.map.difficulty <= 10 && (<span style={{ color: "red" }}>Very Hard</span>)}
           <div>
             {data.map.difficulty <= 2 ? (<div className='difficulty-rating' style={{ backgroundColor: "lime" }}></div>) : (<div className='difficulty-rating'></div>)}
             {data.map.difficulty > 2 && data.map.difficulty <= 4 ? (<div className='difficulty-rating' style={{ backgroundColor: "green" }}></div>) : (<div className='difficulty-rating'></div>)}

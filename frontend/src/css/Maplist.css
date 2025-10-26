@@ -198,6 +198,43 @@ h3 {
     }
 }
 
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    h1 {
+        font-size: 48px;
+    }
+
+    h3 {
+        font-size: 36px;
+        margin: 0px 8px;
+    }
+
+    .portal-count {
+        font-size: 80px;
+    }
+
+    .blur.map span:nth-child(1) {
+        font-size: 50px;
+    }
+
+    .game-cat-button {
+        font-size: 20px;
+    }
+
+    .maplist {
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 18px;
+        margin: 18px 0px;
+    }
+
+    .maplist-entry span {
+        font-size: 18px;
+    }
+
+    .map-entry-image {
+        height: 180px;
+    }
+}
+
 @media screen and (max-width: 768px) {
     h1 {
         font-size: 36px;
