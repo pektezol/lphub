@@ -30,11 +30,11 @@ export function time_ago(date: Date) {
 };
 
 export function ticks_to_time(ticks: number) {
-  let seconds = Math.floor(ticks / 60)
-  let minutes = Math.floor(seconds / 60)
-  const hours = Math.floor(minutes / 60)
+  let seconds = Math.floor(ticks / 60);
+  let minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
 
-  const milliseconds = Math.floor((ticks % 60) * 1000 / 60)
+  const milliseconds = Math.floor((ticks % 60) * 1000 / 60);
   seconds = seconds % 60;
   minutes = minutes % 60;
 

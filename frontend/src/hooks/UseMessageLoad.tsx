@@ -30,6 +30,6 @@ const useMessageLoad = () => {
   );
 
   return { messageLoad, messageLoadClose, MessageDialogLoadComponent };
-}
+};
 
 export default useMessageLoad;

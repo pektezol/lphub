@@ -28,8 +28,8 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
   const [pageNumber, setPageNumber] = React.useState(1);
   const [pageMax, setPageMax] = React.useState(0);
 
-  const [game, setGame] = React.useState("0")
-  const [chapter, setChapter] = React.useState("0")
+  const [game, setGame] = React.useState("0");
+  const [chapter, setChapter] = React.useState("0");
   const [chapterData, setChapterData] = React.useState<GameChapters | null>(null);
   const [maps, setMaps] = React.useState<Map[]>([]);
 
@@ -100,7 +100,7 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
     if (profile && game !== "0") {
       _get_game_maps();
     }
-  }, [profile, game, chapter, chapterData])
+  }, [profile, game, chapter, chapterData]);
 
   if (!profile) {
     return (
@@ -279,14 +279,14 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
                           <span>{e.date.split("T")[0]}</span>
                           <span style={{ flexDirection: "row-reverse" }}>
 
-                            <button style={{ marginRight: "10px" }} onClick={() => { message("Demo Information", `Demo ID: ${e.demo_id}`) }}><img src={ThreedotIcon} alt="demo_id" /></button>
-                            <button onClick={() => { _delete_submission(r.map_id, e.record_id) }}><img src={DeleteIcon}></img></button>
+                            <button style={{ marginRight: "10px" }} onClick={() => { message("Demo Information", `Demo ID: ${e.demo_id}`); }}><img src={ThreedotIcon} alt="demo_id" /></button>
+                            <button onClick={() => { _delete_submission(r.map_id, e.record_id); }}><img src={DeleteIcon}></img></button>
                             <button onClick={() => window.location.href = `/api/v1/demos?uuid=${e.demo_id}`}><img src={DownloadIcon} alt="download" /></button>
                             {i === 0 && r.scores.length > 1 ? <button onClick={() => {
                               (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "44px" ||
                                 (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "" ?
                                 (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height = `${r.scores.length * 46}px` :
-                                (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height = "44px"
+                                (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height = "44px";
                             }
                             }><img src={HistoryIcon} alt="history" /></button> : ""}
 
@@ -325,14 +325,14 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
                             <span>{record!.scores[i].date.split("T")[0]}</span>
                             <span style={{ flexDirection: "row-reverse" }}>
 
-                              <button onClick={() => { message("Demo Information", `Demo ID: ${e.demo_id}`) }}><img src={ThreedotIcon} alt="demo_id" /></button>
-                              <button onClick={() => { _delete_submission(r.id, e.record_id) }}><img src={DeleteIcon}></img></button>
+                              <button onClick={() => { message("Demo Information", `Demo ID: ${e.demo_id}`); }}><img src={ThreedotIcon} alt="demo_id" /></button>
+                              <button onClick={() => { _delete_submission(r.id, e.record_id); }}><img src={DeleteIcon}></img></button>
                               <button onClick={() => window.location.href = `/api/v1/demos?uuid=${e.demo_id}`}><img src={DownloadIcon} alt="download" /></button>
                               {i === 0 && record!.scores.length > 1 ? <button onClick={() => {
                                 (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "44px" ||
                                   (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "" ?
                                   (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height = `${record!.scores.length * 46}px` :
-                                  (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height = "44px"
+                                  (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height = "44px";
                               }
                               }><img src={HistoryIcon} alt="history" /></button> : ""}
 
@@ -340,8 +340,8 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
                           </>))}
                         </button>
 
-                      )
-                    } else { return null }
+                      );
+                    } else { return null; }
                   }) : (<>{console.warn(maps)}</>)}
           </div>
         </section>

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { MapSummary } from "@customTypes/Map";
 import { ModMenuContent } from "@customTypes/Content";
 import { API } from "@api/Api";
-import "@css/ModMenu.css"
+import "@css/ModMenu.css";
 import useConfirm from "@hooks/UseConfirm";
 
 interface ModMenuProps {
@@ -73,7 +73,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID }) =>
         if (success) {
           navigate(0);
         } else {
-          alert("Error. Check logs.")
+          alert("Error. Check logs.");
         }
       }
     }
@@ -87,7 +87,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID }) =>
         if (success) {
           navigate(0);
         } else {
-          alert("Error. Check logs.")
+          alert("Error. Check logs.");
         }
       }
     }
@@ -101,7 +101,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID }) =>
         if (success) {
           navigate(0);
         } else {
-          alert("Error. Check logs.")
+          alert("Error. Check logs.");
         }
       }
     }
@@ -115,7 +115,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID }) =>
         if (success) {
           navigate(0);
         } else {
-          alert("Error. Check logs.")
+          alert("Error. Check logs.");
         }
       }
     }
@@ -149,17 +149,17 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID }) =>
   }, [menu]);
 
   React.useEffect(() => {
-    const modview = document.querySelector("div#modview") as HTMLElement
+    const modview = document.querySelector("div#modview") as HTMLElement;
     if (modview) {
       showButton ? modview.style.transform = "translateY(-68%)"
-        : modview.style.transform = "translateY(0%)"
+        : modview.style.transform = "translateY(0%)";
     }
 
-    const modview_block = document.querySelector("#modview_block") as HTMLElement
+    const modview_block = document.querySelector("#modview_block") as HTMLElement;
     if (modview_block) {
-      showButton ? modview_block.style.display = "none" : modview_block.style.display = "block"
+      showButton ? modview_block.style.display = "none" : modview_block.style.display = "block";
     }
-  }, [showButton])
+  }, [showButton]);
 
   return (
     <>

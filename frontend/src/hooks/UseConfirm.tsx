@@ -21,20 +21,20 @@ const useConfirm = () => {
     if (resolvePromise) {
       resolvePromise(true);
     }
-  }
+  };
 
   const handleCancel = () => {
     setIsOpen(false);
     if (resolvePromise) {
       resolvePromise(false);
     }
-  }
+  };
 
   const ConfirmDialogComponent = isOpen && (
     <ConfirmDialog title={title} subtitle={subtitle} onConfirm={handleConfirm} onCancel={handleCancel}></ConfirmDialog>
   );
 
   return { confirm, ConfirmDialogComponent };
-}
+};
 
 export default useConfirm;

@@ -6,7 +6,7 @@ const MapEntry: React.FC = () => {
     <div>
 
     </div>
-  )
-}
+  );
+};
 
 export default MapEntry;

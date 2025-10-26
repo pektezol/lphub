@@ -2,7 +2,7 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 
 import { MapSummary } from "@customTypes/Map";
-import "@css/Maps.css"
+import "@css/Maps.css";
 
 interface SummaryProps {
   selectedRun: number
@@ -18,11 +18,11 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
   function _select_run(idx: number, category_id: number) {
     const r = document.querySelectorAll("button.record");
     r.forEach(e => (e as HTMLElement).style.backgroundColor = "#2b2e46");
-    (r[idx] as HTMLElement).style.backgroundColor = "#161723"
+    (r[idx] as HTMLElement).style.backgroundColor = "#161723";
 
 
     if (data && data.summary.routes.length !== 0) {
-      idx += data.summary.routes.filter(e => e.category.id < category_id).length // lethimcook
+      idx += data.summary.routes.filter(e => e.category.id < category_id).length; // lethimcook
       setSelectedRun(idx);
     }
   };
@@ -34,7 +34,7 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
 
   function _category_change() {
     const btn = document.querySelectorAll("#section3 #category span button");
-    btn.forEach((e) => { (e as HTMLElement).style.backgroundColor = "#2b2e46" });
+    btn.forEach((e) => { (e as HTMLElement).style.backgroundColor = "#2b2e46"; });
     // heavenly father forgive me for i have sinned. TODO: fix this bullshit with dynamic categories
     const idx = selectedCategory === 1 ? 0 : data.map.is_coop ? selectedCategory - 3 : selectedCategory - 1;
     (btn[idx] as HTMLElement).style.backgroundColor = "#202232";
@@ -42,7 +42,7 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
 
   function _history_change() {
     const btn = document.querySelectorAll("#section3 #history span button");
-    btn.forEach((e) => { (e as HTMLElement).style.backgroundColor = "#2b2e46" });
+    btn.forEach((e) => { (e as HTMLElement).style.backgroundColor = "#2b2e46"; });
     (historySelected ? btn[1] as HTMLElement : btn[0] as HTMLElement).style.backgroundColor = "#202232";
   };
 

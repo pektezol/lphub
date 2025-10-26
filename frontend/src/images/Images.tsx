@@ -1,5 +1,5 @@
-import logo from "./png/logo.png"
-import login from "./png/login.png"
+import logo from "./png/logo.png";
+import login from "./png/login.png";
 import img1 from "./png/1.png";
 import img2 from "./png/2.png";
 import img3 from "./png/3.png";

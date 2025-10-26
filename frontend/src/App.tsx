@@ -52,8 +52,8 @@ const App: React.FC = () => {
       setIsModerator(false);
     } else {
       setProfile({} as UserProfile); // placeholder before we call actual user profile
-      _set_profile(get_user_id_from_token(token))
-      const modStatus = get_user_mod_from_token(token)
+      _set_profile(get_user_id_from_token(token));
+      const modStatus = get_user_mod_from_token(token);
       if (modStatus) {
         setIsModerator(true);
       } else {
@@ -65,6 +65,46 @@ const App: React.FC = () => {
   React.useEffect(() => {
     _fetch_token();
     _fetch_games();
+    if (import.meta.env.DEV) {
+      setProfile({
+        profile: true,
+        steam_id: "76561234567890123",
+        user_name: "test",
+        avatar_link: "",
+        country_code: "XD",
+        titles: [],
+        links: {
+          "p2sr": "",
+          "steam": "",
+          "twitch": "",
+          "youtube": "",
+        },
+        rankings: {
+          "cooperative": {
+            "completion_count": 0,
+            "completion_total": 0,
+            "rank": 0,
+          },
+          "singleplayer": {
+            "completion_count": 0,
+            "completion_total": 0,
+            "rank": 0,
+          },
+          "overall": {
+            "completion_count": 0,
+            "completion_total": 0,
+            "rank": 0,
+          },
+        },
+        records: [],
+        pagination: {
+          "current_page": 0,
+          "page_size": 0,
+          "total_pages": 0,
+          "total_records": 0,
+        },
+      } as UserProfile);
+    };
   }, []);
 
   return (

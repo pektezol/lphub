@@ -16,6 +16,7 @@ export default [
             'no-empty': 'warn',
             'indent': ['warn', 2],
             'quotes': ['warn', 'double'],
+            'semi': ['warn', 'always'],
             '@typescript-eslint/no-explicit-any': 'warn',
             '@typescript-eslint/no-unused-vars': 'warn',
             '@typescript-eslint/no-unused-expressions': 'warn',

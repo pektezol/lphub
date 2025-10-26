@@ -6,7 +6,7 @@ import { MapLeaderboard } from "@customTypes/Map";
 import { ticks_to_time, time_ago } from "@utils/Time";
 import { API } from "@api/Api";
 import useMessage from "@hooks/UseMessage";
-import "@css/Maps.css"
+import "@css/Maps.css";
 
 interface LeaderboardsProps {
   mapID: string;
@@ -26,7 +26,7 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
 
   React.useEffect(() => {
     _fetch_map_leaderboards();
-  }, [pageNumber, navigate])
+  }, [pageNumber, navigate]);
 
   if (!data) {
     return (
@@ -103,14 +103,14 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
 
               {r.kind === "multiplayer" ? (
                 <span>
-                  <button onClick={() => { message("Demo Information", `Host Demo ID: ${r.host_demo_id} \nParnter Demo ID: ${r.partner_demo_id}`) }}><img src={ThreedotIcon} alt="demo_id" /></button>
+                  <button onClick={() => { message("Demo Information", `Host Demo ID: ${r.host_demo_id} \nParnter Demo ID: ${r.partner_demo_id}`); }}><img src={ThreedotIcon} alt="demo_id" /></button>
                   <button onClick={() => window.location.href = `/api/v1/demos?uuid=${r.partner_demo_id}`}><img src={DownloadIcon} alt="download" style={{ filter: "hue-rotate(160deg) contrast(60%) saturate(1000%)" }} /></button>
                   <button onClick={() => window.location.href = `/api/v1/demos?uuid=${r.host_demo_id}`}><img src={DownloadIcon} alt="download" style={{ filter: "hue-rotate(300deg) contrast(60%) saturate(1000%)" }} /></button>
                 </span>
               ) : r.kind === "singleplayer" && (
 
                 <span>
-                  <button onClick={() => { message("Demo Information", `Demo ID: ${r.demo_id}`) }}><img src={ThreedotIcon} alt="demo_id" /></button>
+                  <button onClick={() => { message("Demo Information", `Demo ID: ${r.demo_id}`); }}><img src={ThreedotIcon} alt="demo_id" /></button>
                   <button onClick={() => window.location.href = `/api/v1/demos?uuid=${r.demo_id}`}><img src={DownloadIcon} alt="download" /></button>
                 </span>
               )}
