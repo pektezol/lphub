@@ -365,6 +365,10 @@ a {
     .search-player>span {
         font-size: 23px;
     }
+
+    .login>button:nth-child(2) {
+        left: 170px;
+    }
 }
 
 @media screen and (max-width: 768px) {
