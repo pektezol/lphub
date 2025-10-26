@@ -288,6 +288,92 @@ span.titles {
     cursor: pointer;
 }
 
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    #section1.profile {
+        margin: 18px;
+        grid-template-columns: 220px 1fr;
+        height: 180px;
+    }
+
+    #section1.profile>div:first-child {
+        margin: 6px 28px 6px 28px;
+        scale: 0.85;
+    }
+
+    #profile-top {
+        height: 90px;
+        grid-template-columns: 75% 25%;
+    }
+
+    #profile-top>div:nth-child(1) {
+        font-size: 44px;
+    }
+
+    #profile-top>div:nth-child(1)>div>img {
+        margin: 10px;
+    }
+
+    span.titles {
+        margin: 10px 10px 10px 0;
+        font-size: 16px;
+        padding: 5px 16px 0px 16px;
+    }
+
+    #profile-top>div:nth-child(2)>a>img {
+        height: 44px;
+    }
+
+    #profile-bottom {
+        height: 90px;
+    }
+
+    #profile-bottom>div>span:nth-child(1) {
+        font-size: 16px;
+    }
+
+    #profile-bottom>div>span:nth-child(2) {
+        font-size: 24px;
+    }
+
+    #profile-bottom>div>span:nth-child(2)>span {
+        font-size: 12px;
+    }
+
+    #section2.profile {
+        margin: 18px;
+        height: 55px;
+    }
+
+    #section2.profile>button {
+        font-size: 22px;
+    }
+
+    #section3.profile1 {
+        margin: 18px;
+    }
+
+    #profileboard-nav>select {
+        margin: 10px 18px 18px 18px;
+        height: 48px;
+        font-size: 22px;
+    }
+
+    #profileboard-top {
+        font-size: 18px;
+        padding-left: 35px;
+        margin: 0 18px;
+        grid-template-columns: 16% 16% 5% 16% 5% 14% 14% 14%;
+    }
+
+    .profileboard-record {
+        margin: 10px 18px 0px 18px;
+        width: calc(100% - 36px);
+        padding: 0 0 0 35px;
+        font-size: 18px;
+        grid-template-columns: 16% 16% 5% 16% 5% 14% 14% 14%;
+    }
+}
+
 @media screen and (max-width: 768px) {
     * {
         box-sizing: border-box;

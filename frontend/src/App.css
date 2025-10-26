@@ -94,6 +94,14 @@ body {
     src: local('BarlowSemiCondensed-Regular'), url(./fonts/BarlowSemiCondensed-SemiBold.ttf) format('truetype');
 }
 
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    main {
+        width: calc(100% - 20rem);
+        left: 19rem;
+        font-size: 2rem;
+    }
+}
+
 @media screen and (max-width: 768px) {
     * {
         box-sizing: border-box;

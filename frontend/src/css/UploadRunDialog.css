@@ -165,6 +165,51 @@ button:hover {
     align-items: flex-start;
 }
 
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    div#upload-run {
+        width: 280px;
+    }
+
+    #upload-run-menu {
+        left: calc(50% + 140px);
+        top: 100px;
+    }
+
+    #upload-run-menu-add,
+    #upload-run-menu-edit {
+        font-size: 36px;
+    }
+
+    #upload-run-menu-add>div,
+    #upload-run-menu-edit>div {
+        font-size: 19px;
+        padding: 0px 13px;
+    }
+
+    .upload-run-dropdown-container .dropdown-cur {
+        width: 220px;
+    }
+
+    .upload-run-dropdown {
+        width: 240px;
+        max-height: 280px;
+    }
+
+    .upload-run-demo-name {
+        width: 350px;
+    }
+
+    .upload-run-drag-area {
+        width: 340px;
+        height: 140px;
+    }
+
+    button,
+    input {
+        font-size: 17px;
+    }
+}
+
 @media screen and (max-width: 768px) {
     div#upload-run {
         width: 90vw;

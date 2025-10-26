@@ -308,6 +308,65 @@ a {
     display: none;
 }
 
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    #sidebar {
+        width: 280px;
+    }
+
+    #logo-text {
+        font-size: 30px;
+        line-height: 32px;
+    }
+
+    #logo-text>span>b {
+        font-size: 50px;
+    }
+
+    .sidebar-button,
+    .logout-button,
+    .submit-run-button {
+        width: 265px;
+        height: 40px;
+    }
+
+    input#searchbar[type=text] {
+        width: 200px;
+        height: 28px;
+        font-size: 18px;
+    }
+
+    #search-data {
+        max-height: calc(100vh - 172px);
+    }
+
+    .search-map,
+    .search-player {
+        width: calc(100% - 50px);
+        height: 75px;
+        margin: 9px 6px 0 6px;
+    }
+
+    .search-map>span {
+        font-size: 15px;
+    }
+
+    .search-map>span:nth-child(3) {
+        font-size: 26px;
+    }
+
+    .search-player {
+        padding: 0 14px;
+    }
+
+    .search-player>img {
+        height: 55px;
+    }
+
+    .search-player>span {
+        font-size: 23px;
+    }
+}
+
 @media screen and (max-width: 768px) {
 
     #sidebar {

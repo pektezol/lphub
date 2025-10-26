@@ -141,6 +141,69 @@ div#modview>div:nth-child(2) {
     font-size: 21px;
 }
 
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    #modview_block {
+        left: 280px;
+        width: calc(100% - 280px);
+    }
+
+    #modview-menu {
+        left: calc(50% + 140px);
+        top: 100px;
+    }
+
+    #modview-menu-image {
+        grid-template-columns: 1fr;
+    }
+
+    #modview-menu-image>div:nth-child(1),
+    #modview-menu-image>div:nth-child(2) {
+        width: 450px;
+        height: auto;
+    }
+
+    #modview-menu-image>div>img {
+        width: 450px;
+    }
+
+    #modview-menu-image>div>button {
+        width: 280px;
+        margin-left: 85px;
+        font-size: 18px;
+    }
+
+    #modview-menu-add,
+    #modview-menu-edit {
+        grid-template-columns: 1fr 1fr 1fr;
+        font-size: 36px;
+    }
+
+    #modview-menu-add>div,
+    #modview-menu-edit>div {
+        width: 180px;
+        font-size: 18px;
+    }
+
+    #modview-route-description>textarea {
+        width: 680px;
+        height: 140px;
+    }
+
+    #modview-md {
+        width: 700px;
+        height: 260px;
+        top: 380px;
+    }
+
+    #modview-md>p {
+        font-size: 19px;
+    }
+
+    div#modview {
+        width: 280px;
+    }
+}
+
 @media screen and (max-width: 768px) {
     #modview_block {
         left: 0;

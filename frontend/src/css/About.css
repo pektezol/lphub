@@ -23,6 +23,23 @@ h2 {
     font-size: 60px;
 }
 
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    #about {
+        width: calc(100% - 340px);
+        left: 310px;
+        padding-right: 25px;
+        font-size: 22px;
+    }
+
+    h1 {
+        font-size: 68px;
+    }
+
+    h2 {
+        font-size: 52px;
+    }
+}
+
 @media screen and (max-width: 768px) {
     #about {
         width: 100%;

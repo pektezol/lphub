@@ -107,6 +107,38 @@
     transform: translateX(10px);
 }
 
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    .nav-container button {
+        font-size: 23px;
+        padding: 9px 0px;
+    }
+
+    .nav-1 div {
+        width: 70%;
+    }
+
+    .nav-2 div {
+        width: 82%;
+    }
+
+    .rankings-leaderboard {
+        font-size: 18px;
+    }
+
+    .ranks-container {
+        width: calc(70% - 20px);
+    }
+
+    .leaderboard-entry {
+        grid-template-columns: 18% 42% 40%;
+        font-size: 16px;
+    }
+
+    .leaderboard-entry img {
+        height: 30px;
+    }
+}
+
 @media screen and (max-width: 768px) {
 
     .nav-1 div,
