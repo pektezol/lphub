@@ -76,7 +76,7 @@
 .sidebar-button {
     display: grid;
     grid-template-columns: 50px auto;
-    place-items: left;
+    align-items: center;
     text-align: left;
 
     background-color: inherit;
@@ -85,7 +85,7 @@
     width: 310px;
     height: 40px;
     border-radius: 20px;
-    padding: 0.4em 0 0 11px;
+    padding: 0 0 0 11px;
 
     transition:
         width .3s,
@@ -100,7 +100,7 @@
 .logout-button {
     display: grid;
     grid-template-columns: 50px auto;
-    place-items: left;
+    align-items: center;
     text-align: left;
 
     background-color: inherit;
@@ -109,7 +109,7 @@
     width: 310px;
     height: 40px;
     border-radius: 20px;
-    padding: 0.4em 0 0 11px;
+    padding: 0 0 0 11px;
 
     transition:
         width .3s,
@@ -120,7 +120,7 @@
 .submit-run-button {
     display: grid;
     grid-template-columns: 50px auto;
-    place-items: left;
+    align-items: center;
     text-align: left;
 
     background-color: inherit;
@@ -129,7 +129,7 @@
     width: 310px;
     height: 40px;
     border-radius: 20px;
-    padding: 0.4em 0 0 11px;
+    padding: 0 0 0 11px;
 
     transition:
         width .3s,
