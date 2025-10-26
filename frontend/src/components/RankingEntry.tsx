@@ -26,7 +26,7 @@ const RankingEntry: React.FC<RankingEntryProps> = (prop) => {
         </div>
         <span>{prop.curRankingData.total_score}</span>
       </div>
-    )
+    );
   } else {
     return (
       <div className='leaderboard-entry'>
@@ -39,8 +39,8 @@ const RankingEntry: React.FC<RankingEntryProps> = (prop) => {
         </div>
         <span>{prop.currentLeaderboardType == RankingCategories.rankings_singleplayer ? prop.curRankingData.sp_score : prop.currentLeaderboardType == RankingCategories.rankings_multiplayer ? prop.curRankingData.mp_score : prop.curRankingData.overall_score}</span>
       </div>
-    )
+    );
   }
-}
+};
 
 export default RankingEntry;

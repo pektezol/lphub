@@ -32,6 +32,6 @@ const useMessage = () => {
   );
 
   return { message, MessageDialogComponent };
-}
+};
 
 export default useMessage;

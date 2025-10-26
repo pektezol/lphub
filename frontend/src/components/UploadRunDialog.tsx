@@ -52,7 +52,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
     } else {
       fileInputRefPartner.current?.click();
     }
-  }
+  };
 
   const _handle_drag_over = (e: React.DragEvent<HTMLDivElement>, host: boolean) => {
     e.preventDefault();
@@ -62,7 +62,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
     } else {
       setDragHighlightPartner(true);
     }
-  }
+  };
 
   const _handle_drag_leave = (e: React.DragEvent<HTMLDivElement>, host: boolean) => {
     e.preventDefault();
@@ -72,7 +72,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
     } else {
       setDragHighlightPartner(false);
     }
-  }
+  };
 
   const _handle_drop = (e: React.DragEvent<HTMLDivElement>, host: boolean) => {
     e.preventDefault();
@@ -80,7 +80,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
     setDragHighlight(true);
 
     _handle_file_change(e.dataTransfer.files, host);
-  }
+  };
 
   const _handle_dropdowns = (dropdown: number) => {
     setDropdown1Vis(false);
@@ -91,7 +91,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
       setDropdown2Vis(!dropdown2Vis);
       document.querySelector("#dropdown2")?.scrollTo(0, 0);
     }
-  }
+  };
 
   const _handle_game_select = async (game_id: string, game_name: string) => {
     setLoading(true);
@@ -120,16 +120,16 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
     if (token) {
       if (games[selectedGameID].is_coop) {
         if (uploadRunContent.host_demo === null) {
-          await message("Error", "You must select a host demo to upload.")
-          return
+          await message("Error", "You must select a host demo to upload.");
+          return;
         } else if (uploadRunContent.partner_demo === null) {
-          await message("Error", "You must select a partner demo to upload.")
-          return
+          await message("Error", "You must select a partner demo to upload.");
+          return;
         }
       } else {
         if (uploadRunContent.host_demo === null) {
-          await message("Error", "You must select a demo to upload.")
-          return
+          await message("Error", "You must select a demo to upload.");
+          return;
         }
       }
       const demo = SourceDemoParser.default()
@@ -137,24 +137,24 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
         .parse(await uploadRunContent.host_demo.arrayBuffer());
       const scoreboard = demo.findPacket<NetMessages.SvcUserMessage>((msg) => {
         return msg instanceof NetMessages.SvcUserMessage && msg.userMessage instanceof ScoreboardTempUpdate;
-      })
+      });
 
       if (!scoreboard) {
-        await message("Error", "Error while processing demo: Unable to get scoreboard result. Either there is a demo that is corrupt or haven't been recorded in challenge mode.")
-        return
+        await message("Error", "Error while processing demo: Unable to get scoreboard result. Either there is a demo that is corrupt or haven't been recorded in challenge mode.");
+        return;
       }
 
       if (!demo.mapName || !MapNames[demo.mapName]) {
-        await message("Error", "Error while processing demo: Invalid map name.")
-        return
+        await message("Error", "Error while processing demo: Invalid map name.");
+        return;
       }
 
       if (selectedGameID === 0 && MapNames[demo.mapName] > 60) {
-        await message("Error", "Error while processing demo: Invalid cooperative demo in singleplayer submission.")
-        return
+        await message("Error", "Error while processing demo: Invalid cooperative demo in singleplayer submission.");
+        return;
       } else if (selectedGameID === 1 && MapNames[demo.mapName] <= 60) {
-        await message("Error", "Error while processing demo: Invalid singleplayer demo in cooperative submission.")
-        return
+        await message("Error", "Error while processing demo: Invalid singleplayer demo in cooperative submission.");
+        return;
       }
 
       const { portalScore, timeScore } = scoreboard.userMessage?.as<ScoreboardTempUpdate>() ?? {};
@@ -207,7 +207,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
                 </div>
                 <div style={{ top: "110px" }} className={dropdown1Vis ? "upload-run-dropdown" : "upload-run-dropdown hidden"}>
                   {games.map((game) => (
-                    <div onClick={() => { _handle_game_select(game.id.toString(), game.name); _handle_dropdowns(1) }} key={game.id}>{game.name}</div>
+                    <div onClick={() => { _handle_game_select(game.id.toString(), game.name); _handle_dropdowns(1); }} key={game.id}>{game.name}</div>
                   ))}
                 </div>
               </div>
@@ -219,7 +219,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
 
                     <div>
                       <h3 style={{ margin: "10px 0px" }}>Host Demo</h3>
-                      <div onClick={() => { _handle_file_click(true) }} onDragOver={(e) => { _handle_drag_over(e, true) }} onDrop={(e) => { _handle_drop(e, true) }} onDragLeave={(e) => { _handle_drag_leave(e, true) }} className={`upload-run-drag-area ${dragHightlight ? "upload-run-drag-area-highlight" : ""} ${uploadRunContent.host_demo ? "upload-run-drag-area-hidden" : ""}`}>
+                      <div onClick={() => { _handle_file_click(true); }} onDragOver={(e) => { _handle_drag_over(e, true); }} onDrop={(e) => { _handle_drop(e, true); }} onDragLeave={(e) => { _handle_drag_leave(e, true); }} className={`upload-run-drag-area ${dragHightlight ? "upload-run-drag-area-highlight" : ""} ${uploadRunContent.host_demo ? "upload-run-drag-area-hidden" : ""}`}>
                         <input ref={fileInputRef} type="file" name="host_demo" id="host_demo" accept=".dem" onChange={(e) => _handle_file_change(e.target.files, true)} />
                         {!uploadRunContent.host_demo ?
                           <div>
@@ -239,7 +239,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
                           <>
                             <div>
                               <h3 style={{ margin: "10px 0px" }}>Partner Demo</h3>
-                              <div onClick={() => { _handle_file_click(false) }} onDragOver={(e) => { _handle_drag_over(e, false) }} onDrop={(e) => { _handle_drop(e, false) }} onDragLeave={(e) => { _handle_drag_leave(e, false) }} className={`upload-run-drag-area ${dragHightlightPartner ? "upload-run-drag-area-highlight-partner" : ""} ${uploadRunContent.partner_demo ? "upload-run-drag-area-hidden" : ""}`}>
+                              <div onClick={() => { _handle_file_click(false); }} onDragOver={(e) => { _handle_drag_over(e, false); }} onDrop={(e) => { _handle_drop(e, false); }} onDragLeave={(e) => { _handle_drag_leave(e, false); }} className={`upload-run-drag-area ${dragHightlightPartner ? "upload-run-drag-area-highlight-partner" : ""} ${uploadRunContent.partner_demo ? "upload-run-drag-area-hidden" : ""}`}>
                                 <input ref={fileInputRefPartner} type="file" name="partner_demo" id="partner_demo" accept=".dem" onChange={(e) => _handle_file_change(e.target.files, false)} />						  {!uploadRunContent.partner_demo ?
                                   <div>
                                     <span>Drag and drop</span>

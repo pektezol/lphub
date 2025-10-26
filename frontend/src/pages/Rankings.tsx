@@ -31,15 +31,15 @@ const Rankings: React.FC = () => {
     const rankings = await API.get_official_rankings();
     setLeaderboardData(rankings);
     if (currentLeaderboardType == RankingCategories.rankings_singleplayer) {
-      setCurrentLeaderboard(rankings.rankings_singleplayer)
+      setCurrentLeaderboard(rankings.rankings_singleplayer);
     } else if (currentLeaderboardType == RankingCategories.rankings_multiplayer) {
-      setCurrentLeaderboard(rankings.rankings_multiplayer)
+      setCurrentLeaderboard(rankings.rankings_multiplayer);
     } else {
-      setCurrentLeaderboard(rankings.rankings_overall)
+      setCurrentLeaderboard(rankings.rankings_overall);
     }
     setLoad(true);
     setLeaderboardLoad(true);
-  }
+  };
 
   const __dev_fetch_unofficial_rankings = async () => {
     try {
@@ -47,17 +47,17 @@ const Rankings: React.FC = () => {
       const rankings = await API.get_unofficial_rankings();
       setLeaderboardData(rankings);
       if (currentLeaderboardType == RankingCategories.rankings_singleplayer) {
-        setCurrentLeaderboard(rankings.rankings_singleplayer)
+        setCurrentLeaderboard(rankings.rankings_singleplayer);
       } else if (currentLeaderboardType == RankingCategories.rankings_multiplayer) {
-        setCurrentLeaderboard(rankings.rankings_multiplayer)
+        setCurrentLeaderboard(rankings.rankings_multiplayer);
       } else {
-        setCurrentLeaderboard(rankings.rankings_overall)
+        setCurrentLeaderboard(rankings.rankings_overall);
       }
       setLeaderboardLoad(true);
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
-  }
+  };
 
   const _set_current_leaderboard = (ranking_cat: RankingCategories) => {
     if (ranking_cat == RankingCategories.rankings_singleplayer) {
@@ -69,7 +69,7 @@ const Rankings: React.FC = () => {
     }
 
     setCurrentLeaderboardType(ranking_cat);
-  }
+  };
 
   const _set_leaderboard_type = (leaderboard_type: LeaderboardTypes) => {
     if (leaderboard_type == LeaderboardTypes.official) {
@@ -77,14 +77,14 @@ const Rankings: React.FC = () => {
     } else {
 
     }
-  }
+  };
 
   useEffect(() => {
     _fetch_rankings();
     if (load) {
       _set_current_leaderboard(RankingCategories.rankings_singleplayer);
     }
-  }, [load])
+  }, [load]);
 
   return (
     <main>
@@ -93,10 +93,10 @@ const Rankings: React.FC = () => {
       </Helmet>
       <section className="nav-container nav-1">
         <div>
-          <button onClick={() => { _fetch_rankings(); setCurrentRankingType(LeaderboardTypes.official) }} className={`nav-1-btn ${currentRankingType == LeaderboardTypes.official ? "selected" : ""}`}>
+          <button onClick={() => { _fetch_rankings(); setCurrentRankingType(LeaderboardTypes.official); }} className={`nav-1-btn ${currentRankingType == LeaderboardTypes.official ? "selected" : ""}`}>
             <span>Official (LPHUB)</span>
           </button>
-          <button onClick={() => { __dev_fetch_unofficial_rankings(); setCurrentRankingType(LeaderboardTypes.unofficial) }} className={`nav-1-btn ${currentRankingType == LeaderboardTypes.unofficial ? "selected" : ""}`}>
+          <button onClick={() => { __dev_fetch_unofficial_rankings(); setCurrentRankingType(LeaderboardTypes.unofficial); }} className={`nav-1-btn ${currentRankingType == LeaderboardTypes.unofficial ? "selected" : ""}`}>
             <span>Unofficial (Steam)</span>
           </button>
         </div>
@@ -127,7 +127,7 @@ const Rankings: React.FC = () => {
             <div className="splitter"></div>
 
             {leaderboardLoad && currentLeaderboard?.map((curRankingData, i) => {
-              return <RankingEntry currentLeaderboardType={currentLeaderboardType} curRankingData={curRankingData} key={i}></RankingEntry>
+              return <RankingEntry currentLeaderboardType={currentLeaderboardType} curRankingData={curRankingData} key={i}></RankingEntry>;
             })
             }
 
@@ -140,7 +140,7 @@ const Rankings: React.FC = () => {
         </section>
         : null}
     </main>
-  )
-}
+  );
+};
 
 export default Rankings;

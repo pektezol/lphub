@@ -28,19 +28,19 @@ const Sidebar: React.FC<SidebarProps> = ({ setToken, profile, setProfile, onUplo
 
   const handle_sidebar_click = (clicked_sidebar_idx: number) => {
     const btn = document.querySelectorAll("button.sidebar-button");
-    if (isSidebarOpen) { setSidebarOpen(false); _handle_sidebar_hide() }
+    if (isSidebarOpen) { setSidebarOpen(false); _handle_sidebar_hide(); }
     // clusterfuck
     btn.forEach((e, i) => {
-      btn[i].classList.remove("sidebar-button-selected")
-      btn[i].classList.add("sidebar-button-deselected")
-    })
-    btn[clicked_sidebar_idx].classList.add("sidebar-button-selected")
-    btn[clicked_sidebar_idx].classList.remove("sidebar-button-deselected")
+      btn[i].classList.remove("sidebar-button-selected");
+      btn[i].classList.add("sidebar-button-deselected");
+    });
+    btn[clicked_sidebar_idx].classList.add("sidebar-button-selected");
+    btn[clicked_sidebar_idx].classList.remove("sidebar-button-deselected");
   };
 
   const _handle_sidebar_hide = () => {
-    const btn = document.querySelectorAll("button.sidebar-button") as NodeListOf<HTMLElement>
-    const span = document.querySelectorAll("button.sidebar-button>span") as NodeListOf<HTMLElement>
+    const btn = document.querySelectorAll("button.sidebar-button") as NodeListOf<HTMLElement>;
+    const span = document.querySelectorAll("button.sidebar-button>span") as NodeListOf<HTMLElement>;
     const side = document.querySelector("#sidebar-list") as HTMLElement;
     const searchbar = document.querySelector("#searchbar") as HTMLInputElement;
     const uploadRunBtn = document.querySelector("#upload-run") as HTMLInputElement;
@@ -49,42 +49,42 @@ const Sidebar: React.FC<SidebarProps> = ({ setToken, profile, setProfile, onUplo
     if (isSidebarOpen) {
       if (profile) {
         const login = document.querySelectorAll(".login>button")[1] as HTMLElement;
-        login.style.opacity = "1"
-        uploadRunBtn.style.width = "310px"
-        uploadRunBtn.style.padding = "0.4em 0 0 11px"
-        uploadRunSpan.style.opacity = "0"
+        login.style.opacity = "1";
+        uploadRunBtn.style.width = "310px";
+        uploadRunBtn.style.padding = "0.4em 0 0 11px";
+        uploadRunSpan.style.opacity = "0";
         setTimeout(() => {
-          uploadRunSpan.style.opacity = "1"
-        }, 100)
+          uploadRunSpan.style.opacity = "1";
+        }, 100);
       }
       setSidebarOpen(false);
-      side.style.width = "320px"
+      side.style.width = "320px";
       btn.forEach((e, i) => {
-        e.style.width = (window.innerWidth > 1024) ? "310px" : "265px"
-        e.style.padding = "0.4em 0 0 11px"
+        e.style.width = (window.innerWidth > 1024) ? "310px" : "265px";
+        e.style.padding = "0.4em 0 0 11px";
         setTimeout(() => {
-          span[i].style.opacity = "1"
-        }, 100)
+          span[i].style.opacity = "1";
+        }, 100);
       });
-      side.style.zIndex = "2"
+      side.style.zIndex = "2";
     } else {
       if (profile) {
         const login = document.querySelectorAll(".login>button")[1] as HTMLElement;
-        login.style.opacity = "0"
-        uploadRunBtn.style.width = "40px"
-        uploadRunBtn.style.padding = "0.4em 0 0 5px"
-        uploadRunSpan.style.opacity = "0"
+        login.style.opacity = "0";
+        uploadRunBtn.style.width = "40px";
+        uploadRunBtn.style.padding = "0.4em 0 0 5px";
+        uploadRunSpan.style.opacity = "0";
       }
       setSidebarOpen(true);
       side.style.width = "40px";
       searchbar.focus();
       btn.forEach((e, i) => {
-        e.style.width = "40px"
-        e.style.padding = "0.4em 0 0 5px"
-        span[i].style.opacity = "0"
-      })
+        e.style.width = "40px";
+        e.style.padding = "0.4em 0 0 5px";
+        span[i].style.opacity = "0";
+      });
       setTimeout(() => {
-        side.style.zIndex = "0"
+        side.style.zIndex = "0";
       }, 300);
     }
   };
@@ -94,7 +94,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setToken, profile, setProfile, onUplo
       setIsMobileSearchOpen(!isMobileSearchOpen);
     } else {
       if (!isSidebarLocked) {
-        _handle_sidebar_hide()
+        _handle_sidebar_hide();
         setIsSidebarLocked(true);
         setTimeout(() => setIsSidebarLocked(false), 300);
       }
@@ -124,14 +124,14 @@ const Sidebar: React.FC<SidebarProps> = ({ setToken, profile, setProfile, onUplo
   };
 
   React.useEffect(() => {
-    if (path === "/") { handle_sidebar_click(1) }
-    else if (path.includes("games")) { handle_sidebar_click(2) }
-    else if (path.includes("rankings")) { handle_sidebar_click(3) }
+    if (path === "/") { handle_sidebar_click(1); }
+    else if (path.includes("games")) { handle_sidebar_click(2); }
+    else if (path.includes("rankings")) { handle_sidebar_click(3); }
     // else if (path.includes("news")) { handle_sidebar_click(4) }
     // else if (path.includes("scorelog")) { handle_sidebar_click(5) }
-    else if (path.includes("profile")) { handle_sidebar_click(4) }
-    else if (path.includes("rules")) { handle_sidebar_click(5) }
-    else if (path.includes("about")) { handle_sidebar_click(6) }
+    else if (path.includes("profile")) { handle_sidebar_click(4); }
+    else if (path.includes("rules")) { handle_sidebar_click(5); }
+    else if (path.includes("about")) { handle_sidebar_click(6); }
   }, [path]);
 
   return (
@@ -225,15 +225,15 @@ const Sidebar: React.FC<SidebarProps> = ({ setToken, profile, setProfile, onUplo
               </Link>
             ))}
             {searchData?.players.map((q, index) =>
-            (
-              <Link to={
-                profile && q.steam_id === profile.steam_id ? "/profile" :
-                  `/users/${q.steam_id}`
-              } className='search-player' key={index} onClick={_close_mobile_search_and_menu}>
-                <img src={q.avatar_link} alt='pfp'></img>
-                <span style={{ fontSize: `${36 - q.user_name.length * 0.8}px` }}>{q.user_name}</span>
-              </Link>
-            ))}
+              (
+                <Link to={
+                  profile && q.steam_id === profile.steam_id ? "/profile" :
+                    `/users/${q.steam_id}`
+                } className='search-player' key={index} onClick={_close_mobile_search_and_menu}>
+                  <img src={q.avatar_link} alt='pfp'></img>
+                  <span style={{ fontSize: `${36 - q.user_name.length * 0.8}px` }}>{q.user_name}</span>
+                </Link>
+              ))}
 
           </div>
         </div>

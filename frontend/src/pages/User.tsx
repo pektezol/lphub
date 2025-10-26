@@ -83,7 +83,7 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
     if (user && game !== "0") {
       _get_game_maps();
     }
-  }, [user, game, chapter, location])
+  }, [user, game, chapter, location]);
 
   if (!user) {
     return (
@@ -248,13 +248,13 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
                         <span>{e.date.split("T")[0]}</span>
                         <span style={{ flexDirection: "row-reverse" }}>
 
-                          <button onClick={() => { message("Demo Information", `Demo ID: ${e.demo_id}`) }}><img src={ThreedotIcon} alt="demo_id" /></button>
+                          <button onClick={() => { message("Demo Information", `Demo ID: ${e.demo_id}`); }}><img src={ThreedotIcon} alt="demo_id" /></button>
                           <button onClick={() => window.location.href = `/api/v1/demos?uuid=${e.demo_id}`}><img src={DownloadIcon} alt="download" /></button>
                           {i === 0 && r.scores.length > 1 ? <button onClick={() => {
                             (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "44px" ||
                               (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "" ?
                               (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height = `${r.scores.length * 46}px` :
-                              (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height = "44px"
+                              (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height = "44px";
                           }
                           }><img src={HistoryIcon} alt="history" /></button> : ""}
 
@@ -293,13 +293,13 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
                           <span>{record!.scores[i].date.split("T")[0]}</span>
                           <span style={{ flexDirection: "row-reverse" }}>
 
-                            <button onClick={() => { message("Demo Information", `Demo ID: ${e.demo_id}`) }}><img src={ThreedotIcon} alt="demo_id" /></button>
+                            <button onClick={() => { message("Demo Information", `Demo ID: ${e.demo_id}`); }}><img src={ThreedotIcon} alt="demo_id" /></button>
                             <button onClick={() => window.location.href = `/api/v1/demos?uuid=${e.demo_id}`}><img src={DownloadIcon} alt="download" /></button>
                             {i === 0 && record!.scores.length > 1 ? <button onClick={() => {
                               (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "44px" ||
                                 (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "" ?
                                 (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height = `${record!.scores.length * 46}px` :
-                                (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height = "44px"
+                                (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height = "44px";
                             }
                             }><img src={HistoryIcon} alt="history" /></button> : ""}
 
@@ -307,8 +307,8 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
                         </>))}
                       </button>
 
-                    )
-                  } else { return null }
+                    );
+                  } else { return null; }
                 }) : (<>{console.warn(maps)}</>)}
         </div>
       </section>

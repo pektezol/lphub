@@ -4,7 +4,7 @@ import { MapDiscussionContent, UploadRunContent } from "@customTypes/Content";
 import { MapSummary, MapLeaderboard, MapDiscussions, MapDiscussion } from "@customTypes/Map";
 
 export const get_map_summary = async (map_id: string): Promise<MapSummary> => {
-  const response = await axios.get(url(`maps/${map_id}/summary`))
+  const response = await axios.get(url(`maps/${map_id}/summary`));
   return response.data.data;
 };
 
@@ -94,7 +94,7 @@ export const post_record = async (token: string, run: UploadRunContent, map_id: 
     });
     return [response.data.success, response.data.message];
   }
-}
+};
 
 export const delete_map_record = async (token: string, map_id: number, record_id: number): Promise<boolean> => {
   const response = await axios.delete(url(`maps/${map_id}/record/${record_id}`), {

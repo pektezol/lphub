@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet";
 
 import GameEntry from "@components/GameEntry";
 import { Game } from "@customTypes/Game";
-import "@css/Maps.css"
+import "@css/Maps.css";
 
 interface GamesProps {
   games: Game[];
@@ -16,7 +16,7 @@ const Games: React.FC<GamesProps> = ({ games }) => {
     loaders.forEach((loader) => {
       (loader as HTMLElement).style.display = "none";
     });
-  }
+  };
 
   React.useEffect(() => {
     document.querySelectorAll(".games-page-item-body").forEach((game, index) => {

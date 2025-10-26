@@ -1,6 +1,6 @@
 import React from "react";
 
-import "@css/Dialog.css"
+import "@css/Dialog.css";
 
 interface ConfirmDialogProps {
     title: string;
@@ -25,7 +25,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ title, subtitle, onConfir
         </div>
       </div>
     </div>
-  )
+  );
 };
 
 export default ConfirmDialog;

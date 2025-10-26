@@ -51,7 +51,7 @@ export const API = {
 
 const BASE_API_URL: string = import.meta.env.DEV
   ? "https://lp.portal2.sr/api/v1/"
-  : "/api/v1/"
+  : "/api/v1/";
 
 export function url(path: string): string {
   return BASE_API_URL + path;

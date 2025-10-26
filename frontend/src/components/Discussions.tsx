@@ -4,7 +4,7 @@ import { MapDiscussion, MapDiscussions, MapDiscussionsDetail } from "@customType
 import { MapDiscussionContent } from "@customTypes/Content";
 import { time_ago } from "@utils/Time";
 import { API } from "@api/Api";
-import "@css/Maps.css"
+import "@css/Maps.css";
 import { Link } from "react-router-dom";
 import useConfirm from "@hooks/UseConfirm";
 

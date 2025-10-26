@@ -1,6 +1,6 @@
 import React from "react";
 
-import "@css/Dialog.css"
+import "@css/Dialog.css";
 
 interface MessageDialogProps {
     title: string;
@@ -23,7 +23,7 @@ const MessageDialog: React.FC<MessageDialogProps> = ({ title, subtitle, onClose 
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default MessageDialog;

@@ -34,7 +34,7 @@ const Maplist: React.FC = () => {
   const _fetch_chapters = async (chapter_id: string) => {
     const chapters = await API.get_chapters(chapter_id);
     setCurChapter(chapters);
-  }
+  };
 
   const _handle_dropdown_click = () => {
     if (dropdownActive == "none") {
@@ -42,7 +42,7 @@ const Maplist: React.FC = () => {
     } else {
       setDropdownActive("none");
     }
-  }
+  };
 
   // im sorry but im too lazy to fix this right now
   useEffect(() => {
@@ -73,7 +73,7 @@ const Maplist: React.FC = () => {
       const games_chapters = await API.get_games_chapters(gameId.toString());
       setGameChapters(games_chapters);
       setNumChapters(games_chapters.chapters.length);
-    }
+    };
 
     setLoad(true);
     _fetch_game();
@@ -85,7 +85,7 @@ const Maplist: React.FC = () => {
     if (gameChapters != undefined && !queryParams.get("chapter")) {
       _fetch_chapters(gameChapters!.chapters[0].id.toString());
     }
-  }, [gameChapters])
+  }, [gameChapters]);
 
 
 
@@ -124,7 +124,7 @@ const Maplist: React.FC = () => {
               </div>
               <div className="game-header-categories">
                 {game?.category_portals.map((cat, index) => (
-                  <button key={index} className={currentlySelected == cat.category.id || cat.category.id - 1 == catNum && !hasClicked ? "game-cat-button selected" : "game-cat-button"} onClick={() => { setCatNum(cat.category.id - 1); _update_currently_selected(cat.category.id) }}>
+                  <button key={index} className={currentlySelected == cat.category.id || cat.category.id - 1 == catNum && !hasClicked ? "game-cat-button selected" : "game-cat-button"} onClick={() => { setCatNum(cat.category.id - 1); _update_currently_selected(cat.category.id); }}>
                     <span>{cat.category.name}</span>
                   </button>
                 ))}
@@ -143,7 +143,7 @@ const Maplist: React.FC = () => {
               </div>
               <div className="dropdown-elements" style={{ display: dropdownActive }}>
                 {gameChapters?.chapters.map((chapter, i) => {
-                  return <div className="dropdown-element" onClick={() => { _fetch_chapters(chapter.id.toString()); _handle_dropdown_click() }}>{chapter.name}</div>
+                  return <div className="dropdown-element" onClick={() => { _fetch_chapters(chapter.id.toString()); _handle_dropdown_click(); }}>{chapter.name}</div>;
                 })
 
                 }
@@ -173,7 +173,7 @@ const Maplist: React.FC = () => {
                       </div>
                     </div>
                   </Link>
-                </div>
+                </div>;
               })}
             </section>
           </div>

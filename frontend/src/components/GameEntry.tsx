@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { Game, GameCategoryPortals } from "@customTypes/Game";
-import "@css/Games.css"
+import "@css/Games.css";
 
 import GameCategory from "@components/GameCategory";
 
@@ -25,7 +25,7 @@ const GameEntry: React.FC<GameEntryProps> = ({ game }) => {
       </div>
       <div id={game.id as any as string} className='games-page-item-body'>
         {catInfo.map((cat, index) => {
-          return <GameCategory cat={cat} game={game} key={index}></GameCategory>
+          return <GameCategory cat={cat} game={game} key={index}></GameCategory>;
         })}
       </div>
     </div></Link>

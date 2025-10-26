@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { Game, GameCategoryPortals } from "@customTypes/Game";
-import "@css/Games.css"
+import "@css/Games.css";
 
 interface GameCategoryProps {
     game: Game;
@@ -18,7 +18,7 @@ const GameCategory: React.FC<GameCategoryProps> = ({cat, game}) => {
         <span className='games-page-item-body-item-num'>{cat.portal_count}</span>
       </div>
     </Link>
-  )
-}
+  );
+};
 
 export default GameCategory;
