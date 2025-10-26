@@ -38,5 +38,11 @@ export function ticks_to_time(ticks: number) {
   seconds = seconds % 60;
   minutes = minutes % 60;
 
-  return `${hours === 0 ? "" : hours + ":"}${minutes === 0 ? "" : hours > 0 ? minutes.toString().padStart(2, "0") + ":" : (minutes + ":")}${minutes > 0 ? seconds.toString().padStart(2, "0") : seconds}.${milliseconds.toString().padStart(3, "0")}`;
+  if (hours > 0) {
+    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}.${milliseconds.toString().padStart(3, "0")}`;
+  } else if (minutes > 0) {
+    return `${minutes}:${seconds.toString().padStart(2, "0")}.${milliseconds.toString().padStart(3, "0")}`;
+  } else {
+    return `${seconds}.${milliseconds.toString().padStart(3, "0")}`;
+  }
 };
