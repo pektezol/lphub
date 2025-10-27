@@ -5,6 +5,7 @@ import { get_games, get_chapters, get_games_chapters, get_game_maps, get_search 
 import { get_official_rankings, get_unofficial_rankings } from "@api/Rankings";
 import { get_map_summary, get_map_leaderboard, get_map_discussions, get_map_discussion, post_map_discussion, post_map_discussion_comment, delete_map_discussion, post_record, delete_map_record } from "@api/Maps";
 import { delete_map_summary, post_map_summary, put_map_image, put_map_summary } from "@api/Mod";
+import { get_portal_count_history, get_recent_scores } from "@api/Stats";
 import { UploadRunContent } from "@customTypes/Content";
 
 // add new api call function entries here
@@ -47,6 +48,9 @@ export const API = {
   put_map_summary: (token: string, map_id: string, content: ModMenuContent) => put_map_summary(token, map_id, content),
 
   delete_map_summary: (token: string, map_id: string, route_id: number) => delete_map_summary(token, map_id, route_id),
+  // Stats
+  get_portal_count_history: () => get_portal_count_history(),
+  get_recent_scores: () => get_recent_scores(),
 };
 
 const BASE_API_URL: string = import.meta.env.DEV
