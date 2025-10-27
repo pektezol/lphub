@@ -35,11 +35,11 @@ type RecordResponse struct {
 //	@Tags			maps / leaderboards
 //	@Accept			mpfd
 //	@Produce		json
-//	@Param			mapid				path		int		true	"Map ID"
-//	@Param			Authorization		header		string	true	"JWT Token"
-//	@Param			host_demo			formData	file	true	"Host Demo"
-//	@Param			partner_demo		formData	file	false	"Partner Demo"
-//	@Success		200					{object}	models.Response{data=RecordResponse}
+//	@Param			mapid			path		int		true	"Map ID"
+//	@Param			Authorization	header		string	true	"JWT Token"
+//	@Param			host_demo		formData	file	true	"Host Demo"
+//	@Param			partner_demo	formData	file	false	"Partner Demo"
+//	@Success		200				{object}	models.Response{data=RecordResponse}
 //	@Router			/maps/{mapid}/record [post]
 func CreateRecordWithDemo(c *gin.Context) {
 	id := c.Param("mapid")
