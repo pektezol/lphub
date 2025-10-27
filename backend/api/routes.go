@@ -54,8 +54,8 @@ func InitRoutes(router *gin.Engine) {
 		v1.GET("/games/:gameid", RateLimit, handlers.FetchChapters)
 		v1.GET("/chapters/:chapterid", RateLimit, handlers.FetchChapterMaps)
 		v1.GET("/games/:gameid/maps", RateLimit, handlers.FetchMaps)
-		// Logs
-		v1.GET("/logs/score", RateLimit, handlers.ScoreLogs)
-		// v1.GET("/logs/mod", IsAuthenticated, handlers.ModLogs)
+		// Stats
+		v1.GET("/stats/timeline", RateLimit, handlers.Timeline)
+		v1.GET("/stats/scores", RateLimit, handlers.Scores)
 	}
 }

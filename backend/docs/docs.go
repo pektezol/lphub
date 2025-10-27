@@ -250,37 +250,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/logs/score": {
-            "get": {
-                "description": "Get score logs of every player.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "logs"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/handlers.ScoreLogsResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
         "/maps/{mapid}/discussions": {
             "get": {
                 "description": "Get map discussions with specified map id.",
@@ -1220,6 +1189,68 @@ const docTemplate = `{
                 }
             }
         },
+        "/stats/scores": {
+            "get": {
+                "description": "Get score logs of every player.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stats"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handlers.ScoresResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/stats/timeline": {
+            "get": {
+                "description": "Get the history of portal count world records over time.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stats"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handlers.TimelineResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/token": {
             "get": {
                 "description": "Gets the token cookie value from the user.",
@@ -1774,18 +1805,7 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.ScoreLogsResponse": {
-            "type": "object",
-            "properties": {
-                "scores": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/handlers.ScoreLogsResponseDetails"
-                    }
-                }
-            }
-        },
-        "handlers.ScoreLogsResponseDetails": {
+        "handlers.ScoresDetails": {
             "type": "object",
             "properties": {
                 "date": {
@@ -1808,6 +1828,17 @@ const docTemplate = `{
                 },
                 "user": {
                     "$ref": "#/definitions/models.UserShort"
+                }
+            }
+        },
+        "handlers.ScoresResponse": {
+            "type": "object",
+            "properties": {
+                "scores": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handlers.ScoresDetails"
+                    }
                 }
             }
         },
@@ -1857,6 +1888,34 @@ const docTemplate = `{
                 },
                 "user_name": {
                     "type": "string"
+                }
+            }
+        },
+        "handlers.TimelinePoint": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "date": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.TimelineResponse": {
+            "type": "object",
+            "properties": {
+                "timeline_multiplayer": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handlers.TimelinePoint"
+                    }
+                },
+                "timeline_singleplayer": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handlers.TimelinePoint"
+                    }
                 }
             }
         },
@@ -1944,6 +2003,9 @@ const docTemplate = `{
             "properties": {
                 "chapter_name": {
                     "type": "string"
+                },
+                "difficulty": {
+                    "type": "integer"
                 },
                 "game_name": {
                     "type": "string"

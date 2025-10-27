@@ -287,14 +287,7 @@ definitions:
       score_time:
         type: integer
     type: object
-  handlers.ScoreLogsResponse:
-    properties:
-      scores:
-        items:
-          $ref: '#/definitions/handlers.ScoreLogsResponseDetails'
-        type: array
-    type: object
-  handlers.ScoreLogsResponseDetails:
+  handlers.ScoresDetails:
     properties:
       date:
         type: string
@@ -310,6 +303,13 @@ definitions:
         type: integer
       user:
         $ref: '#/definitions/models.UserShort'
+    type: object
+  handlers.ScoresResponse:
+    properties:
+      scores:
+        items:
+          $ref: '#/definitions/handlers.ScoresDetails'
+        type: array
     type: object
   handlers.SearchResponse:
     properties:
@@ -342,6 +342,24 @@ definitions:
         type: string
       user_name:
         type: string
+    type: object
+  handlers.TimelinePoint:
+    properties:
+      count:
+        type: integer
+      date:
+        type: string
+    type: object
+  handlers.TimelineResponse:
+    properties:
+      timeline_multiplayer:
+        items:
+          $ref: '#/definitions/handlers.TimelinePoint'
+        type: array
+      timeline_singleplayer:
+        items:
+          $ref: '#/definitions/handlers.TimelinePoint'
+        type: array
     type: object
   models.Category:
     properties:
@@ -398,6 +416,8 @@ definitions:
     properties:
       chapter_name:
         type: string
+      difficulty:
+        type: integer
       game_name:
         type: string
       id:
@@ -672,23 +692,6 @@ paths:
               type: object
       tags:
       - login
-  /logs/score:
-    get:
-      description: Get score logs of every player.
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/models.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/handlers.ScoreLogsResponse'
-              type: object
-      tags:
-      - logs
   /maps/{mapid}/discussions:
     get:
       description: Get map discussions with specified map id.
@@ -1259,6 +1262,40 @@ paths:
               type: object
       tags:
       - search
+  /stats/scores:
+    get:
+      description: Get score logs of every player.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/handlers.ScoresResponse'
+              type: object
+      tags:
+      - stats
+  /stats/timeline:
+    get:
+      description: Get the history of portal count world records over time.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/handlers.TimelineResponse'
+              type: object
+      tags:
+      - stats
   /token:
     delete:
       description: Deletes the token cookie from the user.
