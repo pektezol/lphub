@@ -20,7 +20,7 @@ const Homepage: React.FC = () => {
     };
     const sortedData = [...data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
     const startDate = new Date(sortedData[0].date);
-    const endDate = new Date(sortedData[sortedData.length - 1].date);
+    const today = new Date();
 
     const result: PortalCountData[] = [];
     let currentDate = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
@@ -28,7 +28,7 @@ const Homepage: React.FC = () => {
     let dataIndex = 0;
     let currentCount = sortedData[0].count;
 
-    while (currentDate <= endDate) {
+    while (currentDate <= today) {
       while (dataIndex < sortedData.length && new Date(sortedData[dataIndex].date) <= currentDate) {
         currentCount = sortedData[dataIndex].count;
         dataIndex++;
@@ -44,7 +44,6 @@ const Homepage: React.FC = () => {
         currentDate = nextDate;
       }
     }
-
     return result;
   };
 
