@@ -51,7 +51,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setToken, profile, setProfile, onUplo
         const login = document.querySelectorAll(".login>button")[1] as HTMLElement;
         login.style.opacity = "1";
         uploadRunBtn.style.width = "310px";
-        uploadRunBtn.style.padding = "0.4em 0 0 11px";
+        uploadRunBtn.style.padding = "0 0 0 11px";
         uploadRunSpan.style.opacity = "0";
         setTimeout(() => {
           uploadRunSpan.style.opacity = "1";
@@ -61,7 +61,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setToken, profile, setProfile, onUplo
       side.style.width = "320px";
       btn.forEach((e, i) => {
         e.style.width = (window.innerWidth > 1024) ? "310px" : "265px";
-        e.style.padding = "0.4em 0 0 11px";
+        e.style.padding = "0 0 0 11px";
         setTimeout(() => {
           span[i].style.opacity = "1";
         }, 100);
@@ -72,7 +72,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setToken, profile, setProfile, onUplo
         const login = document.querySelectorAll(".login>button")[1] as HTMLElement;
         login.style.opacity = "0";
         uploadRunBtn.style.width = "40px";
-        uploadRunBtn.style.padding = "0.4em 0 0 5px";
+        uploadRunBtn.style.padding = "0 0 0 5px";
         uploadRunSpan.style.opacity = "0";
       }
       setSidebarOpen(true);
@@ -80,7 +80,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setToken, profile, setProfile, onUplo
       searchbar.focus();
       btn.forEach((e, i) => {
         e.style.width = "40px";
-        e.style.padding = "0.4em 0 0 5px";
+        e.style.padding = "0 0 0 5px";
         span[i].style.opacity = "0";
       });
       setTimeout(() => {
@@ -225,15 +225,15 @@ const Sidebar: React.FC<SidebarProps> = ({ setToken, profile, setProfile, onUplo
               </Link>
             ))}
             {searchData?.players.map((q, index) =>
-              (
-                <Link to={
-                  profile && q.steam_id === profile.steam_id ? "/profile" :
-                    `/users/${q.steam_id}`
-                } className='search-player' key={index} onClick={_close_mobile_search_and_menu}>
-                  <img src={q.avatar_link} alt='pfp'></img>
-                  <span style={{ fontSize: `${36 - q.user_name.length * 0.8}px` }}>{q.user_name}</span>
-                </Link>
-              ))}
+            (
+              <Link to={
+                profile && q.steam_id === profile.steam_id ? "/profile" :
+                  `/users/${q.steam_id}`
+              } className='search-player' key={index} onClick={_close_mobile_search_and_menu}>
+                <img src={q.avatar_link} alt='pfp'></img>
+                <span style={{ fontSize: `${36 - q.user_name.length * 0.8}px` }}>{q.user_name}</span>
+              </Link>
+            ))}
 
           </div>
         </div>
