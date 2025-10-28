@@ -226,7 +226,10 @@ const Homepage: React.FC = () => {
                     <div className="score-map">
                       <Link key={index} to={`/maps/${score.map.id}`} className="score-map">{score.map.name}</Link>
                     </div>
-                    <div className="score-portals">{score.score_count} { } portals</div>
+                    <div className="score-portals">
+                      {score.score_count} portals
+                      <span className="score-date"> · {new Date(score.date).toISOString().split("T")[0]}</span>
+                    </div>
                   </div>
                 ))}
               </div>
