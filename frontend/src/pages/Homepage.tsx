@@ -18,19 +18,18 @@ const Homepage: React.FC = () => {
     if (data.length === 0) {
       return [];
     };
-    const sortedData = [...data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-    const startDate = new Date(sortedData[0].date);
+    const startDate = new Date(data[0].date);
     const today = new Date();
 
     const result: PortalCountData[] = [];
-    let currentDate = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+    let currentDate = new Date(startDate.getFullYear(), 0, 1);
 
     let dataIndex = 0;
-    let currentCount = sortedData[0].count;
+    let currentCount = data[0].count;
 
     while (currentDate <= today) {
-      while (dataIndex < sortedData.length && new Date(sortedData[dataIndex].date) <= currentDate) {
-        currentCount = sortedData[dataIndex].count;
+      while (dataIndex < data.length && new Date(data[dataIndex].date) <= currentDate) {
+        currentCount = data[dataIndex].count;
         dataIndex++;
       }
       result.push({
