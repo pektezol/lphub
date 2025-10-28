@@ -109,7 +109,7 @@ func Timeline(c *gin.Context) {
 		WITH date_series AS (
 			SELECT DISTINCT record_date as date
 			FROM map_history
-			WHERE category_id = 1 AND map_id <= 60 AND record_date >= '2013-01-31'
+			WHERE category_id = 1 AND map_id <= 60 AND record_date >= '2013-01-01'
 			ORDER BY record_date
 		),
 		map_best_at_date AS (
@@ -136,7 +136,7 @@ func Timeline(c *gin.Context) {
 		WITH date_series AS (
 			SELECT DISTINCT record_date as date
 			FROM map_history
-			WHERE category_id = 1 AND map_id > 60 AND record_date >= '2013-01-31'
+			WHERE category_id = 1 AND map_id > 60 AND record_date >= '2013-01-01'
 			ORDER BY record_date
 		),
 		map_best_at_date AS (
