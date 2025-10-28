@@ -2,36 +2,37 @@ import axios from "axios";
 import { url } from "./Api";
 
 export interface PortalCountData {
-    date: string;
-    count: number;
+  date: string;
+  count: number;
 }
 
 export interface RecordsTimelineResponse {
-    timeline_singleplayer: PortalCountData[];
-    timeline_multiplayer: PortalCountData[];
+  timeline_singleplayer: PortalCountData[];
+  timeline_multiplayer: PortalCountData[];
 }
 
 export interface ScoreLog {
-    game: {
-        id: number;
-        name: string;
-        image: string;
-        is_coop: boolean;
-        category_portals: null;
-    };
-    user: {
-        steam_id: string;
-        user_name: string;
-    };
-    map: {
-        id: number;
-        name: string;
-        image: string;
-        is_disabled: boolean;
-        portal_count: number;
-        difficulty: number;
-    };
-    score_count: number;
+  game: {
+    id: number;
+    name: string;
+    image: string;
+    is_coop: boolean;
+    category_portals: null;
+  };
+  user: {
+    steam_id: string;
+    user_name: string;
+  };
+  map: {
+    id: number;
+    name: string;
+    image: string;
+    is_disabled: boolean;
+    portal_count: number;
+    difficulty: number;
+  };
+  score_count: number;
+  date: string;
 }
 
 export async function get_portal_count_history(): Promise<RecordsTimelineResponse | undefined> {

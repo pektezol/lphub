@@ -235,6 +235,11 @@
     color: #888;
 }
 
+.score-date {
+    font-size: 11px;
+    color: #666;
+}
+
 .scores-empty {
     text-align: center;
     padding: 40px 20px;
@@ -378,6 +383,10 @@
         font-size: 12px;
     }
 
+    .score-date {
+        font-size: 10px;
+    }
+
     .info-section {
         margin: 18px;
     }
@@ -475,6 +484,10 @@
 
     .score-portals {
         font-size: 12px;
+    }
+
+    .score-date {
+        font-size: 10px;
     }
 
     .chart-loading,
