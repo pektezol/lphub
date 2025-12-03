@@ -184,7 +184,7 @@
 		"id": 47785,
 		"name": "Cave Johnson",
 		"mode": 1,
-		"wr": 4
+		"wr": 3
 	},
 	{
 		"id": 47786,
@@ -292,7 +292,7 @@
 		"id": 47820,
 		"name": "Repulsion Polarity",
 		"mode": 1,
-		"wr": 2
+		"wr": 0
 	},
 	{
 		"id": 47822,
@@ -329,7 +329,7 @@
 		"id": 47827,
 		"name": "Lasers",
 		"mode": 2,
-		"wr": 2
+		"wr": 0
 	},
 	{
 		"id": 47830,
