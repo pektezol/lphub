@@ -37,7 +37,7 @@ func InitRoutes(router *gin.Engine) {
 		v1.GET("/maps/:mapid/leaderboards", RateLimit, handlers.FetchMapLeaderboards)
 		v1.POST("/maps/:mapid/record", IsAuthenticated, handlers.CreateRecordWithDemo)
 		v1.DELETE("/maps/:mapid/record/:recordid", IsAuthenticated, handlers.DeleteRecord)
-		v1.GET("/demos", RateLimit, handlers.DownloadDemoWithID)
+		v1.GET("/demos", RateLimit, IsAuthenticated, handlers.DownloadDemoWithID)
 		// - Discussions
 		v1.GET("/maps/:mapid/discussions", RateLimit, handlers.FetchMapDiscussions)
 		v1.GET("/maps/:mapid/discussions/:discussionid", RateLimit, handlers.FetchMapDiscussion)

@@ -104,3 +104,32 @@ export const delete_map_record = async (token: string, map_id: number, record_id
   });
   return response.data.success;
 };
+
+export const download_demo = async (token: string, demo_id: string): Promise<[boolean, string]> => {
+  const response = await axios.get(url(`demos?uuid=${demo_id}`), {
+    headers: {
+      "Authorization": token,
+    },
+    responseType: "blob",
+  });
+
+  if (response.data.type === "application/json") {
+    const errorText = await response.data.text();
+    const errorData = JSON.parse(errorText);
+    return [false, errorData.message ?? "Could not download demo."];
+  }
+
+  const contentDisposition = response.headers["content-disposition"];
+  const fileNameMatch = contentDisposition?.match(/filename="?([^"]+)"?/);
+  const fileName = fileNameMatch?.[1] ?? `${demo_id}.dem`;
+  const blobUrl = window.URL.createObjectURL(response.data);
+  const link = document.createElement("a");
+  link.href = blobUrl;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(blobUrl);
+
+  return [true, ""];
+};

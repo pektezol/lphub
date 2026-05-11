@@ -4,6 +4,7 @@ import { get_user, get_profile, post_profile } from "@api/User";
 import { get_games, get_chapters, get_games_chapters, get_game_maps, get_search } from "@api/Games";
 import { get_official_rankings, get_unofficial_rankings } from "@api/Rankings";
 import { get_map_summary, get_map_leaderboard, get_map_discussions, get_map_discussion, post_map_discussion, post_map_discussion_comment, delete_map_discussion, post_record, delete_map_record } from "@api/Maps";
+import { download_demo } from "@api/Maps";
 import { delete_map_summary, post_map_summary, put_map_image, put_map_summary } from "@api/Mod";
 import { get_portal_count_history, get_recent_scores } from "@api/Stats";
 import { UploadRunContent } from "@customTypes/Content";
@@ -41,6 +42,7 @@ export const API = {
   delete_map_discussion: (token: string, map_id: string, discussion_id: number) => delete_map_discussion(token, map_id, discussion_id),
 
   delete_map_record: (token: string, map_id: number, record_id: number) => delete_map_record(token, map_id, record_id),
+  download_demo: (token: string, demo_id: string) => download_demo(token, demo_id),
   // Mod
   post_map_summary: (token: string, map_id: string, content: ModMenuContent) => post_map_summary(token, map_id, content),
 

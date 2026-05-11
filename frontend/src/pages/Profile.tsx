@@ -84,6 +84,18 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
     }
   };
 
+  const _download_demo = async (demoID: string) => {
+    if (!token) {
+      await message("Download Demo", "You must be logged in to download demos.");
+      return;
+    }
+
+    const [success, errorMessage] = await API.download_demo(token, demoID);
+    if (!success) {
+      await message("Download Demo", errorMessage);
+    }
+  };
+
   React.useEffect(() => {
     if (!profile) {
       navigate("/");
@@ -281,7 +293,7 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
 
                             <button style={{ marginRight: "10px" }} onClick={() => { message("Demo Information", `Demo ID: ${e.demo_id}`); }}><img src={ThreedotIcon} alt="demo_id" /></button>
                             <button onClick={() => { _delete_submission(r.map_id, e.record_id); }}><img src={DeleteIcon}></img></button>
-                            <button onClick={() => window.location.href = `/api/v1/demos?uuid=${e.demo_id}`}><img src={DownloadIcon} alt="download" /></button>
+                            <button onClick={() => _download_demo(e.demo_id)}><img src={DownloadIcon} alt="download" /></button>
                             {i === 0 && r.scores.length > 1 ? <button onClick={() => {
                               (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "44px" ||
                                 (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "" ?
@@ -327,7 +339,7 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
 
                               <button onClick={() => { message("Demo Information", `Demo ID: ${e.demo_id}`); }}><img src={ThreedotIcon} alt="demo_id" /></button>
                               <button onClick={() => { _delete_submission(r.id, e.record_id); }}><img src={DeleteIcon}></img></button>
-                              <button onClick={() => window.location.href = `/api/v1/demos?uuid=${e.demo_id}`}><img src={DownloadIcon} alt="download" /></button>
+                              <button onClick={() => _download_demo(e.demo_id)}><img src={DownloadIcon} alt="download" /></button>
                               {i === 0 && record!.scores.length > 1 ? <button onClick={() => {
                                 (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "44px" ||
                                   (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "" ?
