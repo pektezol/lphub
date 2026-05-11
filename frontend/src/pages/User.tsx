@@ -69,6 +69,18 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
     }
   };
 
+  const _download_demo = async (demoID: string) => {
+    if (!token) {
+      await message("Download Demo", "You must be logged in to download demos.");
+      return;
+    }
+
+    const [success, errorMessage] = await API.download_demo(token, demoID);
+    if (!success) {
+      await message("Download Demo", errorMessage);
+    }
+  };
+
   React.useEffect(() => {
     _fetch_user();
   }, [location]);
@@ -249,7 +261,7 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
                         <span style={{ flexDirection: "row-reverse" }}>
 
                           <button onClick={() => { message("Demo Information", `Demo ID: ${e.demo_id}`); }}><img src={ThreedotIcon} alt="demo_id" /></button>
-                          <button onClick={() => window.location.href = `/api/v1/demos?uuid=${e.demo_id}`}><img src={DownloadIcon} alt="download" /></button>
+                          <button onClick={() => _download_demo(e.demo_id)}><img src={DownloadIcon} alt="download" /></button>
                           {i === 0 && r.scores.length > 1 ? <button onClick={() => {
                             (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "44px" ||
                               (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "" ?
@@ -294,7 +306,7 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
                           <span style={{ flexDirection: "row-reverse" }}>
 
                             <button onClick={() => { message("Demo Information", `Demo ID: ${e.demo_id}`); }}><img src={ThreedotIcon} alt="demo_id" /></button>
-                            <button onClick={() => window.location.href = `/api/v1/demos?uuid=${e.demo_id}`}><img src={DownloadIcon} alt="download" /></button>
+                            <button onClick={() => _download_demo(e.demo_id)}><img src={DownloadIcon} alt="download" /></button>
                             {i === 0 && record!.scores.length > 1 ? <button onClick={() => {
                               (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "44px" ||
                                 (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "" ?

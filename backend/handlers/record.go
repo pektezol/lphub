@@ -378,10 +378,30 @@ func DownloadDemoWithID(c *gin.Context) {
 		c.JSON(http.StatusOK, models.ErrorResponse("Invalid id given."))
 		return
 	}
+	user, exists := c.Get("user")
+	if !exists {
+		c.JSON(http.StatusOK, models.ErrorResponse("Authentication required."))
+		return
+	}
+	authUser, ok := user.(models.User)
+	if !ok {
+		c.JSON(http.StatusOK, models.ErrorResponse("Authentication required."))
+		return
+	}
 	var checkedUUID string
 	err := database.DB.QueryRow("SELECT d.id FROM demos d WHERE d.id = $1", uuid).Scan(&checkedUUID)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse("Given id does not match a demo."))
+		return
+	}
+	_, err = database.DB.Exec(
+		`INSERT INTO audit (table_name, operation_type, old_data, new_data, changed_by)
+		VALUES ('demos', 'DOWNLOAD', NULL, jsonb_build_object('id', $1), $2)`,
+		uuid,
+		authUser.SteamID,
+	)
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
 

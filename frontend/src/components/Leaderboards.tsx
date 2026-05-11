@@ -16,10 +16,23 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
   const navigate = useNavigate();
   const [data, setData] = React.useState<MapLeaderboard | undefined>(undefined);
   const [pageNumber, setPageNumber] = React.useState<number>(1);
+  const [token, setToken] = React.useState<string | undefined>(undefined);
 
   const _fetch_map_leaderboards = async () => {
     const mapLeaderboards = await API.get_map_leaderboard(mapID, pageNumber.toString());
     setData(mapLeaderboards);
+  };
+
+  const _download_demo = async (demoID: string) => {
+    if (!token) {
+      await message("Download Demo", "You must be logged in to download demos.");
+      return;
+    }
+
+    const [success, errorMessage] = await API.download_demo(token, demoID);
+    if (!success) {
+      await message("Download Demo", errorMessage);
+    }
   };
 
   const { message, MessageDialogComponent } = useMessage();
@@ -27,6 +40,10 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
   React.useEffect(() => {
     _fetch_map_leaderboards();
   }, [pageNumber, navigate]);
+
+  React.useEffect(() => {
+    API.get_token().then(setToken);
+  }, []);
 
   if (!data) {
     return (
@@ -104,14 +121,14 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
               {r.kind === "multiplayer" ? (
                 <span>
                   <button onClick={() => { message("Demo Information", `Host Demo ID: ${r.host_demo_id} \nParnter Demo ID: ${r.partner_demo_id}`); }}><img src={ThreedotIcon} alt="demo_id" /></button>
-                  <button onClick={() => window.location.href = `/api/v1/demos?uuid=${r.partner_demo_id}`}><img src={DownloadIcon} alt="download" style={{ filter: "hue-rotate(160deg) contrast(60%) saturate(1000%)" }} /></button>
-                  <button onClick={() => window.location.href = `/api/v1/demos?uuid=${r.host_demo_id}`}><img src={DownloadIcon} alt="download" style={{ filter: "hue-rotate(300deg) contrast(60%) saturate(1000%)" }} /></button>
+                  <button onClick={() => _download_demo(r.partner_demo_id)}><img src={DownloadIcon} alt="download" style={{ filter: "hue-rotate(160deg) contrast(60%) saturate(1000%)" }} /></button>
+                  <button onClick={() => _download_demo(r.host_demo_id)}><img src={DownloadIcon} alt="download" style={{ filter: "hue-rotate(300deg) contrast(60%) saturate(1000%)" }} /></button>
                 </span>
               ) : r.kind === "singleplayer" && (
 
                 <span>
                   <button onClick={() => { message("Demo Information", `Demo ID: ${r.demo_id}`); }}><img src={ThreedotIcon} alt="demo_id" /></button>
-                  <button onClick={() => window.location.href = `/api/v1/demos?uuid=${r.demo_id}`}><img src={DownloadIcon} alt="download" /></button>
+                  <button onClick={() => _download_demo(r.demo_id)}><img src={DownloadIcon} alt="download" /></button>
                 </span>
               )}
             </span>
