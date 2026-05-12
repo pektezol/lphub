@@ -396,7 +396,7 @@ func DownloadDemoWithID(c *gin.Context) {
 	}
 	_, err = database.DB.Exec(
 		`INSERT INTO audit (table_name, operation_type, old_data, new_data, changed_by)
-		VALUES ('demos', 'DOWNLOAD', NULL, jsonb_build_object('id', $1), $2)`,
+		VALUES ('demos', 'DOWNLOAD', NULL, jsonb_build_object('id', $1::text), $2)`,
 		uuid,
 		authUser.SteamID,
 	)
