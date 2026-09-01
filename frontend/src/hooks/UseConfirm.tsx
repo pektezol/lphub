@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import ConfirmDialog from "@components/ConfirmDialog";
 
 const useConfirm = () => {

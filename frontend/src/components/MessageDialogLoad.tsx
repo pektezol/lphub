@@ -3,11 +3,10 @@ import React from "react";
 import "@css/Dialog.css";
 
 interface MessageDialogLoadProps {
-    title: string;    
-	onClose: () => void;
+  title: string;
 };
 
-const MessageDialogLoad: React.FC<MessageDialogLoadProps> = ({ title, onClose }) => {
+const MessageDialogLoad: React.FC<MessageDialogLoadProps> = ({ title }) => {
   return (
     <div className='dimmer'>
       <div className='dialog'>

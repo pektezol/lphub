@@ -23,7 +23,6 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
 
   const [user, setUser] = React.useState<UserProfile | undefined>(undefined);
 
-  const [navState, setNavState] = React.useState(0);
   const [pageNumber, setPageNumber] = React.useState(1);
   const [pageMax, setPageMax] = React.useState(0);
 
@@ -160,8 +159,8 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
 
 
       <section id='section2' className='profile'>
-        <button onClick={() => setNavState(0)}><img src={FlagIcon} alt="" />&nbsp;Player Records</button>
-        <button onClick={() => setNavState(1)}><img src={StatisticsIcon} alt="" />&nbsp;Statistics</button>
+        <button><img src={FlagIcon} alt="" />&nbsp;Player Records</button>
+        <button><img src={StatisticsIcon} alt="" />&nbsp;Statistics</button>
       </section>
 
 

@@ -29,7 +29,7 @@ const Sidebar: React.FC<SidebarProps> = ({ profile, onLogout, onUploadRun }) => 
     const btn = document.querySelectorAll("button.sidebar-button");
     if (isSidebarOpen) { setSidebarOpen(false); _handle_sidebar_hide(); }
     // clusterfuck
-    btn.forEach((e, i) => {
+    btn.forEach((_, i) => {
       btn[i].classList.remove("sidebar-button-selected");
       btn[i].classList.add("sidebar-button-deselected");
     });

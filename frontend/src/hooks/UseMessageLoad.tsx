@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import MessageDialogLoad from "@components/MessageDialogLoad";
 
 const useMessageLoad = () => {
@@ -25,7 +25,7 @@ const useMessageLoad = () => {
 
   const MessageDialogLoadComponent = isOpen && (
     <div className="dialog-container">
-      <MessageDialogLoad title={title} onClose={messageLoadClose}></MessageDialogLoad>
+      <MessageDialogLoad title={title}></MessageDialogLoad>
     </div>
   );
 
