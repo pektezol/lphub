@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { DownloadIcon, ThreedotIcon } from "@images/Images";
 import { MapLeaderboard } from "@customTypes/Map";
@@ -13,15 +13,10 @@ interface LeaderboardsProps {
 }
 
 const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
-  const navigate = useNavigate();
   const [data, setData] = React.useState<MapLeaderboard | undefined>(undefined);
+  const [status, setStatus] = React.useState<"loading" | "ready" | "empty" | "unavailable" | "error">("loading");
   const [pageNumber, setPageNumber] = React.useState<number>(1);
   const [token, setToken] = React.useState<string | undefined>(undefined);
-
-  const _fetch_map_leaderboards = async () => {
-    const mapLeaderboards = await API.get_map_leaderboard(mapID, pageNumber.toString());
-    setData(mapLeaderboards);
-  };
 
   const _download_demo = async (demoID: string) => {
     if (!token) {
@@ -38,14 +33,59 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
   const { message, MessageDialogComponent } = useMessage();
 
   React.useEffect(() => {
-    _fetch_map_leaderboards();
-  }, [pageNumber, navigate]);
+    let isCurrent = true;
+
+    const fetchMapLeaderboards = async () => {
+      setStatus("loading");
+      setData(undefined);
+
+      try {
+        const mapLeaderboards = await API.get_map_leaderboard(mapID, pageNumber.toString());
+        if (!isCurrent) {
+          return;
+        }
+
+        if (mapLeaderboards) {
+          setData(mapLeaderboards);
+          setStatus(mapLeaderboards.records.length === 0 ? "empty" : "ready");
+        } else {
+          setStatus("unavailable");
+        }
+      } catch {
+        if (isCurrent) {
+          setStatus("error");
+        }
+      }
+    };
+
+    void fetchMapLeaderboards();
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [mapID, pageNumber]);
 
   React.useEffect(() => {
     API.get_token().then(setToken);
   }, []);
 
-  if (!data) {
+  if (status === "loading") {
+    return (
+      <section id='section6' className='summary2'>
+        <h1 style={{ textAlign: "center" }}>Loading competitive boards…</h1>
+      </section>
+    );
+  }
+
+  if (status === "error") {
+    return (
+      <section id='section6' className='summary2'>
+        <h1 style={{ textAlign: "center" }}>Could not load competitive boards.</h1>
+      </section>
+    );
+  }
+
+  if (status === "unavailable" || !data) {
     return (
       <section id='section6' className='summary2'>
         <h1 style={{ textAlign: "center" }}>Map is not available for competitive boards.</h1>
@@ -53,7 +93,7 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
     );
   };
 
-  if (data.records.length === 0) {
+  if (status === "empty") {
     return (
       <section id='section6' className='summary2'>
         <h1 style={{ textAlign: "center" }}>No records found.</h1>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import MessageDialog from "@components/MessageDialog";
 
 const useMessage = () => {

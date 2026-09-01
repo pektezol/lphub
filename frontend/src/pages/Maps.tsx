@@ -7,7 +7,7 @@ import Summary from "@components/Summary";
 import Leaderboards from "@components/Leaderboards";
 import Discussions from "@components/Discussions";
 import ModMenu from "@components/ModMenu";
-import { MapDiscussions, MapLeaderboard, MapSummary } from "@customTypes/Map";
+import { MapDiscussions, MapSummary } from "@customTypes/Map";
 import { Game } from "@customTypes/Game";
 import { API } from "@api/Api";
 import "@css/Maps.css";
@@ -23,7 +23,6 @@ const Maps: React.FC<MapProps> = ({ token, isModerator, games }) => {
   const [selectedRun, setSelectedRun] = React.useState<number | undefined>(undefined);
 
   const [mapSummaryData, setMapSummaryData] = React.useState<MapSummary | undefined>(undefined);
-  const [mapLeaderboardData, setMapLeaderboardData] = React.useState<MapLeaderboard | undefined>(undefined);
   const [mapDiscussionsData, setMapDiscussionsData] = React.useState<MapDiscussions | undefined>(undefined);
 
   const [navState, setNavState] = React.useState<number>(0);
@@ -37,11 +36,6 @@ const Maps: React.FC<MapProps> = ({ token, isModerator, games }) => {
     setMapSummaryData(mapSummary);
   };
 
-  const _fetch_map_leaderboards = async () => {
-    const mapLeaderboards = await API.get_map_leaderboard(mapID, "1");
-    setMapLeaderboardData(mapLeaderboards);
-  };
-
   const _fetch_map_discussions = async () => {
     const mapDiscussions = await API.get_map_discussions(mapID);
     setMapDiscussionsData(mapDiscussions);
@@ -50,7 +44,6 @@ const Maps: React.FC<MapProps> = ({ token, isModerator, games }) => {
   React.useEffect(() => {
     setSelectedRun(undefined);
     _fetch_map_summary();
-    _fetch_map_leaderboards();
     _fetch_map_discussions();
   }, [mapID]);
 

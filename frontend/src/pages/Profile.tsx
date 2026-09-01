@@ -23,7 +23,6 @@ const Profile: React.FC<ProfileProps> = ({ authentication, gameData, onDeleteRec
   const { confirm, ConfirmDialogComponent } = useConfirm();
   const { message, MessageDialogComponent } = useMessage();
   const { messageLoad, messageLoadClose, MessageDialogLoadComponent } = useMessageLoad();
-  const [navState, setNavState] = React.useState(0);
   const [pageNumber, setPageNumber] = React.useState(1);
   const [pageMax, setPageMax] = React.useState(0);
 
@@ -192,8 +191,8 @@ const Profile: React.FC<ProfileProps> = ({ authentication, gameData, onDeleteRec
 
 
         <section id='section2' className='profile'>
-          <button onClick={() => setNavState(0)}><img src={FlagIcon} alt="" />&nbsp;Player Records</button>
-          <button onClick={() => setNavState(1)}><img src={StatisticsIcon} alt="" />&nbsp;Statistics</button>
+          <button><img src={FlagIcon} alt="" />&nbsp;Player Records</button>
+          <button><img src={StatisticsIcon} alt="" />&nbsp;Statistics</button>
         </section>
 
 

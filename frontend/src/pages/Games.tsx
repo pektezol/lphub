@@ -19,7 +19,7 @@ const Games: React.FC<GamesProps> = ({ games }) => {
   };
 
   React.useEffect(() => {
-    document.querySelectorAll(".games-page-item-body").forEach((game, index) => {
+    document.querySelectorAll(".games-page-item-body").forEach((game) => {
       game.innerHTML = "";
     });
     _page_load();
@@ -33,8 +33,8 @@ const Games: React.FC<GamesProps> = ({ games }) => {
       <section>
         <div className='games-page-content'>
           <div className='games-page-item-content'>
-            {games.map((game, index) => (
-              <GameEntry game={game} key={index} />
+            {games.map((game) => (
+              <GameEntry game={game} key={game.id} />
             ))}
           </div>
         </div>

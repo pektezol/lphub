@@ -82,11 +82,15 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
     }
   };
 
+  const _route_submission_content = (): ModMenuContent => ({
+    ...routeContent,
+    date: `${routeContent.date}T00:00:00Z`,
+  });
+
   const _edit_map_summary_route = async () => {
     if (await confirm("Edit Map Summary Route", "Are you sure you want to submit this to the database?")) {
       if (token) {
-        routeContent.date += "T00:00:00Z";
-        const success = await API.put_map_summary(token, mapID, routeContent);
+        const success = await API.put_map_summary(token, mapID, _route_submission_content());
         if (success) {
           navigate(0);
         } else {
@@ -99,8 +103,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
   const _create_map_summary_route = async () => {
     if (await confirm("Create Map Summary Route", "Are you sure you want to submit this to the database?")) {
       if (token) {
-        routeContent.date += "T00:00:00Z";
-        const success = await API.post_map_summary(token, mapID, routeContent);
+        const success = await API.post_map_summary(token, mapID, _route_submission_content());
         if (success) {
           navigate(0);
         } else {
@@ -268,7 +271,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
                     ...routeContent,
                     description: e.target.value,
                   });
-                  setMd(routeContent.description);
+                  setMd(e.target.value);
                 }} />
               </div>
               <button style={{ gridColumn: "2 / span 3", height: "40px" }} onClick={_edit_map_summary_route}>Apply</button>
@@ -344,7 +347,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
                     ...routeContent,
                     description: e.target.value,
                   });
-                  setMd(routeContent.description);
+                  setMd(e.target.value);
                 }} />
               </div>
               <button style={{ gridColumn: "2 / span 3", height: "40px" }} onClick={_create_map_summary_route}>Apply</button>
