@@ -13,6 +13,12 @@ div#modview>div>button {
     height: 30px;
 }
 
+div#modview>div>button:disabled {
+    display: inline-block;
+    cursor: not-allowed;
+    opacity: .5;
+}
+
 div#modview>div:nth-child(1) {
     display: grid;
     grid-template-columns: 50% 50%;

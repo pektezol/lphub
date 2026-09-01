@@ -11,7 +11,7 @@ import useConfirm from "@hooks/UseConfirm";
 interface ModMenuProps {
   token?: string;
   data: MapSummary;
-  selectedRun: number;
+  selectedRun?: number;
   mapID: string;
 }
 
@@ -36,6 +36,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID }) =>
   const [md, setMd] = React.useState<string>("");
 
   const navigate = useNavigate();
+  const selectedRoute = selectedRun === undefined ? undefined : data.summary.routes[selectedRun];
 
   function compressImage(file: File): Promise<string> {
     const reader = new FileReader();
@@ -108,10 +109,14 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID }) =>
   };
 
   const _delete_map_summary_route = async () => {
+    if (!selectedRoute) {
+      return;
+    }
+
     if (await confirm("Delete Map Summary Route", `Are you sure you want to submit this to the database?\n
-      ${data.summary.routes[selectedRun].category.name}\n${data.summary.routes[selectedRun].history.score_count} portals\n${data.summary.routes[selectedRun].history.runner_name}`)) {
+      ${selectedRoute.category.name}\n${selectedRoute.history.score_count} portals\n${selectedRoute.history.runner_name}`)) {
       if (token) {
-        const success = await API.delete_map_summary(token, mapID, data.summary.routes[selectedRun].route_id);
+        const success = await API.delete_map_summary(token, mapID, selectedRoute.route_id);
         if (success) {
           navigate(0);
         } else {
@@ -134,19 +139,27 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID }) =>
       });
       setMd("No description available.");
     }
-    if (menu === 2) { // edit route
-      setRouteContent({
-        id: data.summary.routes[selectedRun].route_id,
-        name: data.summary.routes[selectedRun].history.runner_name,
-        score: data.summary.routes[selectedRun].history.score_count,
-        date: data.summary.routes[selectedRun].history.date.split("T")[0],
-        showcase: data.summary.routes[selectedRun].showcase,
-        description: data.summary.routes[selectedRun].description,
-        category_id: data.summary.routes[selectedRun].category.id,
-      });
-      setMd(data.summary.routes[selectedRun].description);
-    }
   }, [menu]);
+
+  React.useEffect(() => {
+    if (menu === 2 && !selectedRoute) {
+      setMenu(0);
+      return;
+    }
+
+    if (menu === 2 && selectedRoute) { // edit route
+      setRouteContent({
+        id: selectedRoute.route_id,
+        name: selectedRoute.history.runner_name,
+        score: selectedRoute.history.score_count,
+        date: selectedRoute.history.date.split("T")[0],
+        showcase: selectedRoute.showcase,
+        description: selectedRoute.description,
+        category_id: selectedRoute.category.id,
+      });
+      setMd(selectedRoute.description);
+    }
+  }, [menu, selectedRoute]);
 
   React.useEffect(() => {
     const modview = document.querySelector("div#modview") as HTMLElement;
@@ -168,9 +181,9 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID }) =>
       <div id='modview'>
         <div>
           <button onClick={() => setMenu(1)}>Edit Image</button>
-          <button onClick={() => setMenu(2)}>Edit Selected Route</button>
+          <button disabled={!selectedRoute} onClick={() => setMenu(2)}>Edit Selected Route</button>
           <button onClick={() => setMenu(3)}>Add New Route</button>
-          <button onClick={() => _delete_map_summary_route()}>Delete Selected Route</button>
+          <button disabled={!selectedRoute} onClick={() => _delete_map_summary_route()}>Delete Selected Route</button>
         </div>
         <div>
           {showButton ? (
