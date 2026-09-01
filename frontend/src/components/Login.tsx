@@ -7,12 +7,11 @@ import { API } from "@api/Api";
 import "@css/Login.css";
 
 interface LoginProps {
-  setToken: React.Dispatch<React.SetStateAction<string | undefined>>;
   profile?: UserProfile;
-  setProfile: React.Dispatch<React.SetStateAction<UserProfile | undefined>>;
+  onLogout: () => void;
 };
 
-const Login: React.FC<LoginProps> = ({ setToken, profile, setProfile }) => {
+const Login: React.FC<LoginProps> = ({ profile, onLogout }) => {
 
   const navigate = useNavigate();
 
@@ -21,9 +20,8 @@ const Login: React.FC<LoginProps> = ({ setToken, profile, setProfile }) => {
   };
 
   const _logout = () => {
-    setProfile(undefined);
-    setToken(undefined);
-    API.delete_token();
+    onLogout();
+    void API.delete_token();
     navigate("/");
   };
 

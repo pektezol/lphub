@@ -2,7 +2,6 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
-import { UserProfile } from "@customTypes/Profile";
 import Sidebar from "./components/Sidebar";
 import "./App.css";
 
@@ -18,94 +17,92 @@ import { Game } from "@customTypes/Game";
 import { API } from "./api/Api";
 import Maplist from "@pages/Maplist";
 import Rankings from "@pages/Rankings";
-import { get_user_id_from_token, get_user_mod_from_token } from "./utils/Jwt";
+import { get_user_mod_from_token } from "./utils/Jwt";
+import { AuthenticationState } from "@customTypes/Auth";
 
 const App: React.FC = () => {
-  const [token, setToken] = React.useState<string | undefined>(undefined);
-  const [profile, setProfile] = React.useState<UserProfile | undefined>(undefined);
-  const [isModerator, setIsModerator] = React.useState<boolean>(false);
+  const [authentication, setAuthentication] = React.useState<AuthenticationState>({ status: "loading" });
 
   const [games, setGames] = React.useState<Game[]>([]);
 
   const [uploadRunDialog, setUploadRunDialog] = React.useState<boolean>(false);
-
-  const _fetch_token = async () => {
-    const token = await API.get_token();
-    setToken(token);
-  };
 
   const _fetch_games = async () => {
     const games = await API.get_games();
     setGames(games);
   };
 
-  const _set_profile = async (user_id?: string) => {
-    if (user_id && token) {
-      const user = await API.get_profile(token);
-      setProfile(user);
+  React.useEffect(() => {
+    let active = true;
+
+    const _fetch_authentication = async () => {
+      try {
+        const token = await API.get_token();
+        if (!token) {
+          if (active) {
+            setAuthentication({ status: "guest" });
+          }
+          return;
+        }
+
+        const profile = await API.get_profile(token);
+        if (!profile) {
+          if (active) {
+            setAuthentication({ status: "guest" });
+          }
+          return;
+        }
+
+        if (active) {
+          setAuthentication({
+            status: "authenticated",
+            token,
+            profile,
+            isModerator: Boolean(get_user_mod_from_token(token)),
+          });
+        }
+      } catch {
+        if (active) {
+          setAuthentication({ status: "guest" });
+        }
+      }
+    };
+
+    void _fetch_authentication();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  React.useEffect(() => {
+    void _fetch_games();
+  }, []);
+
+  const _set_profile = async () => {
+    if (authentication.status !== "authenticated") {
+      return;
+    }
+
+    try {
+      const profile = await API.get_profile(authentication.token);
+      if (!profile) {
+        setAuthentication((current) => current.status === "authenticated" && current.token === authentication.token
+          ? { status: "guest" }
+          : current);
+        return;
+      }
+
+      setAuthentication((current) => current.status === "authenticated" && current.token === authentication.token
+        ? { ...current, profile }
+        : current);
+    } catch {
+      // Keep the current session visible when refreshing its profile fails.
     }
   };
 
-  React.useEffect(() => {
-    if (token === undefined) {
-      setProfile(undefined);
-      setIsModerator(false);
-    } else {
-      setProfile({} as UserProfile); // placeholder before we call actual user profile
-      _set_profile(get_user_id_from_token(token));
-      const modStatus = get_user_mod_from_token(token);
-      if (modStatus) {
-        setIsModerator(true);
-      } else {
-        setIsModerator(false);
-      }
-    }
-  }, [token]);
-
-  React.useEffect(() => {
-    _fetch_token();
-    _fetch_games();
-    if (import.meta.env.DEV) {
-      setProfile({
-        profile: true,
-        steam_id: "76561234567890123",
-        user_name: "test",
-        avatar_link: "",
-        country_code: "XD",
-        titles: [],
-        links: {
-          "p2sr": "",
-          "steam": "",
-          "twitch": "",
-          "youtube": "",
-        },
-        rankings: {
-          "cooperative": {
-            "completion_count": 0,
-            "completion_total": 0,
-            "rank": 0,
-          },
-          "singleplayer": {
-            "completion_count": 0,
-            "completion_total": 0,
-            "rank": 0,
-          },
-          "overall": {
-            "completion_count": 0,
-            "completion_total": 0,
-            "rank": 0,
-          },
-        },
-        records: [],
-        pagination: {
-          "current_page": 0,
-          "page_size": 0,
-          "total_pages": 0,
-          "total_records": 0,
-        },
-      } as UserProfile);
-    };
-  }, []);
+  const token = authentication.status === "authenticated" ? authentication.token : undefined;
+  const profile = authentication.status === "authenticated" ? authentication.profile : undefined;
+  const isModerator = authentication.status === "authenticated" && authentication.isModerator;
 
   return (
     <>
@@ -116,13 +113,17 @@ const App: React.FC = () => {
       <UploadRunDialog token={token} open={uploadRunDialog} onClose={(updateProfile) => {
         setUploadRunDialog(false);
         if (updateProfile) {
-          _set_profile(get_user_id_from_token(token));
+          void _set_profile();
         }
       }} games={games} />
-      <Sidebar setToken={setToken} profile={profile} setProfile={setProfile} onUploadRun={() => setUploadRunDialog(true)} />
+      <Sidebar
+        profile={profile}
+        onLogout={() => setAuthentication({ status: "guest" })}
+        onUploadRun={() => setUploadRunDialog(true)}
+      />
       <Routes>
         <Route path="/" element={<Homepage />} />
-        <Route path="/profile" element={<Profile profile={profile} token={token} gameData={games} onDeleteRecord={() => _set_profile(get_user_id_from_token(token))} />} />
+        <Route path="/profile" element={<Profile authentication={authentication} gameData={games} onDeleteRecord={() => void _set_profile()} />} />
         <Route path="/users/*" element={<User profile={profile} token={token} gameData={games} />} />
         <Route path="/games" element={<Games games={games} />} />
         <Route path='/games/:id' element={<Maplist />}></Route>

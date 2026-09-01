@@ -9,13 +9,12 @@ import { API } from "@api/Api";
 import "@css/Sidebar.css";
 
 interface SidebarProps {
-  setToken: React.Dispatch<React.SetStateAction<string | undefined>>;
   profile?: UserProfile;
-  setProfile: React.Dispatch<React.SetStateAction<UserProfile | undefined>>;
+  onLogout: () => void;
   onUploadRun: () => void;
 };
 
-const Sidebar: React.FC<SidebarProps> = ({ setToken, profile, setProfile, onUploadRun }) => {
+const Sidebar: React.FC<SidebarProps> = ({ profile, onLogout, onUploadRun }) => {
 
   const [searchData, setSearchData] = React.useState<Search | undefined>(undefined);
   const [isSidebarLocked, setIsSidebarLocked] = React.useState<boolean>(false);
@@ -198,7 +197,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setToken, profile, setProfile, onUplo
                 <span></span>
             }
 
-            <Login setToken={setToken} profile={profile} setProfile={setProfile} />
+            <Login profile={profile} onLogout={onLogout} />
 
             <Link to="/rules" tabIndex={-1} onClick={_close_mobile_menu}>
               <button className='sidebar-button'><img src={BookIcon} alt="rules" /><span>Leaderboard&nbsp;Rules</span></button>
