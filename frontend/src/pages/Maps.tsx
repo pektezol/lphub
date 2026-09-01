@@ -8,15 +8,17 @@ import Leaderboards from "@components/Leaderboards";
 import Discussions from "@components/Discussions";
 import ModMenu from "@components/ModMenu";
 import { MapDiscussions, MapLeaderboard, MapSummary } from "@customTypes/Map";
+import { Game } from "@customTypes/Game";
 import { API } from "@api/Api";
 import "@css/Maps.css";
 
 interface MapProps {
   token?: string;
   isModerator: boolean;
+  games: Game[];
 };
 
-const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
+const Maps: React.FC<MapProps> = ({ token, isModerator, games }) => {
 
   const [selectedRun, setSelectedRun] = React.useState<number | undefined>(undefined);
 
@@ -81,7 +83,13 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
         <title>LPHUB | {mapSummaryData.map.map_name}</title>
         <meta name="description" content={mapSummaryData.map.map_name} />
       </Helmet>
-      {isModerator && <ModMenu token={token} data={mapSummaryData} selectedRun={selectedRun} mapID={mapID} />}
+      {isModerator && <ModMenu
+        token={token}
+        data={mapSummaryData}
+        selectedRun={selectedRun}
+        mapID={mapID}
+        categories={games.find((game) => game.name === mapSummaryData.map.game_name)?.category_portals ?? []}
+      />}
 
       <div id='background-image'>
         <img src={mapSummaryData.map.image} alt="" />
