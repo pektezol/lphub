@@ -6,6 +6,14 @@ import { PortalCountData, ScoreLog } from "../api/Stats";
 import "../css/Homepage.css";
 import { Link } from "react-router-dom";
 
+interface PortalCountTooltipProps {
+  active?: boolean;
+  payload?: {
+    value?: number | string;
+    payload?: PortalCountData;
+  }[];
+}
+
 const Homepage: React.FC = () => {
   const [portalCountDataSingleplayer, setPortalCountDataSingleplayer] = React.useState<PortalCountData[]>([]);
   const [portalCountDataMultiplayer, setPortalCountDataMultiplayer] = React.useState<PortalCountData[]>([]);
@@ -102,16 +110,18 @@ const Homepage: React.FC = () => {
     fetchRecentScores();
   }, []);
 
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
+  const CustomTooltip = ({ active, payload }: PortalCountTooltipProps) => {
+    const dataPoint = payload?.[0];
+
+    if (active && dataPoint?.payload) {
       return (
         <div className="custom-tooltip">
-          <p className="tooltip-date">{new Date(payload[0].payload.date).toLocaleDateString("en-US", {
+          <p className="tooltip-date">{new Date(dataPoint.payload.date).toLocaleDateString("en-US", {
             year: "numeric",
             month: "long",
             day: "numeric"
           })}</p>
-          <p className="tooltip-count">{`Portal Count: ${payload[0].value}`}</p>
+          <p className="tooltip-count">{`Portal Count: ${dataPoint.value}`}</p>
         </div>
       );
     }

@@ -1,7 +1,11 @@
 import axios from "axios";
 import { url } from "@api/Api";
 import { MapDiscussionContent, UploadRunContent } from "@customTypes/Content";
-import { MapSummary, MapLeaderboard, MapDiscussions, MapDiscussion } from "@customTypes/Map";
+import { MapSummary, MapLeaderboard, MapDiscussions, MapDiscussion, MapLeaderboardRecordMultiplayer, MapLeaderboardRecordSingleplayer } from "@customTypes/Map";
+
+type MapLeaderboardResponse = Omit<MapLeaderboard, "records"> & {
+  records: (Omit<MapLeaderboardRecordSingleplayer, "kind"> | Omit<MapLeaderboardRecordMultiplayer, "kind">)[];
+};
 
 export const get_map_summary = async (map_id: string): Promise<MapSummary> => {
   const response = await axios.get(url(`maps/${map_id}/summary`));
@@ -9,20 +13,20 @@ export const get_map_summary = async (map_id: string): Promise<MapSummary> => {
 };
 
 export const get_map_leaderboard = async (map_id: string, page: string): Promise<MapLeaderboard | undefined> => {
-  const response = await axios.get(url(`maps/${map_id}/leaderboards?page=${page}`));
+  const response = await axios.get<{ success: boolean; data: MapLeaderboardResponse }>(url(`maps/${map_id}/leaderboards?page=${page}`));
   if (!response.data.success) {
     return undefined;
   }
   const data = response.data.data;
   // map the kind of leaderboard
-  data.records = data.records.map((record: any) => {
-    if (record.host && record.partner) {
-      return { ...record, kind: "multiplayer" };
+  const records = data.records.map((record) => {
+    if ("host" in record && "partner" in record) {
+      return { ...record, kind: "multiplayer" as const };
     } else {
-      return { ...record, kind: "singleplayer" };
+      return { ...record, kind: "singleplayer" as const };
     }
   });
-  return data;
+  return { ...data, records };
 };
 
 export const get_map_discussions = async (map_id: string): Promise<MapDiscussions | undefined> => {

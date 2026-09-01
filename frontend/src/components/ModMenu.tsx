@@ -169,13 +169,12 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
   React.useEffect(() => {
     const modview = document.querySelector("div#modview") as HTMLElement;
     if (modview) {
-      showButton ? modview.style.transform = "translateY(-68%)"
-        : modview.style.transform = "translateY(0%)";
+      modview.style.transform = showButton ? "translateY(-68%)" : "translateY(0%)";
     }
 
     const modview_block = document.querySelector("#modview_block") as HTMLElement;
     if (modview_block) {
-      showButton ? modview_block.style.display = "none" : modview_block.style.display = "block";
+      modview_block.style.display = showButton ? "none" : "block";
     }
   }, [showButton]);
 

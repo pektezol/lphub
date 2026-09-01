@@ -1,7 +1,16 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 
-import { BookIcon, FlagIcon, HelpIcon, HomeIcon, LogoIcon, PortalIcon, SearchIcon, UploadIcon } from "@images/Images";
+import {
+  BookIcon,
+  FlagIcon,
+  HelpIcon,
+  HomeIcon,
+  LogoIcon,
+  PortalIcon,
+  SearchIcon,
+  UploadIcon,
+} from "@images/Images";
 import Login from "@components/Login";
 import { UserProfile } from "@customTypes/Profile";
 import { Search } from "@customTypes/Search";
@@ -12,22 +21,39 @@ interface SidebarProps {
   profile?: UserProfile;
   onLogout: () => void;
   onUploadRun: () => void;
-};
+}
 
-const Sidebar: React.FC<SidebarProps> = ({ profile, onLogout, onUploadRun }) => {
+const SEARCH_DEBOUNCE_MS = 250;
 
-  const [searchData, setSearchData] = React.useState<Search | undefined>(undefined);
+const Sidebar: React.FC<SidebarProps> = ({
+  profile,
+  onLogout,
+  onUploadRun,
+}) => {
+  const [searchData, setSearchData] = React.useState<Search | undefined>(
+    undefined,
+  );
   const [isSidebarLocked, setIsSidebarLocked] = React.useState<boolean>(false);
   const [isSidebarOpen, setSidebarOpen] = React.useState<boolean>(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState<boolean>(false);
-  const [isMobileSearchOpen, setIsMobileSearchOpen] = React.useState<boolean>(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] =
+    React.useState<boolean>(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] =
+    React.useState<boolean>(false);
+  const searchDebounceRef = React.useRef<
+    ReturnType<typeof setTimeout> | undefined
+  >(undefined);
+  const searchAbortControllerRef = React.useRef<AbortController | null>(null);
+  const searchRequestIdRef = React.useRef(0);
 
   const location = useLocation();
   const path = location.pathname;
 
   const handle_sidebar_click = (clicked_sidebar_idx: number) => {
     const btn = document.querySelectorAll("button.sidebar-button");
-    if (isSidebarOpen) { setSidebarOpen(false); _handle_sidebar_hide(); }
+    if (isSidebarOpen) {
+      setSidebarOpen(false);
+      _handle_sidebar_hide();
+    }
     // clusterfuck
     btn.forEach((_, i) => {
       btn[i].classList.remove("sidebar-button-selected");
@@ -38,16 +64,26 @@ const Sidebar: React.FC<SidebarProps> = ({ profile, onLogout, onUploadRun }) => 
   };
 
   const _handle_sidebar_hide = () => {
-    const btn = document.querySelectorAll("button.sidebar-button") as NodeListOf<HTMLElement>;
-    const span = document.querySelectorAll("button.sidebar-button>span") as NodeListOf<HTMLElement>;
+    const btn = document.querySelectorAll(
+      "button.sidebar-button",
+    ) as NodeListOf<HTMLElement>;
+    const span = document.querySelectorAll(
+      "button.sidebar-button>span",
+    ) as NodeListOf<HTMLElement>;
     const side = document.querySelector("#sidebar-list") as HTMLElement;
     const searchbar = document.querySelector("#searchbar") as HTMLInputElement;
-    const uploadRunBtn = document.querySelector("#upload-run") as HTMLInputElement;
-    const uploadRunSpan = document.querySelector("#upload-run>span") as HTMLInputElement;
+    const uploadRunBtn = document.querySelector(
+      "#upload-run",
+    ) as HTMLInputElement;
+    const uploadRunSpan = document.querySelector(
+      "#upload-run>span",
+    ) as HTMLInputElement;
 
     if (isSidebarOpen) {
       if (profile) {
-        const login = document.querySelectorAll(".login>button")[1] as HTMLElement;
+        const login = document.querySelectorAll(
+          ".login>button",
+        )[1] as HTMLElement;
         login.style.opacity = "1";
         uploadRunBtn.style.width = "310px";
         uploadRunBtn.style.padding = "0 0 0 11px";
@@ -59,7 +95,7 @@ const Sidebar: React.FC<SidebarProps> = ({ profile, onLogout, onUploadRun }) => 
       setSidebarOpen(false);
       side.style.width = "320px";
       btn.forEach((e, i) => {
-        e.style.width = (window.innerWidth > 1024) ? "310px" : "265px";
+        e.style.width = window.innerWidth > 1024 ? "310px" : "265px";
         e.style.padding = "0 0 0 11px";
         setTimeout(() => {
           span[i].style.opacity = "1";
@@ -68,7 +104,9 @@ const Sidebar: React.FC<SidebarProps> = ({ profile, onLogout, onUploadRun }) => 
       side.style.zIndex = "2";
     } else {
       if (profile) {
-        const login = document.querySelectorAll(".login>button")[1] as HTMLElement;
+        const login = document.querySelectorAll(
+          ".login>button",
+        )[1] as HTMLElement;
         login.style.opacity = "0";
         uploadRunBtn.style.width = "40px";
         uploadRunBtn.style.padding = "0 0 0 5px";
@@ -109,9 +147,41 @@ const Sidebar: React.FC<SidebarProps> = ({ profile, onLogout, onUploadRun }) => 
     setIsMobileMenuOpen(false);
   };
 
-  const _handle_search_change = async (q: string) => {
-    const searchResponse = await API.get_search(q);
-    setSearchData(searchResponse);
+  const _handle_search_change = (q: string) => {
+    const query = q.trim();
+    const requestId = ++searchRequestIdRef.current;
+
+    if (searchDebounceRef.current !== undefined) {
+      clearTimeout(searchDebounceRef.current);
+    }
+    searchAbortControllerRef.current?.abort();
+    setSearchData(undefined);
+
+    if (!query) {
+      return;
+    }
+
+    searchDebounceRef.current = setTimeout(async () => {
+      const controller = new AbortController();
+      searchAbortControllerRef.current = controller;
+
+      try {
+        const searchResponse = await API.get_search(query, controller.signal);
+        if (
+          !controller.signal.aborted &&
+          requestId === searchRequestIdRef.current
+        ) {
+          setSearchData(searchResponse);
+        }
+      } catch {
+        if (
+          !controller.signal.aborted &&
+          requestId === searchRequestIdRef.current
+        ) {
+          setSearchData(undefined);
+        }
+      }
+    }, SEARCH_DEBOUNCE_MS);
   };
 
   const _toggle_mobile_menu = () => {
@@ -123,117 +193,193 @@ const Sidebar: React.FC<SidebarProps> = ({ profile, onLogout, onUploadRun }) => 
   };
 
   React.useEffect(() => {
-    if (path === "/") { handle_sidebar_click(1); }
-    else if (path.includes("games")) { handle_sidebar_click(2); }
-    else if (path.includes("rankings")) { handle_sidebar_click(3); }
+    if (path === "/") {
+      handle_sidebar_click(1);
+    } else if (path.includes("games")) {
+      handle_sidebar_click(2);
+    } else if (path.includes("rankings")) {
+      handle_sidebar_click(3);
+    }
     // else if (path.includes("news")) { handle_sidebar_click(4) }
     // else if (path.includes("scorelog")) { handle_sidebar_click(5) }
-    else if (path.includes("profile")) { handle_sidebar_click(4); }
-    else if (path.includes("rules")) { handle_sidebar_click(5); }
-    else if (path.includes("about")) { handle_sidebar_click(6); }
+    else if (path.includes("profile")) {
+      handle_sidebar_click(4);
+    } else if (path.includes("rules")) {
+      handle_sidebar_click(5);
+    } else if (path.includes("about")) {
+      handle_sidebar_click(6);
+    }
   }, [path]);
+
+  React.useEffect(() => {
+    return () => {
+      if (searchDebounceRef.current !== undefined) {
+        clearTimeout(searchDebounceRef.current);
+      }
+      searchAbortControllerRef.current?.abort();
+      ++searchRequestIdRef.current;
+    };
+  }, []);
 
   return (
     <>
-      <div id='mobile-topbar'>
+      <div id="mobile-topbar">
         <Link to="/" tabIndex={-1}>
-          <div id='mobile-logo'>
+          <div id="mobile-logo">
             <img src={LogoIcon} alt="" height={"50px"} />
-            <div id='mobile-logo-text'>
-              <span><b>LPHUB</b></span>
+            <div id="mobile-logo-text">
+              <span>
+                <b>LPHUB</b>
+              </span>
             </div>
           </div>
         </Link>
-        <button id='hamburger-menu' onClick={_toggle_mobile_menu} className={isMobileMenuOpen ? "open" : ""}>
+        <button
+          id="hamburger-menu"
+          onClick={_toggle_mobile_menu}
+          className={isMobileMenuOpen ? "open" : ""}
+        >
           <span></span>
           <span></span>
           <span></span>
         </button>
       </div>
-      <div id='sidebar' className={isMobileMenuOpen ? "mobile-open" : ""}>
+      <div id="sidebar" className={isMobileMenuOpen ? "mobile-open" : ""}>
         <Link to="/" tabIndex={-1}>
-          <div id='logo'> {/* logo */}
+          <div id="logo">
+            {" "}
+            {/* logo */}
             <img src={LogoIcon} alt="" height={"80px"} />
-            <div id='logo-text'>
-              <span><b>PORTAL 2</b></span><br />
+            <div id="logo-text">
+              <span>
+                <b>PORTAL 2</b>
+              </span>
+              <br />
               <span>Least Portals Hub</span>
             </div>
           </div>
         </Link>
-        <div id='sidebar-list'> {/* List */}
-          <div id='sidebar-toplist'> {/* Top */}
-
-            <button className='sidebar-button' onClick={() => _handle_sidebar_lock()}><img src={SearchIcon} alt="" /><span>Search</span></button>
-
+        <div id="sidebar-list">
+          {/* List */}
+          <div id="sidebar-toplist">
+            {/* Top */}
+            <button
+              className="sidebar-button"
+              onClick={() => _handle_sidebar_lock()}
+            >
+              <img src={SearchIcon} alt="" />
+              <span>Search</span>
+            </button>
             <span></span>
-
             <Link to="/" tabIndex={-1} onClick={_close_mobile_menu}>
-              <button className='sidebar-button'><img src={HomeIcon} alt="homepage" /><span>Home&nbsp;Page</span></button>
+              <button className="sidebar-button">
+                <img src={HomeIcon} alt="homepage" />
+                <span>Home&nbsp;Page</span>
+              </button>
             </Link>
-
             <Link to="/games" tabIndex={-1} onClick={_close_mobile_menu}>
-              <button className='sidebar-button'><img src={PortalIcon} alt="games" /><span>Games</span></button>
+              <button className="sidebar-button">
+                <img src={PortalIcon} alt="games" />
+                <span>Games</span>
+              </button>
             </Link>
-
             <Link to="/rankings" tabIndex={-1} onClick={_close_mobile_menu}>
-              <button className='sidebar-button'><img src={FlagIcon} alt="rankings" /><span>Rankings</span></button>
+              <button className="sidebar-button">
+                <img src={FlagIcon} alt="rankings" />
+                <span>Rankings</span>
+              </button>
             </Link>
-
             {/* <Link to="/news" tabIndex={-1}>
             <button className='sidebar-button'><img src={NewsIcon} alt="news" /><span>News</span></button>
           </Link> */}
-
             {/* <Link to="/scorelog" tabIndex={-1}>
             <button className='sidebar-button'><img src={TableIcon} alt="scorelogs" /><span>Score&nbsp;Logs</span></button>
           </Link> */}
           </div>
-          <div id='sidebar-bottomlist'>
+          <div id="sidebar-bottomlist">
             <span></span>
 
-            {
-              profile && profile.profile ?
-                <button id='upload-run' className='submit-run-button' onClick={() => onUploadRun()}><img src={UploadIcon} alt="upload" /><span>Upload&nbsp;Record</span></button>
-                :
-                <span></span>
-            }
+            {profile && profile.profile ? (
+              <button
+                id="upload-run"
+                className="submit-run-button"
+                onClick={() => onUploadRun()}
+              >
+                <img src={UploadIcon} alt="upload" />
+                <span>Upload&nbsp;Record</span>
+              </button>
+            ) : (
+              <span></span>
+            )}
 
             <Login profile={profile} onLogout={onLogout} />
 
             <Link to="/rules" tabIndex={-1} onClick={_close_mobile_menu}>
-              <button className='sidebar-button'><img src={BookIcon} alt="rules" /><span>Leaderboard&nbsp;Rules</span></button>
+              <button className="sidebar-button">
+                <img src={BookIcon} alt="rules" />
+                <span>Leaderboard&nbsp;Rules</span>
+              </button>
             </Link>
 
             <Link to="/about" tabIndex={-1} onClick={_close_mobile_menu}>
-              <button className='sidebar-button'><img src={HelpIcon} alt="about" /><span>About&nbsp;LPHUB</span></button>
+              <button className="sidebar-button">
+                <img src={HelpIcon} alt="about" />
+                <span>About&nbsp;LPHUB</span>
+              </button>
             </Link>
           </div>
         </div>
-        <div id='search-panel' className={isMobileSearchOpen ? "mobile-search-open" : ""}>
-          <input type="text" id='searchbar' placeholder='Search for map or a player...' onChange={(e) => _handle_search_change(e.target.value)} />
-          <div className='mobile-search-header'>
-            <button className='mobile-search-close' onClick={_close_mobile_search}>✕</button>
+        <div
+          id="search-panel"
+          className={isMobileSearchOpen ? "mobile-search-open" : ""}
+        >
+          <input
+            type="text"
+            id="searchbar"
+            placeholder="Search for map or a player..."
+            onChange={(e) => _handle_search_change(e.target.value)}
+          />
+          <div className="mobile-search-header">
+            <button
+              className="mobile-search-close"
+              onClick={_close_mobile_search}
+            >
+              ✕
+            </button>
           </div>
 
-          <div id='search-data'>
-
+          <div id="search-data">
             {searchData?.maps.map((q, index) => (
-              <Link to={`/maps/${q.id}`} className='search-map' key={index} onClick={_close_mobile_search_and_menu}>
+              <Link
+                to={`/maps/${q.id}`}
+                className="search-map"
+                key={index}
+                onClick={_close_mobile_search_and_menu}
+              >
                 <span>{q.game}</span>
                 <span>{q.chapter}</span>
                 <span>{q.map}</span>
               </Link>
             ))}
-            {searchData?.players.map((q, index) =>
-            (
-              <Link to={
-                profile && q.steam_id === profile.steam_id ? "/profile" :
-                  `/users/${q.steam_id}`
-              } className='search-player' key={index} onClick={_close_mobile_search_and_menu}>
-                <img src={q.avatar_link} alt='pfp'></img>
-                <span style={{ fontSize: `${36 - q.user_name.length * 0.8}px` }}>{q.user_name}</span>
+            {searchData?.players.map((q, index) => (
+              <Link
+                to={
+                  profile && q.steam_id === profile.steam_id
+                    ? "/profile"
+                    : `/users/${q.steam_id}`
+                }
+                className="search-player"
+                key={index}
+                onClick={_close_mobile_search_and_menu}
+              >
+                <img src={q.avatar_link} alt="pfp"></img>
+                <span
+                  style={{ fontSize: `${36 - q.user_name.length * 0.8}px` }}
+                >
+                  {q.user_name}
+                </span>
               </Link>
             ))}
-
           </div>
         </div>
       </div>

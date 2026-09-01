@@ -25,7 +25,7 @@ export const API = {
   get_chapters: (chapter_id: string) => get_chapters(chapter_id),
   get_games_chapters: (game_id: string) => get_games_chapters(game_id),
   get_game_maps: (game_id: string) => get_game_maps(game_id),
-  get_search: (q: string) => get_search(q),
+  get_search: (q: string, signal?: AbortSignal) => get_search(q, signal),
   // Rankings
   get_official_rankings: () => get_official_rankings(),
   get_unofficial_rankings: () => get_unofficial_rankings(),
