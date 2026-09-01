@@ -3,9 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
 import { SteamIcon, TwitchIcon, YouTubeIcon, PortalIcon, FlagIcon, StatisticsIcon, SortIcon, ThreedotIcon, DownloadIcon, HistoryIcon, DeleteIcon } from "@images/Images";
-import { UserProfile } from "@customTypes/Profile";
 import { Game, GameChapters } from "@customTypes/Game";
 import { Map } from "@customTypes/Map";
+import { AuthenticationState } from "@customTypes/Auth";
 import { ticks_to_time } from "@utils/Time";
 import "@css/Profile.css";
 import { API } from "@api/Api";
@@ -14,13 +14,12 @@ import useMessage from "@hooks/UseMessage";
 import useMessageLoad from "@hooks/UseMessageLoad";
 
 interface ProfileProps {
-  profile?: UserProfile;
-  token?: string;
+  authentication: AuthenticationState;
   gameData: Game[];
   onDeleteRecord: () => void;
 }
 
-const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRecord }) => {
+const Profile: React.FC<ProfileProps> = ({ authentication, gameData, onDeleteRecord }) => {
   const { confirm, ConfirmDialogComponent } = useConfirm();
   const { message, MessageDialogComponent } = useMessage();
   const { messageLoad, messageLoadClose, MessageDialogLoadComponent } = useMessageLoad();
@@ -34,6 +33,8 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
   const [maps, setMaps] = React.useState<Map[]>([]);
 
   const navigate = useNavigate();
+  const profile = authentication.status === "authenticated" ? authentication.profile : undefined;
+  const token = authentication.status === "authenticated" ? authentication.token : undefined;
 
   const _update_profile = () => {
     if (token) {
@@ -97,10 +98,10 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
   };
 
   React.useEffect(() => {
-    if (!profile) {
-      navigate("/");
-    };
-  }, [profile]);
+    if (authentication.status === "guest") {
+      navigate("/", { replace: true });
+    }
+  }, [authentication.status, navigate]);
 
   React.useEffect(() => {
     if (profile) {
@@ -114,7 +115,7 @@ const Profile: React.FC<ProfileProps> = ({ profile, token, gameData, onDeleteRec
     }
   }, [profile, game, chapter, chapterData]);
 
-  if (!profile) {
+  if (authentication.status !== "authenticated" || !profile) {
     return (
       <></>
     );
