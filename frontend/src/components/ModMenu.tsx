@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { MapSummary } from "@customTypes/Map";
 import { ModMenuContent } from "@customTypes/Content";
+import { GameCategoryPortals } from "@customTypes/Game";
 import { API } from "@api/Api";
 import "@css/ModMenu.css";
 import useConfirm from "@hooks/UseConfirm";
@@ -13,9 +14,10 @@ interface ModMenuProps {
   data: MapSummary;
   selectedRun?: number;
   mapID: string;
+  categories: GameCategoryPortals[];
 }
 
-const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID }) => {
+const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, categories }) => {
 
   const { confirm, ConfirmDialogComponent } = useConfirm();
 
@@ -29,7 +31,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID }) =>
     date: "",
     showcase: "",
     description: "No description available.",
-    category_id: 1,
+    category_id: 0,
   });
 
   const [image, setImage] = React.useState<string>("");
@@ -135,11 +137,11 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID }) =>
         date: "",
         showcase: "",
         description: "No description available.",
-        category_id: 1,
+        category_id: categories[0]?.category.id ?? 0,
       });
       setMd("No description available.");
     }
-  }, [menu]);
+  }, [menu, categories]);
 
   React.useEffect(() => {
     if (menu === 2 && !selectedRoute) {
@@ -182,7 +184,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID }) =>
         <div>
           <button onClick={() => setMenu(1)}>Edit Image</button>
           <button disabled={!selectedRoute} onClick={() => setMenu(2)}>Edit Selected Route</button>
-          <button onClick={() => setMenu(3)}>Add New Route</button>
+          <button disabled={categories.length === 0} onClick={() => setMenu(3)}>Add New Route</button>
           <button disabled={!selectedRoute} onClick={() => _delete_map_summary_route()}>Delete Selected Route</button>
         </div>
         <div>
@@ -288,17 +290,15 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID }) =>
             <div id='modview-menu-add'>
               <div id='modview-route-category'>
                 <span>Category:</span>
-                <select onChange={(e) => {
+                <select value={routeContent.category_id} onChange={(e) => {
                   setRouteContent({
                     ...routeContent,
                     category_id: parseInt(e.target.value),
                   });
                 }}>
-                  <option value="1" key="1">CM</option>
-                  <option value="2" key="2">No SLA</option>
-                  {data.map.game_name === "Portal 2 - Cooperative" ? "" : (
-                    <option value="3" key="3">Inbounds SLA</option>)}
-                  <option value="4" key="4">Any%</option>
+                  {categories.map(({ category }) => (
+                    <option value={category.id} key={category.id}>{category.name}</option>
+                  ))}
                 </select>
               </div>
               <div id='modview-route-name'>

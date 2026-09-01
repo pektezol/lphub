@@ -127,7 +127,7 @@ const App: React.FC = () => {
         <Route path="/users/*" element={<User profile={profile} token={token} gameData={games} />} />
         <Route path="/games" element={<Games games={games} />} />
         <Route path='/games/:id' element={<Maplist />}></Route>
-        <Route path="/maps/*" element={<Maps token={token} isModerator={isModerator} />} />
+        <Route path="/maps/*" element={<Maps token={token} isModerator={isModerator} games={games} />} />
         <Route path="/rules" element={<Rules />} />
         <Route path="/about" element={<About />} />
         <Route path='/rankings' element={<Rankings />}></Route>
