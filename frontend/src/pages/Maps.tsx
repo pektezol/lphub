@@ -18,7 +18,7 @@ interface MapProps {
 
 const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
 
-  const [selectedRun, setSelectedRun] = React.useState<number>(0);
+  const [selectedRun, setSelectedRun] = React.useState<number | undefined>(undefined);
 
   const [mapSummaryData, setMapSummaryData] = React.useState<MapSummary | undefined>(undefined);
   const [mapLeaderboardData, setMapLeaderboardData] = React.useState<MapLeaderboard | undefined>(undefined);
@@ -46,6 +46,7 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
   };
 
   React.useEffect(() => {
+    setSelectedRun(undefined);
     _fetch_map_summary();
     _fetch_map_leaderboards();
     _fetch_map_discussions();
