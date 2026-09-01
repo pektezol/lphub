@@ -23,7 +23,7 @@ const GameEntry: React.FC<GameEntryProps> = ({ game }) => {
         <div style={{ backgroundImage: `url(${game.image})` }} className='games-page-item-header-img'></div>
         <span><b>{game.name}</b></span>
       </div>
-      <div id={game.id as any as string} className='games-page-item-body'>
+      <div id={String(game.id)} className='games-page-item-body'>
         {catInfo.map((cat, index) => {
           return <GameCategory cat={cat} game={game} key={index}></GameCategory>;
         })}

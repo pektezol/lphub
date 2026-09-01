@@ -25,7 +25,10 @@ export const get_game_maps = async (game_id: string): Promise<Map[]> => {
   return response.data.data.maps;
 };
 
-export const get_search = async (q: string): Promise<Search> => {
-  const response = await axios.get(url(`search?q=${q}`));
+export const get_search = async (q: string, signal?: AbortSignal): Promise<Search> => {
+  const response = await axios.get(url("search"), {
+    params: { q },
+    signal,
+  });
   return response.data.data;
 };

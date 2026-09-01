@@ -96,6 +96,17 @@ const Profile: React.FC<ProfileProps> = ({ authentication, gameData, onDeleteRec
     }
   };
 
+  const _toggle_record_history = (index: number, recordCount: number) => {
+    const recordElement = document.querySelectorAll<HTMLElement>(".profileboard-record")[index % 20];
+    if (!recordElement) {
+      return;
+    }
+
+    recordElement.style.height = recordElement.style.height === "44px" || recordElement.style.height === ""
+      ? `${recordCount * 46}px`
+      : "44px";
+  };
+
   React.useEffect(() => {
     if (authentication.status === "guest") {
       navigate("/", { replace: true });
@@ -294,13 +305,7 @@ const Profile: React.FC<ProfileProps> = ({ authentication, gameData, onDeleteRec
                             <button style={{ marginRight: "10px" }} onClick={() => { message("Demo Information", `Demo ID: ${e.demo_id}`); }}><img src={ThreedotIcon} alt="demo_id" /></button>
                             <button onClick={() => { _delete_submission(r.map_id, e.record_id); }}><img src={DeleteIcon}></img></button>
                             <button onClick={() => _download_demo(e.demo_id)}><img src={DownloadIcon} alt="download" /></button>
-                            {i === 0 && r.scores.length > 1 ? <button onClick={() => {
-                              (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "44px" ||
-                                (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "" ?
-                                (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height = `${r.scores.length * 46}px` :
-                                (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height = "44px";
-                            }
-                            }><img src={HistoryIcon} alt="history" /></button> : ""}
+                            {i === 0 && r.scores.length > 1 ? <button onClick={() => _toggle_record_history(index, r.scores.length)}><img src={HistoryIcon} alt="history" /></button> : ""}
 
                           </span>
                         </>))}
@@ -340,13 +345,7 @@ const Profile: React.FC<ProfileProps> = ({ authentication, gameData, onDeleteRec
                               <button onClick={() => { message("Demo Information", `Demo ID: ${e.demo_id}`); }}><img src={ThreedotIcon} alt="demo_id" /></button>
                               <button onClick={() => { _delete_submission(r.id, e.record_id); }}><img src={DeleteIcon}></img></button>
                               <button onClick={() => _download_demo(e.demo_id)}><img src={DownloadIcon} alt="download" /></button>
-                              {i === 0 && record!.scores.length > 1 ? <button onClick={() => {
-                                (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "44px" ||
-                                  (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height === "" ?
-                                  (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height = `${record!.scores.length * 46}px` :
-                                  (document.querySelectorAll(".profileboard-record")[index % 20] as HTMLInputElement).style.height = "44px";
-                              }
-                              }><img src={HistoryIcon} alt="history" /></button> : ""}
+                              {i === 0 && record!.scores.length > 1 ? <button onClick={() => _toggle_record_history(index, record!.scores.length)}><img src={HistoryIcon} alt="history" /></button> : ""}
 
                             </span>
                           </>))}

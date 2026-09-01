@@ -37,7 +37,7 @@ interface MapDiscussionDetailComment {
 
 export interface MapLeaderboard {
   map: MapSummaryMap;
-  records: MapLeaderboardRecordSingleplayer[] | MapLeaderboardRecordMultiplayer[];
+  records: (MapLeaderboardRecordSingleplayer | MapLeaderboardRecordMultiplayer)[];
   pagination: Pagination;
 };
 
@@ -106,4 +106,3 @@ export interface MapDeleteEndpoint {
   map_id: number;
   record_id: number;
 }
-
