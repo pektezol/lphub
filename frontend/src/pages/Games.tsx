@@ -19,9 +19,6 @@ const Games: React.FC<GamesProps> = ({ games }) => {
   };
 
   React.useEffect(() => {
-    document.querySelectorAll(".games-page-item-body").forEach((game) => {
-      game.innerHTML = "";
-    });
     _page_load();
   }, []);
 

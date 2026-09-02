@@ -13,6 +13,7 @@ import (
 
 type Result struct {
 	MapID          int
+	EngineMapName  string
 	ServerNumber   int
 	PortalCount    int
 	TickCount      int
@@ -46,6 +47,7 @@ func ProcessDemo(demoFile io.Reader) (Result, error) {
 		return Result{}, errors.New("Invalid map.")
 	}
 	result.MapID = mapDict[mapName]
+	result.EngineMapName = mapName
 	for {
 		packetType := reader.TryReadUInt8()
 		reader.SkipBits(40)
@@ -471,4 +473,58 @@ var mapDict = map[string]int{
 	"mp_coop_laser_tbeam":      108,
 	"mp_coop_paint_rat_maze":   109,
 	"mp_coop_paint_crazy_box":  110,
+
+	"st_a1_tramride":  111,
+	"st_a1_mel_intro": 112,
+	"st_a1_lift":      113,
+	"st_a1_garden":    114,
+
+	"st_a2_garden_de":   115,
+	"st_a2_underbounce": 116,
+	"st_a2_once_upon":   117,
+	"st_a2_past_power":  118,
+	"st_a2_ramp":        119,
+	"st_a2_firestorm":   120,
+
+	"st_a3_junkyard":    121,
+	"st_a3_concepts":    122,
+	"st_a3_paint_fling": 123,
+	"st_a3_faith_plate": 124,
+	"st_a3_transition":  125,
+
+	"st_a4_overgrown":     126,
+	"st_a4_tb_over_goo":   127,
+	"st_a4_two_of_a_kind": 128,
+	"st_a4_destroyed":     129,
+	"st_a4_factory":       130,
+
+	"st_a4_core_access": 131,
+	"st_a4_finale":      132,
+
+	"sp_a1_tramride":  133,
+	"sp_a1_mel_intro": 134,
+	"sp_a1_lift":      135,
+	"sp_a1_garden":    136,
+
+	"sp_a2_garden_de":   137,
+	"sp_a2_underbounce": 138,
+	"sp_a2_once_upon":   139,
+	"sp_a2_past_power":  140,
+	"sp_a2_ramp":        141,
+	"sp_a2_firestorm":   142,
+
+	"sp_a3_junkyard":    143,
+	"sp_a3_concepts":    144,
+	"sp_a3_paint_fling": 145,
+	"sp_a3_faith_plate": 146,
+	"sp_a3_transition":  147,
+
+	"sp_a4_overgrown":     148,
+	"sp_a4_tb_over_goo":   149,
+	"sp_a4_two_of_a_kind": 150,
+	"sp_a4_destroyed":     151,
+	"sp_a4_factory":       152,
+
+	"sp_a4_core_access": 153,
+	"sp_a4_finale":      154,
 }

@@ -14,4 +14,8 @@ INSERT INTO chapters(id, game_id, name, is_disabled) VALUES
 (13, 2, 'Course 3 - Hard-Light Surfaces', false),
 (14, 2, 'Course 4 - Excursion Funnels', false),
 (15, 2, 'Course 5 - Mobility Gels', false),
-(16, 2, 'Course 6 - Art Therapy', false);
+(16, 2, 'Course 6 - Art Therapy', false),
+(17, 3, 'Story Mode', false),
+(18, 3, 'Advanced Mode', false);
+
+SELECT setval(pg_get_serial_sequence('chapters', 'id'), (SELECT MAX(id) FROM chapters));

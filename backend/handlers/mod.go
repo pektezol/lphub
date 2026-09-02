@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	stdsql "database/sql"
 	"net/http"
 	"strconv"
 	"time"
@@ -72,10 +73,19 @@ func CreateMapSummary(c *gin.Context) {
 		return
 	}
 	defer tx.Rollback()
-	// Fetch route category and score count
+	// Verify that the selected category is supported by this map's game.
 	var checkMapID int
-	sql := `SELECT m.id FROM maps m WHERE m.id = $1`
-	err = database.DB.QueryRow(sql, mapID).Scan(&checkMapID)
+	sql := `
+		SELECT m.id
+		FROM maps m
+		INNER JOIN game_categories gc ON gc.game_id = m.game_id
+		WHERE m.id = $1 AND gc.category_id = $2
+	`
+	err = tx.QueryRow(sql, mapID, request.CategoryID).Scan(&checkMapID)
+	if err == stdsql.ErrNoRows {
+		c.JSON(http.StatusOK, models.ErrorResponse("Map ID does not exist or the category is not available for this game."))
+		return
+	}
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
