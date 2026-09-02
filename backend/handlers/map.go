@@ -333,9 +333,9 @@ func FetchGames(c *gin.Context) {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	var games []models.Game
+	games := []models.Game{}
 	for rows.Next() {
-		var game models.Game
+		game := models.Game{CategoryPortals: []models.CategoryPortal{}}
 		if err := rows.Scan(&game.ID, &game.Name, &game.IsCoop, &game.Image); err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
@@ -402,13 +402,15 @@ func FetchChapters(c *gin.Context) {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	var response ChaptersResponse
+	response := ChaptersResponse{
+		Game:     models.Game{CategoryPortals: []models.CategoryPortal{}},
+		Chapters: []models.Chapter{},
+	}
 	rows, err := database.DB.Query(`SELECT c.id, c.name, g.name, c.is_disabled, c.image FROM chapters c INNER JOIN games g ON c.game_id = g.id WHERE game_id = $1 ORDER BY c.id;`, gameID)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	var chapters []models.Chapter
 	var gameName string
 	for rows.Next() {
 		var chapter models.Chapter
@@ -416,11 +418,10 @@ func FetchChapters(c *gin.Context) {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
 		}
-		chapters = append(chapters, chapter)
+		response.Chapters = append(response.Chapters, chapter)
 	}
 	response.Game.ID = intID
 	response.Game.Name = gameName
-	response.Chapters = chapters
 	c.JSON(http.StatusOK, models.Response{
 		Success: true,
 		Message: "Successfully retrieved chapters.",
@@ -442,7 +443,10 @@ func FetchMaps(c *gin.Context) {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	var response GameMapsResponse
+	response := GameMapsResponse{
+		Game: models.Game{CategoryPortals: []models.CategoryPortal{}},
+		Maps: []models.MapSelect{},
+	}
 	err = database.DB.QueryRow(`SELECT g.id, g.name, g.is_coop, g.image FROM games g WHERE g.id = $1;`, gameID).Scan(&response.Game.ID, &response.Game.Name, &response.Game.IsCoop, &response.Game.Image)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
@@ -494,18 +498,18 @@ func FetchMaps(c *gin.Context) {
 		m.is_disabled,
 		m.difficulty,
 		m.image,
-		cat.id,
-		cat.name,
-		mh.min_score_count AS score_count
+		COALESCE(cat.id, 0),
+		COALESCE(cat.name, ''),
+		COALESCE(mh.min_score_count, 0) AS score_count
 	FROM 
 		maps m
 	INNER JOIN 
 		chapters c ON m.chapter_id = c.id
-	INNER JOIN 
-		game_categories gc ON gc.game_id = c.game_id
-	INNER JOIN
+	LEFT JOIN
+		game_categories gc ON gc.game_id = m.game_id
+	LEFT JOIN
 		categories cat ON cat.id = gc.category_id
-	INNER JOIN 
+	LEFT JOIN
 		(
 			SELECT 
 				map_id, 
@@ -527,6 +531,7 @@ func FetchMaps(c *gin.Context) {
 		return
 	}
 	var lastMapID int
+	hasMap := false
 	for rows.Next() {
 		var mapShort models.MapSelect
 		var categoryPortal models.CategoryPortal
@@ -534,12 +539,18 @@ func FetchMaps(c *gin.Context) {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
 		}
-		if mapShort.ID == lastMapID {
-			response.Maps[len(response.Maps)-1].CategoryPortals = append(response.Maps[len(response.Maps)-1].CategoryPortals, categoryPortal)
+		if hasMap && mapShort.ID == lastMapID {
+			if categoryPortal.Category.ID != 0 {
+				response.Maps[len(response.Maps)-1].CategoryPortals = append(response.Maps[len(response.Maps)-1].CategoryPortals, categoryPortal)
+			}
 		} else {
-			mapShort.CategoryPortals = append(mapShort.CategoryPortals, categoryPortal)
+			mapShort.CategoryPortals = []models.CategoryPortal{}
+			if categoryPortal.Category.ID != 0 {
+				mapShort.CategoryPortals = append(mapShort.CategoryPortals, categoryPortal)
+			}
 			response.Maps = append(response.Maps, mapShort)
 			lastMapID = mapShort.ID
+			hasMap = true
 		}
 	}
 	c.JSON(http.StatusOK, models.Response{
@@ -565,7 +576,7 @@ func FetchChapterMaps(c *gin.Context) {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	var response ChapterMapsResponse
+	response := ChapterMapsResponse{Maps: []models.MapSelect{}}
 	rows, err := database.DB.Query(`
 	SELECT 
 		m.id, 
@@ -574,18 +585,18 @@ func FetchChapterMaps(c *gin.Context) {
 		m.is_disabled,
 		m.difficulty,
 		m.image,
-		cat.id,
-		cat.name,
-		mh.min_score_count AS score_count
+		COALESCE(cat.id, 0),
+		COALESCE(cat.name, ''),
+		COALESCE(mh.min_score_count, 0) AS score_count
 	FROM 
 		maps m
 	INNER JOIN 
 		chapters c ON m.chapter_id = c.id
-	INNER JOIN 
-		game_categories gc ON gc.game_id = c.game_id
-	INNER JOIN
+	LEFT JOIN
+		game_categories gc ON gc.game_id = m.game_id
+	LEFT JOIN
 		categories cat ON cat.id = gc.category_id
-	INNER JOIN 
+	LEFT JOIN
 		(
 			SELECT 
 				map_id, 
@@ -606,9 +617,9 @@ func FetchChapterMaps(c *gin.Context) {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	var maps []models.MapSelect
 	var chapterName string
 	var lastMapID int
+	hasMap := false
 	for rows.Next() {
 		var mapShort models.MapSelect
 		var categoryPortal models.CategoryPortal
@@ -616,17 +627,22 @@ func FetchChapterMaps(c *gin.Context) {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
 		}
-		if mapShort.ID == lastMapID {
-			maps[len(maps)-1].CategoryPortals = append(maps[len(maps)-1].CategoryPortals, categoryPortal)
+		if hasMap && mapShort.ID == lastMapID {
+			if categoryPortal.Category.ID != 0 {
+				response.Maps[len(response.Maps)-1].CategoryPortals = append(response.Maps[len(response.Maps)-1].CategoryPortals, categoryPortal)
+			}
 		} else {
-			mapShort.CategoryPortals = append(mapShort.CategoryPortals, categoryPortal)
-			maps = append(maps, mapShort)
+			mapShort.CategoryPortals = []models.CategoryPortal{}
+			if categoryPortal.Category.ID != 0 {
+				mapShort.CategoryPortals = append(mapShort.CategoryPortals, categoryPortal)
+			}
+			response.Maps = append(response.Maps, mapShort)
 			lastMapID = mapShort.ID
+			hasMap = true
 		}
 	}
 	response.Chapter.ID = intID
 	response.Chapter.Name = chapterName
-	response.Maps = maps
 	c.JSON(http.StatusOK, models.Response{
 		Success: true,
 		Message: "Successfully retrieved maps.",
