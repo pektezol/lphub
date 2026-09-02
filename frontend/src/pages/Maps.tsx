@@ -8,17 +8,15 @@ import Leaderboards from "@components/Leaderboards";
 import Discussions from "@components/Discussions";
 import ModMenu from "@components/ModMenu";
 import { MapDiscussions, MapSummary } from "@customTypes/Map";
-import { Game } from "@customTypes/Game";
 import { API } from "@api/Api";
 import "@css/Maps.css";
 
 interface MapProps {
   token?: string;
   isModerator: boolean;
-  games: Game[];
 };
 
-const Maps: React.FC<MapProps> = ({ token, isModerator, games }) => {
+const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
 
   const [selectedRun, setSelectedRun] = React.useState<number | undefined>(undefined);
 
@@ -73,15 +71,15 @@ const Maps: React.FC<MapProps> = ({ token, isModerator, games }) => {
   return (
     <>
       <Helmet>
-        <title>LPHUB | {mapSummaryData.map.map_name}</title>
-        <meta name="description" content={mapSummaryData.map.map_name} />
+        <title>LPHUB | {mapSummaryData.map.map_name}{mapSummaryData.map.section_kind === "mode" ? " — " + mapSummaryData.map.chapter_name : ""}</title>
+        <meta name="description" content={mapSummaryData.map.map_name + (mapSummaryData.map.section_kind === "mode" ? " — " + mapSummaryData.map.chapter_name : "")} />
       </Helmet>
       {isModerator && <ModMenu
         token={token}
         data={mapSummaryData}
         selectedRun={selectedRun}
         mapID={mapID}
-        categories={games.find((game) => game.name === mapSummaryData.map.game_name)?.category_portals ?? []}
+        categories={mapSummaryData.map.categories}
       />}
 
       <div id='background-image'>
@@ -91,8 +89,15 @@ const Maps: React.FC<MapProps> = ({ token, isModerator, games }) => {
         <section id='section1' className='summary1'>
           <div>
             <Link to="/games"><button className='nav-button' style={{ borderRadius: "20px 0px 0px 20px" }}><i className='triangle'></i><span>Games List</span></button></Link>
-            <Link to={`/games/${mapSummaryData.map.is_coop ? "2" : "1"}?chapter=${mapSummaryData.map.chapter_name.split(" ")[1]}`}><button className='nav-button' style={{ borderRadius: "0px 20px 20px 0px", marginLeft: "2px" }}><i className='triangle'></i><span>{mapSummaryData.map.chapter_name}</span></button></Link>
-            <br /><span><b>{mapSummaryData.map.map_name}</b></span>
+            <Link to={"/games/" + mapSummaryData.map.game_id + "?chapter=" + mapSummaryData.map.chapter_id}><button className='nav-button' style={{ borderRadius: "0px 20px 20px 0px", marginLeft: "2px" }}><i className='triangle'></i><span>{mapSummaryData.map.section_label}: {mapSummaryData.map.chapter_name}</span></button></Link>
+            {mapSummaryData.map.counterpart && (
+              <Link to={"/maps/" + mapSummaryData.map.counterpart.id}>
+                <button className='nav-button' style={{ borderRadius: "20px", marginLeft: "8px" }}>
+                  <span>View {mapSummaryData.map.counterpart.section_name}</span>
+                </button>
+              </Link>
+            )}
+            <br /><span><b>{mapSummaryData.map.map_name}</b>{mapSummaryData.map.section_kind === "mode" ? " — " + mapSummaryData.map.chapter_name : ""}</span>
           </div>
         </section>
 

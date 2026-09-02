@@ -64,7 +64,7 @@ INSERT INTO map_history(map_id,category_id,user_name,score_count,record_date) VA
 (13,1,'LookLikeAKango',3,'2011-10-05'),
 (13,1,'Imanex',2,'2011-12-08'),
 (13,1,'jyjey',0,'2012-08-22'),
-(14,0,'?',0,'2011-04-19'),
+(14,1,'?',0,'2011-04-19'),
 (15,1,'Tyronis',2,'2011-10-05'),
 (15,1,'SuperAiderton',0,'2024-01-28'),
 (16,1,'LookLikeAKango',2,'2011-10-05'),
@@ -839,3 +839,5 @@ INSERT INTO map_history(map_id,category_id,user_name,score_count,record_date) VA
 (110,5,'00svo & z1mb0bw4y',4,'2012-08-10'),
 (110,5,'Klooger & z1mb0bw4y',2,'2014-02-01'),
 (110,5,'DM_ & follon',0,'2015-04-01');
+
+SELECT setval(pg_get_serial_sequence('map_history', 'id'), (SELECT MAX(id) FROM map_history));

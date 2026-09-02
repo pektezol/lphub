@@ -14,16 +14,17 @@ import (
 )
 
 type ProfileResponse struct {
-	Profile     bool              `json:"profile"`
-	SteamID     string            `json:"steam_id"`
-	UserName    string            `json:"user_name"`
-	AvatarLink  string            `json:"avatar_link"`
-	CountryCode string            `json:"country_code"`
-	Titles      []models.Title    `json:"titles"`
-	Links       models.Links      `json:"links"`
-	Rankings    ProfileRankings   `json:"rankings"`
-	Records     []ProfileRecords  `json:"records"`
-	Pagination  models.Pagination `json:"pagination"`
+	Profile         bool                       `json:"profile"`
+	SteamID         string                     `json:"steam_id"`
+	UserName        string                     `json:"user_name"`
+	AvatarLink      string                     `json:"avatar_link"`
+	CountryCode     string                     `json:"country_code"`
+	Titles          []models.Title             `json:"titles"`
+	Links           models.Links               `json:"links"`
+	Rankings        ProfileRankings            `json:"rankings"`
+	ModeCompletions []ProfileSectionCompletion `json:"mode_completions"`
+	Records         []ProfileRecords           `json:"records"`
+	Pagination      models.Pagination          `json:"pagination"`
 }
 
 type ProfileRankings struct {
@@ -37,14 +38,30 @@ type ProfileRankingsDetails struct {
 	CompletionCount int `json:"completion_count"`
 	CompletionTotal int `json:"completion_total"`
 }
+
+type ProfileSectionCompletion struct {
+	GameID          int    `json:"game_id"`
+	GameName        string `json:"game_name"`
+	ChapterID       int    `json:"chapter_id"`
+	SectionLabel    string `json:"section_label"`
+	SectionName     string `json:"section_name"`
+	CompletionCount int    `json:"completion_count"`
+	CompletionTotal int    `json:"completion_total"`
+}
+
 type ProfileRecords struct {
-	GameID     int             `json:"game_id"`
-	CategoryID int             `json:"category_id"`
-	MapID      int             `json:"map_id"`
-	MapName    string          `json:"map_name"`
-	MapWRCount int             `json:"map_wr_count"`
-	Placement  int             `json:"placement"`
-	Scores     []ProfileScores `json:"scores"`
+	GameID       int             `json:"game_id"`
+	GameName     string          `json:"game_name"`
+	CategoryID   int             `json:"category_id"`
+	ChapterID    int             `json:"chapter_id"`
+	SectionKind  string          `json:"section_kind"`
+	SectionLabel string          `json:"section_label"`
+	SectionName  string          `json:"section_name"`
+	MapID        int             `json:"map_id"`
+	MapName      string          `json:"map_name"`
+	MapWRCount   int             `json:"map_wr_count"`
+	Placement    int             `json:"placement"`
+	Scores       []ProfileScores `json:"scores"`
 }
 
 type ProfileScores struct {
@@ -58,6 +75,90 @@ type ProfileScores struct {
 type ScoreResponse struct {
 	MapID   int `json:"map_id"`
 	Records any `json:"records"`
+}
+
+func enrichProfileRecords(records []ProfileRecords) error {
+	for index := range records {
+		record := &records[index]
+		err := database.DB.QueryRow(`
+			SELECT g.name, m.chapter_id, g.section_kind, g.section_label, c.name
+			FROM maps m
+			INNER JOIN games g ON g.id = m.game_id
+			INNER JOIN chapters c ON c.id = m.chapter_id
+			WHERE m.id = $1
+		`, record.MapID).Scan(
+			&record.GameName,
+			&record.ChapterID,
+			&record.SectionKind,
+			&record.SectionLabel,
+			&record.SectionName,
+		)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func fetchModeCompletions(userID string) ([]ProfileSectionCompletion, error) {
+	rows, err := database.DB.Query(`
+		WITH current_cm AS (
+			SELECT mh.map_id, MIN(mh.score_count) AS score_count
+			FROM map_history mh
+			INNER JOIN maps m ON m.id = mh.map_id
+			INNER JOIN games g ON g.id = m.game_id
+			WHERE mh.category_id = 1 AND g.section_kind = 'mode'
+			GROUP BY mh.map_id
+		),
+		completed_maps AS (
+			SELECT DISTINCT sp.map_id
+			FROM records_sp sp
+			INNER JOIN maps m ON m.id = sp.map_id
+			INNER JOIN games g ON g.id = m.game_id
+			INNER JOIN current_cm cm
+				ON cm.map_id = sp.map_id AND cm.score_count = sp.score_count
+			WHERE sp.user_id = $1
+				AND sp.is_deleted = false
+				AND g.section_kind = 'mode'
+		)
+		SELECT
+			m.game_id,
+			g.name,
+			m.chapter_id,
+			g.section_label,
+			c.name,
+			COUNT(m.id),
+			COUNT(completed_maps.map_id)
+		FROM maps m
+		INNER JOIN games g ON g.id = m.game_id
+		INNER JOIN chapters c ON c.id = m.chapter_id
+		LEFT JOIN completed_maps ON completed_maps.map_id = m.id
+		WHERE g.section_kind = 'mode' AND m.is_disabled = false
+		GROUP BY m.game_id, g.name, m.chapter_id, g.section_label, c.name
+		ORDER BY m.game_id, m.chapter_id
+	`, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	completions := []ProfileSectionCompletion{}
+	for rows.Next() {
+		completion := ProfileSectionCompletion{}
+		if err := rows.Scan(
+			&completion.GameID,
+			&completion.GameName,
+			&completion.ChapterID,
+			&completion.SectionLabel,
+			&completion.SectionName,
+			&completion.CompletionTotal,
+			&completion.CompletionCount,
+		); err != nil {
+			return nil, err
+		}
+		completions = append(completions, completion)
+	}
+	return completions, rows.Err()
 }
 
 // GET Profile
@@ -95,17 +196,17 @@ func Profile(c *gin.Context) {
 	rankings.Overall.CompletionTotal = rankings.Singleplayer.CompletionTotal + rankings.Cooperative.CompletionTotal
 	// Get user completion count
 	sql = `SELECT 'records_sp' AS table_name, COUNT(*) FROM (
-	    SELECT sp.map_id FROM records_sp sp JOIN (
-	        SELECT mh.map_id, MIN(mh.score_count) AS min_score_count FROM map_history mh WHERE mh.category_id = 1 GROUP BY mh.map_id
-	    ) AS subquery_sp ON sp.map_id = subquery_sp.map_id AND sp.score_count = subquery_sp.min_score_count
-	    WHERE sp.user_id = $1 AND sp.is_deleted = false GROUP BY sp.map_id
+		    SELECT sp.map_id FROM records_sp sp INNER JOIN maps record_map ON record_map.id = sp.map_id JOIN (
+		        SELECT mh.map_id, MIN(mh.score_count) AS min_score_count FROM map_history mh INNER JOIN maps history_map ON history_map.id = mh.map_id WHERE mh.category_id = 1 AND history_map.game_id = 1 GROUP BY mh.map_id
+		    ) AS subquery_sp ON sp.map_id = subquery_sp.map_id AND sp.score_count = subquery_sp.min_score_count
+		    WHERE sp.user_id = $1 AND sp.is_deleted = false AND record_map.game_id = 1 GROUP BY sp.map_id
 	) AS unique_maps
 	UNION ALL
 	SELECT 'records_mp' AS table_name, COUNT(*) FROM (
-	    SELECT mp.map_id FROM records_mp mp JOIN (
-	        SELECT mh.map_id, MIN(mh.score_count) AS min_score_count FROM map_history mh WHERE mh.category_id = 1 GROUP BY mh.map_id
-	    ) AS subquery_mp ON mp.map_id = subquery_mp.map_id AND mp.score_count = subquery_mp.min_score_count
-	    WHERE (mp.host_id = $1 OR mp.partner_id = $1) AND mp.is_deleted = false GROUP BY mp.map_id
+		    SELECT mp.map_id FROM records_mp mp INNER JOIN maps record_map ON record_map.id = mp.map_id JOIN (
+		        SELECT mh.map_id, MIN(mh.score_count) AS min_score_count FROM map_history mh INNER JOIN maps history_map ON history_map.id = mh.map_id WHERE mh.category_id = 1 AND history_map.game_id = 2 GROUP BY mh.map_id
+		    ) AS subquery_mp ON mp.map_id = subquery_mp.map_id AND mp.score_count = subquery_mp.min_score_count
+		    WHERE (mp.host_id = $1 OR mp.partner_id = $1) AND mp.is_deleted = false AND record_map.game_id = 2 GROUP BY mp.map_id
 	) AS unique_maps`
 	rows, err := database.DB.Query(sql, user.(models.User).SteamID)
 	if err != nil {
@@ -255,7 +356,7 @@ func Profile(c *gin.Context) {
 	}
 	records := []ProfileRecords{}
 	// Get singleplayer records
-	sql = `SELECT sp.id, m.game_id, m.chapter_id, sp.map_id, m."name", (SELECT mh.score_count FROM map_history mh WHERE mh.map_id = sp.map_id AND mh.category_id = 1 ORDER BY mh.score_count ASC LIMIT 1) AS wr_count, sp.score_count, sp.score_time, sp.demo_id, sp.record_date
+	sql = `SELECT sp.id, m.game_id, m.chapter_id, sp.map_id, m."name", COALESCE((SELECT mh.score_count FROM map_history mh WHERE mh.map_id = sp.map_id AND mh.category_id = 1 ORDER BY mh.score_count ASC LIMIT 1), 0) AS wr_count, sp.score_count, sp.score_time, sp.demo_id, sp.record_date
 	FROM records_sp sp INNER JOIN maps m ON sp.map_id = m.id WHERE sp.user_id = $1 AND sp.is_deleted = false ORDER BY sp.map_id, sp.score_count, sp.score_time`
 	rows, err = database.DB.Query(sql, user.(models.User).SteamID)
 	if err != nil {
@@ -306,7 +407,7 @@ func Profile(c *gin.Context) {
 		records[len(records)-1].Scores = append(records[len(records)-1].Scores, score)
 	}
 	// Get multiplayer records
-	sql = `SELECT mp.id, m.game_id, m.chapter_id, mp.map_id, m."name", (SELECT mh.score_count FROM map_history mh WHERE mh.map_id = mp.map_id AND mh.category_id = 1 ORDER BY mh.score_count ASC LIMIT 1) AS wr_count,  mp.score_count, mp.score_time, CASE WHEN host_id = $1 THEN mp.host_demo_id WHEN partner_id = $1 THEN mp.partner_demo_id END demo_id, mp.record_date
+	sql = `SELECT mp.id, m.game_id, m.chapter_id, mp.map_id, m."name", COALESCE((SELECT mh.score_count FROM map_history mh WHERE mh.map_id = mp.map_id AND mh.category_id = 1 ORDER BY mh.score_count ASC LIMIT 1), 0) AS wr_count,  mp.score_count, mp.score_time, CASE WHEN host_id = $1 THEN mp.host_demo_id WHEN partner_id = $1 THEN mp.partner_demo_id END demo_id, mp.record_date
 	FROM records_mp mp INNER JOIN maps m ON mp.map_id = m.id WHERE (mp.host_id = $1 OR mp.partner_id = $1) AND mp.is_deleted = false ORDER BY mp.map_id, mp.score_count, mp.score_time`
 	rows, err = database.DB.Query(sql, user.(models.User).SteamID)
 	if err != nil {
@@ -352,19 +453,29 @@ func Profile(c *gin.Context) {
 		placementIndex++
 		records[len(records)-1].Scores = append(records[len(records)-1].Scores, score)
 	}
+	if err := enrichProfileRecords(records); err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	modeCompletions, err := fetchModeCompletions(user.(models.User).SteamID)
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
 	c.JSON(http.StatusOK, models.Response{
 		Success: true,
 		Message: "Successfully retrieved user scores.",
 		Data: ProfileResponse{
-			Profile:     true,
-			SteamID:     user.(models.User).SteamID,
-			UserName:    user.(models.User).UserName,
-			AvatarLink:  user.(models.User).AvatarLink,
-			CountryCode: user.(models.User).CountryCode,
-			Titles:      user.(models.User).Titles,
-			Links:       links,
-			Rankings:    rankings,
-			Records:     records,
+			Profile:         true,
+			SteamID:         user.(models.User).SteamID,
+			UserName:        user.(models.User).UserName,
+			AvatarLink:      user.(models.User).AvatarLink,
+			CountryCode:     user.(models.User).CountryCode,
+			Titles:          user.(models.User).Titles,
+			Links:           links,
+			Rankings:        rankings,
+			ModeCompletions: modeCompletions,
+			Records:         records,
 		},
 	})
 }
@@ -428,17 +539,17 @@ func FetchUser(c *gin.Context) {
 	rankings.Overall.CompletionTotal = rankings.Singleplayer.CompletionTotal + rankings.Cooperative.CompletionTotal
 	// Get user completion count
 	sql = `SELECT 'records_sp' AS table_name, COUNT(*) FROM (
-	    SELECT sp.map_id FROM records_sp sp JOIN (
-	        SELECT mh.map_id, MIN(mh.score_count) AS min_score_count FROM map_history mh WHERE mh.category_id = 1 GROUP BY mh.map_id
-	    ) AS subquery_sp ON sp.map_id = subquery_sp.map_id AND sp.score_count = subquery_sp.min_score_count
-	    WHERE sp.user_id = $1 AND sp.is_deleted = false GROUP BY sp.map_id
+		    SELECT sp.map_id FROM records_sp sp INNER JOIN maps record_map ON record_map.id = sp.map_id JOIN (
+		        SELECT mh.map_id, MIN(mh.score_count) AS min_score_count FROM map_history mh INNER JOIN maps history_map ON history_map.id = mh.map_id WHERE mh.category_id = 1 AND history_map.game_id = 1 GROUP BY mh.map_id
+		    ) AS subquery_sp ON sp.map_id = subquery_sp.map_id AND sp.score_count = subquery_sp.min_score_count
+		    WHERE sp.user_id = $1 AND sp.is_deleted = false AND record_map.game_id = 1 GROUP BY sp.map_id
 	) AS unique_maps
 	UNION ALL
 	SELECT 'records_mp' AS table_name, COUNT(*) FROM (
-	    SELECT mp.map_id FROM records_mp mp JOIN (
-	        SELECT mh.map_id, MIN(mh.score_count) AS min_score_count FROM map_history mh WHERE mh.category_id = 1 GROUP BY mh.map_id
-	    ) AS subquery_mp ON mp.map_id = subquery_mp.map_id AND mp.score_count = subquery_mp.min_score_count
-	    WHERE (mp.host_id = $1 OR mp.partner_id = $1) AND mp.is_deleted = false GROUP BY mp.map_id
+		    SELECT mp.map_id FROM records_mp mp INNER JOIN maps record_map ON record_map.id = mp.map_id JOIN (
+		        SELECT mh.map_id, MIN(mh.score_count) AS min_score_count FROM map_history mh INNER JOIN maps history_map ON history_map.id = mh.map_id WHERE mh.category_id = 1 AND history_map.game_id = 2 GROUP BY mh.map_id
+		    ) AS subquery_mp ON mp.map_id = subquery_mp.map_id AND mp.score_count = subquery_mp.min_score_count
+		    WHERE (mp.host_id = $1 OR mp.partner_id = $1) AND mp.is_deleted = false AND record_map.game_id = 2 GROUP BY mp.map_id
 	) AS unique_maps`
 	rows, err = database.DB.Query(sql, user.SteamID)
 	if err != nil {
@@ -589,7 +700,7 @@ func FetchUser(c *gin.Context) {
 	}
 	records := []ProfileRecords{}
 	// Get singleplayer records
-	sql = `SELECT sp.id, m.game_id, m.chapter_id, sp.map_id, m."name", (SELECT mh.score_count FROM map_history mh WHERE mh.map_id = sp.map_id AND mh.category_id = 1 ORDER BY mh.score_count ASC LIMIT 1) AS wr_count, sp.score_count, sp.score_time, sp.demo_id, sp.record_date
+	sql = `SELECT sp.id, m.game_id, m.chapter_id, sp.map_id, m."name", COALESCE((SELECT mh.score_count FROM map_history mh WHERE mh.map_id = sp.map_id AND mh.category_id = 1 ORDER BY mh.score_count ASC LIMIT 1), 0) AS wr_count, sp.score_count, sp.score_time, sp.demo_id, sp.record_date
 	FROM records_sp sp INNER JOIN maps m ON sp.map_id = m.id WHERE sp.user_id = $1 AND sp.is_deleted = false ORDER BY sp.map_id, sp.score_count, sp.score_time`
 	rows, err = database.DB.Query(sql, user.SteamID)
 	if err != nil {
@@ -640,7 +751,7 @@ func FetchUser(c *gin.Context) {
 		records[len(records)-1].Scores = append(records[len(records)-1].Scores, score)
 	}
 	// Get multiplayer records
-	sql = `SELECT mp.id, m.game_id, m.chapter_id, mp.map_id, m."name", (SELECT mh.score_count FROM map_history mh WHERE mh.map_id = mp.map_id AND mh.category_id = 1 ORDER BY mh.score_count ASC LIMIT 1) AS wr_count,  mp.score_count, mp.score_time, CASE WHEN host_id = $1 THEN mp.host_demo_id WHEN partner_id = $1 THEN mp.partner_demo_id END demo_id, mp.record_date
+	sql = `SELECT mp.id, m.game_id, m.chapter_id, mp.map_id, m."name", COALESCE((SELECT mh.score_count FROM map_history mh WHERE mh.map_id = mp.map_id AND mh.category_id = 1 ORDER BY mh.score_count ASC LIMIT 1), 0) AS wr_count,  mp.score_count, mp.score_time, CASE WHEN host_id = $1 THEN mp.host_demo_id WHEN partner_id = $1 THEN mp.partner_demo_id END demo_id, mp.record_date
 	FROM records_mp mp INNER JOIN maps m ON mp.map_id = m.id WHERE (mp.host_id = $1 OR mp.partner_id = $1) AND mp.is_deleted = false ORDER BY mp.map_id, mp.score_count, mp.score_time`
 	rows, err = database.DB.Query(sql, user.SteamID)
 	if err != nil {
@@ -686,19 +797,29 @@ func FetchUser(c *gin.Context) {
 		placementIndex++
 		records[len(records)-1].Scores = append(records[len(records)-1].Scores, score)
 	}
+	if err := enrichProfileRecords(records); err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	modeCompletions, err := fetchModeCompletions(user.SteamID)
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
 	c.JSON(http.StatusOK, models.Response{
 		Success: true,
 		Message: "Successfully retrieved user scores.",
 		Data: ProfileResponse{
-			Profile:     false,
-			SteamID:     user.SteamID,
-			UserName:    user.UserName,
-			AvatarLink:  user.AvatarLink,
-			CountryCode: user.CountryCode,
-			Titles:      titles,
-			Links:       links,
-			Rankings:    rankings,
-			Records:     records,
+			Profile:         false,
+			SteamID:         user.SteamID,
+			UserName:        user.UserName,
+			AvatarLink:      user.AvatarLink,
+			CountryCode:     user.CountryCode,
+			Titles:          titles,
+			Links:           links,
+			Rankings:        rankings,
+			ModeCompletions: modeCompletions,
+			Records:         records,
 		},
 	})
 }

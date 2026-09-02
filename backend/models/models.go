@@ -40,32 +40,63 @@ type UserShortWithAvatar struct {
 }
 
 type Map struct {
-	ID          int    `json:"id"`
-	GameName    string `json:"game_name"`
-	ChapterName string `json:"chapter_name"`
-	MapName     string `json:"map_name"`
-	Image       string `json:"image"`
-	IsCoop      bool   `json:"is_coop"`
-	IsDisabled  bool   `json:"is_disabled"`
-	Difficulty  int    `json:"difficulty"`
+	ID            int             `json:"id"`
+	GameID        int             `json:"game_id"`
+	GameName      string          `json:"game_name"`
+	ChapterID     int             `json:"chapter_id"`
+	ChapterName   string          `json:"chapter_name"`
+	SectionKind   string          `json:"section_kind"`
+	SectionLabel  string          `json:"section_label"`
+	MapName       string          `json:"map_name"`
+	Image         string          `json:"image"`
+	IsCoop        bool            `json:"is_coop"`
+	IsDisabled    bool            `json:"is_disabled"`
+	Difficulty    int             `json:"difficulty"`
+	EngineMapName string          `json:"engine_map_name"`
+	VariantKey    string          `json:"variant_key"`
+	SortOrder     int             `json:"sort_order"`
+	Categories    []Category      `json:"categories"`
+	Counterpart   *MapCounterpart `json:"counterpart,omitempty"`
 }
 
 type MapShort struct {
-	ID          int    `json:"id"`
-	Name        string `json:"name"`
-	Image       string `json:"image"`
-	IsDisabled  bool   `json:"is_disabled"`
-	PortalCount int    `json:"portal_count"`
-	Difficulty  int    `json:"difficulty"`
+	ID           int    `json:"id"`
+	GameID       int    `json:"game_id"`
+	ChapterID    int    `json:"chapter_id"`
+	SectionKind  string `json:"section_kind"`
+	SectionLabel string `json:"section_label"`
+	SectionName  string `json:"section_name"`
+	Name         string `json:"name"`
+	Image        string `json:"image"`
+	IsDisabled   bool   `json:"is_disabled"`
+	PortalCount  int    `json:"portal_count"`
+	Difficulty   int    `json:"difficulty"`
+	SortOrder    int    `json:"sort_order"`
 }
 
 type MapSelect struct {
 	ID              int              `json:"id"`
+	GameID          int              `json:"game_id"`
+	ChapterID       int              `json:"chapter_id"`
+	SectionKind     string           `json:"section_kind"`
+	SectionLabel    string           `json:"section_label"`
+	SectionName     string           `json:"section_name"`
 	Name            string           `json:"name"`
 	Image           string           `json:"image"`
 	IsDisabled      bool             `json:"is_disabled"`
 	Difficulty      int              `json:"difficulty"`
+	SortOrder       int              `json:"sort_order"`
 	CategoryPortals []CategoryPortal `json:"category_portals"`
+}
+
+type MapCounterpart struct {
+	ID           int    `json:"id"`
+	GameID       int    `json:"game_id"`
+	ChapterID    int    `json:"chapter_id"`
+	SectionKind  string `json:"section_kind"`
+	SectionLabel string `json:"section_label"`
+	SectionName  string `json:"section_name"`
+	MapName      string `json:"map_name"`
 }
 
 type MapSummary struct {
@@ -103,14 +134,21 @@ type Game struct {
 	Name            string           `json:"name"`
 	Image           string           `json:"image"`
 	IsCoop          bool             `json:"is_coop"`
+	SectionKind     string           `json:"section_kind"`
+	SectionLabel    string           `json:"section_label"`
+	Categories      []Category       `json:"categories"`
 	CategoryPortals []CategoryPortal `json:"category_portals"`
 }
 
 type Chapter struct {
-	ID         int    `json:"id"`
-	Name       string `json:"name"`
-	Image      string `json:"image"`
-	IsDisabled bool   `json:"is_disabled"`
+	ID              int              `json:"id"`
+	GameID          int              `json:"game_id"`
+	Name            string           `json:"name"`
+	Image           string           `json:"image"`
+	IsDisabled      bool             `json:"is_disabled"`
+	SectionKind     string           `json:"section_kind"`
+	SectionLabel    string           `json:"section_label"`
+	CategoryPortals []CategoryPortal `json:"category_portals"`
 }
 
 type CategoryPortal struct {

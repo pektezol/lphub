@@ -357,7 +357,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 onClick={_close_mobile_search_and_menu}
               >
                 <span>{q.game}</span>
-                <span>{q.chapter}</span>
+                <span>{q.section_label}: {q.section_name}</span>
                 <span>{q.map}</span>
               </Link>
             ))}

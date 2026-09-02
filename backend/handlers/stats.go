@@ -108,21 +108,27 @@ func Timeline(c *gin.Context) {
 	spQuery := `
 		WITH date_series AS (
 			SELECT DISTINCT record_date as date
-			FROM map_history
-			WHERE category_id = 1 AND map_id <= 60 AND record_date >= '2013-01-01'
+			FROM map_history mh
+			INNER JOIN maps m ON m.id = mh.map_id
+			WHERE mh.category_id = 1 AND m.game_id = 1 AND mh.record_date >= '2013-01-01'
 			ORDER BY record_date
 		),
 		map_best_at_date AS (
 			SELECT 
 				ds.date,
-				mh.map_id,
+				map_ids.map_id,
 				MIN(mh.score_count) as best_count
 			FROM date_series ds
-			CROSS JOIN (SELECT DISTINCT map_id FROM map_history WHERE category_id = 1 AND map_id <= 60) maps
-			LEFT JOIN map_history mh ON mh.map_id = maps.map_id 
+			CROSS JOIN (
+				SELECT DISTINCT mh.map_id
+				FROM map_history mh
+				INNER JOIN maps m ON m.id = mh.map_id
+				WHERE mh.category_id = 1 AND m.game_id = 1
+			) map_ids
+			LEFT JOIN map_history mh ON mh.map_id = map_ids.map_id
 				AND mh.category_id = 1 
 				AND mh.record_date <= ds.date
-			GROUP BY ds.date, mh.map_id
+			GROUP BY ds.date, map_ids.map_id
 		)
 		SELECT 
 			date,
@@ -135,21 +141,27 @@ func Timeline(c *gin.Context) {
 	mpQuery := `
 		WITH date_series AS (
 			SELECT DISTINCT record_date as date
-			FROM map_history
-			WHERE category_id = 1 AND map_id > 60 AND record_date >= '2013-01-01'
+			FROM map_history mh
+			INNER JOIN maps m ON m.id = mh.map_id
+			WHERE mh.category_id = 1 AND m.game_id = 2 AND mh.record_date >= '2013-01-01'
 			ORDER BY record_date
 		),
 		map_best_at_date AS (
 			SELECT 
 				ds.date,
-				mh.map_id,
+				map_ids.map_id,
 				MIN(mh.score_count) as best_count
 			FROM date_series ds
-			CROSS JOIN (SELECT DISTINCT map_id FROM map_history WHERE category_id = 1 AND map_id > 60) maps
-			LEFT JOIN map_history mh ON mh.map_id = maps.map_id 
+			CROSS JOIN (
+				SELECT DISTINCT mh.map_id
+				FROM map_history mh
+				INNER JOIN maps m ON m.id = mh.map_id
+				WHERE mh.category_id = 1 AND m.game_id = 2
+			) map_ids
+			LEFT JOIN map_history mh ON mh.map_id = map_ids.map_id
 				AND mh.category_id = 1 
 				AND mh.record_date <= ds.date
-			GROUP BY ds.date, mh.map_id
+			GROUP BY ds.date, map_ids.map_id
 		)
 		SELECT 
 			date,

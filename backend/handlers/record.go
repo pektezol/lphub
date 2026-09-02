@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	stdsql "database/sql"
 	"fmt"
 	"io"
 	"mime/multipart"
@@ -50,11 +51,14 @@ func CreateRecordWithDemo(c *gin.Context) {
 	}
 	user, _ := c.Get("user")
 	// Check if map is sp or mp
-	var gameName string
 	var isCoop bool
 	var isDisabled bool
-	sql := `SELECT g.name, g.is_coop, m.is_disabled FROM maps m INNER JOIN games g ON m.game_id=g.id WHERE m.id = $1`
-	err = database.DB.QueryRow(sql, mapID).Scan(&gameName, &isCoop, &isDisabled)
+	var engineMapName stdsql.NullString
+	sql := `SELECT g.is_coop, m.is_disabled, m.engine_map_name
+	FROM maps m
+	INNER JOIN games g ON m.game_id = g.id
+	WHERE m.id = $1`
+	err = database.DB.QueryRow(sql, mapID).Scan(&isCoop, &isDisabled, &engineMapName)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
@@ -106,6 +110,10 @@ func CreateRecordWithDemo(c *gin.Context) {
 		}
 		if mapID != parserResult.MapID {
 			c.JSON(http.StatusOK, models.ErrorResponse("Demo map does not match selected map id."))
+			return
+		}
+		if engineMapName.Valid && engineMapName.String != "" && parserResult.EngineMapName != engineMapName.String {
+			c.JSON(http.StatusOK, models.ErrorResponse("Demo engine map does not match the selected map."))
 			return
 		}
 		hostDemoScoreCount = parserResult.PortalCount

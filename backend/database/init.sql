@@ -12,15 +12,13 @@ CREATE TABLE users (
   PRIMARY KEY (steam_id)
 );
 
-CREATE TRIGGER "users"
-AFTER UPDATE OR DELETE ON "users"
-FOR EACH ROW EXECUTE FUNCTION log_audit();
-
 CREATE TABLE games (
   id SERIAL,
   name TEXT NOT NULL,
   is_coop BOOLEAN NOT NULL,
-  image TEXT NOT NULL,
+  section_kind TEXT NOT NULL DEFAULT 'chapter' CHECK (section_kind IN ('chapter', 'course', 'mode')),
+  section_label TEXT NOT NULL DEFAULT 'Chapter',
+  image TEXT NOT NULL DEFAULT '',
   PRIMARY KEY (id)
 );
 
@@ -29,7 +27,7 @@ CREATE TABLE chapters (
   game_id SMALLINT NOT NULL,
   name TEXT NOT NULL,
   is_disabled BOOLEAN NOT NULL DEFAULT false,
-  image TEXT NOT NULL,
+  image TEXT NOT NULL DEFAULT '',
   PRIMARY KEY (id),
   FOREIGN KEY (game_id) REFERENCES games(id)
 );
@@ -45,6 +43,7 @@ CREATE TABLE game_categories (
   game_id SMALLINT NOT NULL,
   category_id SMALLINT NOT NULL,
   PRIMARY KEY (id),
+  UNIQUE (game_id, category_id),
   FOREIGN KEY (game_id) REFERENCES games(id),
   FOREIGN KEY (category_id) REFERENCES categories(id)
 );
@@ -55,7 +54,11 @@ CREATE TABLE maps (
   chapter_id SMALLINT NOT NULL,
   name TEXT NOT NULL,
   is_disabled BOOLEAN NOT NULL DEFAULT false,
-  image TEXT NOT NULL,
+  image TEXT NOT NULL DEFAULT '',
+  difficulty SMALLINT NOT NULL DEFAULT 1,
+  engine_map_name TEXT UNIQUE,
+  variant_key TEXT,
+  sort_order SMALLINT NOT NULL DEFAULT 0,
   PRIMARY KEY (id),
   FOREIGN KEY (game_id) REFERENCES games(id),
   FOREIGN KEY (chapter_id) REFERENCES chapters(id)
@@ -67,7 +70,7 @@ CREATE TABLE map_history (
   category_id SMALLINT NOT NULL,
   user_name TEXT NOT NULL,
   score_count SMALLINT NOT NULL,
-  description TEXT NOT NULL,
+  description TEXT NOT NULL DEFAULT '',
   showcase TEXT NOT NULL DEFAULT '',
   record_date DATE NOT NULL,
   PRIMARY KEY (id),
@@ -75,10 +78,6 @@ CREATE TABLE map_history (
   FOREIGN KEY (map_id) REFERENCES maps(id),
   UNIQUE (map_id, category_id, score_count)
 );
-
-CREATE TRIGGER "map_history"
-AFTER INSERT OR UPDATE OR DELETE ON "map_history"
-FOR EACH ROW EXECUTE FUNCTION log_audit();
 
 CREATE TABLE map_ratings (
   id SERIAL,
@@ -106,10 +105,6 @@ CREATE TABLE map_discussions (
   FOREIGN KEY (user_id) REFERENCES users(steam_id)
 );
 
-CREATE TRIGGER "map_discussions"
-AFTER INSERT OR UPDATE OR DELETE ON "map_discussions"
-FOR EACH ROW EXECUTE FUNCTION log_audit();
-
 CREATE TABLE map_discussions_comments (
   id SERIAL,
   discussion_id INT NOT NULL,
@@ -120,10 +115,6 @@ CREATE TABLE map_discussions_comments (
   FOREIGN KEY (discussion_id) REFERENCES map_discussions(id),
   FOREIGN KEY (user_id) REFERENCES users(steam_id)
 );
-
-CREATE TRIGGER "map_discussions_comments"
-AFTER INSERT OR UPDATE OR DELETE ON "map_discussions_comments"
-FOR EACH ROW EXECUTE FUNCTION log_audit();
 
 CREATE TABLE map_discussions_upvotes (
   id SERIAL,
@@ -155,10 +146,6 @@ CREATE TABLE records_sp (
   FOREIGN KEY (demo_id) REFERENCES demos(id)
 );
 
-CREATE TRIGGER "records_sp"
-AFTER INSERT OR UPDATE OR DELETE ON "records_sp"
-FOR EACH ROW EXECUTE FUNCTION log_audit();
-
 CREATE TABLE records_mp (
   id SERIAL,
   map_id SMALLINT NOT NULL,
@@ -177,10 +164,6 @@ CREATE TABLE records_mp (
   FOREIGN KEY (host_demo_id) REFERENCES demos(id),
   FOREIGN KEY (partner_demo_id) REFERENCES demos(id)
 );
-
-CREATE TRIGGER "records_mp"
-AFTER INSERT OR UPDATE OR DELETE ON "records_mp"
-FOR EACH ROW EXECUTE FUNCTION log_audit();
 
 CREATE TABLE titles (
   id SERIAL,
@@ -208,8 +191,46 @@ CREATE TABLE audit (
     operation_type TEXT NOT NULL, -- 'INSERT', 'UPDATE', or 'DELETE'
     old_data JSONB,
     new_data JSONB,
-    changed_by TEXT NOT NULL,
+    changed_by TEXT,
     changed_at TIMESTAMP DEFAULT now(),
     PRIMARY KEY (id),
     FOREIGN KEY (changed_by) REFERENCES users(steam_id)
 );
+
+CREATE OR REPLACE FUNCTION log_audit() RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO audit (table_name, operation_type, old_data, new_data, changed_by)
+    VALUES (
+        TG_TABLE_NAME,
+        TG_OP,
+        CASE WHEN TG_OP = 'DELETE' OR TG_OP = 'UPDATE' THEN row_to_json(OLD) ELSE NULL END,
+        CASE WHEN TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN row_to_json(NEW) ELSE NULL END,
+        current_setting('app.user_id', true)::TEXT
+    );
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER "users"
+AFTER UPDATE OR DELETE ON "users"
+FOR EACH ROW EXECUTE FUNCTION log_audit();
+
+CREATE TRIGGER "map_history"
+AFTER INSERT OR UPDATE OR DELETE ON "map_history"
+FOR EACH ROW EXECUTE FUNCTION log_audit();
+
+CREATE TRIGGER "map_discussions"
+AFTER INSERT OR UPDATE OR DELETE ON "map_discussions"
+FOR EACH ROW EXECUTE FUNCTION log_audit();
+
+CREATE TRIGGER "map_discussions_comments"
+AFTER INSERT OR UPDATE OR DELETE ON "map_discussions_comments"
+FOR EACH ROW EXECUTE FUNCTION log_audit();
+
+CREATE TRIGGER "records_sp"
+AFTER INSERT OR UPDATE OR DELETE ON "records_sp"
+FOR EACH ROW EXECUTE FUNCTION log_audit();
+
+CREATE TRIGGER "records_mp"
+AFTER INSERT OR UPDATE OR DELETE ON "records_mp"
+FOR EACH ROW EXECUTE FUNCTION log_audit();

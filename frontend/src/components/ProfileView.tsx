@@ -52,6 +52,12 @@ export interface ProfileViewProps {
 
 const isScoreBasedSort = (key: ProfileRecordSortKey): boolean => key !== "mapName";
 
+const formatProfileMapName = (
+  mapName: string,
+  sectionKind: string,
+  sectionName: string,
+): string => sectionKind === "mode" ? "[" + sectionName + "] " + mapName : mapName;
+
 const getProfileRecordSortValue = (
   row: ProfileBoardRow,
   key: ProfileRecordSortKey,
@@ -136,12 +142,21 @@ const ProfileView: React.FC<ProfileViewProps> = ({
   const [maps, setMaps] = React.useState<GameMap[]>([]);
 
   const canEdit = editable && Boolean(viewerToken);
+  const selectedGame = games.find((candidate) => candidate.id === Number(game));
+  const sectionLabel = selectedGame?.section_label ?? "Chapter";
+  const allSectionsLabel = selectedGame?.section_kind === "mode"
+    ? "All Modes"
+    : "All " + sectionLabel + "s";
 
   const profileBoardRows = React.useMemo<ProfileBoardRow[]>(() => {
     if (game === "0") {
       return profile.records.map((record) => ({
         mapID: record.map_id,
-        mapName: record.map_name,
+        mapName: formatProfileMapName(
+          record.map_name,
+          record.section_kind,
+          record.section_name,
+        ),
         record,
       }));
     }
@@ -151,7 +166,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
       .filter((map) => !map.is_disabled)
       .map((map) => ({
         mapID: map.id,
-        mapName: map.name,
+        mapName: formatProfileMapName(map.name, map.section_kind, map.section_name),
         record: recordsByMapID.get(map.id),
       }));
   }, [game, maps, profile.records]);
@@ -472,6 +487,12 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                 <span>({profile.rankings.cooperative.completion_count}/{profile.rankings.cooperative.completion_total})</span>
               </span>
             </div>
+            {Array.isArray(profile.mode_completions) && profile.mode_completions.map((completion) => (
+              <div className="mode-completion" key={completion.game_id + "-" + completion.chapter_id}>
+                <span>{completion.section_name}</span>
+                <span>{completion.completion_count}/{completion.completion_total}</span>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -501,7 +522,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
 
             {game === "0" ? (
               <select disabled value="0">
-                <option value="0">All Chapters</option>
+                <option value="0">{allSectionsLabel}</option>
               </select>
             ) : chapterData === null ? <select disabled aria-label="Loading chapters" value="0"><option value="0" /></select> : (
               <select
@@ -513,7 +534,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                   resetBoard();
                 }}
               >
-                <option value="0">All Chapters</option>
+                <option value="0">{allSectionsLabel}</option>
                 {chapterData.chapters.filter((availableChapter) => !availableChapter.is_disabled).map((availableChapter) => (
                   <option value={availableChapter.id} key={availableChapter.id}>{availableChapter.name}</option>
                 ))}

@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 
 import { Game, GameCategoryPortals } from "@customTypes/Game";
 import "@css/Games.css";
-
 import GameCategory from "@components/GameCategory";
 
 interface GameEntryProps {
@@ -18,13 +17,21 @@ const GameEntry: React.FC<GameEntryProps> = ({ game }) => {
   return (
     <div className='games-page-item'>
       <Link to={"/games/" + game.id} className='games-page-item-header'>
-        <div style={{ backgroundImage: `url(${game.image})` }} className='games-page-item-header-img'></div>
+        <div style={{ backgroundImage: "url(" + game.image + ")" }} className='games-page-item-header-img'></div>
         <span><b>{game.name}</b></span>
       </Link>
       <div id={String(game.id)} className='games-page-item-body'>
-        {categories.length > 0 ? categories.map((cat) => (
-          <GameCategory cat={cat} game={game} key={cat.category.id}></GameCategory>
-        )) : (
+        {game.section_kind === "mode" ? (
+          <Link className="games-page-item-body-item" to={"/games/" + game.id}>
+            <div>
+              <span className='games-page-item-body-item-title'>Choose a {game.section_label}</span>
+            </div>
+          </Link>
+        ) : categories.length > 0 ? (
+          categories.map((category) => (
+            <GameCategory cat={category} game={game} key={category.category.id} />
+          ))
+        ) : (
           <span className='games-page-item-empty'>No categories available yet.</span>
         )}
       </div>
