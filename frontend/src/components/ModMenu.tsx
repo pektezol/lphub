@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { MapSummary } from "@customTypes/Map";
 import { ModMenuContent } from "@customTypes/Content";
-import { GameCategoryPortals } from "@customTypes/Game";
+import { Category } from "@customTypes/Game";
 import { API } from "@api/Api";
 import "@css/ModMenu.css";
 import useConfirm from "@hooks/UseConfirm";
@@ -14,7 +14,7 @@ interface ModMenuProps {
   data: MapSummary;
   selectedRun?: number;
   mapID: string;
-  categories: GameCategoryPortals[];
+  categories: Category[];
 }
 
 const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, categories }) => {
@@ -140,7 +140,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
         date: "",
         showcase: "",
         description: "No description available.",
-        category_id: categories[0]?.category.id ?? 0,
+        category_id: categories[0]?.id ?? 0,
       });
       setMd("No description available.");
     }
@@ -298,7 +298,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
                     category_id: parseInt(e.target.value),
                   });
                 }}>
-                  {categories.map(({ category }) => (
+                  {categories.map((category) => (
                     <option value={category.id} key={category.id}>{category.name}</option>
                   ))}
                 </select>

@@ -166,12 +166,10 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
       await message("Error", "Error while processing demo: Invalid map name.");
       return;
     }
+    const map = MapNames[demo.mapName];
 
-    if (!selectedGame.is_coop && MapNames[demo.mapName] > 60) {
-      await message("Error", "Error while processing demo: Invalid cooperative demo in singleplayer submission.");
-      return;
-    } else if (selectedGame.is_coop && MapNames[demo.mapName] <= 60) {
-      await message("Error", "Error while processing demo: Invalid singleplayer demo in cooperative submission.");
+    if (map.game_id !== selectedGame.id) {
+      await message("Error", "Error while processing demo: Demo does not belong to the selected game.");
       return;
     }
 
@@ -184,7 +182,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
     }
 
     messageLoad("Uploading...");
-    const [success, response] = await API.post_record(token, uploadRunContent, MapNames[demo.mapName], selectedGame.is_coop);
+    const [success, response] = await API.post_record(token, uploadRunContent, map.id, selectedGame.is_coop);
     messageLoadClose();
     await message("Upload Record", response);
     if (success) {

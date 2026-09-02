@@ -7,7 +7,11 @@ export interface Search {
 
 interface SearchMap {
   id: number;
+  game_id: number;
   game: string;
-  chapter: string;
+  chapter_id: number;
+  section_kind: "chapter" | "course" | "mode";
+  section_label: string;
+  section_name: string;
   map: string;
 };

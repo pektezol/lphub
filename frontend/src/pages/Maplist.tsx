@@ -11,51 +11,16 @@ const parseId = (value: string | null | undefined): number | undefined => {
   if (!value) {
     return undefined;
   }
-
   const id = Number(value);
   return Number.isInteger(id) && id >= 0 ? id : undefined;
 };
 
-const getSelectedChapterId = (
-  gameChapters: GamesChapters,
-  requestedChapterId: number | undefined
-): number | undefined => {
-  if (requestedChapterId === undefined) {
-    return gameChapters.chapters[0]?.id;
-  }
-
-  const chapterById = gameChapters.chapters.find(
-    (chapter) => chapter.id === requestedChapterId
-  );
-  if (chapterById) {
-    return chapterById.id;
-  }
-
-  // Existing map links use the chapter/course number rather than its database ID.
-  const chapterByNumber = gameChapters.chapters.find((chapter) => {
-    const match = chapter.name.match(/(?:Chapter|Course)\s+(\d+)/);
-    return match !== null && Number(match[1]) === requestedChapterId;
-  });
-
-  return chapterByNumber?.id ?? gameChapters.chapters[0]?.id;
-};
-
 const getDifficultyClass = (difficulty: number) => {
-  if (difficulty <= 2) {
-    return "one";
-  }
-  if (difficulty <= 4) {
-    return "two";
-  }
-  if (difficulty <= 6) {
-    return "three";
-  }
-  if (difficulty <= 8) {
-    return "four";
-  }
-  if (difficulty <= 10) {
-    return "five";
-  }
+  if (difficulty <= 2) return "one";
+  if (difficulty <= 4) return "two";
+  if (difficulty <= 6) return "three";
+  if (difficulty <= 8) return "four";
+  if (difficulty <= 10) return "five";
   return "one";
 };
 
@@ -63,44 +28,51 @@ const Maplist: React.FC = () => {
   const [game, setGame] = React.useState<Game | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [gameChapters, setGameChapters] = React.useState<GamesChapters>();
-  const [curChapter, setCurChapter] = React.useState<GameChapter>();
+  const [currentSection, setCurrentSection] = React.useState<GameChapter>();
   const [dropdownActive, setDropdownActive] = React.useState(false);
 
   const { id: gameIdParam } = useParams<{ id: string }>();
   const location = useLocation();
   const navigate = useNavigate();
-
   const gameId = parseId(gameIdParam);
   const queryParams = new URLSearchParams(location.search);
   const requestedCategoryId = parseId(queryParams.get("cat"));
   const requestedChapterId = parseId(queryParams.get("chapter"));
-  const selectedChapterId = gameChapters
-    ? getSelectedChapterId(gameChapters, requestedChapterId)
-    : undefined;
 
-  const selectedCategoryId = game?.category_portals.some(
-    (category) => category.category.id === requestedCategoryId
-  )
-    ? requestedCategoryId
-    : game?.category_portals[0]?.category.id;
+  const selectedSectionId = React.useMemo(() => {
+    if (!gameChapters) {
+      return undefined;
+    }
+    if (requestedChapterId !== undefined) {
+      const requestedSection = gameChapters.chapters.find(
+        (chapter) => chapter.id === requestedChapterId,
+      );
+      if (requestedSection) {
+        return requestedSection.id;
+      }
+      return gameChapters.game.section_kind === "mode"
+        ? undefined
+        : gameChapters.chapters[0]?.id;
+    }
+    return gameChapters.game.section_kind === "mode"
+      ? undefined
+      : gameChapters.chapters[0]?.id;
+  }, [gameChapters, requestedChapterId]);
 
   const updateSearchParam = (name: "cat" | "chapter", value: number) => {
     const nextQueryParams = new URLSearchParams(location.search);
     nextQueryParams.set(name, value.toString());
-    const search = nextQueryParams.toString();
-
     navigate({
-      pathname: `/games/${gameId}`,
-      search: search ? `?${search}` : "",
+      pathname: "/games/" + gameId,
+      search: "?" + nextQueryParams.toString(),
     });
   };
 
   useEffect(() => {
     let isCurrent = true;
-
     setGame(null);
     setGameChapters(undefined);
-    setCurChapter(undefined);
+    setCurrentSection(undefined);
     setDropdownActive(false);
     setIsLoading(true);
 
@@ -113,16 +85,11 @@ const Maplist: React.FC = () => {
 
     const fetchGame = async () => {
       try {
-        const [games, chapters] = await Promise.all([
-          API.get_games(),
-          API.get_games_chapters(gameId.toString()),
-        ]);
-
+        const chapters = await API.get_games_chapters(gameId.toString());
         if (!isCurrent) {
           return;
         }
-
-        setGame(games.find((candidate) => candidate.id === gameId) ?? null);
+        setGame(chapters.game);
         setGameChapters(chapters);
       } catch {
         if (isCurrent) {
@@ -135,9 +102,7 @@ const Maplist: React.FC = () => {
         }
       }
     };
-
     void fetchGame();
-
     return () => {
       isCurrent = false;
     };
@@ -145,40 +110,34 @@ const Maplist: React.FC = () => {
 
   useEffect(() => {
     let isCurrent = true;
-
-    setCurChapter(undefined);
+    setCurrentSection(undefined);
     setDropdownActive(false);
-
-    if (selectedChapterId === undefined) {
+    if (selectedSectionId === undefined) {
       return () => {
         isCurrent = false;
       };
     }
-
-    const fetchChapter = async () => {
+    const fetchSection = async () => {
       try {
-        const chapter = await API.get_chapters(selectedChapterId.toString());
+        const section = await API.get_chapters(selectedSectionId.toString());
         if (isCurrent) {
-          setCurChapter(chapter);
+          setCurrentSection(section);
         }
       } catch {
         if (isCurrent) {
-          setCurChapter(undefined);
+          setCurrentSection(undefined);
         }
       }
     };
-
-    void fetchChapter();
-
+    void fetchSection();
     return () => {
       isCurrent = false;
     };
-  }, [gameId, selectedChapterId]);
+  }, [selectedSectionId]);
 
   if (isLoading || (game !== null && game.id !== gameId)) {
     return <main />;
   }
-
   if (!game) {
     return (
       <main>
@@ -195,11 +154,21 @@ const Maplist: React.FC = () => {
     );
   }
 
-  const selectedCategory = game.category_portals.find(
-    (category) => category.category.id === selectedCategoryId
+  const displayedSection = currentSection?.chapter.id === selectedSectionId
+    ? currentSection
+    : undefined;
+  const categories = game.section_kind === "mode"
+    ? displayedSection?.chapter.category_portals ?? []
+    : game.category_portals;
+  const selectedCategoryId = categories.some(
+    (category) => category.category.id === requestedCategoryId,
+  )
+    ? requestedCategoryId
+    : categories[0]?.category.id;
+  const selectedCategory = categories.find(
+    (category) => category.category.id === selectedCategoryId,
   );
-  const displayedChapter =
-    curChapter?.chapter.id === selectedChapterId ? curChapter : undefined;
+  const needsModeChoice = game.section_kind === "mode" && selectedSectionId === undefined;
 
   return (
     <main>
@@ -216,106 +185,127 @@ const Maplist: React.FC = () => {
       </section>
       <section>
         <h1>{game.name}</h1>
-        <div
-          style={{ backgroundImage: `url(${game.image})` }}
-          className="game-header"
-        >
-          <div className="blur">
-            <div className="game-header-portal-count">
-              <h2 className="portal-count">{selectedCategory?.portal_count}</h2>
-              <h3>portals</h3>
-            </div>
-            <div className="game-header-categories">
-              {game.category_portals.map((category) => (
-                <button
-                  key={category.category.id}
-                  className={
-                    selectedCategoryId === category.category.id
-                      ? "game-cat-button selected"
-                      : "game-cat-button"
-                  }
-                  onClick={() =>
-                    updateSearchParam("cat", category.category.id)
-                  }
-                >
-                  <span>{category.category.name}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div>
+        {needsModeChoice ? (
           <section className="chapter-select-container">
             <div>
-              <span
-                style={{
-                  fontSize: "18px",
-                  transform: "translateY(5px)",
-                  display: "block",
-                  marginTop: "10px",
-                }}
-              >
-                {displayedChapter?.chapter.name.split(" - ")[0]}
+              <span style={{ fontSize: "18px", display: "block", marginTop: "10px" }}>
+                Select a {game.section_label}
               </span>
             </div>
-            <div
-              onClick={() => setDropdownActive((active) => !active)}
-              className="dropdown"
-            >
-              <span>{displayedChapter?.chapter.name.split(" - ")[1]}</span>
-              <i className="triangle"></i>
-            </div>
-            {dropdownActive && (
-              <div className="dropdown-elements">
-                {gameChapters?.chapters.map((chapter) => (
-                  <div
+            <div style={{ display: "flex", gap: "8px", margin: "12px 0" }}>
+              {gameChapters?.chapters
+                .filter((chapter) => !chapter.is_disabled)
+                .map((chapter) => (
+                  <button
+                    className="game-cat-button"
                     key={chapter.id}
-                    className="dropdown-element"
                     onClick={() => updateSearchParam("chapter", chapter.id)}
                   >
                     {chapter.name}
-                  </div>
+                  </button>
                 ))}
-              </div>
-            )}
+            </div>
           </section>
-          <section className="maplist">
-            {displayedChapter?.maps.map((map) => {
-              const mapPortalCount = map.is_disabled
-                ? map.category_portals[0]?.portal_count
-                : map.category_portals.find((category) =>
-                  category.category.id === selectedCategoryId
-                )?.portal_count;
-
-              return (
-                <div key={map.id} className="maplist-entry">
-                  <Link to={`/maps/${map.id}`}>
-                    <span>{map.name}</span>
-                    <div
-                      className="map-entry-image"
-                      style={{ backgroundImage: `url(${map.image})` }}
-                    >
-                      <div className="blur map">
-                        <span>{mapPortalCount}</span>
-                        <span>portals</span>
-                      </div>
-                    </div>
-                    <div className="difficulty-bar">
-                      <div className={getDifficultyClass(map.difficulty)}>
-                        <div className="difficulty-point"></div>
-                        <div className="difficulty-point"></div>
-                        <div className="difficulty-point"></div>
-                        <div className="difficulty-point"></div>
-                        <div className="difficulty-point"></div>
-                      </div>
-                    </div>
-                  </Link>
+        ) : (
+          <>
+            <div
+              style={{ backgroundImage: "url(" + game.image + ")" }}
+              className="game-header"
+            >
+              <div className="blur">
+                <div className="game-header-portal-count">
+                  <h2 className="portal-count">{selectedCategory?.portal_count ?? 0}</h2>
+                  <h3>portals</h3>
                 </div>
-              );
-            })}
-          </section>
-        </div>
+                <div className="game-header-categories">
+                  {categories.map((category) => (
+                    <button
+                      key={category.category.id}
+                      className={
+                        selectedCategoryId === category.category.id
+                          ? "game-cat-button selected"
+                          : "game-cat-button"
+                      }
+                      onClick={() => updateSearchParam("cat", category.category.id)}
+                    >
+                      <span>{category.category.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <section className="chapter-select-container">
+              <div>
+                <span
+                  style={{
+                    fontSize: "18px",
+                    transform: "translateY(5px)",
+                    display: "block",
+                    marginTop: "10px",
+                  }}
+                >
+                  {game.section_label}
+                </span>
+              </div>
+              <div
+                onClick={() => setDropdownActive((active) => !active)}
+                className="dropdown"
+              >
+                <span>{displayedSection?.chapter.name}</span>
+                <i className="triangle"></i>
+              </div>
+              {dropdownActive && (
+                <div className="dropdown-elements">
+                  {gameChapters?.chapters
+                    .filter((chapter) => !chapter.is_disabled)
+                    .map((chapter) => (
+                      <div
+                        key={chapter.id}
+                        className="dropdown-element"
+                        onClick={() => updateSearchParam("chapter", chapter.id)}
+                      >
+                        {chapter.name}
+                      </div>
+                    ))}
+                </div>
+              )}
+            </section>
+
+            <section className="maplist">
+              {displayedSection?.maps.map((map) => {
+                const mapPortalCount = map.category_portals.find(
+                  (category) => category.category.id === selectedCategoryId,
+                )?.portal_count ?? 0;
+                return (
+                  <div key={map.id} className="maplist-entry">
+                    <Link to={"/maps/" + map.id}>
+                      <span>{map.name}</span>
+                      <div
+                        className="map-entry-image"
+                        style={{ backgroundImage: "url(" + map.image + ")" }}
+                      >
+                        <div className="blur map">
+                          <span>{mapPortalCount}</span>
+                          <span>portals</span>
+                        </div>
+                      </div>
+                      <div className="difficulty-bar">
+                        <div className={getDifficultyClass(map.difficulty)}>
+                          <div className="difficulty-point"></div>
+                          <div className="difficulty-point"></div>
+                          <div className="difficulty-point"></div>
+                          <div className="difficulty-point"></div>
+                          <div className="difficulty-point"></div>
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                );
+              })}
+            </section>
+          </>
+        )}
       </section>
     </main>
   );

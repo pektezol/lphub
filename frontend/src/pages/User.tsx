@@ -33,6 +33,15 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
 
   const location = useLocation();
   const navigate = useNavigate();
+  const selectedGame = gameData.find((candidate) => candidate.id === Number(game));
+  const sectionLabel = selectedGame?.section_label ?? "Chapter";
+  const allSectionsLabel = selectedGame?.section_kind === "mode"
+    ? "All Modes"
+    : "All " + sectionLabel + "s";
+  const recordName = (mapName: string, sectionKind: string, sectionName: string) =>
+    sectionKind === "mode" ? "[" + sectionName + "] " + mapName : mapName;
+  const mapName = (name: string, sectionKind: string, sectionName: string) =>
+    sectionKind === "mode" ? "[" + sectionName + "] " + name : name;
 
   const _fetch_user = async () => {
     const userID = location.pathname.split("/")[2];
@@ -165,6 +174,12 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
               <span>({user.rankings.cooperative.completion_count}/{user.rankings.cooperative.completion_total})</span>
             </span>
           </div>
+          {user.mode_completions.map((completion) => (
+            <div className="mode-completion" key={`${completion.game_id}-${completion.chapter_id}`}>
+              <span>{completion.section_name}</span>
+              <span>{completion.completion_count}/{completion.completion_total}</span>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -199,13 +214,13 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
 
           {game === "0" ?
             <select disabled>
-              <option>All Chapters</option>
+                <option>{allSectionsLabel}</option>
             </select>
             : chapterData === null ? <select></select> :
 
               <select id='select-chapter'
                 onChange={() => setChapter((document.querySelector("#select-chapter") as HTMLInputElement).value)}>
-                <option value="0" key="0">All Chapters</option>
+                <option value="0" key="0">{allSectionsLabel}</option>
                 {chapterData.chapters.filter(e => e.is_disabled === false).map((e, i) => (
                   <option value={e.id} key={i + 1}>{e.name}</option>
                 ))}</select>
@@ -259,7 +274,7 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
                       {r.scores.map((e, i) => (<>
                         {i !== 0 ? <hr style={{ gridColumn: "1 / span 8" }} /> : ""}
 
-                        <Link to={`/maps/${r.map_id}`}><span>{r.map_name}</span></Link>
+                        <Link to={`/maps/${r.map_id}`}><span>{recordName(r.map_name, r.section_kind, r.section_name)}</span></Link>
 
                         <span style={{ display: "grid" }}>{e.score_count}</span>
 
@@ -287,7 +302,7 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
                     const record = user.records.find((e) => e.map_id === r.id);
                     return record === undefined ? (
                       <button className="profileboard-record" key={index} style={{ backgroundColor: "#1b1b20" }}>
-                        <Link to={`/maps/${r.id}`}><span>{r.name}</span></Link>
+                        <Link to={`/maps/${r.id}`}><span>{mapName(r.name, r.section_kind, r.section_name)}</span></Link>
                         <span style={{ display: "grid" }}>N/A</span>
                         <span style={{ display: "grid" }}>N/A</span>
                         <span>N/A</span>
@@ -300,7 +315,7 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
                       <button className="profileboard-record" key={index}>
                         {record.scores.map((e, i) => (<>
                           {i !== 0 ? <hr style={{ gridColumn: "1 / span 8" }} /> : ""}
-                          <Link to={`/maps/${r.id}`}><span>{r.name}</span></Link>
+                          <Link to={`/maps/${r.id}`}><span>{mapName(r.name, r.section_kind, r.section_name)}</span></Link>
                           <span style={{ display: "grid" }}>{record!.scores[i].score_count}</span>
                           <span style={{ display: "grid" }}>{record!.scores[i].score_count - record!.map_wr_count > 0 ? `+${record!.scores[i].score_count - record!.map_wr_count}` : "-"}</span>
                           <span style={{ display: "grid" }}>{ticks_to_time(record!.scores[i].score_time)}</span>

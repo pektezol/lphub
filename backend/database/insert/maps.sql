@@ -127,3 +127,56 @@ INSERT INTO maps(game_id, chapter_id, name, is_disabled, image) VALUES
 (2,16,'Double Lift',false,''),
 (2,16,'Gel Maze',false,''),
 (2,16,'Crazier Box',false,'');
+
+-- Portal Stories: Mel keeps Story and Advanced variants as distinct map rows.
+-- IDs are explicit because the demo parser and frontend registry resolve these
+-- exact engine map names to their competitive board.
+INSERT INTO maps(id, game_id, chapter_id, name, is_disabled, image, engine_map_name, variant_key, sort_order) VALUES
+-- Story Mode
+(111,3,17,'Tram Ride',false,'','st_a1_tramride','a1-tramride',1),
+(112,3,17,'Mel Intro',false,'','st_a1_mel_intro','a1-mel-intro',2),
+(113,3,17,'Lift',false,'','st_a1_lift','a1-lift',3),
+(114,3,17,'Garden',false,'','st_a1_garden','a1-garden',4),
+(115,3,17,'Destroyed Garden',false,'','st_a2_garden_de','a2-garden-de',5),
+(116,3,17,'Underbounce',false,'','st_a2_underbounce','a2-underbounce',6),
+(117,3,17,'Once Upon',false,'','st_a2_once_upon','a2-once-upon',7),
+(118,3,17,'Past Power',false,'','st_a2_past_power','a2-past-power',8),
+(119,3,17,'Ramp',false,'','st_a2_ramp','a2-ramp',9),
+(120,3,17,'Firestorm',false,'','st_a2_firestorm','a2-firestorm',10),
+(121,3,17,'Junkyard',false,'','st_a3_junkyard','a3-junkyard',11),
+(122,3,17,'Concepts',false,'','st_a3_concepts','a3-concepts',12),
+(123,3,17,'Paint Fling',false,'','st_a3_paint_fling','a3-paint-fling',13),
+(124,3,17,'Faith Plate',false,'','st_a3_faith_plate','a3-faith-plate',14),
+(125,3,17,'Transition',false,'','st_a3_transition','a3-transition',15),
+(126,3,17,'Overgrown',false,'','st_a4_overgrown','a4-overgrown',16),
+(127,3,17,'Funnel Over Goo',false,'','st_a4_tb_over_goo','a4-tb-over-goo',17),
+(128,3,17,'Two Of A Kind',false,'','st_a4_two_of_a_kind','a4-two-of-a-kind',18),
+(129,3,17,'Destroyed',false,'','st_a4_destroyed','a4-destroyed',19),
+(130,3,17,'Factory',false,'','st_a4_factory','a4-factory',20),
+(131,3,17,'Core Access',false,'','st_a4_core_access','a4-core-access',21),
+(132,3,17,'Finale',false,'','st_a4_finale','a4-finale',22),
+-- Advanced Mode
+(133,3,18,'Tram Ride',false,'','sp_a1_tramride','a1-tramride',1),
+(134,3,18,'Mel Intro',false,'','sp_a1_mel_intro','a1-mel-intro',2),
+(135,3,18,'Lift',false,'','sp_a1_lift','a1-lift',3),
+(136,3,18,'Garden',false,'','sp_a1_garden','a1-garden',4),
+(137,3,18,'Destroyed Garden',false,'','sp_a2_garden_de','a2-garden-de',5),
+(138,3,18,'Underbounce',false,'','sp_a2_underbounce','a2-underbounce',6),
+(139,3,18,'Once Upon',false,'','sp_a2_once_upon','a2-once-upon',7),
+(140,3,18,'Past Power',false,'','sp_a2_past_power','a2-past-power',8),
+(141,3,18,'Ramp',false,'','sp_a2_ramp','a2-ramp',9),
+(142,3,18,'Firestorm',false,'','sp_a2_firestorm','a2-firestorm',10),
+(143,3,18,'Junkyard',false,'','sp_a3_junkyard','a3-junkyard',11),
+(144,3,18,'Concepts',false,'','sp_a3_concepts','a3-concepts',12),
+(145,3,18,'Paint Fling',false,'','sp_a3_paint_fling','a3-paint-fling',13),
+(146,3,18,'Faith Plate',false,'','sp_a3_faith_plate','a3-faith-plate',14),
+(147,3,18,'Transition',false,'','sp_a3_transition','a3-transition',15),
+(148,3,18,'Overgrown',false,'','sp_a4_overgrown','a4-overgrown',16),
+(149,3,18,'Funnel Over Goo',false,'','sp_a4_tb_over_goo','a4-tb-over-goo',17),
+(150,3,18,'Two Of A Kind',false,'','sp_a4_two_of_a_kind','a4-two-of-a-kind',18),
+(151,3,18,'Destroyed',false,'','sp_a4_destroyed','a4-destroyed',19),
+(152,3,18,'Factory',false,'','sp_a4_factory','a4-factory',20),
+(153,3,18,'Core Access',false,'','sp_a4_core_access','a4-core-access',21),
+(154,3,18,'Finale',false,'','sp_a4_finale','a4-finale',22);
+
+SELECT setval(pg_get_serial_sequence('maps', 'id'), (SELECT MAX(id) FROM maps));

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	stdsql "database/sql"
 	"net/http"
 	"strconv"
 	"time"
@@ -28,6 +29,7 @@ type ChaptersResponse struct {
 }
 
 type ChapterMapsResponse struct {
+	Game    models.Game        `json:"game"`
 	Chapter models.Chapter     `json:"chapter"`
 	Maps    []models.MapSelect `json:"maps"`
 }
@@ -59,6 +61,237 @@ type RecordMultiplayer struct {
 	RecordDate    time.Time                  `json:"record_date"`
 }
 
+func fetchGameCategories(gameID int) ([]models.Category, error) {
+	rows, err := database.DB.Query(`
+		SELECT c.id, c.name
+		FROM game_categories gc
+		INNER JOIN categories c ON c.id = gc.category_id
+		WHERE gc.game_id = $1
+		ORDER BY c.id
+	`, gameID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	categories := []models.Category{}
+	for rows.Next() {
+		var category models.Category
+		if err := rows.Scan(&category.ID, &category.Name); err != nil {
+			return nil, err
+		}
+		categories = append(categories, category)
+	}
+	return categories, rows.Err()
+}
+
+// chapterID is zero for a game-wide total. Mode games deliberately only expose
+// totals through a selected section, never across Story and Advanced together.
+func fetchCategoryPortals(gameID, chapterID int) ([]models.CategoryPortal, error) {
+	rows, err := database.DB.Query(`
+		SELECT c.id, c.name, COALESCE(SUM(best.score_count), 0)
+		FROM game_categories gc
+		INNER JOIN categories c ON c.id = gc.category_id
+		LEFT JOIN (
+			SELECT mh.map_id, mh.category_id, MIN(mh.score_count) AS score_count
+			FROM map_history mh
+			INNER JOIN maps listed_map ON listed_map.id = mh.map_id
+			WHERE listed_map.game_id = $1
+				AND ($2 = 0 OR listed_map.chapter_id = $2)
+			GROUP BY mh.map_id, mh.category_id
+		) best ON best.category_id = gc.category_id
+		WHERE gc.game_id = $1
+		GROUP BY c.id, c.name
+		ORDER BY c.id
+	`, gameID, chapterID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	portals := []models.CategoryPortal{}
+	for rows.Next() {
+		var categoryPortal models.CategoryPortal
+		if err := rows.Scan(
+			&categoryPortal.Category.ID,
+			&categoryPortal.Category.Name,
+			&categoryPortal.PortalCount,
+		); err != nil {
+			return nil, err
+		}
+		portals = append(portals, categoryPortal)
+	}
+	return portals, rows.Err()
+}
+
+func fetchGame(gameID int) (models.Game, error) {
+	game := models.Game{
+		Categories:      []models.Category{},
+		CategoryPortals: []models.CategoryPortal{},
+	}
+	err := database.DB.QueryRow(`
+		SELECT id, name, image, is_coop, section_kind, section_label
+		FROM games
+		WHERE id = $1
+	`, gameID).Scan(
+		&game.ID,
+		&game.Name,
+		&game.Image,
+		&game.IsCoop,
+		&game.SectionKind,
+		&game.SectionLabel,
+	)
+	if err != nil {
+		return models.Game{}, err
+	}
+	categories, err := fetchGameCategories(game.ID)
+	if err != nil {
+		return models.Game{}, err
+	}
+	game.Categories = categories
+	if game.SectionKind != "mode" {
+		portals, err := fetchCategoryPortals(game.ID, 0)
+		if err != nil {
+			return models.Game{}, err
+		}
+		game.CategoryPortals = portals
+	}
+	return game, nil
+}
+
+func fetchMapCounterpart(gameID, mapID int, variantKey string) (*models.MapCounterpart, error) {
+	if variantKey == "" {
+		return nil, nil
+	}
+	counterpart := models.MapCounterpart{}
+	err := database.DB.QueryRow(`
+		SELECT m.id, m.game_id, m.chapter_id, g.section_kind, g.section_label, c.name, m.name
+		FROM maps m
+		INNER JOIN games g ON g.id = m.game_id
+		INNER JOIN chapters c ON c.id = m.chapter_id
+		WHERE m.game_id = $1 AND m.variant_key = $2 AND m.id <> $3
+		ORDER BY m.id
+		LIMIT 1
+	`, gameID, variantKey, mapID).Scan(
+		&counterpart.ID,
+		&counterpart.GameID,
+		&counterpart.ChapterID,
+		&counterpart.SectionKind,
+		&counterpart.SectionLabel,
+		&counterpart.SectionName,
+		&counterpart.MapName,
+	)
+	if err == stdsql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &counterpart, nil
+}
+
+func fetchMap(mapID int) (models.Map, error) {
+	mapData := models.Map{Categories: []models.Category{}}
+	err := database.DB.QueryRow(`
+		SELECT
+			m.id, m.game_id, g.name, m.chapter_id, c.name,
+			g.section_kind, g.section_label, m.name, m.image,
+			g.is_coop, m.is_disabled, m.difficulty,
+			COALESCE(m.engine_map_name, ''), COALESCE(m.variant_key, ''), m.sort_order
+		FROM maps m
+		INNER JOIN games g ON g.id = m.game_id
+		INNER JOIN chapters c ON c.id = m.chapter_id
+		WHERE m.id = $1
+	`, mapID).Scan(
+		&mapData.ID,
+		&mapData.GameID,
+		&mapData.GameName,
+		&mapData.ChapterID,
+		&mapData.ChapterName,
+		&mapData.SectionKind,
+		&mapData.SectionLabel,
+		&mapData.MapName,
+		&mapData.Image,
+		&mapData.IsCoop,
+		&mapData.IsDisabled,
+		&mapData.Difficulty,
+		&mapData.EngineMapName,
+		&mapData.VariantKey,
+		&mapData.SortOrder,
+	)
+	if err != nil {
+		return models.Map{}, err
+	}
+	categories, err := fetchGameCategories(mapData.GameID)
+	if err != nil {
+		return models.Map{}, err
+	}
+	mapData.Categories = categories
+	mapData.Counterpart, err = fetchMapCounterpart(mapData.GameID, mapData.ID, mapData.VariantKey)
+	if err != nil {
+		return models.Map{}, err
+	}
+	return mapData, nil
+}
+
+func fetchMapsForScope(gameID, chapterID int) ([]models.MapSelect, error) {
+	rows, err := database.DB.Query(`
+		SELECT
+			m.id, m.game_id, m.chapter_id, g.section_kind, g.section_label, c.name,
+			m.name, m.image, m.is_disabled, m.difficulty, m.sort_order,
+			cat.id, cat.name, COALESCE(best.score_count, 0)
+		FROM maps m
+		INNER JOIN games g ON g.id = m.game_id
+		INNER JOIN chapters c ON c.id = m.chapter_id
+		INNER JOIN game_categories gc ON gc.game_id = m.game_id
+		INNER JOIN categories cat ON cat.id = gc.category_id
+		LEFT JOIN (
+			SELECT map_id, category_id, MIN(score_count) AS score_count
+			FROM map_history
+			GROUP BY map_id, category_id
+		) best ON best.map_id = m.id AND best.category_id = gc.category_id
+		WHERE m.game_id = $1 AND ($2 = 0 OR m.chapter_id = $2)
+		ORDER BY m.chapter_id, m.sort_order, m.id, cat.id
+	`, gameID, chapterID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	maps := []models.MapSelect{}
+	lastMapID := -1
+	for rows.Next() {
+		mapData := models.MapSelect{}
+		categoryPortal := models.CategoryPortal{}
+		if err := rows.Scan(
+			&mapData.ID,
+			&mapData.GameID,
+			&mapData.ChapterID,
+			&mapData.SectionKind,
+			&mapData.SectionLabel,
+			&mapData.SectionName,
+			&mapData.Name,
+			&mapData.Image,
+			&mapData.IsDisabled,
+			&mapData.Difficulty,
+			&mapData.SortOrder,
+			&categoryPortal.Category.ID,
+			&categoryPortal.Category.Name,
+			&categoryPortal.PortalCount,
+		); err != nil {
+			return nil, err
+		}
+		if mapData.ID == lastMapID {
+			maps[len(maps)-1].CategoryPortals = append(maps[len(maps)-1].CategoryPortals, categoryPortal)
+			continue
+		}
+		mapData.CategoryPortals = []models.CategoryPortal{categoryPortal}
+		maps = append(maps, mapData)
+		lastMapID = mapData.ID
+	}
+	return maps, rows.Err()
+}
+
 // GET Map Summary
 //
 //	@Description	Get map summary with specified id.
@@ -68,68 +301,100 @@ type RecordMultiplayer struct {
 //	@Success		200		{object}	models.Response{data=MapSummaryResponse}
 //	@Router			/maps/{mapid}/summary [get]
 func FetchMapSummary(c *gin.Context) {
-	id := c.Param("mapid")
-	response := MapSummaryResponse{Map: models.Map{}, Summary: models.MapSummary{Routes: []models.MapRoute{}}}
-	intID, err := strconv.Atoi(id)
+	mapID, err := strconv.Atoi(c.Param("mapid"))
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	// Get map data
-	response.Map.ID = intID
-	sql := `SELECT m.id, g.name, c.name, m.name, m.image, g.is_coop, m.is_disabled, m.difficulty
-	FROM maps m
-	INNER JOIN games g ON m.game_id = g.id
-	INNER JOIN chapters c ON m.chapter_id = c.id
-	WHERE m.id = $1`
-	err = database.DB.QueryRow(sql, id).Scan(&response.Map.ID, &response.Map.GameName, &response.Map.ChapterName, &response.Map.MapName, &response.Map.Image, &response.Map.IsCoop, &response.Map.IsDisabled, &response.Map.Difficulty)
+	mapData, err := fetchMap(mapID)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	// Get map routes and histories
-	sql = `SELECT mh.id, c.id, c.name, mh.user_name, mh.score_count, mh.record_date, mh.description, mh.showcase, COALESCE(avg(rating), 0.0) FROM map_history mh
-    INNER JOIN categories c ON mh.category_id = c.id
-    LEFT JOIN map_ratings rt ON mh.map_id = rt.map_id AND mh.category_id = rt.category_id 
-	WHERE mh.map_id = $1 AND mh.score_count = mh.score_count GROUP BY mh.id, c.id, mh.user_name, mh.score_count, mh.record_date, mh.description, mh.showcase
-	ORDER BY mh.category_id ASC, mh.score_count ASC;`
-	rows, err := database.DB.Query(sql, id)
+	response := MapSummaryResponse{
+		Map:     mapData,
+		Summary: models.MapSummary{Routes: []models.MapRoute{}},
+	}
+
+	rows, err := database.DB.Query(`
+		SELECT
+			mh.id, c.id, c.name, mh.user_name, mh.score_count, mh.record_date,
+			mh.description, mh.showcase, COALESCE(AVG(rt.rating), 0.0)
+		FROM map_history mh
+		INNER JOIN categories c ON c.id = mh.category_id
+		INNER JOIN maps m ON m.id = mh.map_id
+		INNER JOIN game_categories gc ON gc.game_id = m.game_id
+			AND gc.category_id = mh.category_id
+		LEFT JOIN map_ratings rt ON rt.map_id = mh.map_id
+			AND rt.category_id = mh.category_id
+		WHERE mh.map_id = $1
+		GROUP BY
+			mh.id, c.id, c.name, mh.user_name, mh.score_count, mh.record_date,
+			mh.description, mh.showcase
+		ORDER BY mh.category_id, mh.score_count
+	`, mapID)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
+	defer rows.Close()
+
 	for rows.Next() {
 		route := models.MapRoute{Category: models.Category{}, History: models.MapHistory{}}
-		err = rows.Scan(&route.RouteID, &route.Category.ID, &route.Category.Name, &route.History.RunnerName, &route.History.ScoreCount, &route.History.Date, &route.Description, &route.Showcase, &route.Rating)
+		if err := rows.Scan(
+			&route.RouteID,
+			&route.Category.ID,
+			&route.Category.Name,
+			&route.History.RunnerName,
+			&route.History.ScoreCount,
+			&route.History.Date,
+			&route.Description,
+			&route.Showcase,
+			&route.Rating,
+		); err != nil {
+			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+			return
+		}
+		if mapData.IsCoop {
+			err = database.DB.QueryRow(`
+				SELECT COUNT(*)
+				FROM (
+					SELECT host_id, partner_id, score_count, score_time,
+						ROW_NUMBER() OVER (
+							PARTITION BY host_id, partner_id
+							ORDER BY score_count, score_time
+						) AS rank
+					FROM records_mp
+					WHERE map_id = $1 AND is_deleted = false
+				) best_record
+				WHERE best_record.rank = 1 AND best_record.score_count = $2
+			`, mapData.ID, route.History.ScoreCount).Scan(&route.CompletionCount)
+		} else {
+			err = database.DB.QueryRow(`
+				SELECT COUNT(*)
+				FROM (
+					SELECT user_id, score_count, score_time,
+						ROW_NUMBER() OVER (
+							PARTITION BY user_id
+							ORDER BY score_count, score_time
+						) AS rank
+					FROM records_sp
+					WHERE map_id = $1 AND is_deleted = false
+				) best_record
+				WHERE best_record.rank = 1 AND best_record.score_count = $2
+			`, mapData.ID, route.History.ScoreCount).Scan(&route.CompletionCount)
+		}
 		if err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
 		}
-		// Get completion count
-		if response.Map.IsCoop {
-			sql = `SELECT count(*) FROM ( SELECT host_id, partner_id, score_count, score_time,
-				ROW_NUMBER() OVER (PARTITION BY host_id, partner_id ORDER BY score_count, score_time) AS rn
-				FROM records_mp WHERE map_id = $1 AND is_deleted = false
-				) sub WHERE sub.rn = 1 AND score_count = $2`
-			err = database.DB.QueryRow(sql, response.Map.ID, route.History.ScoreCount).Scan(&route.CompletionCount)
-			if err != nil {
-				c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-				return
-			}
-		} else {
-			sql = `SELECT count(*) FROM ( SELECT user_id, score_count, score_time, 
-				ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY score_count, score_time) AS rn
-				FROM records_sp WHERE map_id = $1 AND is_deleted = false
-				) sub WHERE rn = 1 AND score_count = $2`
-			err = database.DB.QueryRow(sql, response.Map.ID, route.History.ScoreCount).Scan(&route.CompletionCount)
-			if err != nil {
-				c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-				return
-			}
-		}
 		response.Summary.Routes = append(response.Summary.Routes, route)
 	}
-	// Return response
+	if err := rows.Err(); err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+
 	c.JSON(http.StatusOK, models.Response{
 		Success: true,
 		Message: "Successfully retrieved map summary.",
@@ -148,9 +413,11 @@ func FetchMapSummary(c *gin.Context) {
 //	@Success		200			{object}	models.Response{data=MapLeaderboardsResponse}
 //	@Router			/maps/{mapid}/leaderboards [get]
 func FetchMapLeaderboards(c *gin.Context) {
-	id := c.Param("mapid")
-	// Get map data
-	response := MapLeaderboardsResponse{Map: models.Map{}, Records: nil, Pagination: models.Pagination{}}
+	mapID, err := strconv.Atoi(c.Param("mapid"))
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
 	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
 	if err != nil || page < 1 {
 		page = 1
@@ -159,77 +426,74 @@ func FetchMapLeaderboards(c *gin.Context) {
 	if err != nil || pageSize < 1 {
 		pageSize = 20
 	}
-	var isDisabled bool
-	intID, err := strconv.Atoi(id)
+
+	mapData, err := fetchMap(mapID)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	response.Map.ID = intID
-	sql := `SELECT g.name, c.name, m.name, m.is_disabled, m.image, g.is_coop
-	FROM maps m
-	INNER JOIN games g ON m.game_id = g.id
-	INNER JOIN chapters c ON m.chapter_id = c.id
-	WHERE m.id = $1`
-	err = database.DB.QueryRow(sql, id).Scan(&response.Map.GameName, &response.Map.ChapterName, &response.Map.MapName, &isDisabled, &response.Map.Image, &response.Map.IsCoop)
-	if err != nil {
-		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-		return
-	}
-	if isDisabled {
+	if mapData.IsDisabled {
 		c.JSON(http.StatusOK, models.ErrorResponse("Map is not available for competitive boards."))
 		return
 	}
+
+	response := MapLeaderboardsResponse{
+		Map:     mapData,
+		Records: []RecordSingleplayer{},
+	}
 	totalRecords := 0
-	totalPages := 0
-	if response.Map.GameName == "Portal 2 - Cooperative" {
+	if mapData.IsCoop {
 		records := []RecordMultiplayer{}
-		sql = `SELECT
-		sub.id,
-		sub.host_id,
-		host.user_name AS host_user_name,
-		host.avatar_link AS host_avatar_link,
-		sub.partner_id,
-		partner.user_name AS partner_user_name,
-		partner.avatar_link AS partner_avatar_link,
-		sub.score_count,
-		sub.score_time,
-		sub.host_demo_id,
-		sub.partner_demo_id,
-		sub.record_date
-	FROM (
-		SELECT
-			id,
-			host_id,
-			partner_id,
-			score_count,
-			score_time,
-			host_demo_id,
-			partner_demo_id,
-			record_date,
-			ROW_NUMBER() OVER (PARTITION BY host_id, partner_id ORDER BY score_count, score_time) AS rn
-		FROM records_mp
-		WHERE map_id = $1 AND is_deleted = false
-	) sub
-	JOIN users AS host ON sub.host_id = host.steam_id 
-	JOIN users AS partner ON sub.partner_id = partner.steam_id 
-	WHERE sub.rn = 1
-	ORDER BY score_count, score_time`
-		rows, err := database.DB.Query(sql, id)
+		rows, err := database.DB.Query(`
+			SELECT
+				sub.id, sub.host_id, host.user_name, host.avatar_link,
+				sub.partner_id, partner.user_name, partner.avatar_link,
+				sub.score_count, sub.score_time, sub.host_demo_id,
+				sub.partner_demo_id, sub.record_date
+			FROM (
+				SELECT
+					id, host_id, partner_id, score_count, score_time,
+					host_demo_id, partner_demo_id, record_date,
+					ROW_NUMBER() OVER (
+						PARTITION BY host_id, partner_id
+						ORDER BY score_count, score_time
+					) AS rank
+				FROM records_mp
+				WHERE map_id = $1 AND is_deleted = false
+			) sub
+			INNER JOIN users host ON host.steam_id = sub.host_id
+			INNER JOIN users partner ON partner.steam_id = sub.partner_id
+			WHERE sub.rank = 1
+			ORDER BY sub.score_count, sub.score_time
+		`, mapID)
 		if err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
 		}
-		placement := 1
-		ties := 0
+		defer rows.Close()
+		placement, ties := 1, 0
 		for rows.Next() {
-			var record RecordMultiplayer
-			err := rows.Scan(&record.RecordID, &record.Host.SteamID, &record.Host.UserName, &record.Host.AvatarLink, &record.Partner.SteamID, &record.Partner.UserName, &record.Partner.AvatarLink, &record.ScoreCount, &record.ScoreTime, &record.HostDemoID, &record.PartnerDemoID, &record.RecordDate)
-			if err != nil {
+			record := RecordMultiplayer{}
+			if err := rows.Scan(
+				&record.RecordID,
+				&record.Host.SteamID,
+				&record.Host.UserName,
+				&record.Host.AvatarLink,
+				&record.Partner.SteamID,
+				&record.Partner.UserName,
+				&record.Partner.AvatarLink,
+				&record.ScoreCount,
+				&record.ScoreTime,
+				&record.HostDemoID,
+				&record.PartnerDemoID,
+				&record.RecordDate,
+			); err != nil {
 				c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 				return
 			}
-			if len(records) != 0 && records[len(records)-1].ScoreCount == record.ScoreCount && records[len(records)-1].ScoreTime == record.ScoreTime {
+			if len(records) > 0 &&
+				records[len(records)-1].ScoreCount == record.ScoreCount &&
+				records[len(records)-1].ScoreTime == record.ScoreTime {
 				ties++
 				record.Placement = placement - ties
 			} else {
@@ -239,48 +503,56 @@ func FetchMapLeaderboards(c *gin.Context) {
 			records = append(records, record)
 			placement++
 		}
+		if err := rows.Err(); err != nil {
+			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+			return
+		}
 		response.Records = records
 		totalRecords = len(records)
-		if totalRecords != 0 {
-			totalPages = (totalRecords + pageSize - 1) / pageSize
-			if page > totalPages {
-				c.JSON(http.StatusOK, models.ErrorResponse("Invalid page number."))
-				return
-			}
-			startIndex := (page - 1) * pageSize
-			endIndex := startIndex + pageSize
-			if endIndex > totalRecords {
-				endIndex = totalRecords
-			}
-			response.Records = records[startIndex:endIndex]
-		}
 	} else {
 		records := []RecordSingleplayer{}
-		sql = `SELECT id, user_id, users.user_name, users.avatar_link, score_count, score_time, demo_id, record_date
-		FROM (
-		  SELECT id, user_id, score_count, score_time, demo_id, record_date,
-				 ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY score_count, score_time) AS rn
-		  FROM records_sp
-		  WHERE map_id = $1 AND is_deleted = false
-		) sub
-		INNER JOIN users ON user_id = users.steam_id
-		WHERE rn = 1
-		ORDER BY score_count, score_time`
-		rows, err := database.DB.Query(sql, id)
+		rows, err := database.DB.Query(`
+			SELECT
+				sub.id, sub.user_id, users.user_name, users.avatar_link,
+				sub.score_count, sub.score_time, sub.demo_id, sub.record_date
+			FROM (
+				SELECT
+					id, user_id, score_count, score_time, demo_id, record_date,
+					ROW_NUMBER() OVER (
+						PARTITION BY user_id
+						ORDER BY score_count, score_time
+					) AS rank
+				FROM records_sp
+				WHERE map_id = $1 AND is_deleted = false
+			) sub
+			INNER JOIN users ON users.steam_id = sub.user_id
+			WHERE sub.rank = 1
+			ORDER BY sub.score_count, sub.score_time
+		`, mapID)
 		if err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
 		}
-		placement := 1
-		ties := 0
+		defer rows.Close()
+		placement, ties := 1, 0
 		for rows.Next() {
-			var record RecordSingleplayer
-			err := rows.Scan(&record.RecordID, &record.User.SteamID, &record.User.UserName, &record.User.AvatarLink, &record.ScoreCount, &record.ScoreTime, &record.DemoID, &record.RecordDate)
-			if err != nil {
+			record := RecordSingleplayer{}
+			if err := rows.Scan(
+				&record.RecordID,
+				&record.User.SteamID,
+				&record.User.UserName,
+				&record.User.AvatarLink,
+				&record.ScoreCount,
+				&record.ScoreTime,
+				&record.DemoID,
+				&record.RecordDate,
+			); err != nil {
 				c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 				return
 			}
-			if len(records) != 0 && records[len(records)-1].ScoreCount == record.ScoreCount && records[len(records)-1].ScoreTime == record.ScoreTime {
+			if len(records) > 0 &&
+				records[len(records)-1].ScoreCount == record.ScoreCount &&
+				records[len(records)-1].ScoreTime == record.ScoreTime {
 				ties++
 				record.Placement = placement - ties
 			} else {
@@ -290,19 +562,30 @@ func FetchMapLeaderboards(c *gin.Context) {
 			records = append(records, record)
 			placement++
 		}
+		if err := rows.Err(); err != nil {
+			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+			return
+		}
 		response.Records = records
 		totalRecords = len(records)
-		if totalRecords != 0 {
-			totalPages = (totalRecords + pageSize - 1) / pageSize
-			if page > totalPages {
-				c.JSON(http.StatusOK, models.ErrorResponse("Invalid page number."))
-				return
-			}
-			startIndex := (page - 1) * pageSize
-			endIndex := startIndex + pageSize
-			if endIndex > totalRecords {
-				endIndex = totalRecords
-			}
+	}
+
+	totalPages := 0
+	if totalRecords > 0 {
+		totalPages = (totalRecords + pageSize - 1) / pageSize
+		if page > totalPages {
+			c.JSON(http.StatusOK, models.ErrorResponse("Invalid page number."))
+			return
+		}
+		startIndex := (page - 1) * pageSize
+		endIndex := startIndex + pageSize
+		if endIndex > totalRecords {
+			endIndex = totalRecords
+		}
+		switch records := response.Records.(type) {
+		case []RecordSingleplayer:
+			response.Records = records[startIndex:endIndex]
+		case []RecordMultiplayer:
 			response.Records = records[startIndex:endIndex]
 		}
 	}
@@ -328,57 +611,30 @@ func FetchMapLeaderboards(c *gin.Context) {
 //	@Failure		400	{object}	models.Response
 //	@Router			/games [get]
 func FetchGames(c *gin.Context) {
-	rows, err := database.DB.Query(`SELECT id, name, is_coop, image FROM games ORDER BY id;`)
+	rows, err := database.DB.Query(`SELECT id FROM games ORDER BY id`)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	var games []models.Game
+	defer rows.Close()
+
+	games := []models.Game{}
 	for rows.Next() {
-		var game models.Game
-		if err := rows.Scan(&game.ID, &game.Name, &game.IsCoop, &game.Image); err != nil {
+		var gameID int
+		if err := rows.Scan(&gameID); err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
 		}
-		categoryPortalRows, err := database.DB.Query(`SELECT c.id, c.name FROM game_categories gc JOIN categories c ON gc.category_id = c.id WHERE gc.game_id = $1 ORDER BY c.id;`, game.ID)
+		game, err := fetchGame(gameID)
 		if err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
 		}
-		for categoryPortalRows.Next() {
-			var categoryPortals models.CategoryPortal
-			if err := categoryPortalRows.Scan(&categoryPortals.Category.ID, &categoryPortals.Category.Name); err != nil {
-				c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-				return
-			}
-			getCategoryPortalCount := `
-			SELECT
-				SUM(mh.lowest_score_count) AS total_lowest_scores
-			FROM (
-				SELECT
-					map_id,
-					category_id,
-					MIN(score_count) AS lowest_score_count
-				FROM
-					map_history
-				GROUP BY
-					map_id,
-					category_id
-			) mh
-			JOIN maps m ON mh.map_id = m.id
-			JOIN games g ON m.game_id = g.id
-			WHERE
-				mh.category_id = $1 and g.id = $2
-			GROUP BY
-				g.id,
-				g.name,
-				mh.category_id;
-			`
-			database.DB.QueryRow(getCategoryPortalCount, categoryPortals.Category.ID, game.ID).Scan(&categoryPortals.PortalCount)
-			// not checking for errors since there can be no record for category - just let it have 0
-			game.CategoryPortals = append(game.CategoryPortals, categoryPortals)
-		}
 		games = append(games, game)
+	}
+	if err := rows.Err(); err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
 	}
 	c.JSON(http.StatusOK, models.Response{
 		Success: true,
@@ -389,42 +645,62 @@ func FetchGames(c *gin.Context) {
 
 // GET Chapters of a Game
 //
-//	@Description	Get chapters from the specified game id.
+//	@Description	Get sections from the specified game id.
 //	@Tags			games & chapters
 //	@Produce		json
 //	@Param			gameid	path		int	true	"Game ID"
 //	@Success		200		{object}	models.Response{data=ChaptersResponse}
 //	@Router			/games/{gameid} [get]
 func FetchChapters(c *gin.Context) {
-	gameID := c.Param("gameid")
-	intID, err := strconv.Atoi(gameID)
+	gameID, err := strconv.Atoi(c.Param("gameid"))
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	var response ChaptersResponse
-	rows, err := database.DB.Query(`SELECT c.id, c.name, g.name, c.is_disabled, c.image FROM chapters c INNER JOIN games g ON c.game_id = g.id WHERE game_id = $1 ORDER BY c.id;`, gameID)
+	game, err := fetchGame(gameID)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	var chapters []models.Chapter
-	var gameName string
+	rows, err := database.DB.Query(`
+		SELECT id, game_id, name, is_disabled, image
+		FROM chapters
+		WHERE game_id = $1
+		ORDER BY id
+	`, gameID)
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	defer rows.Close()
+
+	chapters := []models.Chapter{}
 	for rows.Next() {
-		var chapter models.Chapter
-		if err := rows.Scan(&chapter.ID, &chapter.Name, &gameName, &chapter.IsDisabled, &chapter.Image); err != nil {
+		chapter := models.Chapter{
+			SectionKind:     game.SectionKind,
+			SectionLabel:    game.SectionLabel,
+			CategoryPortals: []models.CategoryPortal{},
+		}
+		if err := rows.Scan(
+			&chapter.ID,
+			&chapter.GameID,
+			&chapter.Name,
+			&chapter.IsDisabled,
+			&chapter.Image,
+		); err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
 		}
 		chapters = append(chapters, chapter)
 	}
-	response.Game.ID = intID
-	response.Game.Name = gameName
-	response.Chapters = chapters
+	if err := rows.Err(); err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
 	c.JSON(http.StatusOK, models.Response{
 		Success: true,
-		Message: "Successfully retrieved chapters.",
-		Data:    response,
+		Message: "Successfully retrieved sections.",
+		Data:    ChaptersResponse{Game: game, Chapters: chapters},
 	})
 }
 
@@ -434,7 +710,7 @@ func FetchChapters(c *gin.Context) {
 //	@Tags			games & chapters
 //	@Produce		json
 //	@Param			gameid	path		int	true	"Game ID"
-//	@Success		200		{object}	models.Response{data=ChaptersResponse}
+//	@Success		200	{object}	models.Response{data=GameMapsResponse}
 //	@Router			/games/{gameid}/maps [get]
 func FetchMaps(c *gin.Context) {
 	gameID, err := strconv.Atoi(c.Param("gameid"))
@@ -442,116 +718,26 @@ func FetchMaps(c *gin.Context) {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	var response GameMapsResponse
-	err = database.DB.QueryRow(`SELECT g.id, g.name, g.is_coop, g.image FROM games g WHERE g.id = $1;`, gameID).Scan(&response.Game.ID, &response.Game.Name, &response.Game.IsCoop, &response.Game.Image)
+	game, err := fetchGame(gameID)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	categoryPortalRows, err := database.DB.Query(`SELECT c.id, c.name FROM game_categories gc JOIN categories c ON gc.category_id = c.id WHERE gc.game_id = $1 ORDER BY c.id;`, gameID)
+	maps, err := fetchMapsForScope(gameID, 0)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
-	}
-	for categoryPortalRows.Next() {
-		var categoryPortals models.CategoryPortal
-		if err := categoryPortalRows.Scan(&categoryPortals.Category.ID, &categoryPortals.Category.Name); err != nil {
-			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-			return
-		}
-		getCategoryPortalCount := `
-			SELECT
-				SUM(mh.lowest_score_count) AS total_lowest_scores
-			FROM (
-				SELECT
-					map_id,
-					category_id,
-					MIN(score_count) AS lowest_score_count
-				FROM
-					map_history
-				GROUP BY
-					map_id,
-					category_id
-			) mh
-			JOIN maps m ON mh.map_id = m.id
-			JOIN games g ON m.game_id = g.id
-			WHERE
-				mh.category_id = $1 and g.id = $2
-			GROUP BY
-				g.id,
-				g.name,
-				mh.category_id;
-			`
-		database.DB.QueryRow(getCategoryPortalCount, categoryPortals.Category.ID, gameID).Scan(&categoryPortals.PortalCount)
-		// not checking for errors since there can be no record for category - just let it have 0
-		response.Game.CategoryPortals = append(response.Game.CategoryPortals, categoryPortals)
-	}
-
-	rows, err := database.DB.Query(`
-	SELECT 
-		m.id,
-		m.name, 
-		m.is_disabled,
-		m.difficulty,
-		m.image,
-		cat.id,
-		cat.name,
-		mh.min_score_count AS score_count
-	FROM 
-		maps m
-	INNER JOIN 
-		chapters c ON m.chapter_id = c.id
-	INNER JOIN 
-		game_categories gc ON gc.game_id = c.game_id
-	INNER JOIN
-		categories cat ON cat.id = gc.category_id
-	INNER JOIN 
-		(
-			SELECT 
-				map_id, 
-				category_id, 
-				MIN(score_count) AS min_score_count
-			FROM 
-				map_history
-			GROUP BY 
-				map_id, 
-				category_id
-		) mh ON m.id = mh.map_id AND gc.category_id = mh.category_id
-	WHERE 
-		m.game_id = $1
-	ORDER BY 
-		m.id, gc.category_id, mh.min_score_count ASC;
-	`, gameID)
-	if err != nil {
-		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-		return
-	}
-	var lastMapID int
-	for rows.Next() {
-		var mapShort models.MapSelect
-		var categoryPortal models.CategoryPortal
-		if err := rows.Scan(&mapShort.ID, &mapShort.Name, &mapShort.IsDisabled, &mapShort.Difficulty, &mapShort.Image, &categoryPortal.Category.ID, &categoryPortal.Category.Name, &categoryPortal.PortalCount); err != nil {
-			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-			return
-		}
-		if mapShort.ID == lastMapID {
-			response.Maps[len(response.Maps)-1].CategoryPortals = append(response.Maps[len(response.Maps)-1].CategoryPortals, categoryPortal)
-		} else {
-			mapShort.CategoryPortals = append(mapShort.CategoryPortals, categoryPortal)
-			response.Maps = append(response.Maps, mapShort)
-			lastMapID = mapShort.ID
-		}
 	}
 	c.JSON(http.StatusOK, models.Response{
 		Success: true,
 		Message: "Successfully retrieved maps.",
-		Data:    response,
+		Data:    GameMapsResponse{Game: game, Maps: maps},
 	})
 }
 
 // GET Maps of a Chapter
 //
-//	@Description	Get maps from the specified chapter id.
+//	@Description	Get maps from the specified section id.
 //	@Tags			games & chapters
 //	@Produce		json
 //	@Param			chapterid	path		int	true	"Chapter ID"
@@ -559,77 +745,55 @@ func FetchMaps(c *gin.Context) {
 //	@Failure		400			{object}	models.Response
 //	@Router			/chapters/{chapterid} [get]
 func FetchChapterMaps(c *gin.Context) {
-	chapterID := c.Param("chapterid")
-	intID, err := strconv.Atoi(chapterID)
+	chapterID, err := strconv.Atoi(c.Param("chapterid"))
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	var response ChapterMapsResponse
-	rows, err := database.DB.Query(`
-	SELECT 
-		m.id, 
-		m.name AS map_name, 
-		c.name AS chapter_name, 
-		m.is_disabled,
-		m.difficulty,
-		m.image,
-		cat.id,
-		cat.name,
-		mh.min_score_count AS score_count
-	FROM 
-		maps m
-	INNER JOIN 
-		chapters c ON m.chapter_id = c.id
-	INNER JOIN 
-		game_categories gc ON gc.game_id = c.game_id
-	INNER JOIN
-		categories cat ON cat.id = gc.category_id
-	INNER JOIN 
-		(
-			SELECT 
-				map_id, 
-				category_id, 
-				MIN(score_count) AS min_score_count
-			FROM 
-				map_history
-			GROUP BY 
-				map_id, 
-				category_id
-		) mh ON m.id = mh.map_id AND gc.category_id = mh.category_id
-	WHERE 
-		m.chapter_id = $1
-	ORDER BY 
-		m.id, gc.category_id, mh.min_score_count ASC;
-	`, chapterID)
+	chapter := models.Chapter{CategoryPortals: []models.CategoryPortal{}}
+	err = database.DB.QueryRow(`
+		SELECT
+			c.id, c.game_id, c.name, c.is_disabled, c.image,
+			g.section_kind, g.section_label
+		FROM chapters c
+		INNER JOIN games g ON g.id = c.game_id
+		WHERE c.id = $1
+	`, chapterID).Scan(
+		&chapter.ID,
+		&chapter.GameID,
+		&chapter.Name,
+		&chapter.IsDisabled,
+		&chapter.Image,
+		&chapter.SectionKind,
+		&chapter.SectionLabel,
+	)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	var maps []models.MapSelect
-	var chapterName string
-	var lastMapID int
-	for rows.Next() {
-		var mapShort models.MapSelect
-		var categoryPortal models.CategoryPortal
-		if err := rows.Scan(&mapShort.ID, &mapShort.Name, &chapterName, &mapShort.IsDisabled, &mapShort.Difficulty, &mapShort.Image, &categoryPortal.Category.ID, &categoryPortal.Category.Name, &categoryPortal.PortalCount); err != nil {
-			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-			return
-		}
-		if mapShort.ID == lastMapID {
-			maps[len(maps)-1].CategoryPortals = append(maps[len(maps)-1].CategoryPortals, categoryPortal)
-		} else {
-			mapShort.CategoryPortals = append(mapShort.CategoryPortals, categoryPortal)
-			maps = append(maps, mapShort)
-			lastMapID = mapShort.ID
-		}
+	game, err := fetchGame(chapter.GameID)
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
 	}
-	response.Chapter.ID = intID
-	response.Chapter.Name = chapterName
-	response.Maps = maps
+	portals, err := fetchCategoryPortals(chapter.GameID, chapter.ID)
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	chapter.CategoryPortals = portals
+	maps, err := fetchMapsForScope(chapter.GameID, chapter.ID)
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
 	c.JSON(http.StatusOK, models.Response{
 		Success: true,
 		Message: "Successfully retrieved maps.",
-		Data:    response,
+		Data: ChapterMapsResponse{
+			Game:    game,
+			Chapter: chapter,
+			Maps:    maps,
+		},
 	})
 }
