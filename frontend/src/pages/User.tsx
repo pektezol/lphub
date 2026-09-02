@@ -47,7 +47,7 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
   const _get_game_chapters = async () => {
     if (game !== "0") {
       const gameChapters = await API.get_games_chapters(game);
-      setChapterData(gameChapters);
+      setChapterData(gameChapters ?? null);
     } else {
       setPageMax(Math.ceil(user!.records.length / 20));
       setPageNumber(1);
@@ -62,8 +62,9 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
       setPageNumber(1);
     } else {
       const gameChapters = await API.get_chapters(chapter);
-      setMaps(gameChapters.maps);
-      setPageMax(Math.ceil(gameChapters.maps.length / 20));
+      const chapterMaps = gameChapters?.maps ?? [];
+      setMaps(chapterMaps);
+      setPageMax(Math.ceil(chapterMaps.length / 20));
       setPageNumber(1);
     }
   };

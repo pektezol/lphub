@@ -85,6 +85,16 @@ h3 {
     margin: 20px 0px;
 }
 
+.game-empty-state {
+    color: #cdcfdf;
+    font-size: 20px;
+    margin: 24px 0px;
+}
+
+.game-header-empty-state {
+    margin: 0px;
+}
+
 .maplist-entry {
     background-color: #202232;
     border-radius: 24px;

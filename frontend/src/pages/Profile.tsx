@@ -44,7 +44,7 @@ const Profile: React.FC<ProfileProps> = ({ authentication, gameData, onDeleteRec
   const _get_game_chapters = async () => {
     if (game && game !== "0") {
       const gameChapters = await API.get_games_chapters(game);
-      setChapterData(gameChapters);
+      setChapterData(gameChapters ?? null);
     } else if (game && game === "0") {
       setPageMax(Math.ceil(profile!.records.length / 20));
       setPageNumber(1);
@@ -59,8 +59,9 @@ const Profile: React.FC<ProfileProps> = ({ authentication, gameData, onDeleteRec
       setPageNumber(1);
     } else {
       const gameChapters = await API.get_chapters(chapter);
-      setMaps(gameChapters.maps);
-      setPageMax(Math.ceil(gameChapters.maps.length / 20));
+      const chapterMaps = gameChapters?.maps ?? [];
+      setMaps(chapterMaps);
+      setPageMax(Math.ceil(chapterMaps.length / 20));
       setPageNumber(1);
     }
   };

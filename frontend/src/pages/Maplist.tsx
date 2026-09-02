@@ -20,11 +20,15 @@ const getSelectedChapterId = (
   gameChapters: GamesChapters,
   requestedChapterId: number | undefined
 ): number | undefined => {
+  const chapters = Array.isArray(gameChapters.chapters)
+    ? gameChapters.chapters
+    : [];
+
   if (requestedChapterId === undefined) {
-    return gameChapters.chapters[0]?.id;
+    return chapters[0]?.id;
   }
 
-  const chapterById = gameChapters.chapters.find(
+  const chapterById = chapters.find(
     (chapter) => chapter.id === requestedChapterId
   );
   if (chapterById) {
@@ -32,12 +36,12 @@ const getSelectedChapterId = (
   }
 
   // Existing map links use the chapter/course number rather than its database ID.
-  const chapterByNumber = gameChapters.chapters.find((chapter) => {
+  const chapterByNumber = chapters.find((chapter) => {
     const match = chapter.name.match(/(?:Chapter|Course)\s+(\d+)/);
     return match !== null && Number(match[1]) === requestedChapterId;
   });
 
-  return chapterByNumber?.id ?? gameChapters.chapters[0]?.id;
+  return chapterByNumber?.id ?? chapters[0]?.id;
 };
 
 const getDifficultyClass = (difficulty: number) => {
@@ -78,11 +82,17 @@ const Maplist: React.FC = () => {
     ? getSelectedChapterId(gameChapters, requestedChapterId)
     : undefined;
 
-  const selectedCategoryId = game?.category_portals.some(
+  const categories = Array.isArray(game?.category_portals)
+    ? game.category_portals
+    : [];
+  const chapters = Array.isArray(gameChapters?.chapters)
+    ? gameChapters.chapters
+    : [];
+  const selectedCategoryId = categories.some(
     (category) => category.category.id === requestedCategoryId
   )
     ? requestedCategoryId
-    : game?.category_portals[0]?.category.id;
+    : categories[0]?.category.id;
 
   const updateSearchParam = (name: "cat" | "chapter", value: number) => {
     const nextQueryParams = new URLSearchParams(location.search);
@@ -195,11 +205,14 @@ const Maplist: React.FC = () => {
     );
   }
 
-  const selectedCategory = game.category_portals.find(
+  const selectedCategory = categories.find(
     (category) => category.category.id === selectedCategoryId
   );
   const displayedChapter =
-    curChapter?.chapter.id === selectedChapterId ? curChapter : undefined;
+    curChapter?.chapter?.id === selectedChapterId ? curChapter : undefined;
+  const maps = Array.isArray(displayedChapter?.maps)
+    ? displayedChapter.maps
+    : [];
 
   return (
     <main>
@@ -222,100 +235,120 @@ const Maplist: React.FC = () => {
         >
           <div className="blur">
             <div className="game-header-portal-count">
-              <h2 className="portal-count">{selectedCategory?.portal_count}</h2>
-              <h3>portals</h3>
+              {selectedCategory ? (
+                <>
+                  <h2 className="portal-count">{selectedCategory.portal_count}</h2>
+                  <h3>portals</h3>
+                </>
+              ) : (
+                <span className="game-empty-state game-header-empty-state">
+                  No categories are available yet.
+                </span>
+              )}
             </div>
-            <div className="game-header-categories">
-              {game.category_portals.map((category) => (
-                <button
-                  key={category.category.id}
-                  className={
-                    selectedCategoryId === category.category.id
-                      ? "game-cat-button selected"
-                      : "game-cat-button"
-                  }
-                  onClick={() =>
-                    updateSearchParam("cat", category.category.id)
-                  }
-                >
-                  <span>{category.category.name}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <section className="chapter-select-container">
-            <div>
-              <span
-                style={{
-                  fontSize: "18px",
-                  transform: "translateY(5px)",
-                  display: "block",
-                  marginTop: "10px",
-                }}
-              >
-                {displayedChapter?.chapter.name.split(" - ")[0]}
-              </span>
-            </div>
-            <div
-              onClick={() => setDropdownActive((active) => !active)}
-              className="dropdown"
-            >
-              <span>{displayedChapter?.chapter.name.split(" - ")[1]}</span>
-              <i className="triangle"></i>
-            </div>
-            {dropdownActive && (
-              <div className="dropdown-elements">
-                {gameChapters?.chapters.map((chapter) => (
-                  <div
-                    key={chapter.id}
-                    className="dropdown-element"
-                    onClick={() => updateSearchParam("chapter", chapter.id)}
+            {categories.length > 0 && (
+              <div className="game-header-categories">
+                {categories.map((category) => (
+                  <button
+                    key={category.category.id}
+                    className={
+                      selectedCategoryId === category.category.id
+                        ? "game-cat-button selected"
+                        : "game-cat-button"
+                    }
+                    onClick={() =>
+                      updateSearchParam("cat", category.category.id)
+                    }
                   >
-                    {chapter.name}
-                  </div>
+                    <span>{category.category.name}</span>
+                  </button>
                 ))}
               </div>
             )}
-          </section>
-          <section className="maplist">
-            {displayedChapter?.maps.map((map) => {
-              const mapPortalCount = map.is_disabled
-                ? map.category_portals[0]?.portal_count
-                : map.category_portals.find((category) =>
-                  category.category.id === selectedCategoryId
-                )?.portal_count;
-
-              return (
-                <div key={map.id} className="maplist-entry">
-                  <Link to={`/maps/${map.id}`}>
-                    <span>{map.name}</span>
-                    <div
-                      className="map-entry-image"
-                      style={{ backgroundImage: `url(${map.image})` }}
-                    >
-                      <div className="blur map">
-                        <span>{mapPortalCount}</span>
-                        <span>portals</span>
-                      </div>
-                    </div>
-                    <div className="difficulty-bar">
-                      <div className={getDifficultyClass(map.difficulty)}>
-                        <div className="difficulty-point"></div>
-                        <div className="difficulty-point"></div>
-                        <div className="difficulty-point"></div>
-                        <div className="difficulty-point"></div>
-                        <div className="difficulty-point"></div>
-                      </div>
-                    </div>
-                  </Link>
-                </div>
-              );
-            })}
-          </section>
+          </div>
         </div>
+
+        {chapters.length === 0 ? (
+          <p className="game-empty-state">No chapters or maps are available yet.</p>
+        ) : (
+          <div>
+            <section className="chapter-select-container">
+              <div>
+                <span
+                  style={{
+                    fontSize: "18px",
+                    transform: "translateY(5px)",
+                    display: "block",
+                    marginTop: "10px",
+                  }}
+                >
+                  {displayedChapter?.chapter.name.split(" - ")[0]}
+                </span>
+              </div>
+              <div
+                onClick={() => setDropdownActive((active) => !active)}
+                className="dropdown"
+              >
+                <span>{displayedChapter?.chapter.name.split(" - ")[1]}</span>
+                <i className="triangle"></i>
+              </div>
+              {dropdownActive && (
+                <div className="dropdown-elements">
+                  {chapters.map((chapter) => (
+                    <div
+                      key={chapter.id}
+                      className="dropdown-element"
+                      onClick={() => updateSearchParam("chapter", chapter.id)}
+                    >
+                      {chapter.name}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+            <section className="maplist">
+              {displayedChapter && maps.length === 0 && (
+                <p className="game-empty-state">No maps are available in this chapter yet.</p>
+              )}
+              {maps.map((map) => {
+                const mapCategories = Array.isArray(map.category_portals)
+                  ? map.category_portals
+                  : [];
+                const mapPortalCount = map.is_disabled
+                  ? mapCategories[0]?.portal_count
+                  : mapCategories.find((category) =>
+                    category.category.id === selectedCategoryId
+                  )?.portal_count;
+
+                return (
+                  <div key={map.id} className="maplist-entry">
+                    <Link to={`/maps/${map.id}`}>
+                      <span>{map.name}</span>
+                      <div
+                        className="map-entry-image"
+                        style={{ backgroundImage: `url(${map.image})` }}
+                      >
+                        <div className="blur map">
+                          <span>{mapPortalCount}</span>
+                          <span>portals</span>
+                        </div>
+                      </div>
+                      <div className="difficulty-bar">
+                        <div className={getDifficultyClass(map.difficulty)}>
+                          <div className="difficulty-point"></div>
+                          <div className="difficulty-point"></div>
+                          <div className="difficulty-point"></div>
+                          <div className="difficulty-point"></div>
+                          <div className="difficulty-point"></div>
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                );
+              })}
+            </section>
+          </div>
+        )}
       </section>
     </main>
   );
