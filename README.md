@@ -18,6 +18,31 @@ Full list of contributors can be found in the [CONTRIBUTORS](https://github.com/
 
 Full API documentation can be found at https://lp.pektezol.dev/api/v1/
 
+## Development
+
+Run the frontend against the hosted API:
+
+```sh
+cd frontend
+npm run dev
+```
+
+Run the frontend against a local backend instead:
+
+```sh
+cd backend
+go run .
+```
+
+Then, in another terminal:
+
+```sh
+cd frontend
+npm run dev:local
+```
+
+The local backend must be configured to listen on port `4000`.
+
 ## License
 
 This project is licensed under the GNU Affero General Public License v3.0 - see the [LICENSE](https://github.com/pektezol/lphub/blob/main/LICENSE) file for details.

@@ -79,7 +79,7 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
         data={mapSummaryData}
         selectedRun={selectedRun}
         mapID={mapID}
-        categories={mapSummaryData.map.categories}
+        categories={mapSummaryData.map.categories ?? []}
       />}
 
       <div id='background-image'>

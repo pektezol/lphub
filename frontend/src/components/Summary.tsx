@@ -14,7 +14,18 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
 
   const [selectedCategory, setSelectedCategory] = React.useState<number | undefined>(undefined);
   const [historySelected, setHistorySelected] = React.useState<boolean>(false);
-  const categories = data.map.categories;
+  const categories = React.useMemo(() => {
+    const declaredCategories = data.map.categories ?? [];
+    if (declaredCategories.length > 0) {
+      return declaredCategories;
+    }
+
+    return Array.from(
+      new Map(
+        data.summary.routes.map((route) => [route.category.id, route.category]),
+      ).values(),
+    );
+  }, [data.map.categories, data.summary.routes]);
   const categoryRoutes = data.summary.routes.filter(route => route.category.id === selectedCategory);
   const selectedRoute = selectedRun === undefined
     ? undefined
