@@ -7,7 +7,18 @@ import { Search } from "@customTypes/Search";
 
 export const get_games = async (): Promise<Game[]> => {
   const response = await axios.get(url("games"));
-  return response.data.data;
+  const games = response.data?.data;
+
+  if (!Array.isArray(games)) {
+    return [];
+  }
+
+  return games.map((game) => ({
+    ...game,
+    category_portals: Array.isArray(game?.category_portals)
+      ? game.category_portals
+      : [],
+  }));
 };
 
 export const get_chapters = async (chapter_id: string): Promise<GameChapter> => {

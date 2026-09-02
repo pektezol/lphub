@@ -28,8 +28,12 @@ const App: React.FC = () => {
   const [uploadRunDialog, setUploadRunDialog] = React.useState<boolean>(false);
 
   const _fetch_games = async () => {
-    const games = await API.get_games();
-    setGames(games);
+    try {
+      const games = await API.get_games();
+      setGames(games);
+    } catch {
+      setGames([]);
+    }
   };
 
   React.useEffect(() => {

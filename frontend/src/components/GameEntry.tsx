@@ -11,24 +11,24 @@ interface GameEntryProps {
 }
 
 const GameEntry: React.FC<GameEntryProps> = ({ game }) => {
-  const [catInfo, setCatInfo] = React.useState<GameCategoryPortals[]>([]);
-
-  React.useEffect(() => {
-    setCatInfo(game.category_portals);
-  }, [game.category_portals]);
+  const categories: GameCategoryPortals[] = Array.isArray(game.category_portals)
+    ? game.category_portals.filter((category) => category?.category)
+    : [];
 
   return (
-    <Link to={"/games/" + game.id}><div className='games-page-item'>
-      <div className='games-page-item-header'>
+    <div className='games-page-item'>
+      <Link to={"/games/" + game.id} className='games-page-item-header'>
         <div style={{ backgroundImage: `url(${game.image})` }} className='games-page-item-header-img'></div>
         <span><b>{game.name}</b></span>
-      </div>
+      </Link>
       <div id={String(game.id)} className='games-page-item-body'>
-        {catInfo.map((cat, index) => {
-          return <GameCategory cat={cat} game={game} key={index}></GameCategory>;
-        })}
+        {categories.length > 0 ? categories.map((cat) => (
+          <GameCategory cat={cat} game={game} key={cat.category.id}></GameCategory>
+        )) : (
+          <span className='games-page-item-empty'>No categories available yet.</span>
+        )}
       </div>
-    </div></Link>
+    </div>
   );
 };
 

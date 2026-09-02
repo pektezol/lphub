@@ -48,10 +48,13 @@ span>b {
 }
 
 .games-page-item-header {
+    display: block;
     width: 100%;
     height: 50%;
     background-size: cover;
     overflow: hidden;
+    color: inherit;
+    text-decoration: none;
 }
 
 .games-page-item-header-img {
@@ -96,6 +99,11 @@ span>b {
 .games-page-item-body-item-num {
     font-size: 50px;
     font-family: BarlowCondensed-Bold;
+}
+
+.games-page-item-empty {
+    color: #CDCFDF;
+    font-size: 20px;
 }
 
 @media screen and (min-width: 769px) and (max-width: 1024px) {

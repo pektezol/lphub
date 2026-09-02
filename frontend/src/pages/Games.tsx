@@ -10,20 +10,7 @@ interface GamesProps {
 }
 
 const Games: React.FC<GamesProps> = ({ games }) => {
-
-  const _page_load = () => {
-    const loaders = document.querySelectorAll(".loader");
-    loaders.forEach((loader) => {
-      (loader as HTMLElement).style.display = "none";
-    });
-  };
-
-  React.useEffect(() => {
-    document.querySelectorAll(".games-page-item-body").forEach((game) => {
-      game.innerHTML = "";
-    });
-    _page_load();
-  }, []);
+  const gameList = Array.isArray(games) ? games : [];
 
   return (
     <div className='games-page'>
@@ -33,7 +20,7 @@ const Games: React.FC<GamesProps> = ({ games }) => {
       <section>
         <div className='games-page-content'>
           <div className='games-page-item-content'>
-            {games.map((game) => (
+            {gameList.map((game) => (
               <GameEntry game={game} key={game.id} />
             ))}
           </div>
