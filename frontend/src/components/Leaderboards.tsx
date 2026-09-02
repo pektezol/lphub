@@ -72,7 +72,6 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
   if (status === "loading") {
     return (
       <section id='section6' className='summary2'>
-        <h1 style={{ textAlign: "center" }}>Loading competitive boards…</h1>
       </section>
     );
   }
