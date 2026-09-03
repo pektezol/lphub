@@ -2,11 +2,11 @@ main {
     overflow: auto;
     overflow-x: hidden;
     position: relative;
-    width: calc(100% - 320px - 2rem);
+    width: calc(100% - 320px - 4rem);
     height: 100vh;
     left: 320px;
-    padding-right: 1rem;
-    padding-left: 1rem;
+    padding-right: 2rem;
+    padding-left: 2rem;
     font-size: 2.5rem;
     font-family: BarlowSemiCondensed-Regular;
     color: #cdcfdf;
