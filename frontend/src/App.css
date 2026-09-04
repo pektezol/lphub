@@ -2,10 +2,11 @@ main {
     overflow: auto;
     overflow-x: hidden;
     position: relative;
-    width: calc(100% - 23.75rem);
+    width: calc(100% - 320px - 4rem);
     height: 100vh;
-    left: 21.875rem;
-    padding-right: 1.875rem;
+    left: 320px;
+    padding-right: 2rem;
+    padding-left: 2rem;
     font-size: 2.5rem;
     font-family: BarlowSemiCondensed-Regular;
     color: #cdcfdf;
@@ -96,8 +97,8 @@ body {
 
 @media screen and (min-width: 769px) and (max-width: 1024px) {
     main {
-        width: calc(100% - 20rem);
-        left: 19rem;
+        width: calc(70% - 1rem);
+        left: 280px;
         font-size: 2rem;
     }
 }
