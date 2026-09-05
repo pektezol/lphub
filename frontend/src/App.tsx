@@ -127,7 +127,7 @@ const App: React.FC = () => {
       />
       <Routes>
         <Route path="/" element={<Homepage />} />
-        <Route path="/profile" element={<Profile authentication={authentication} gameData={games} onDeleteRecord={() => void _set_profile()} />} />
+        <Route path="/profile" element={<Profile authentication={authentication} gameData={games} onProfileRefresh={_set_profile} />} />
         <Route path="/users/*" element={<User profile={profile} token={token} gameData={games} />} />
         <Route path="/games" element={<Games games={games} />} />
         <Route path='/games/:id' element={<Maplist />}></Route>

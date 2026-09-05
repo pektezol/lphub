@@ -1,15 +1,10 @@
 import React from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import { useLocation, useNavigate } from "react-router-dom";
 
-import { SteamIcon, TwitchIcon, YouTubeIcon, PortalIcon, FlagIcon, StatisticsIcon, SortIcon, ThreedotIcon, DownloadIcon, HistoryIcon } from "@images/Images";
-import { UserProfile } from "@customTypes/Profile";
-import { Game, GameChapters } from "@customTypes/Game";
-import { Map } from "@customTypes/Map";
 import { API } from "@api/Api";
-import { ticks_to_time } from "@utils/Time";
-import "@css/Profile.css";
-import useMessage from "@hooks/UseMessage";
+import ProfileView from "@components/ProfileView";
+import type { Game } from "@customTypes/Game";
+import type { UserProfile } from "@customTypes/Profile";
 
 interface UserProps {
   profile?: UserProfile;
@@ -18,313 +13,52 @@ interface UserProps {
 }
 
 const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
-
-  const { message, MessageDialogComponent } = useMessage();
-
-  const [user, setUser] = React.useState<UserProfile | undefined>(undefined);
-
-  const [pageNumber, setPageNumber] = React.useState(1);
-  const [pageMax, setPageMax] = React.useState(0);
-
-  const [game, setGame] = React.useState("0");
-  const [chapter, setChapter] = React.useState("0");
-  const [chapterData, setChapterData] = React.useState<GameChapters | null>(null);
-  const [maps, setMaps] = React.useState<Map[]>([]);
-
+  const [user, setUser] = React.useState<UserProfile | undefined>();
   const location = useLocation();
   const navigate = useNavigate();
-
-  const _fetch_user = async () => {
-    const userID = location.pathname.split("/")[2];
-    if (token && profile && profile.profile && profile.steam_id === userID) {
-      navigate("/profile");
-      return;
-    }
-    const userData = await API.get_user(userID);
-    setUser(userData);
-  };
-
-  const _get_game_chapters = async () => {
-    if (game !== "0") {
-      const gameChapters = await API.get_games_chapters(game);
-      setChapterData(gameChapters ?? null);
-    } else {
-      setPageMax(Math.ceil(user!.records.length / 20));
-      setPageNumber(1);
-    }
-  };
-
-  const _get_game_maps = async () => {
-    if (chapter === "0") {
-      const gameMaps = await API.get_game_maps(game);
-      setMaps(gameMaps);
-      setPageMax(Math.ceil(gameMaps.length / 20));
-      setPageNumber(1);
-    } else {
-      const gameChapters = await API.get_chapters(chapter);
-      const chapterMaps = gameChapters?.maps ?? [];
-      setMaps(chapterMaps);
-      setPageMax(Math.ceil(chapterMaps.length / 20));
-      setPageNumber(1);
-    }
-  };
-
-  const _download_demo = async (demoID: string) => {
-    if (!token) {
-      await message("Download Demo", "You must be logged in to download demos.");
-      return;
-    }
-
-    const [success, errorMessage] = await API.download_demo(token, demoID);
-    if (!success) {
-      await message("Download Demo", errorMessage);
-    }
-  };
-
-  const _toggle_record_history = (index: number, recordCount: number) => {
-    const recordElement = document.querySelectorAll<HTMLElement>(".profileboard-record")[index % 20];
-    if (!recordElement) {
-      return;
-    }
-
-    recordElement.style.height = recordElement.style.height === "44px" || recordElement.style.height === ""
-      ? `${recordCount * 46}px`
-      : "44px";
-  };
+  const userID = location.pathname.split("/")[2];
+  const viewingOwnProfile = Boolean(token && profile?.profile && profile.steam_id === userID);
 
   React.useEffect(() => {
-    _fetch_user();
-  }, [location]);
+    if (viewingOwnProfile) {
+      navigate("/profile", { replace: true });
+    }
+  }, [navigate, viewingOwnProfile]);
 
   React.useEffect(() => {
-    if (user) {
-      _get_game_chapters();
-    }
-  }, [user, game, location]);
+    let active = true;
 
-  React.useEffect(() => {
-    if (user && game !== "0") {
-      _get_game_maps();
+    if (!userID || viewingOwnProfile) {
+      setUser(undefined);
+      return () => {
+        active = false;
+      };
     }
-  }, [user, game, chapter, location]);
+
+    setUser(undefined);
+    void (async () => {
+      try {
+        const userData = await API.get_user(userID);
+        if (active) {
+          setUser(userData);
+        }
+      } catch {
+        if (active) {
+          setUser(undefined);
+        }
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
+  }, [location.pathname, userID, viewingOwnProfile]);
 
   if (!user) {
-    return (
-      <></>
-    );
-  };
+    return null;
+  }
 
-  return (
-    <main>
-      <Helmet>
-        <title>LPHUB | {user.user_name}</title>
-        <meta name="description" content={user.user_name} />
-      </Helmet>
-      {MessageDialogComponent}
-      <section id='section1' className='profile'>
-        <div>
-          <img src={user.avatar_link} alt="profile-image"></img>
-        </div>
-        <div id='profile-top'>
-          <div>
-            <div>{user.user_name}</div>
-            <div>
-              {user.country_code === "XX" ? "" : <img src={`https://flagcdn.com/w80/${user.country_code.toLowerCase()}.jpg`} alt={user.country_code} />}
-            </div>
-            <div>
-              {user.titles.map(e => (
-                <span className="titles" style={{ backgroundColor: `#${e.color}` }}>
-                  {e.name}
-                </span>
-              ))}
-            </div>
-          </div>
-          <div>
-            {user.links.steam === "-" ? "" : <a href={user.links.steam}><img src={SteamIcon} alt="Steam" /></a>}
-            {user.links.twitch === "-" ? "" : <a href={user.links.twitch}><img src={TwitchIcon} alt="Twitch" /></a>}
-            {user.links.youtube === "-" ? "" : <a href={user.links.youtube}><img src={YouTubeIcon} alt="Youtube" /></a>}
-            {user.links.p2sr === "-" ? "" : <a href={user.links.p2sr}><img src={PortalIcon} alt="P2SR" style={{ padding: "0" }} /></a>}
-          </div>
-
-        </div>
-        <div id='profile-bottom'>
-          <div>
-            <span>Overall</span>
-            <span>{user.rankings.overall.rank === 0 ? "N/A " : "#" + user.rankings.overall.rank + " "}
-              <span>({user.rankings.overall.completion_count}/{user.rankings.overall.completion_total})</span>
-            </span>
-          </div>
-          <div>
-            <span>Singleplayer</span>
-            <span>{user.rankings.singleplayer.rank === 0 ? "N/A " : "#" + user.rankings.singleplayer.rank + " "}
-              <span>({user.rankings.singleplayer.completion_count}/{user.rankings.singleplayer.completion_total})</span>
-            </span>
-          </div>
-          <div>
-            <span>Cooperative</span>
-            <span>{user.rankings.cooperative.rank === 0 ? "N/A " : "#" + user.rankings.cooperative.rank + " "}
-              <span>({user.rankings.cooperative.completion_count}/{user.rankings.cooperative.completion_total})</span>
-            </span>
-          </div>
-        </div>
-      </section>
-
-
-      <section id='section2' className='profile'>
-        <button><img src={FlagIcon} alt="" />&nbsp;Player Records</button>
-        <button><img src={StatisticsIcon} alt="" />&nbsp;Statistics</button>
-      </section>
-
-
-
-
-
-      <section id='section3' className='profile1'>
-        <div id='profileboard-nav'>
-          {gameData === null ? <select>error</select> :
-
-            <select id='select-game'
-              onChange={() => {
-                setGame((document.querySelector("#select-game") as HTMLInputElement).value);
-                setChapter("0");
-                const chapterSelect = document.querySelector("#select-chapter") as HTMLSelectElement;
-                if (chapterSelect) {
-                  chapterSelect.value = "0";
-                }
-              }}>
-              <option value={0} key={0}>All Scores</option>
-              {gameData.map((e, i) => (
-                <option value={e.id} key={i + 1}>{e.name}</option>
-              ))}</select>
-          }
-
-          {game === "0" ?
-            <select disabled>
-              <option>All Chapters</option>
-            </select>
-            : chapterData === null ? <select></select> :
-
-              <select id='select-chapter'
-                onChange={() => setChapter((document.querySelector("#select-chapter") as HTMLInputElement).value)}>
-                <option value="0" key="0">All Chapters</option>
-                {chapterData.chapters.filter(e => e.is_disabled === false).map((e, i) => (
-                  <option value={e.id} key={i + 1}>{e.name}</option>
-                ))}</select>
-          }
-        </div>
-        <div id='profileboard-top'>
-          <span><span>Map Name</span><img src={SortIcon} alt="" /></span>
-          <span style={{ justifyContent: "center" }}><span>Portals</span><img src={SortIcon} alt="" /></span>
-          <span style={{ justifyContent: "center" }}><span>WRΔ </span><img src={SortIcon} alt="" /></span>
-          <span style={{ justifyContent: "center" }}><span>Time</span><img src={SortIcon} alt="" /></span>
-          <span> </span>
-          <span><span>Rank</span><img src={SortIcon} alt="" /></span>
-          <span><span>Date</span><img src={SortIcon} alt="" /></span>
-          <div id='page-number'>
-            <div>
-              <button onClick={() => {
-                if (pageNumber !== 1) {
-                  setPageNumber(prevPageNumber => prevPageNumber - 1);
-                  const records = document.querySelectorAll(".profileboard-record");
-                  records.forEach((r) => {
-                    (r as HTMLInputElement).style.height = "44px";
-                  });
-                }
-              }}
-              ><i className='triangle' style={{ position: "relative", left: "-5px", }}></i> </button>
-              <span>{pageNumber}/{pageMax}</span>
-              <button onClick={() => {
-                if (pageNumber !== pageMax) {
-                  setPageNumber(prevPageNumber => prevPageNumber + 1);
-                  const records = document.querySelectorAll(".profileboard-record");
-                  records.forEach((r) => {
-                    (r as HTMLInputElement).style.height = "44px";
-                  });
-                }
-              }}
-              ><i className='triangle' style={{ position: "relative", left: "5px", transform: "rotate(180deg)" }}></i> </button>
-            </div>
-          </div>
-        </div>
-        <hr />
-        <div id='profileboard-records'>
-
-          {game === "0"
-            ? (
-
-              user.records.sort((a, b) => a.map_id - b.map_id)
-                .map((r, index) => (
-
-                  Math.ceil((index + 1) / 20) === pageNumber ? (
-                    <button className="profileboard-record" key={index}>
-                      {r.scores.map((e, i) => (<>
-                        {i !== 0 ? <hr style={{ gridColumn: "1 / span 8" }} /> : ""}
-
-                        <Link to={`/maps/${r.map_id}`}><span>{r.map_name}</span></Link>
-
-                        <span style={{ display: "grid" }}>{e.score_count}</span>
-
-                        <span style={{ display: "grid" }}>{e.score_count - r.map_wr_count > 0 ? `+${e.score_count - r.map_wr_count}` : "-"}</span>
-                        <span style={{ display: "grid" }}>{ticks_to_time(e.score_time)}</span>
-                        <span> </span>
-                        {i === 0 ? <span>#{r.placement}</span> : <span> </span>}
-                        <span>{e.date.split("T")[0]}</span>
-                        <span style={{ flexDirection: "row-reverse" }}>
-
-                          <button onClick={() => { message("Demo Information", `Demo ID: ${e.demo_id}`); }}><img src={ThreedotIcon} alt="demo_id" /></button>
-                          <button onClick={() => _download_demo(e.demo_id)}><img src={DownloadIcon} alt="download" /></button>
-                          {i === 0 && r.scores.length > 1 ? <button onClick={() => _toggle_record_history(index, r.scores.length)}><img src={HistoryIcon} alt="history" /></button> : ""}
-
-                        </span>
-                      </>))}
-
-                    </button>
-                  ) : ""
-                ))) : maps ?
-
-              maps.filter(e => e.is_disabled === false).sort((a, b) => a.id - b.id)
-                .map((r, index) => {
-                  if (Math.ceil((index + 1) / 20) === pageNumber) {
-                    const record = user.records.find((e) => e.map_id === r.id);
-                    return record === undefined ? (
-                      <button className="profileboard-record" key={index} style={{ backgroundColor: "#1b1b20" }}>
-                        <Link to={`/maps/${r.id}`}><span>{r.name}</span></Link>
-                        <span style={{ display: "grid" }}>N/A</span>
-                        <span style={{ display: "grid" }}>N/A</span>
-                        <span>N/A</span>
-                        <span> </span>
-                        <span>N/A</span>
-                        <span>N/A</span>
-                        <span style={{ flexDirection: "row-reverse" }}></span>
-                      </button>
-                    ) : (
-                      <button className="profileboard-record" key={index}>
-                        {record.scores.map((e, i) => (<>
-                          {i !== 0 ? <hr style={{ gridColumn: "1 / span 8" }} /> : ""}
-                          <Link to={`/maps/${r.id}`}><span>{r.name}</span></Link>
-                          <span style={{ display: "grid" }}>{record!.scores[i].score_count}</span>
-                          <span style={{ display: "grid" }}>{record!.scores[i].score_count - record!.map_wr_count > 0 ? `+${record!.scores[i].score_count - record!.map_wr_count}` : "-"}</span>
-                          <span style={{ display: "grid" }}>{ticks_to_time(record!.scores[i].score_time)}</span>
-                          <span> </span>
-                          {i === 0 ? <span>#{record!.placement}</span> : <span> </span>}
-                          <span>{record!.scores[i].date.split("T")[0]}</span>
-                          <span style={{ flexDirection: "row-reverse" }}>
-
-                            <button onClick={() => { message("Demo Information", `Demo ID: ${e.demo_id}`); }}><img src={ThreedotIcon} alt="demo_id" /></button>
-                            <button onClick={() => _download_demo(e.demo_id)}><img src={DownloadIcon} alt="download" /></button>
-                            {i === 0 && record!.scores.length > 1 ? <button onClick={() => _toggle_record_history(index, record!.scores.length)}><img src={HistoryIcon} alt="history" /></button> : ""}
-
-                          </span>
-                        </>))}
-                      </button>
-
-                    );
-                  } else { return null; }
-                }) : (<>{console.warn(maps)}</>)}
-        </div>
-      </section>
-    </main>
-  );
+  return <ProfileView profile={user} games={gameData} viewerToken={token} />;
 };
 
 export default User;
