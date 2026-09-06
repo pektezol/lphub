@@ -12,4 +12,11 @@ INSERT INTO game_categories(id, game_id, category_id) VALUES
 (4, 1, 4),
 (5, 2, 1),
 (6, 2, 4),
-(7, 2, 5);
+(7, 2, 5),
+(8, 3, 1),
+(9, 3, 2),
+(10, 3, 3),
+(11, 3, 4);
+
+SELECT setval(pg_get_serial_sequence('categories', 'id'), (SELECT MAX(id) FROM categories));
+SELECT setval(pg_get_serial_sequence('game_categories', 'id'), (SELECT MAX(id) FROM game_categories));

@@ -18,6 +18,7 @@
   },
   "scripts": {
     "dev": "vite",
+    "dev:local": "vite --mode backend-local",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint .",

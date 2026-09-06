@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	stdsql "database/sql"
 	"net/http"
 	"strconv"
 	"time"
@@ -35,6 +36,10 @@ type DeleteMapSummaryRequest struct {
 
 type EditMapImageRequest struct {
 	Image string `json:"image" binding:"required"`
+}
+
+type EditMapDifficultyRequest struct {
+	Difficulty *int `json:"difficulty" binding:"required"`
 }
 
 // POST Map Summary
@@ -72,10 +77,19 @@ func CreateMapSummary(c *gin.Context) {
 		return
 	}
 	defer tx.Rollback()
-	// Fetch route category and score count
+	// Verify that the selected category is supported by this map's game.
 	var checkMapID int
-	sql := `SELECT m.id FROM maps m WHERE m.id = $1`
-	err = database.DB.QueryRow(sql, mapID).Scan(&checkMapID)
+	sql := `
+		SELECT m.id
+		FROM maps m
+		INNER JOIN game_categories gc ON gc.game_id = m.game_id
+		WHERE m.id = $1 AND gc.category_id = $2
+	`
+	err = tx.QueryRow(sql, mapID, request.CategoryID).Scan(&checkMapID)
+	if err == stdsql.ErrNoRows {
+		c.JSON(http.StatusOK, models.ErrorResponse("Map ID does not exist or the category is not available for this game."))
+		return
+	}
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
@@ -249,6 +263,61 @@ func EditMapImage(c *gin.Context) {
 	c.JSON(http.StatusOK, models.Response{
 		Success: true,
 		Message: "Successfully updated map image.",
+		Data:    request,
+	})
+}
+
+// PUT Map Difficulty
+//
+//	@Description	Edit map difficulty with specified map id.
+//	@Tags			maps / summary
+//	@Produce		json
+//	@Param			Authorization	header		string					true	"JWT Token"
+//	@Param			mapid			path		int					true	"Map ID"
+//	@Param			request			body		EditMapDifficultyRequest	true	"Body"
+//	@Success		200			{object}	models.Response{data=EditMapDifficultyRequest}
+//	@Router			/maps/{mapid}/difficulty [put]
+func EditMapDifficulty(c *gin.Context) {
+	mod, exists := c.Get("mod")
+	if !exists || !mod.(bool) {
+		c.JSON(http.StatusOK, models.ErrorResponse("Insufficient permissions."))
+		return
+	}
+
+	mapID, err := strconv.Atoi(c.Param("mapid"))
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+
+	var request EditMapDifficultyRequest
+	if err := c.BindJSON(&request); err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	if request.Difficulty == nil || *request.Difficulty < 1 || *request.Difficulty > 10 {
+		c.JSON(http.StatusOK, models.ErrorResponse("Difficulty must be an integer between 1 and 10."))
+		return
+	}
+
+	result, err := database.DB.Exec(`UPDATE maps SET difficulty = $2 WHERE id = $1`, mapID, *request.Difficulty)
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	if rowsAffected == 0 {
+		c.JSON(http.StatusOK, models.ErrorResponse("Map ID does not exist."))
+		return
+	}
+
+	c.JSON(http.StatusOK, models.Response{
+		Success: true,
+		Message: "Successfully updated map difficulty.",
 		Data:    request,
 	})
 }

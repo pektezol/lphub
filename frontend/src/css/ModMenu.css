@@ -81,6 +81,22 @@ div#modview>div:nth-child(2) {
     font-size: 15px;
 }
 
+#modview-menu-difficulty {
+    box-shadow: 0 0 40px 16px black;
+    outline: 8px solid #2b2e46;
+    border-radius: 20px;
+    display: grid;
+    gap: 16px;
+    min-width: 280px;
+    padding: 20px;
+    font-size: 20px;
+}
+
+#modview-menu-difficulty input,
+#modview-menu-difficulty button {
+    font-size: 20px;
+}
+
 
 #modview-menu-add,
 #modview-menu-edit {

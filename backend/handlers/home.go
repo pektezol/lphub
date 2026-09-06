@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"sort"
@@ -37,6 +36,7 @@ type SteamUserRanking struct {
 	MpRank       int    `json:"mp_rank"`
 	OverallRank  int    `json:"overall_rank"`
 }
+
 type RankingsSteamResponse struct {
 	Singleplayer []SteamUserRanking `json:"rankings_singleplayer"`
 	Multiplayer  []SteamUserRanking `json:"rankings_multiplayer"`
@@ -44,10 +44,267 @@ type RankingsSteamResponse struct {
 }
 
 type MapShortWithGame struct {
-	ID      int    `json:"id"`
-	Game    string `json:"game"`
-	Chapter string `json:"chapter"`
-	Map     string `json:"map"`
+	ID           int    `json:"id"`
+	GameID       int    `json:"game_id"`
+	Game         string `json:"game"`
+	ChapterID    int    `json:"chapter_id"`
+	SectionKind  string `json:"section_kind"`
+	SectionLabel string `json:"section_label"`
+	SectionName  string `json:"section_name"`
+	Map          string `json:"map"`
+}
+
+type cachedSearchMapGroup struct {
+	firstID      int
+	gameID       int
+	game         string
+	chapterID    int
+	sectionKind  string
+	sectionLabel string
+	sectionName  string
+	mapNames     []string
+}
+
+// cachedSearchMaps avoids a database query for every search request. Keep this
+// in sync with backend/database/insert/maps.sql.
+var cachedSearchMaps = buildCachedSearchMaps()
+
+func buildCachedSearchMaps() []MapShortWithGame {
+	groups := []cachedSearchMapGroup{
+		{
+			firstID:      1,
+			gameID:       1,
+			game:         "Portal 2 - Singleplayer",
+			chapterID:    1,
+			sectionKind:  "chapter",
+			sectionLabel: "Chapter",
+			sectionName:  "Chapter 1 - The Courtesy Call",
+			mapNames: []string{
+				"Container Ride", "Portal Carousel", "Portal Gun", "Smooth Jazz", "Cube Momentum",
+				"Future Starter", "Secret Panel", "Wakeup", "Incinerator",
+			},
+		},
+		{
+			firstID:      10,
+			gameID:       1,
+			game:         "Portal 2 - Singleplayer",
+			chapterID:    2,
+			sectionKind:  "chapter",
+			sectionLabel: "Chapter",
+			sectionName:  "Chapter 2 - The Cold Boot",
+			mapNames: []string{
+				"Laser Intro", "Laser Stairs", "Dual Lasers", "Laser Over Goo", "Catapult Intro", "Trust Fling",
+				"Pit Flings", "Fizzler Intro",
+			},
+		},
+		{
+			firstID:      18,
+			gameID:       1,
+			game:         "Portal 2 - Singleplayer",
+			chapterID:    3,
+			sectionKind:  "chapter",
+			sectionLabel: "Chapter",
+			sectionName:  "Chapter 3 - The Return",
+			mapNames: []string{
+				"Ceiling Catapult", "Ricochet", "Bridge Intro", "Bridge The Gap", "Turret Intro", "Laser Relays",
+				"Turret Blocker", "Laser vs Turret", "Pull The Rug",
+			},
+		},
+		{
+			firstID:      27,
+			gameID:       1,
+			game:         "Portal 2 - Singleplayer",
+			chapterID:    4,
+			sectionKind:  "chapter",
+			sectionLabel: "Chapter",
+			sectionName:  "Chapter 4 - The Surprise",
+			mapNames:     []string{"Column Blocker", "Laser Chaining", "Triple Laser", "Jail Break", "Escape"},
+		},
+		{
+			firstID:      32,
+			gameID:       1,
+			game:         "Portal 2 - Singleplayer",
+			chapterID:    5,
+			sectionKind:  "chapter",
+			sectionLabel: "Chapter",
+			sectionName:  "Chapter 5 - The Escape",
+			mapNames:     []string{"Turret Factory", "Turret Sabotage", "Neurotoxin Sabotage", "Core"},
+		},
+		{
+			firstID:      36,
+			gameID:       1,
+			game:         "Portal 2 - Singleplayer",
+			chapterID:    6,
+			sectionKind:  "chapter",
+			sectionLabel: "Chapter",
+			sectionName:  "Chapter 6 - The Fall",
+			mapNames:     []string{"Underground", "Cave Johnson", "Repulsion Intro", "Bomb Flings", "Crazy Box", "PotatOS"},
+		},
+		{
+			firstID:      42,
+			gameID:       1,
+			game:         "Portal 2 - Singleplayer",
+			chapterID:    7,
+			sectionKind:  "chapter",
+			sectionLabel: "Chapter",
+			sectionName:  "Chapter 7 - The Reunion",
+			mapNames:     []string{"Propulsion Intro", "Propulsion Flings", "Conversion Intro", "Three Gels"},
+		},
+		{
+			firstID:      46,
+			gameID:       1,
+			game:         "Portal 2 - Singleplayer",
+			chapterID:    8,
+			sectionKind:  "chapter",
+			sectionLabel: "Chapter",
+			sectionName:  "Chapter 8 - The Itch",
+			mapNames: []string{
+				"Test", "Funnel Intro", "Ceiling Button", "Wall Button", "Polarity", "Funnel Catch", "Stop The Box",
+				"Laser Catapult", "Laser Platform", "Propulsion Catch", "Repulsion Polarity",
+			},
+		},
+		{
+			firstID:      57,
+			gameID:       1,
+			game:         "Portal 2 - Singleplayer",
+			chapterID:    9,
+			sectionKind:  "chapter",
+			sectionLabel: "Chapter",
+			sectionName:  "Chapter 9 - The Part Where He Kills You",
+			mapNames:     []string{"Finale 1", "Finale 2", "Finale 3", "Finale 4"},
+		},
+		{
+			firstID:      61,
+			gameID:       2,
+			game:         "Portal 2 - Cooperative",
+			chapterID:    10,
+			sectionKind:  "course",
+			sectionLabel: "Course",
+			sectionName:  "Course 0 - Introduction",
+			mapNames:     []string{"Calibration", "Hub"},
+		},
+		{
+			firstID:      63,
+			gameID:       2,
+			game:         "Portal 2 - Cooperative",
+			chapterID:    11,
+			sectionKind:  "course",
+			sectionLabel: "Course",
+			sectionName:  "Course 1 - Team Building",
+			mapNames:     []string{"Doors", "Buttons", "Lasers", "Rat Maze", "Laser Crusher", "Behind The Scenes"},
+		},
+		{
+			firstID:      69,
+			gameID:       2,
+			game:         "Portal 2 - Cooperative",
+			chapterID:    12,
+			sectionKind:  "course",
+			sectionLabel: "Course",
+			sectionName:  "Course 2 - Mass And Velocity",
+			mapNames: []string{
+				"Flings", "Infinifling", "Team Retrieval", "Vertical Flings", "Catapults", "Multifling", "Fling Crushers",
+				"Industrial Fan",
+			},
+		},
+		{
+			firstID:      77,
+			gameID:       2,
+			game:         "Portal 2 - Cooperative",
+			chapterID:    13,
+			sectionKind:  "course",
+			sectionLabel: "Course",
+			sectionName:  "Course 3 - Hard-Light Surfaces",
+			mapNames: []string{
+				"Cooperative Bridges", "Bridge Swap", "Fling Block", "Catapult Block", "Bridge Fling", "Turret Walls",
+				"Turret Assassin", "Bridge Testing",
+			},
+		},
+		{
+			firstID:      85,
+			gameID:       2,
+			game:         "Portal 2 - Cooperative",
+			chapterID:    14,
+			sectionKind:  "course",
+			sectionLabel: "Course",
+			sectionName:  "Course 4 - Excursion Funnels",
+			mapNames: []string{
+				"Cooperative Funnels", "Funnel Drill", "Funnel Catch", "Funnel Laser", "Cooperative Polarity", "Funnel Hop",
+				"Advanced Polarity", "Funnel Maze", "Turret Warehouse",
+			},
+		},
+		{
+			firstID:      94,
+			gameID:       2,
+			game:         "Portal 2 - Cooperative",
+			chapterID:    15,
+			sectionKind:  "course",
+			sectionLabel: "Course",
+			sectionName:  "Course 5 - Mobility Gels",
+			mapNames: []string{
+				"Repulsion Jumps", "Double Bounce", "Bridge Repulsion", "Wall Repulsion", "Propulsion Crushers", "Turret Ninja",
+				"Propulsion Retrieval", "Vault Entrance",
+			},
+		},
+		{
+			firstID:      102,
+			gameID:       2,
+			game:         "Portal 2 - Cooperative",
+			chapterID:    16,
+			sectionKind:  "course",
+			sectionLabel: "Course",
+			sectionName:  "Course 6 - Art Therapy",
+			mapNames: []string{
+				"Separation", "Triple Axis", "Catapult Catch", "Bridge Gels", "Maintenance", "Bridge Catch", "Double Lift",
+				"Gel Maze", "Crazier Box",
+			},
+		},
+		{
+			firstID:      111,
+			gameID:       3,
+			game:         "Portal Stories: Mel",
+			chapterID:    17,
+			sectionKind:  "mode",
+			sectionLabel: "Mode",
+			sectionName:  "Story Mode",
+			mapNames: []string{
+				"Tram Ride", "Mel Intro", "Lift", "Garden", "Destroyed Garden", "Underbounce", "Once Upon", "Past Power",
+				"Ramp", "Firestorm", "Junkyard", "Concepts", "Paint Fling", "Faith Plate", "Transition", "Overgrown",
+				"Funnel Over Goo", "Two Of A Kind", "Destroyed", "Factory", "Core Access", "Finale",
+			},
+		},
+		{
+			firstID:      133,
+			gameID:       3,
+			game:         "Portal Stories: Mel",
+			chapterID:    18,
+			sectionKind:  "mode",
+			sectionLabel: "Mode",
+			sectionName:  "Advanced Mode",
+			mapNames: []string{
+				"Tram Ride", "Mel Intro", "Lift", "Garden", "Destroyed Garden", "Underbounce", "Once Upon", "Past Power",
+				"Ramp", "Firestorm", "Junkyard", "Concepts", "Paint Fling", "Faith Plate", "Transition", "Overgrown",
+				"Funnel Over Goo", "Two Of A Kind", "Destroyed", "Factory", "Core Access", "Finale",
+			},
+		},
+	}
+
+	maps := make([]MapShortWithGame, 0, 154)
+	for _, group := range groups {
+		for offset, name := range group.mapNames {
+			maps = append(maps, MapShortWithGame{
+				ID:           group.firstID + offset,
+				GameID:       group.gameID,
+				Game:         group.game,
+				ChapterID:    group.chapterID,
+				SectionKind:  group.sectionKind,
+				SectionLabel: group.sectionLabel,
+				SectionName:  group.sectionName,
+				Map:          name,
+			})
+		}
+	}
+
+	return maps
 }
 
 // GET Rankings LPHUB
@@ -63,104 +320,95 @@ func RankingsLPHUB(c *gin.Context) {
 		Multiplayer:  []models.UserRanking{},
 		Overall:      []models.UserRanking{},
 	}
-	// Singleplayer rankings
-	rows, err := database.DB.Query(`SELECT * FROM get_rankings_singleplayer();`)
+	rows, err := database.DB.Query(`SELECT * FROM get_rankings_singleplayer()`)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
+	defer rows.Close()
 	for rows.Next() {
 		ranking := models.UserRanking{}
-		err = rows.Scan(&ranking.User.SteamID, &ranking.User.UserName, &ranking.User.AvatarLink, &ranking.TotalScore)
-		if err != nil {
+		if err := rows.Scan(
+			&ranking.User.SteamID,
+			&ranking.User.UserName,
+			&ranking.User.AvatarLink,
+			&ranking.TotalScore,
+		); err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
 		}
 		response.Singleplayer = append(response.Singleplayer, ranking)
 	}
-	// Multiplayer rankings
-	rows, err = database.DB.Query(`SELECT * FROM get_rankings_multiplayer();`)
+	if err := rows.Err(); err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+
+	rows, err = database.DB.Query(`SELECT * FROM get_rankings_multiplayer()`)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
+	defer rows.Close()
 	for rows.Next() {
 		ranking := models.UserRanking{}
-		err = rows.Scan(&ranking.User.SteamID, &ranking.User.UserName, &ranking.User.AvatarLink, &ranking.TotalScore)
-		if err != nil {
+		if err := rows.Scan(
+			&ranking.User.SteamID,
+			&ranking.User.UserName,
+			&ranking.User.AvatarLink,
+			&ranking.TotalScore,
+		); err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
 		}
 		response.Multiplayer = append(response.Multiplayer, ranking)
 	}
-	// Has both so they are qualified for overall ranking
+	if err := rows.Err(); err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+
 	for _, spRanking := range response.Singleplayer {
 		for _, mpRanking := range response.Multiplayer {
 			if spRanking.User.SteamID == mpRanking.User.SteamID {
-				totalScore := spRanking.TotalScore + mpRanking.TotalScore
-				overallRanking := models.UserRanking{
+				response.Overall = append(response.Overall, models.UserRanking{
 					User:       spRanking.User,
-					TotalScore: totalScore,
-				}
-				response.Overall = append(response.Overall, overallRanking)
+					TotalScore: spRanking.TotalScore + mpRanking.TotalScore,
+				})
 				break
 			}
 		}
 	}
-	// Sort the overall rankings
 	sort.Slice(response.Overall, func(i, j int) bool {
-		a := response.Overall[i]
-		b := response.Overall[j]
+		a, b := response.Overall[i], response.Overall[j]
 		if a.TotalScore == b.TotalScore {
 			return a.User.SteamID < b.User.SteamID
 		}
 		return a.TotalScore < b.TotalScore
 	})
-
-	placement := 1
-	ties := 0
-	for index := 0; index < len(response.Singleplayer); index++ {
-		if index != 0 && response.Singleplayer[index-1].TotalScore == response.Singleplayer[index].TotalScore {
-			ties++
-			response.Singleplayer[index].Placement = placement - ties
-		} else {
-			ties = 0
-			response.Singleplayer[index].Placement = placement
-		}
-		placement++
-	}
-
-	placement = 1
-	ties = 0
-	for index := 0; index < len(response.Multiplayer); index++ {
-		if index != 0 && response.Multiplayer[index-1].TotalScore == response.Multiplayer[index].TotalScore {
-			ties++
-			response.Multiplayer[index].Placement = placement - ties
-		} else {
-			ties = 0
-			response.Multiplayer[index].Placement = placement
-		}
-		placement++
-	}
-
-	placement = 1
-	ties = 0
-	for index := 0; index < len(response.Overall); index++ {
-		if index != 0 && response.Overall[index-1].TotalScore == response.Overall[index].TotalScore {
-			ties++
-			response.Overall[index].Placement = placement - ties
-		} else {
-			ties = 0
-			response.Overall[index].Placement = placement
-		}
-		placement++
-	}
+	assignPlacements(response.Singleplayer)
+	assignPlacements(response.Multiplayer)
+	assignPlacements(response.Overall)
 
 	c.JSON(http.StatusOK, models.Response{
 		Success: true,
 		Message: "Successfully retrieved rankings.",
 		Data:    response,
 	})
+}
+
+func assignPlacements(rankings []models.UserRanking) {
+	placement, ties := 1, 0
+	for index := range rankings {
+		if index > 0 && rankings[index-1].TotalScore == rankings[index].TotalScore {
+			ties++
+			rankings[index].Placement = placement - ties
+		} else {
+			ties = 0
+			rankings[index].Placement = placement
+		}
+		placement++
+	}
 }
 
 // GET Rankings Steam
@@ -176,53 +424,34 @@ func RankingsSteam(c *gin.Context) {
 		Multiplayer:  []SteamUserRanking{},
 		Overall:      []SteamUserRanking{},
 	}
-	spJson, err := os.Open("../rankings/output/sp.json")
-	if err != nil {
-		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-		return
+	files := []struct {
+		path   string
+		target *[]SteamUserRanking
+	}{
+		{path: "../rankings/output/sp.json", target: &response.Singleplayer},
+		{path: "../rankings/output/mp.json", target: &response.Multiplayer},
+		{path: "../rankings/output/overall.json", target: &response.Overall},
 	}
-	defer spJson.Close()
-	spJsonBytes, err := io.ReadAll(spJson)
-	if err != nil {
-		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-		return
-	}
-	err = json.Unmarshal(spJsonBytes, &response.Singleplayer)
-	if err != nil {
-		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-		return
-	}
-	mpJson, err := os.Open("../rankings/output/mp.json")
-	if err != nil {
-		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-		return
-	}
-	defer mpJson.Close()
-	mpJsonBytes, err := io.ReadAll(mpJson)
-	if err != nil {
-		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-		return
-	}
-	err = json.Unmarshal(mpJsonBytes, &response.Multiplayer)
-	if err != nil {
-		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-		return
-	}
-	overallJson, err := os.Open("../rankings/output/overall.json")
-	if err != nil {
-		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-		return
-	}
-	defer overallJson.Close()
-	overallJsonBytes, err := io.ReadAll(overallJson)
-	if err != nil {
-		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-		return
-	}
-	err = json.Unmarshal(overallJsonBytes, &response.Overall)
-	if err != nil {
-		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-		return
+	for _, item := range files {
+		file, err := os.Open(item.path)
+		if err != nil {
+			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+			return
+		}
+		contents, readErr := io.ReadAll(file)
+		closeErr := file.Close()
+		if readErr != nil {
+			c.JSON(http.StatusOK, models.ErrorResponse(readErr.Error()))
+			return
+		}
+		if closeErr != nil {
+			c.JSON(http.StatusOK, models.ErrorResponse(closeErr.Error()))
+			return
+		}
+		if err := json.Unmarshal(contents, item.target); err != nil {
+			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+			return
+		}
 	}
 	c.JSON(http.StatusOK, models.Response{
 		Success: true,
@@ -240,148 +469,40 @@ func RankingsSteam(c *gin.Context) {
 //	@Success		200	{object}	models.Response{data=SearchResponse}
 //	@Router			/search [get]
 func SearchWithQuery(c *gin.Context) {
-	query := c.Query("q")
-	query = strings.ToLower(query)
-	var response SearchResponse
-	// Cache all maps for faster response
-	var maps = []MapShortWithGame{
-		{ID: 1, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 1 - The Courtesy Call", Map: "Container Ride"},
-		{ID: 2, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 1 - The Courtesy Call", Map: "Portal Carousel"},
-		{ID: 3, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 1 - The Courtesy Call", Map: "Portal Gun"},
-		{ID: 4, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 1 - The Courtesy Call", Map: "Smooth Jazz"},
-		{ID: 5, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 1 - The Courtesy Call", Map: "Cube Momentum"},
-		{ID: 6, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 1 - The Courtesy Call", Map: "Future Starter"},
-		{ID: 7, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 1 - The Courtesy Call", Map: "Secret Panel"},
-		{ID: 8, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 1 - The Courtesy Call", Map: "Wakeup"},
-		{ID: 9, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 1 - The Courtesy Call", Map: "Incinerator"},
-		{ID: 10, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 2 - The Cold Boot", Map: "Laser Intro"},
-		{ID: 11, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 2 - The Cold Boot", Map: "Laser Stairs"},
-		{ID: 12, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 2 - The Cold Boot", Map: "Dual Lasers"},
-		{ID: 13, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 2 - The Cold Boot", Map: "Laser Over Goo"},
-		{ID: 14, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 2 - The Cold Boot", Map: "Catapult Intro"},
-		{ID: 15, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 2 - The Cold Boot", Map: "Trust Fling"},
-		{ID: 16, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 2 - The Cold Boot", Map: "Pit Flings"},
-		{ID: 17, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 2 - The Cold Boot", Map: "Fizzler Intro"},
-		{ID: 18, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 3 - The Return", Map: "Ceiling Catapult"},
-		{ID: 19, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 3 - The Return", Map: "Ricochet"},
-		{ID: 20, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 3 - The Return", Map: "Bridge Intro"},
-		{ID: 21, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 3 - The Return", Map: "Bridge The Gap"},
-		{ID: 22, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 3 - The Return", Map: "Turret Intro"},
-		{ID: 23, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 3 - The Return", Map: "Laser Relays"},
-		{ID: 24, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 3 - The Return", Map: "Turret Blocker"},
-		{ID: 25, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 3 - The Return", Map: "Laser vs Turret"},
-		{ID: 26, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 3 - The Return", Map: "Pull The Rug"},
-		{ID: 27, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 4 - The Surprise", Map: "Column Blocker"},
-		{ID: 28, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 4 - The Surprise", Map: "Laser Chaining"},
-		{ID: 29, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 4 - The Surprise", Map: "Triple Laser"},
-		{ID: 30, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 4 - The Surprise", Map: "Jail Break"},
-		{ID: 31, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 4 - The Surprise", Map: "Escape"},
-		{ID: 32, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 5 - The Escape", Map: "Turret Factory"},
-		{ID: 33, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 5 - The Escape", Map: "Turret Sabotage"},
-		{ID: 34, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 5 - The Escape", Map: "Neurotoxin Sabotage"},
-		{ID: 35, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 5 - The Escape", Map: "Core"},
-		{ID: 36, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 6 - The Fall", Map: "Underground"},
-		{ID: 37, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 6 - The Fall", Map: "Cave Johnson"},
-		{ID: 38, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 6 - The Fall", Map: "Repulsion Intro"},
-		{ID: 39, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 6 - The Fall", Map: "Bomb Flings"},
-		{ID: 40, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 6 - The Fall", Map: "Crazy Box"},
-		{ID: 41, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 6 - The Fall", Map: "PotatOS"},
-		{ID: 42, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 7 - The Reunion", Map: "Propulsion Intro"},
-		{ID: 43, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 7 - The Reunion", Map: "Propulsion Flings"},
-		{ID: 44, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 7 - The Reunion", Map: "Conversion Intro"},
-		{ID: 45, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 7 - The Reunion", Map: "Three Gels"},
-		{ID: 46, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 8 - The Itch", Map: "Test"},
-		{ID: 47, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 8 - The Itch", Map: "Funnel Intro"},
-		{ID: 48, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 8 - The Itch", Map: "Ceiling Button"},
-		{ID: 49, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 8 - The Itch", Map: "Wall Button"},
-		{ID: 50, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 8 - The Itch", Map: "Polarity"},
-		{ID: 51, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 8 - The Itch", Map: "Funnel Catch"},
-		{ID: 52, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 8 - The Itch", Map: "Stop The Box"},
-		{ID: 53, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 8 - The Itch", Map: "Laser Catapult"},
-		{ID: 54, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 8 - The Itch", Map: "Laser Platform"},
-		{ID: 55, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 8 - The Itch", Map: "Propulsion Catch"},
-		{ID: 56, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 8 - The Itch", Map: "Repulsion Polarity"},
-		{ID: 57, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 9 - The Part Where He Kills You", Map: "Finale 1"},
-		{ID: 58, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 9 - The Part Where He Kills You", Map: "Finale 2"},
-		{ID: 59, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 9 - The Part Where He Kills You", Map: "Finale 3"},
-		{ID: 60, Game: "Portal 2 - Singleplayer", Chapter: "Chapter 9 - The Part Where He Kills You", Map: "Finale 4"},
-		{ID: 61, Game: "Portal 2 - Cooperative", Chapter: "Course 0 - Introduction", Map: "Calibration"},
-		{ID: 62, Game: "Portal 2 - Cooperative", Chapter: "Course 0 - Introduction", Map: "Hub"},
-		{ID: 63, Game: "Portal 2 - Cooperative", Chapter: "Course 1 - Team Building", Map: "Doors"},
-		{ID: 64, Game: "Portal 2 - Cooperative", Chapter: "Course 1 - Team Building", Map: "Buttons"},
-		{ID: 65, Game: "Portal 2 - Cooperative", Chapter: "Course 1 - Team Building", Map: "Lasers"},
-		{ID: 66, Game: "Portal 2 - Cooperative", Chapter: "Course 1 - Team Building", Map: "Rat Maze"},
-		{ID: 67, Game: "Portal 2 - Cooperative", Chapter: "Course 1 - Team Building", Map: "Laser Crusher"},
-		{ID: 68, Game: "Portal 2 - Cooperative", Chapter: "Course 1 - Team Building", Map: "Behind The Scenes"},
-		{ID: 69, Game: "Portal 2 - Cooperative", Chapter: "Course 2 - Mass And Velocity", Map: "Flings"},
-		{ID: 70, Game: "Portal 2 - Cooperative", Chapter: "Course 2 - Mass And Velocity", Map: "Infinifling"},
-		{ID: 71, Game: "Portal 2 - Cooperative", Chapter: "Course 2 - Mass And Velocity", Map: "Team Retrieval"},
-		{ID: 72, Game: "Portal 2 - Cooperative", Chapter: "Course 2 - Mass And Velocity", Map: "Vertical Flings"},
-		{ID: 73, Game: "Portal 2 - Cooperative", Chapter: "Course 2 - Mass And Velocity", Map: "Catapults"},
-		{ID: 74, Game: "Portal 2 - Cooperative", Chapter: "Course 2 - Mass And Velocity", Map: "Multifling"},
-		{ID: 75, Game: "Portal 2 - Cooperative", Chapter: "Course 2 - Mass And Velocity", Map: "Fling Crushers"},
-		{ID: 76, Game: "Portal 2 - Cooperative", Chapter: "Course 2 - Mass And Velocity", Map: "Industrial Fan"},
-		{ID: 77, Game: "Portal 2 - Cooperative", Chapter: "Course 3 - Hard-Light Surfaces", Map: "Cooperative Bridges"},
-		{ID: 78, Game: "Portal 2 - Cooperative", Chapter: "Course 3 - Hard-Light Surfaces", Map: "Bridge Swap"},
-		{ID: 79, Game: "Portal 2 - Cooperative", Chapter: "Course 3 - Hard-Light Surfaces", Map: "Fling Block"},
-		{ID: 80, Game: "Portal 2 - Cooperative", Chapter: "Course 3 - Hard-Light Surfaces", Map: "Catapult Block"},
-		{ID: 81, Game: "Portal 2 - Cooperative", Chapter: "Course 3 - Hard-Light Surfaces", Map: "Bridge Fling"},
-		{ID: 82, Game: "Portal 2 - Cooperative", Chapter: "Course 3 - Hard-Light Surfaces", Map: "Turret Walls"},
-		{ID: 83, Game: "Portal 2 - Cooperative", Chapter: "Course 3 - Hard-Light Surfaces", Map: "Turret Assassin"},
-		{ID: 84, Game: "Portal 2 - Cooperative", Chapter: "Course 3 - Hard-Light Surfaces", Map: "Bridge Testing"},
-		{ID: 85, Game: "Portal 2 - Cooperative", Chapter: "Course 4 - Excursion Funnels", Map: "Cooperative Funnels"},
-		{ID: 86, Game: "Portal 2 - Cooperative", Chapter: "Course 4 - Excursion Funnels", Map: "Funnel Drill"},
-		{ID: 87, Game: "Portal 2 - Cooperative", Chapter: "Course 4 - Excursion Funnels", Map: "Funnel Catch"},
-		{ID: 88, Game: "Portal 2 - Cooperative", Chapter: "Course 4 - Excursion Funnels", Map: "Funnel Laser"},
-		{ID: 89, Game: "Portal 2 - Cooperative", Chapter: "Course 4 - Excursion Funnels", Map: "Cooperative Polarity"},
-		{ID: 90, Game: "Portal 2 - Cooperative", Chapter: "Course 4 - Excursion Funnels", Map: "Funnel Hop"},
-		{ID: 91, Game: "Portal 2 - Cooperative", Chapter: "Course 4 - Excursion Funnels", Map: "Advanced Polarity"},
-		{ID: 92, Game: "Portal 2 - Cooperative", Chapter: "Course 4 - Excursion Funnels", Map: "Funnel Maze"},
-		{ID: 93, Game: "Portal 2 - Cooperative", Chapter: "Course 4 - Excursion Funnels", Map: "Turret Warehouse"},
-		{ID: 94, Game: "Portal 2 - Cooperative", Chapter: "Course 5 - Mobility Gels", Map: "Repulsion Jumps"},
-		{ID: 95, Game: "Portal 2 - Cooperative", Chapter: "Course 5 - Mobility Gels", Map: "Double Bounce"},
-		{ID: 96, Game: "Portal 2 - Cooperative", Chapter: "Course 5 - Mobility Gels", Map: "Bridge Repulsion"},
-		{ID: 97, Game: "Portal 2 - Cooperative", Chapter: "Course 5 - Mobility Gels", Map: "Wall Repulsion"},
-		{ID: 98, Game: "Portal 2 - Cooperative", Chapter: "Course 5 - Mobility Gels", Map: "Propulsion Crushers"},
-		{ID: 99, Game: "Portal 2 - Cooperative", Chapter: "Course 5 - Mobility Gels", Map: "Turret Ninja"},
-		{ID: 100, Game: "Portal 2 - Cooperative", Chapter: "Course 5 - Mobility Gels", Map: "Propulsion Retrieval"},
-		{ID: 101, Game: "Portal 2 - Cooperative", Chapter: "Course 5 - Mobility Gels", Map: "Vault Entrance"},
-		{ID: 102, Game: "Portal 2 - Cooperative", Chapter: "Course 6 - Art Therapy", Map: "Separation"},
-		{ID: 103, Game: "Portal 2 - Cooperative", Chapter: "Course 6 - Art Therapy", Map: "Triple Axis"},
-		{ID: 104, Game: "Portal 2 - Cooperative", Chapter: "Course 6 - Art Therapy", Map: "Catapult Catch"},
-		{ID: 105, Game: "Portal 2 - Cooperative", Chapter: "Course 6 - Art Therapy", Map: "Bridge Gels"},
-		{ID: 106, Game: "Portal 2 - Cooperative", Chapter: "Course 6 - Art Therapy", Map: "Maintenance"},
-		{ID: 107, Game: "Portal 2 - Cooperative", Chapter: "Course 6 - Art Therapy", Map: "Bridge Catch"},
-		{ID: 108, Game: "Portal 2 - Cooperative", Chapter: "Course 6 - Art Therapy", Map: "Double Lift"},
-		{ID: 109, Game: "Portal 2 - Cooperative", Chapter: "Course 6 - Art Therapy", Map: "Gel Maze"},
-		{ID: 110, Game: "Portal 2 - Cooperative", Chapter: "Course 6 - Art Therapy", Map: "Crazier Box"},
+	query := strings.ToLower(c.Query("q"))
+	response := SearchResponse{
+		Players: []models.UserShortWithAvatar{},
+		Maps:    []MapShortWithGame{},
 	}
-	var filteredMaps []MapShortWithGame
-	for _, m := range maps {
-		if strings.Contains(strings.ToLower(m.Map), strings.ToLower(query)) {
-			filteredMaps = append(filteredMaps, m)
+
+	for _, cachedMap := range cachedSearchMaps {
+		if strings.Contains(strings.ToLower(cachedMap.Map), query) {
+			response.Maps = append(response.Maps, cachedMap)
 		}
 	}
-	response.Maps = filteredMaps
-	if len(response.Maps) == 0 {
-		response.Maps = []MapShortWithGame{}
-	}
-	rows, err := database.DB.Query("SELECT steam_id, user_name, avatar_link FROM users WHERE lower(user_name) LIKE $1", "%"+query+"%")
+
+	playerRows, err := database.DB.Query(
+		`SELECT steam_id, user_name, avatar_link FROM users WHERE user_name ILIKE '%' || $1 || '%'`,
+		query,
+	)
 	if err != nil {
-		log.Fatal(err)
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
 	}
-	defer rows.Close()
-	for rows.Next() {
-		var user models.UserShortWithAvatar
-		if err := rows.Scan(&user.SteamID, &user.UserName, &user.AvatarLink); err != nil {
+	defer playerRows.Close()
+	for playerRows.Next() {
+		player := models.UserShortWithAvatar{}
+		if err := playerRows.Scan(&player.SteamID, &player.UserName, &player.AvatarLink); err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
 		}
-		response.Players = append(response.Players, user)
+		response.Players = append(response.Players, player)
 	}
-	if len(response.Players) == 0 {
-		response.Players = []models.UserShortWithAvatar{}
+	if err := playerRows.Err(); err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
 	}
+
 	c.JSON(http.StatusOK, models.Response{
 		Success: true,
 		Message: "Search successfully retrieved.",

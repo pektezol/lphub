@@ -6,7 +6,7 @@ BEGIN
         TG_OP,
         CASE WHEN TG_OP = 'DELETE' OR TG_OP = 'UPDATE' THEN row_to_json(OLD) ELSE NULL END,
         CASE WHEN TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN row_to_json(NEW) ELSE NULL END,
-        current_setting('app.user_id')::TEXT
+        current_setting('app.user_id', true)::TEXT
     );
     RETURN NULL;
 END;
@@ -29,15 +29,17 @@ BEGIN
             SELECT SUM(min_score_count) AS total_min_score_count 
             FROM (
                 SELECT sp.user_id, MIN(sp.score_count) AS min_score_count 
-                FROM records_sp sp 
-                WHERE sp.is_deleted = false 
+                FROM records_sp sp
+                INNER JOIN maps m ON m.id = sp.map_id
+                WHERE sp.is_deleted = false AND m.game_id = 1
                 GROUP BY sp.user_id, sp.map_id
             ) AS subquery 
             WHERE user_id = u.steam_id
         )
-    FROM records_sp sp 
+    FROM records_sp sp
+    INNER JOIN maps m ON m.id = sp.map_id
     JOIN users u ON u.steam_id = sp.user_id 
-    WHERE sp.is_deleted = false 
+    WHERE sp.is_deleted = false AND m.game_id = 1
     GROUP BY u.steam_id, u.user_name, u.avatar_link
     HAVING COUNT(DISTINCT sp.map_id) = (
         SELECT COUNT(m.name) 
@@ -77,22 +79,25 @@ BEGIN
                         mp.host_id AS player_id, 
                         mp.score_count
                     FROM records_mp mp
-                    WHERE mp.is_deleted = false
+                    INNER JOIN maps m ON m.id = mp.map_id
+                    WHERE mp.is_deleted = false AND m.game_id = 2
                     UNION ALL
                     SELECT 
                         mp.map_id, 
                         mp.partner_id AS player_id, 
                         mp.score_count
                     FROM records_mp mp
-                    WHERE mp.is_deleted = false
+                    INNER JOIN maps m ON m.id = mp.map_id
+                    WHERE mp.is_deleted = false AND m.game_id = 2
                 ) AS player_scores
                 GROUP BY map_id, player_id
             ) AS subquery
             WHERE player_id = u.steam_id
         )
-    FROM records_mp mp 
+    FROM records_mp mp
+    INNER JOIN maps m ON m.id = mp.map_id
     JOIN users u ON u.steam_id = mp.host_id OR u.steam_id = mp.partner_id
-    WHERE mp.is_deleted = false 
+    WHERE mp.is_deleted = false AND m.game_id = 2
     GROUP BY u.steam_id, u.user_name, u.avatar_link
     HAVING COUNT(DISTINCT mp.map_id) = (
         SELECT COUNT(m.name) 
@@ -135,27 +140,23 @@ BEGIN
         FROM ranked_scores rs
         WHERE rs.rank = 1
     ),
-    min_placements AS (
+    ranked_placements AS (
         SELECT 
             bs.map_id,
             bs.user_id,
-            (SELECT COUNT(*) + 1 
-            FROM best_scores AS inner_scores 
-            WHERE inner_scores.map_id = bs.map_id 
-            AND (inner_scores.score_count < bs.score_count 
-                    OR (inner_scores.score_count = bs.score_count 
-                        AND inner_scores.score_time < bs.score_time)
-                )
+            RANK() OVER (
+                PARTITION BY bs.map_id
+                ORDER BY bs.score_count ASC, bs.score_time ASC
             ) AS placement
         FROM best_scores AS bs
     )
     SELECT 
-        minp.map_id,
-        MIN(minp.placement) AS placement
-    FROM min_placements minp
-    WHERE minp.user_id = get_placements_singleplayer.player_id
-    GROUP BY minp.map_id
-    ORDER BY minp.map_id, placement;
+        rp.map_id,
+        rp.placement
+    FROM ranked_placements rp
+    -- Filter after ranking so competitors still determine the placement.
+    WHERE rp.user_id = get_placements_singleplayer.player_id
+    ORDER BY rp.map_id, rp.placement;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -192,35 +193,25 @@ BEGIN
         FROM ranked_scores rs
         WHERE rs.rank = 1
     ),
-    min_placements AS (
+    ranked_placements AS (
         SELECT 
             bs.map_id,
             bs.host_id,
             bs.partner_id,
-            (SELECT COUNT(*) + 1 
-            FROM best_scores AS inner_scores 
-            WHERE inner_scores.map_id = bs.map_id 
-            AND (inner_scores.score_count < bs.score_count 
-                    OR (inner_scores.score_count = bs.score_count 
-                        AND inner_scores.score_time < bs.score_time)
-                )
+            RANK() OVER (
+                PARTITION BY bs.map_id
+                ORDER BY bs.score_count ASC, bs.score_time ASC
             ) AS placement
         FROM best_scores AS bs
-    ),
-    distinct_min_placements AS (
-        SELECT unified_placements.map_id, unified_placements.player_id, MIN(unified_placements.placement) AS min_placement
-        FROM (
-            SELECT minp.map_id, minp.host_id AS player_id, minp.placement FROM min_placements minp
-            UNION ALL
-            SELECT minp.map_id, minp.partner_id AS player_id, minp.placement FROM min_placements minp
-        ) AS unified_placements
-        WHERE unified_placements.player_id = get_placements_multiplayer.player_id
-        GROUP BY unified_placements.map_id, unified_placements.player_id
     )
     SELECT 
-        dminp.map_id,
-        dminp.min_placement AS placement
-    FROM distinct_min_placements dminp
-    ORDER BY dminp.map_id, placement;
+        rp.map_id,
+        MIN(rp.placement) AS placement
+    FROM ranked_placements rp
+    -- Rank teams first, then take the player's best placement across both roles.
+    WHERE rp.host_id = get_placements_multiplayer.player_id
+        OR rp.partner_id = get_placements_multiplayer.player_id
+    GROUP BY rp.map_id
+    ORDER BY rp.map_id, placement;
 END;
 $$ LANGUAGE plpgsql;

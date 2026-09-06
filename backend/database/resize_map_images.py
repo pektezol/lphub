@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Re-encode one game's map images as 1280x720 JPEG data URLs.
+"""Re-encode one game's map images as JPEG data URLs.
 
 The ``maps.image`` column contains browser data URLs such as
 ``data:image/png;base64,...``.  This script decodes each non-empty image,
-resizes it to exactly 1280x720, encodes it as an optimized JPEG, and writes it
+resizes it, encodes it as an optimized JPEG, and writes it
 back as ``data:image/jpeg;base64,...``.
 
 Dependencies:
@@ -34,9 +34,9 @@ from typing import Any
 
 from PIL import Image, ImageOps, UnidentifiedImageError
 
-TARGET_SIZE = (800, 450)
+TARGET_SIZE = (400, 225)
 JPEG_MIME_TYPE = "image/jpeg"
-DEFAULT_QUALITY = 70
+DEFAULT_QUALITY = 50
 DEFAULT_ENV_FILE = Path(__file__).resolve().parents[1] / ".env"
 
 

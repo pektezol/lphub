@@ -5,6 +5,7 @@ import { API } from "../api/Api";
 import { PortalCountData, ScoreLog } from "../api/Stats";
 import "../css/Homepage.css";
 import { Link } from "react-router-dom";
+import { portalLabel } from "@utils/Portal";
 
 interface PortalCountTooltipProps {
   active?: boolean;
@@ -237,7 +238,7 @@ const Homepage: React.FC = () => {
                       <Link key={index} to={`/maps/${score.map.id}`} className="score-map">{score.map.name}</Link>
                     </div>
                     <div className="score-portals">
-                      {score.score_count} portals
+                      {score.score_count} {portalLabel(score.score_count)}
                       <span className="score-date"> · {new Date(score.date).toISOString().split("T")[0]}</span>
                     </div>
                   </div>

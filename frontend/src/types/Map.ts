@@ -4,10 +4,16 @@ import type { UserShort } from "@customTypes/Profile";
 
 export interface Map {
   id: number;
+  game_id: number;
+  chapter_id: number;
+  section_kind: "chapter" | "course" | "mode";
+  section_label: string;
+  section_name: string;
   name: string;
   image: string;
   is_disabled: boolean;
   difficulty: number;
+  sort_order: number;
   category_portals: GameCategoryPortals[];
 };
 
@@ -71,16 +77,35 @@ export interface MapSummary {
   summary: MapSummaryDetails;
 };
 
-interface MapSummaryMap {
+export interface MapSummaryMap {
   id: number;
+  game_id: number;
+  chapter_id: number;
   image: string;
   chapter_name: string;
+  section_kind: "chapter" | "course" | "mode";
+  section_label: string;
   game_name: string;
   map_name: string;
   is_coop: boolean;
   is_disabled: boolean;
   difficulty: number;
+  engine_map_name: string;
+  variant_key: string;
+  sort_order: number;
+  categories: Category[];
+  counterpart?: MapCounterpart;
 };
+
+export interface MapCounterpart {
+  id: number;
+  game_id: number;
+  chapter_id: number;
+  section_kind: "chapter" | "course" | "mode";
+  section_label: string;
+  section_name: string;
+  map_name: string;
+}
 
 interface MapSummaryDetails {
   routes: MapSummaryDetailsRoute[];

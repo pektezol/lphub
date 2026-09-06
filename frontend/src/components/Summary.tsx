@@ -2,6 +2,7 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 
 import { MapSummary } from "@customTypes/Map";
+import { portalLabel } from "@utils/Portal";
 import "@css/Maps.css";
 
 interface SummaryProps {
@@ -12,8 +13,20 @@ interface SummaryProps {
 
 const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) => {
 
-  const [selectedCategory, setSelectedCategory] = React.useState<number>(1);
+  const [selectedCategory, setSelectedCategory] = React.useState<number | undefined>(undefined);
   const [historySelected, setHistorySelected] = React.useState<boolean>(false);
+  const categories = React.useMemo(() => {
+    const declaredCategories = data.map.categories ?? [];
+    if (declaredCategories.length > 0) {
+      return declaredCategories;
+    }
+
+    return Array.from(
+      new Map(
+        data.summary.routes.map((route) => [route.category.id, route.category]),
+      ).values(),
+    );
+  }, [data.map.categories, data.summary.routes]);
   const categoryRoutes = data.summary.routes.filter(route => route.category.id === selectedCategory);
   const selectedRoute = selectedRun === undefined
     ? undefined
@@ -38,9 +51,13 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
   };
 
   React.useEffect(() => {
-    const routeIndex = data.summary.routes.findIndex(route => route.category.id === selectedCategory);
+    const categoryID = categories.some((category) => category.id === selectedCategory)
+      ? selectedCategory
+      : categories[0]?.id;
+    setSelectedCategory(categoryID);
+    const routeIndex = data.summary.routes.findIndex(route => route.category.id === categoryID);
     setSelectedRun(routeIndex === -1 ? undefined : routeIndex);
-  }, [data, selectedCategory, setSelectedRun]);
+  }, [categories, data, selectedCategory, setSelectedRun]);
 
   return (
     <>
@@ -49,26 +66,18 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
           style={data.map.image === "" ? { backgroundColor: "#202232" } : {}}>
           <img src={data.map.image} alt="" id='category-image'></img>
           <p><span className='portal-count'>{selectedRoute?.history.score_count ?? 0}</span>
-            {(selectedRoute?.history.score_count ?? 0) === 1 ? " portal" : " portals"}</p>
-          {data.map.is_coop ? // TODO: make this part dynamic
-            (
-              <span style={{ gridTemplateColumns: "1fr 1fr 1fr" }}>
-                <button style={{ backgroundColor: selectedCategory === 1 ? "#202232" : "#2b2e46" }} onClick={() => _select_category(1)}>CM</button>
-                <button style={{ backgroundColor: selectedCategory === 4 ? "#202232" : "#2b2e46" }} onClick={() => _select_category(4)}>Any%</button>
-                <button style={{ backgroundColor: selectedCategory === 5 ? "#202232" : "#2b2e46" }} onClick={() => _select_category(5)}>All Courses</button>
-              </span>
-            )
-            :
-            (
-              <span style={{ gridTemplateColumns: "1fr 1fr 1fr 1fr" }}>
-
-                <button style={{ backgroundColor: selectedCategory === 1 ? "#202232" : "#2b2e46" }} onClick={() => _select_category(1)}>CM</button>
-                <button style={{ backgroundColor: selectedCategory === 2 ? "#202232" : "#2b2e46" }} onClick={() => _select_category(2)}>NoSLA</button>
-                <button style={{ backgroundColor: selectedCategory === 3 ? "#202232" : "#2b2e46" }} onClick={() => _select_category(3)}>Inbounds SLA</button>
-                <button style={{ backgroundColor: selectedCategory === 4 ? "#202232" : "#2b2e46" }} onClick={() => _select_category(4)}>Any%</button>
-              </span>
-            )
-          }
+            {" "}{portalLabel(selectedRoute?.history.score_count ?? 0)}</p>
+          <span style={{ gridTemplateColumns: "repeat(" + Math.max(categories.length, 1) + ", 1fr)" }}>
+            {categories.map((category) => (
+              <button
+                key={category.id}
+                style={{ backgroundColor: selectedCategory === category.id ? "#202232" : "#2b2e46" }}
+                onClick={() => _select_category(category.id)}
+              >
+                {category.name}
+              </button>
+            ))}
+          </span>
 
         </div>
 

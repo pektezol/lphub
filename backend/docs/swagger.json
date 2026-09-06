@@ -244,6 +244,62 @@
                 }
             }
         },
+        "/maps/{mapid}/difficulty": {
+            "put": {
+                "description": "Edit map difficulty with specified map id.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "maps / summary"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "JWT Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Map ID",
+                        "name": "mapid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.EditMapDifficultyRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handlers.EditMapDifficultyRequest"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/maps/{mapid}/discussions": {
             "get": {
                 "description": "Get map discussions with specified map id.",
@@ -1453,6 +1509,17 @@
             ],
             "properties": {
                 "route_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "handlers.EditMapDifficultyRequest": {
+            "type": "object",
+            "required": [
+                "difficulty"
+            ],
+            "properties": {
+                "difficulty": {
                     "type": "integer"
                 }
             }

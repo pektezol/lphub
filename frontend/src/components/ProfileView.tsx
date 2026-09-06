@@ -26,9 +26,13 @@ import {
 import { ticks_to_time } from "@utils/Time";
 
 const profilePageSize = 20;
-const mapNameCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
+const mapNameCollator = new Intl.Collator(undefined, {
+  numeric: true,
+  sensitivity: "base",
+});
 
-type ProfileRecordSortKey = "mapName" | "portals" | "wrDelta" | "time" | "rank" | "date";
+type ProfileRecordSortKey =
+  "mapName" | "portals" | "wrDelta" | "time" | "rank" | "date";
 type ProfileRecordSortDirection = "ascending" | "descending";
 
 interface ProfileRecordSort {
@@ -50,7 +54,17 @@ export interface ProfileViewProps {
   onProfileRefresh?: () => void | Promise<void>;
 }
 
-const isScoreBasedSort = (key: ProfileRecordSortKey): boolean => key !== "mapName";
+const isScoreBasedSort = (key: ProfileRecordSortKey): boolean =>
+  key !== "mapName";
+
+const formatProfileMapName = (
+  mapName: string,
+  sectionKind: string,
+  sectionName: string,
+): string =>
+  sectionKind === "mode"
+    ? "[" + sectionName.replace(/\s+Mode$/, "") + "] " + mapName
+    : mapName;
 
 const getProfileRecordSortValue = (
   row: ProfileBoardRow,
@@ -64,7 +78,9 @@ const getProfileRecordSortValue = (
   case "portals":
     return score?.score_count;
   case "wrDelta":
-    return score && row.record ? score.score_count - row.record.map_wr_count : undefined;
+    return score && row.record
+      ? score.score_count - row.record.map_wr_count
+      : undefined;
   case "time":
     return score?.score_time;
   case "rank":
@@ -89,7 +105,10 @@ const compareProfileBoardRows = (
     return first.mapID - second.mapID;
   }
 
-  if (isScoreBasedSort(sort.key) && (first.record === undefined) !== (second.record === undefined)) {
+  if (
+    isScoreBasedSort(sort.key) &&
+    (first.record === undefined) !== (second.record === undefined)
+  ) {
     return first.record === undefined ? 1 : -1;
   }
 
@@ -106,9 +125,10 @@ const compareProfileBoardRows = (
     return -1;
   }
 
-  const comparison = typeof firstValue === "string" && typeof secondValue === "string"
-    ? mapNameCollator.compare(firstValue, secondValue)
-    : Number(firstValue) - Number(secondValue);
+  const comparison =
+    typeof firstValue === "string" && typeof secondValue === "string"
+      ? mapNameCollator.compare(firstValue, secondValue)
+      : Number(firstValue) - Number(secondValue);
 
   if (comparison === 0) {
     return first.mapID - second.mapID;
@@ -126,41 +146,68 @@ const ProfileView: React.FC<ProfileViewProps> = ({
 }) => {
   const { confirm, ConfirmDialogComponent } = useConfirm();
   const { message, MessageDialogComponent } = useMessage();
-  const { messageLoad, messageLoadClose, MessageDialogLoadComponent } = useMessageLoad();
+  const { messageLoad, messageLoadClose, MessageDialogLoadComponent } =
+    useMessageLoad();
   const [pageNumber, setPageNumber] = React.useState(1);
   const [sort, setSort] = React.useState<ProfileRecordSort | null>(null);
-  const [expandedRecordIDs, setExpandedRecordIDs] = React.useState<Set<number>>(() => new Set());
+  const [expandedRecordIDs, setExpandedRecordIDs] = React.useState<Set<number>>(
+    () => new Set(),
+  );
   const [game, setGame] = React.useState("0");
   const [chapter, setChapter] = React.useState("0");
-  const [chapterData, setChapterData] = React.useState<GameChapters | null>(null);
+  const [chapterData, setChapterData] = React.useState<GameChapters | null>(
+    null,
+  );
   const [maps, setMaps] = React.useState<GameMap[]>([]);
 
   const canEdit = editable && Boolean(viewerToken);
+  const selectedGame = games.find((candidate) => candidate.id === Number(game));
+  const sectionLabel = selectedGame?.section_label ?? "Chapter";
+  const allSectionsLabel =
+    selectedGame?.section_kind === "mode"
+      ? "All Modes"
+      : "All " + sectionLabel + "s";
 
   const profileBoardRows = React.useMemo<ProfileBoardRow[]>(() => {
     if (game === "0") {
       return profile.records.map((record) => ({
         mapID: record.map_id,
-        mapName: record.map_name,
+        mapName: formatProfileMapName(
+          record.map_name,
+          record.section_kind,
+          record.section_name,
+        ),
         record,
       }));
     }
 
-    const recordsByMapID = new globalThis.Map(profile.records.map((record) => [record.map_id, record]));
+    const recordsByMapID = new globalThis.Map(
+      profile.records.map((record) => [record.map_id, record]),
+    );
     return maps
       .filter((map) => !map.is_disabled)
       .map((map) => ({
         mapID: map.id,
-        mapName: map.name,
+        mapName: formatProfileMapName(
+          map.name,
+          map.section_kind,
+          map.section_name,
+        ),
         record: recordsByMapID.get(map.id),
       }));
   }, [game, maps, profile.records]);
 
   const sortedProfileBoardRows = React.useMemo(
-    () => [...profileBoardRows].sort((first, second) => compareProfileBoardRows(first, second, sort)),
+    () =>
+      [...profileBoardRows].sort((first, second) =>
+        compareProfileBoardRows(first, second, sort),
+      ),
     [profileBoardRows, sort],
   );
-  const pageMax = Math.max(1, Math.ceil(sortedProfileBoardRows.length / profilePageSize));
+  const pageMax = Math.max(
+    1,
+    Math.ceil(sortedProfileBoardRows.length / profilePageSize),
+  );
   const currentPage = Math.min(pageNumber, pageMax);
   const pageRows = sortedProfileBoardRows.slice(
     (currentPage - 1) * profilePageSize,
@@ -190,14 +237,21 @@ const ProfileView: React.FC<ProfileViewProps> = ({
       return;
     }
 
-    const userConfirmed = await confirm("Delete Record", "Are you sure you want to delete this record?");
+    const userConfirmed = await confirm(
+      "Delete Record",
+      "Are you sure you want to delete this record?",
+    );
     if (!userConfirmed) {
       return;
     }
 
     messageLoad("Deleting...");
     try {
-      const apiSuccess = await API.delete_map_record(viewerToken, mapID, recordID);
+      const apiSuccess = await API.delete_map_record(
+        viewerToken,
+        mapID,
+        recordID,
+      );
       messageLoadClose();
       if (!apiSuccess) {
         await message("Delete Record", "Could not delete record.");
@@ -214,12 +268,18 @@ const ProfileView: React.FC<ProfileViewProps> = ({
 
   const downloadDemo = async (demoID: string) => {
     if (!viewerToken) {
-      await message("Download Demo", "You must be logged in to download demos.");
+      await message(
+        "Download Demo",
+        "You must be logged in to download demos.",
+      );
       return;
     }
 
     try {
-      const [success, errorMessage] = await API.download_demo(viewerToken, demoID);
+      const [success, errorMessage] = await API.download_demo(
+        viewerToken,
+        demoID,
+      );
       if (!success) {
         await message("Download Demo", errorMessage);
       }
@@ -243,9 +303,10 @@ const ProfileView: React.FC<ProfileViewProps> = ({
   const sortRecords = (key: ProfileRecordSortKey) => {
     setSort((currentSort) => ({
       key,
-      direction: currentSort?.key === key && currentSort.direction === "ascending"
-        ? "descending"
-        : "ascending",
+      direction:
+        currentSort?.key === key && currentSort.direction === "ascending"
+          ? "descending"
+          : "ascending",
     }));
     resetBoard();
   };
@@ -253,7 +314,8 @@ const ProfileView: React.FC<ProfileViewProps> = ({
   const renderSortHeader = (key: ProfileRecordSortKey, label: string) => {
     const isActive = sort?.key === key;
     const direction = isActive ? sort.direction : undefined;
-    const nextDirection = direction === "ascending" ? "descending" : "ascending";
+    const nextDirection =
+      direction === "ascending" ? "descending" : "ascending";
 
     return (
       <button
@@ -273,8 +335,14 @@ const ProfileView: React.FC<ProfileViewProps> = ({
   const renderProfileBoardRow = (row: ProfileBoardRow) => {
     if (!row.record) {
       return (
-        <div className="profileboard-record" key={row.mapID} style={{ backgroundColor: "#1b1b20" }}>
-          <Link to={`/maps/${row.mapID}`}><span>{row.mapName}</span></Link>
+        <div
+          className="profileboard-record"
+          key={row.mapID}
+          style={{ backgroundColor: "#1b1b20" }}
+        >
+          <Link to={`/maps/${row.mapID}`}>
+            <span>{row.mapName}</span>
+          </Link>
           <span style={{ display: "grid" }}>N/A</span>
           <span style={{ display: "grid" }}>N/A</span>
           <span>N/A</span>
@@ -291,17 +359,27 @@ const ProfileView: React.FC<ProfileViewProps> = ({
       <div
         className="profileboard-record"
         key={row.mapID}
-        style={expandedRecordIDs.has(row.mapID) ? { height: `${record.scores.length * 46}px` } : undefined}
+        style={
+          expandedRecordIDs.has(row.mapID)
+            ? { height: `${record.scores.length * 46}px` }
+            : undefined
+        }
       >
         {record.scores.map((score, index) => (
           <React.Fragment key={score.record_id}>
             {index !== 0 && <hr style={{ gridColumn: "1 / span 8" }} />}
-            <Link to={`/maps/${row.mapID}`}><span>{row.mapName}</span></Link>
+            <Link to={`/maps/${row.mapID}`}>
+              <span>{row.mapName}</span>
+            </Link>
             <span style={{ display: "grid" }}>{score.score_count}</span>
             <span style={{ display: "grid" }}>
-              {score.score_count - record.map_wr_count > 0 ? `+${score.score_count - record.map_wr_count}` : "-"}
+              {score.score_count - record.map_wr_count > 0
+                ? `+${score.score_count - record.map_wr_count}`
+                : "-"}
             </span>
-            <span style={{ display: "grid" }}>{ticks_to_time(score.score_time)}</span>
+            <span style={{ display: "grid" }}>
+              {ticks_to_time(score.score_time)}
+            </span>
             <span> </span>
             {index === 0 ? <span>#{record.placement}</span> : <span> </span>}
             <span>{score.date.split("T")[0]}</span>
@@ -309,7 +387,9 @@ const ProfileView: React.FC<ProfileViewProps> = ({
               <button
                 type="button"
                 style={{ marginRight: "10px" }}
-                onClick={() => { void message("Demo Information", `Demo ID: ${score.demo_id}`); }}
+                onClick={() => {
+                  void message("Demo Information", `Demo ID: ${score.demo_id}`);
+                }}
                 aria-label="Demo information"
               >
                 <img src={ThreedotIcon} alt="demo_id" />
@@ -317,17 +397,29 @@ const ProfileView: React.FC<ProfileViewProps> = ({
               {canEdit && (
                 <button
                   type="button"
-                  onClick={() => { void deleteSubmission(row.mapID, score.record_id); }}
+                  onClick={() => {
+                    void deleteSubmission(row.mapID, score.record_id);
+                  }}
                   aria-label="Delete record"
                 >
                   <img src={DeleteIcon} alt="delete" />
                 </button>
               )}
-              <button type="button" onClick={() => { void downloadDemo(score.demo_id); }} aria-label="Download demo">
+              <button
+                type="button"
+                onClick={() => {
+                  void downloadDemo(score.demo_id);
+                }}
+                aria-label="Download demo"
+              >
                 <img src={DownloadIcon} alt="download" />
               </button>
               {index === 0 && record.scores.length > 1 && (
-                <button type="button" onClick={() => toggleRecordHistory(row.mapID)} aria-label="Toggle record history">
+                <button
+                  type="button"
+                  onClick={() => toggleRecordHistory(row.mapID)}
+                  aria-label="Toggle record history"
+                >
                   <img src={HistoryIcon} alt="history" />
                 </button>
               )}
@@ -376,9 +468,10 @@ const ProfileView: React.FC<ProfileViewProps> = ({
 
     void (async () => {
       try {
-        const gameMaps = chapter === "0"
-          ? await API.get_game_maps(game)
-          : (await API.get_chapters(chapter))?.maps ?? [];
+        const gameMaps =
+          chapter === "0"
+            ? await API.get_game_maps(game)
+            : ((await API.get_chapters(chapter))?.maps ?? []);
         if (!cancelled) {
           setMaps(gameMaps);
         }
@@ -415,7 +508,9 @@ const ProfileView: React.FC<ProfileViewProps> = ({
               id="profile-image"
               role="button"
               tabIndex={0}
-              onClick={() => { void updateProfile(); }}
+              onClick={() => {
+                void updateProfile();
+              }}
               onKeyDown={(event) => {
                 if (event.key === "Enter" || event.key === " ") {
                   event.preventDefault();
@@ -436,48 +531,119 @@ const ProfileView: React.FC<ProfileViewProps> = ({
             <div>
               <div>{profile.user_name}</div>
               <div>
-                {profile.country_code === "XX" ? "" : <img src={`https://flagcdn.com/w80/${profile.country_code.toLowerCase()}.jpg`} alt={profile.country_code} />}
+                {profile.country_code === "XX" ? (
+                  ""
+                ) : (
+                  <img
+                    src={`https://flagcdn.com/w80/${profile.country_code.toLowerCase()}.jpg`}
+                    alt={profile.country_code}
+                  />
+                )}
               </div>
               <div>
                 {profile.titles.map((title, index) => (
-                  <span className="titles" style={{ backgroundColor: `#${title.color}` }} key={`${title.name}-${index}`}>
+                  <span
+                    className="titles"
+                    style={{ backgroundColor: `#${title.color}` }}
+                    key={`${title.name}-${index}`}
+                  >
                     {title.name}
                   </span>
                 ))}
               </div>
             </div>
             <div>
-              {profile.links.steam === "-" ? "" : <a href={profile.links.steam}><img src={SteamIcon} alt="Steam" /></a>}
-              {profile.links.twitch === "-" ? "" : <a href={profile.links.twitch}><img src={TwitchIcon} alt="Twitch" /></a>}
-              {profile.links.youtube === "-" ? "" : <a href={profile.links.youtube}><img src={YouTubeIcon} alt="Youtube" /></a>}
-              {profile.links.p2sr === "-" ? "" : <a href={profile.links.p2sr}><img src={PortalIcon} alt="P2SR" style={{ padding: "0" }} /></a>}
+              {profile.links.steam === "-" ? (
+                ""
+              ) : (
+                <a href={profile.links.steam}>
+                  <img src={SteamIcon} alt="Steam" />
+                </a>
+              )}
+              {profile.links.twitch === "-" ? (
+                ""
+              ) : (
+                <a href={profile.links.twitch}>
+                  <img src={TwitchIcon} alt="Twitch" />
+                </a>
+              )}
+              {profile.links.youtube === "-" ? (
+                ""
+              ) : (
+                <a href={profile.links.youtube}>
+                  <img src={YouTubeIcon} alt="Youtube" />
+                </a>
+              )}
+              {profile.links.p2sr === "-" ? (
+                ""
+              ) : (
+                <a href={profile.links.p2sr}>
+                  <img src={PortalIcon} alt="P2SR" style={{ padding: "0" }} />
+                </a>
+              )}
             </div>
           </div>
           <div id="profile-bottom">
             <div>
               <span>Overall</span>
-              <span>{profile.rankings.overall.rank === 0 ? "N/A " : `#${profile.rankings.overall.rank} `}
-                <span>({profile.rankings.overall.completion_count}/{profile.rankings.overall.completion_total})</span>
+              <span>
+                {profile.rankings.overall.rank === 0
+                  ? "N/A "
+                  : `#${profile.rankings.overall.rank} `}
+                <span>
+                  ({profile.rankings.overall.completion_count}/
+                  {profile.rankings.overall.completion_total})
+                </span>
               </span>
             </div>
             <div>
               <span>Singleplayer</span>
-              <span>{profile.rankings.singleplayer.rank === 0 ? "N/A " : `#${profile.rankings.singleplayer.rank} `}
-                <span>({profile.rankings.singleplayer.completion_count}/{profile.rankings.singleplayer.completion_total})</span>
+              <span>
+                {profile.rankings.singleplayer.rank === 0
+                  ? "N/A "
+                  : `#${profile.rankings.singleplayer.rank} `}
+                <span>
+                  ({profile.rankings.singleplayer.completion_count}/
+                  {profile.rankings.singleplayer.completion_total})
+                </span>
               </span>
             </div>
             <div>
               <span>Cooperative</span>
-              <span>{profile.rankings.cooperative.rank === 0 ? "N/A " : `#${profile.rankings.cooperative.rank} `}
-                <span>({profile.rankings.cooperative.completion_count}/{profile.rankings.cooperative.completion_total})</span>
+              <span>
+                {profile.rankings.cooperative.rank === 0
+                  ? "N/A "
+                  : `#${profile.rankings.cooperative.rank} `}
+                <span>
+                  ({profile.rankings.cooperative.completion_count}/
+                  {profile.rankings.cooperative.completion_total})
+                </span>
               </span>
             </div>
+            {/*{Array.isArray(profile.mode_completions) &&
+              profile.mode_completions.map((completion) => (
+                <div
+                  className="mode-completion"
+                  key={completion.game_id + "-" + completion.chapter_id}
+                >
+                  <span>{completion.section_name}</span>
+                  <span>
+                    {completion.completion_count}/{completion.completion_total}
+                  </span>
+                </div>
+              ))}*/}
           </div>
         </section>
 
         <section id="section2" className="profile">
-          <button type="button"><img src={FlagIcon} alt="" />&nbsp;Player Records</button>
-          <button type="button"><img src={StatisticsIcon} alt="" />&nbsp;Statistics</button>
+          <button type="button">
+            <img src={FlagIcon} alt="" />
+            &nbsp;Player Records
+          </button>
+          <button type="button">
+            <img src={StatisticsIcon} alt="" />
+            &nbsp;Statistics
+          </button>
         </section>
 
         <section id="section3" className="profile1">
@@ -495,15 +661,21 @@ const ProfileView: React.FC<ProfileViewProps> = ({
             >
               <option value="0">All Scores</option>
               {games.map((availableGame) => (
-                <option value={availableGame.id} key={availableGame.id}>{availableGame.name}</option>
+                <option value={availableGame.id} key={availableGame.id}>
+                  {availableGame.name}
+                </option>
               ))}
             </select>
 
             {game === "0" ? (
               <select disabled value="0">
-                <option value="0">All Chapters</option>
+                <option value="0">{allSectionsLabel}</option>
               </select>
-            ) : chapterData === null ? <select disabled aria-label="Loading chapters" value="0"><option value="0" /></select> : (
+            ) : chapterData === null ? (
+              <select disabled aria-label="Loading chapters" value="0">
+                <option value="0" />
+              </select>
+            ) : (
               <select
                 id="select-chapter"
                 value={chapter}
@@ -513,18 +685,31 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                   resetBoard();
                 }}
               >
-                <option value="0">All Chapters</option>
-                {chapterData.chapters.filter((availableChapter) => !availableChapter.is_disabled).map((availableChapter) => (
-                  <option value={availableChapter.id} key={availableChapter.id}>{availableChapter.name}</option>
-                ))}
+                <option value="0">{allSectionsLabel}</option>
+                {chapterData.chapters
+                  .filter((availableChapter) => !availableChapter.is_disabled)
+                  .map((availableChapter) => (
+                    <option
+                      value={availableChapter.id}
+                      key={availableChapter.id}
+                    >
+                      {availableChapter.name}
+                    </option>
+                  ))}
               </select>
             )}
           </div>
           <div id="profileboard-top">
             <span>{renderSortHeader("mapName", "Map Name")}</span>
-            <span style={{ justifyContent: "center" }}>{renderSortHeader("portals", "Portals")}</span>
-            <span style={{ justifyContent: "center" }}>{renderSortHeader("wrDelta", "WRΔ")}</span>
-            <span style={{ justifyContent: "center" }}>{renderSortHeader("time", "Time")}</span>
+            <span style={{ justifyContent: "center" }}>
+              {renderSortHeader("portals", "Portals")}
+            </span>
+            <span style={{ justifyContent: "center" }}>
+              {renderSortHeader("wrDelta", "WRΔ")}
+            </span>
+            <span style={{ justifyContent: "center" }}>
+              {renderSortHeader("time", "Time")}
+            </span>
             <span> </span>
             <span>{renderSortHeader("rank", "Rank")}</span>
             <span>{renderSortHeader("date", "Date")}</span>
@@ -538,8 +723,15 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                       setExpandedRecordIDs(new Set());
                     }
                   }}
-                ><i className="triangle" style={{ position: "relative", left: "-5px" }} /></button>
-                <span>{currentPage}/{pageMax}</span>
+                >
+                  <i
+                    className="triangle"
+                    style={{ position: "relative", left: "-5px" }}
+                  />
+                </button>
+                <span>
+                  {currentPage}/{pageMax}
+                </span>
                 <button
                   type="button"
                   onClick={() => {
@@ -548,7 +740,16 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                       setExpandedRecordIDs(new Set());
                     }
                   }}
-                ><i className="triangle" style={{ position: "relative", left: "5px", transform: "rotate(180deg)" }} /></button>
+                >
+                  <i
+                    className="triangle"
+                    style={{
+                      position: "relative",
+                      left: "5px",
+                      transform: "rotate(180deg)",
+                    }}
+                  />
+                </button>
               </div>
             </div>
           </div>

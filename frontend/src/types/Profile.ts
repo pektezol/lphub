@@ -15,6 +15,7 @@ export interface UserProfile {
   titles: UserProfileTitles[];
   links: UserProfileLinks;
   rankings: UserProfileRankings;
+  mode_completions: UserProfileSectionCompletion[];
   records: UserProfileRecords[];
   pagination: Pagination;
 };
@@ -39,7 +40,12 @@ interface UserProfileRankings {
 
 interface UserProfileRecords {
   game_id: number;
+  game_name: string;
   category_id: number;
+  chapter_id: number;
+  section_kind: "chapter" | "course" | "mode";
+  section_label: string;
+  section_name: string;
   map_id: number;
   map_name: string;
   map_wr_count: number;
@@ -61,3 +67,12 @@ interface UserProfileRankingsDetail {
   completion_total: number;
 };
 
+interface UserProfileSectionCompletion {
+  game_id: number;
+  game_name: string;
+  chapter_id: number;
+  section_label: string;
+  section_name: string;
+  completion_count: number;
+  completion_total: number;
+};
