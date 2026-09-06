@@ -1,11 +1,11 @@
-import { useState } from "react";
+import React from "react";
 import ConfirmDialog from "@components/ConfirmDialog";
 
 const useConfirm = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [title, setTitle] = useState<string>("");
-  const [subtitle, setSubtitle] = useState<string>("");
-  const [resolvePromise, setResolvePromise] = useState<((value: boolean) => void) | null>(null);
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [title, setTitle] = React.useState<string>("");
+  const [subtitle, setSubtitle] = React.useState<string>("");
+  const [resolvePromise, setResolvePromise] = React.useState<((value: boolean) => void) | null>(null);
 
   const confirm = ( titleN: string, subtitleN: string ) => {
     setIsOpen(true);

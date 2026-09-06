@@ -8,6 +8,7 @@ import { Category } from "@customTypes/Game";
 import { API } from "@api/Api";
 import "@css/ModMenu.css";
 import useConfirm from "@hooks/UseConfirm";
+import { portalLabel } from "@utils/Portal";
 
 interface ModMenuProps {
   token?: string;
@@ -119,7 +120,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
     }
 
     if (await confirm("Delete Map Summary Route", `Are you sure you want to submit this to the database?\n
-      ${selectedRoute.category.name}\n${selectedRoute.history.score_count} portals\n${selectedRoute.history.runner_name}`)) {
+      ${selectedRoute.category.name}\n${selectedRoute.history.score_count} ${portalLabel(selectedRoute.history.score_count)}\n${selectedRoute.history.runner_name}`)) {
       if (token) {
         const success = await API.delete_map_summary(token, mapID, selectedRoute.route_id);
         if (success) {

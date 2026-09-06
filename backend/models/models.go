@@ -152,8 +152,15 @@ type Chapter struct {
 }
 
 type CategoryPortal struct {
-	Category    Category `json:"category"`
-	PortalCount int      `json:"portal_count"`
+	Category       Category                 `json:"category"`
+	PortalCount    int                      `json:"portal_count"`
+	SectionPortals []SectionCategoryPortals `json:"section_portals,omitempty"`
+}
+
+type SectionCategoryPortals struct {
+	SectionID   int    `json:"section_id"`
+	SectionName string `json:"section_name"`
+	PortalCount int    `json:"portal_count"`
 }
 
 type Category struct {

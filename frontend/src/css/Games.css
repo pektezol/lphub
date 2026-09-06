@@ -101,6 +101,35 @@ span>b {
     font-family: BarlowCondensed-Bold;
 }
 
+.games-page-item-body-item-mode {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+}
+
+.games-page-item-body-item-mode-counts {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.games-page-item-body-item-mode-count {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.games-page-item-body-item-mode-label {
+    font-size: 14px;
+}
+
+.games-page-item-body-item-mode-num {
+    font-size: 32px;
+    font-family: BarlowCondensed-Bold;
+}
+
 .games-page-item-empty {
     color: #CDCFDF;
     font-size: 20px;
@@ -144,6 +173,14 @@ span>b {
 
     .games-page-item-body-item-num {
         font-size: 44px;
+    }
+
+    .games-page-item-body-item-mode-label {
+        font-size: 13px;
+    }
+
+    .games-page-item-body-item-mode-num {
+        font-size: 28px;
     }
 }
 
@@ -192,5 +229,17 @@ span>b {
 
     .games-page-item-body-item-num {
         font-size: 36px;
+    }
+
+    .games-page-item-body-item-mode-counts {
+        gap: 8px;
+    }
+
+    .games-page-item-body-item-mode-label {
+        font-size: 11px;
+    }
+
+    .games-page-item-body-item-mode-num {
+        font-size: 24px;
     }
 }

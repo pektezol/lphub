@@ -140,27 +140,23 @@ BEGIN
         FROM ranked_scores rs
         WHERE rs.rank = 1
     ),
-    min_placements AS (
+    ranked_placements AS (
         SELECT 
             bs.map_id,
             bs.user_id,
-            (SELECT COUNT(*) + 1 
-            FROM best_scores AS inner_scores 
-            WHERE inner_scores.map_id = bs.map_id 
-            AND (inner_scores.score_count < bs.score_count 
-                    OR (inner_scores.score_count = bs.score_count 
-                        AND inner_scores.score_time < bs.score_time)
-                )
+            RANK() OVER (
+                PARTITION BY bs.map_id
+                ORDER BY bs.score_count ASC, bs.score_time ASC
             ) AS placement
         FROM best_scores AS bs
     )
     SELECT 
-        minp.map_id,
-        MIN(minp.placement) AS placement
-    FROM min_placements minp
-    WHERE minp.user_id = get_placements_singleplayer.player_id
-    GROUP BY minp.map_id
-    ORDER BY minp.map_id, placement;
+        rp.map_id,
+        rp.placement
+    FROM ranked_placements rp
+    -- Filter after ranking so competitors still determine the placement.
+    WHERE rp.user_id = get_placements_singleplayer.player_id
+    ORDER BY rp.map_id, rp.placement;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -197,35 +193,25 @@ BEGIN
         FROM ranked_scores rs
         WHERE rs.rank = 1
     ),
-    min_placements AS (
+    ranked_placements AS (
         SELECT 
             bs.map_id,
             bs.host_id,
             bs.partner_id,
-            (SELECT COUNT(*) + 1 
-            FROM best_scores AS inner_scores 
-            WHERE inner_scores.map_id = bs.map_id 
-            AND (inner_scores.score_count < bs.score_count 
-                    OR (inner_scores.score_count = bs.score_count 
-                        AND inner_scores.score_time < bs.score_time)
-                )
+            RANK() OVER (
+                PARTITION BY bs.map_id
+                ORDER BY bs.score_count ASC, bs.score_time ASC
             ) AS placement
         FROM best_scores AS bs
-    ),
-    distinct_min_placements AS (
-        SELECT unified_placements.map_id, unified_placements.player_id, MIN(unified_placements.placement) AS min_placement
-        FROM (
-            SELECT minp.map_id, minp.host_id AS player_id, minp.placement FROM min_placements minp
-            UNION ALL
-            SELECT minp.map_id, minp.partner_id AS player_id, minp.placement FROM min_placements minp
-        ) AS unified_placements
-        WHERE unified_placements.player_id = get_placements_multiplayer.player_id
-        GROUP BY unified_placements.map_id, unified_placements.player_id
     )
     SELECT 
-        dminp.map_id,
-        dminp.min_placement AS placement
-    FROM distinct_min_placements dminp
-    ORDER BY dminp.map_id, placement;
+        rp.map_id,
+        MIN(rp.placement) AS placement
+    FROM ranked_placements rp
+    -- Rank teams first, then take the player's best placement across both roles.
+    WHERE rp.host_id = get_placements_multiplayer.player_id
+        OR rp.partner_id = get_placements_multiplayer.player_id
+    GROUP BY rp.map_id
+    ORDER BY rp.map_id, placement;
 END;
 $$ LANGUAGE plpgsql;

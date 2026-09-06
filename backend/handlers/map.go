@@ -85,8 +85,7 @@ func fetchGameCategories(gameID int) ([]models.Category, error) {
 	return categories, rows.Err()
 }
 
-// chapterID is zero for a game-wide total. Mode games deliberately only expose
-// totals through a selected section, never across Story and Advanced together.
+// chapterID is zero for a game-wide total.
 func fetchCategoryPortals(gameID, chapterID int) ([]models.CategoryPortal, error) {
 	rows, err := database.DB.Query(`
 		SELECT c.id, c.name, COALESCE(SUM(best.score_count), 0)
@@ -124,6 +123,70 @@ func fetchCategoryPortals(gameID, chapterID int) ([]models.CategoryPortal, error
 	return portals, rows.Err()
 }
 
+// Mode games expose one labelled total per section so Story and Advanced can
+// be displayed together without creating an unlabelled combined total.
+func fetchSectionCategoryPortals(gameID int) ([]models.CategoryPortal, error) {
+	rows, err := database.DB.Query(`
+		SELECT
+			c.id,
+			c.name,
+			game_section.id,
+			game_section.name,
+			COALESCE(SUM(best.score_count), 0)
+		FROM game_categories gc
+		INNER JOIN categories c ON c.id = gc.category_id
+		INNER JOIN chapters game_section ON game_section.game_id = gc.game_id
+		LEFT JOIN (
+			SELECT
+				listed_map.chapter_id,
+				mh.category_id,
+				mh.map_id,
+				MIN(mh.score_count) AS score_count
+			FROM map_history mh
+			INNER JOIN maps listed_map ON listed_map.id = mh.map_id
+			WHERE listed_map.game_id = $1
+			GROUP BY listed_map.chapter_id, mh.category_id, mh.map_id
+		) best ON best.chapter_id = game_section.id AND best.category_id = gc.category_id
+		WHERE gc.game_id = $1 AND game_section.is_disabled = false
+		GROUP BY c.id, c.name, game_section.id, game_section.name
+		ORDER BY c.id, game_section.id
+	`, gameID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	portals := []models.CategoryPortal{}
+	lastCategoryID := -1
+	for rows.Next() {
+		var categoryID int
+		var categoryName string
+		var sectionPortal models.SectionCategoryPortals
+		if err := rows.Scan(
+			&categoryID,
+			&categoryName,
+			&sectionPortal.SectionID,
+			&sectionPortal.SectionName,
+			&sectionPortal.PortalCount,
+		); err != nil {
+			return nil, err
+		}
+
+		if categoryID != lastCategoryID {
+			portals = append(portals, models.CategoryPortal{
+				Category: models.Category{
+					ID:   categoryID,
+					Name: categoryName,
+				},
+				SectionPortals: []models.SectionCategoryPortals{},
+			})
+			lastCategoryID = categoryID
+		}
+		portals[len(portals)-1].SectionPortals = append(portals[len(portals)-1].SectionPortals, sectionPortal)
+	}
+	return portals, rows.Err()
+}
+
 func fetchGame(gameID int) (models.Game, error) {
 	game := models.Game{
 		Categories:      []models.Category{},
@@ -149,7 +212,13 @@ func fetchGame(gameID int) (models.Game, error) {
 		return models.Game{}, err
 	}
 	game.Categories = categories
-	if game.SectionKind != "mode" {
+	if game.SectionKind == "mode" {
+		portals, err := fetchSectionCategoryPortals(game.ID)
+		if err != nil {
+			return models.Game{}, err
+		}
+		game.CategoryPortals = portals
+	} else {
 		portals, err := fetchCategoryPortals(game.ID, 0)
 		if err != nil {
 			return models.Game{}, err

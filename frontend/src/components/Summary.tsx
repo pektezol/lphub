@@ -2,6 +2,7 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 
 import { MapSummary } from "@customTypes/Map";
+import { portalLabel } from "@utils/Portal";
 import "@css/Maps.css";
 
 interface SummaryProps {
@@ -65,7 +66,7 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
           style={data.map.image === "" ? { backgroundColor: "#202232" } : {}}>
           <img src={data.map.image} alt="" id='category-image'></img>
           <p><span className='portal-count'>{selectedRoute?.history.score_count ?? 0}</span>
-            {(selectedRoute?.history.score_count ?? 0) === 1 ? " portal" : " portals"}</p>
+            {" "}{portalLabel(selectedRoute?.history.score_count ?? 0)}</p>
           <span style={{ gridTemplateColumns: "repeat(" + Math.max(categories.length, 1) + ", 1fr)" }}>
             {categories.map((category) => (
               <button

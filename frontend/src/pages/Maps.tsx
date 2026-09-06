@@ -14,14 +14,19 @@ import "@css/Maps.css";
 interface MapProps {
   token?: string;
   isModerator: boolean;
-};
+}
 
 const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
+  const [selectedRun, setSelectedRun] = React.useState<number | undefined>(
+    undefined,
+  );
 
-  const [selectedRun, setSelectedRun] = React.useState<number | undefined>(undefined);
-
-  const [mapSummaryData, setMapSummaryData] = React.useState<MapSummary | undefined>(undefined);
-  const [mapDiscussionsData, setMapDiscussionsData] = React.useState<MapDiscussions | undefined>(undefined);
+  const [mapSummaryData, setMapSummaryData] = React.useState<
+    MapSummary | undefined
+  >(undefined);
+  const [mapDiscussionsData, setMapDiscussionsData] = React.useState<
+    MapDiscussions | undefined
+  >(undefined);
 
   const [navState, setNavState] = React.useState<number>(0);
 
@@ -50,19 +55,36 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
     return (
       <>
         <main>
-          <section id='section1' className='summary1'>
+          <section id="section1" className="summary1">
             <div>
-              <Link to="/games"><button className='nav-button' style={{ borderRadius: "20px 20px 20px 20px" }}><i className='triangle'></i><span>Games List</span></button></Link>
+              <Link to="/games">
+                <button
+                  className="nav-button"
+                  style={{ borderRadius: "20px 20px 20px 20px" }}
+                >
+                  <i className="triangle"></i>
+                  <span>Games List</span>
+                </button>
+              </Link>
             </div>
           </section>
 
-          <section id='section2' className='summary1'>
-            <button className='nav-button'><img src={PortalIcon} alt="" /><span>Summary</span></button>
-            <button className='nav-button'><img src={FlagIcon} alt="" /><span>Leaderboards</span></button>
-            <button className='nav-button'><img src={ChatIcon} alt="" /><span>Discussions</span></button>
+          <section id="section2" className="summary1">
+            <button className="nav-button">
+              <img src={PortalIcon} alt="" />
+              <span>Summary</span>
+            </button>
+            <button className="nav-button">
+              <img src={FlagIcon} alt="" />
+              <span>Leaderboards</span>
+            </button>
+            <button className="nav-button">
+              <img src={ChatIcon} alt="" />
+              <span>Discussions</span>
+            </button>
           </section>
 
-          <section id='section6' className='summary2' />
+          <section id="section6" className="summary2" />
         </main>
       </>
     );
@@ -71,45 +93,104 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
   return (
     <>
       <Helmet>
-        <title>LPHUB | {mapSummaryData.map.map_name}{mapSummaryData.map.section_kind === "mode" ? " — " + mapSummaryData.map.chapter_name : ""}</title>
-        <meta name="description" content={mapSummaryData.map.map_name + (mapSummaryData.map.section_kind === "mode" ? " — " + mapSummaryData.map.chapter_name : "")} />
+        <title>LPHUB | {mapSummaryData.map.map_name}</title>
+        <meta name="description" content={mapSummaryData.map.map_name} />
       </Helmet>
-      {isModerator && <ModMenu
-        token={token}
-        data={mapSummaryData}
-        selectedRun={selectedRun}
-        mapID={mapID}
-        categories={mapSummaryData.map.categories ?? []}
-      />}
+      {isModerator && (
+        <ModMenu
+          token={token}
+          data={mapSummaryData}
+          selectedRun={selectedRun}
+          mapID={mapID}
+          categories={mapSummaryData.map.categories ?? []}
+        />
+      )}
 
-      <div id='background-image'>
+      <div id="background-image">
         <img src={mapSummaryData.map.image} alt="" />
       </div>
       <main>
-        <section id='section1' className='summary1'>
+        <section id="section1" className="summary1">
           <div>
-            <Link to="/games"><button className='nav-button' style={{ borderRadius: "20px 0px 0px 20px" }}><i className='triangle'></i><span>Games List</span></button></Link>
-            <Link to={"/games/" + mapSummaryData.map.game_id + "?chapter=" + mapSummaryData.map.chapter_id}><button className='nav-button' style={{ borderRadius: "0px 20px 20px 0px", marginLeft: "2px" }}><i className='triangle'></i><span>{mapSummaryData.map.section_label}: {mapSummaryData.map.chapter_name}</span></button></Link>
+            <Link to="/games">
+              <button
+                className="nav-button"
+                style={{ borderRadius: "20px 0px 0px 20px" }}
+              >
+                <i className="triangle"></i>
+                <span>Games List</span>
+              </button>
+            </Link>
+            <Link
+              to={
+                "/games/" +
+                mapSummaryData.map.game_id +
+                "?chapter=" +
+                mapSummaryData.map.chapter_id
+              }
+            >
+              <button
+                className="nav-button"
+                style={{ borderRadius: "0px 20px 20px 0px", marginLeft: "2px" }}
+              >
+                <i className="triangle"></i>
+                <span>{mapSummaryData.map.chapter_name}</span>
+              </button>
+            </Link>
             {mapSummaryData.map.counterpart && (
               <Link to={"/maps/" + mapSummaryData.map.counterpart.id}>
-                <button className='nav-button' style={{ borderRadius: "20px", marginLeft: "8px" }}>
-                  <span>View {mapSummaryData.map.counterpart.section_name}</span>
+                <button
+                  className="nav-button"
+                  style={{ borderRadius: "20px", marginLeft: "8px" }}
+                >
+                  <span>
+                    View {mapSummaryData.map.counterpart.section_name}
+                  </span>
                 </button>
               </Link>
             )}
-            <br /><span><b>{mapSummaryData.map.map_name}</b>{mapSummaryData.map.section_kind === "mode" ? " — " + mapSummaryData.map.chapter_name : ""}</span>
+            <br />
+            <span>
+              <b>{mapSummaryData.map.map_name}</b>
+              {mapSummaryData.map.section_kind === "mode"
+                ? " — " + mapSummaryData.map.chapter_name
+                : ""}
+            </span>
           </div>
         </section>
 
-        <section id='section2' className='summary1'>
-          <button className='nav-button' onClick={() => setNavState(0)}><img src={PortalIcon} alt="" /><span>Summary</span></button>
-          <button className='nav-button' onClick={() => setNavState(1)}><img src={FlagIcon} alt="" /><span>Leaderboards</span></button>
-          <button className='nav-button' onClick={() => setNavState(2)}><img src={ChatIcon} alt="" /><span>Discussions</span></button>
+        <section id="section2" className="summary1">
+          <button className="nav-button" onClick={() => setNavState(0)}>
+            <img src={PortalIcon} alt="" />
+            <span>Summary</span>
+          </button>
+          <button className="nav-button" onClick={() => setNavState(1)}>
+            <img src={FlagIcon} alt="" />
+            <span>Leaderboards</span>
+          </button>
+          <button className="nav-button" onClick={() => setNavState(2)}>
+            <img src={ChatIcon} alt="" />
+            <span>Discussions</span>
+          </button>
         </section>
 
-        {navState === 0 && <Summary selectedRun={selectedRun} setSelectedRun={setSelectedRun} data={mapSummaryData} />}
+        {navState === 0 && (
+          <Summary
+            selectedRun={selectedRun}
+            setSelectedRun={setSelectedRun}
+            data={mapSummaryData}
+          />
+        )}
         {navState === 1 && <Leaderboards mapID={mapID} />}
-        {navState === 2 && <Discussions data={mapDiscussionsData} token={token} isModerator={isModerator} mapID={mapID} onRefresh={() => _fetch_map_discussions()} />}
+        {navState === 2 && (
+          <Discussions
+            data={mapDiscussionsData}
+            token={token}
+            isModerator={isModerator}
+            mapID={mapID}
+            onRefresh={() => _fetch_map_discussions()}
+          />
+        )}
       </main>
     </>
   );

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Helmet } from "react-helmet";
 
 import RankingEntry from "@components/RankingEntry";
@@ -73,7 +73,7 @@ const Rankings: React.FC = () => {
     }
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     void fetchRankings(LeaderboardTypes.official);
 
     return () => {

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
@@ -6,6 +6,7 @@ import "@css/Maplist.css";
 import { API } from "@api/Api";
 import { Game } from "@customTypes/Game";
 import { GameChapter, GamesChapters } from "@customTypes/Chapters";
+import { portalLabel } from "@utils/Portal";
 
 const parseId = (value: string | null | undefined): number | undefined => {
   if (!value) {
@@ -19,20 +20,27 @@ const getSelectedSectionId = (
   gameChapters: GamesChapters,
   requestedSectionId: number | undefined,
 ): number | undefined => {
-  const sections = Array.isArray(gameChapters.chapters) ? gameChapters.chapters : [];
+  const sections = Array.isArray(gameChapters.chapters)
+    ? gameChapters.chapters
+    : [];
   const isModeGame = gameChapters.game.section_kind === "mode";
+  const defaultSection = isModeGame
+    ? (sections.find((section) => !section.is_disabled) ?? sections[0])
+    : sections[0];
 
   if (requestedSectionId === undefined) {
-    return isModeGame ? undefined : sections[0]?.id;
+    return defaultSection?.id;
   }
 
-  const sectionById = sections.find((section) => section.id === requestedSectionId);
+  const sectionById = sections.find(
+    (section) => section.id === requestedSectionId,
+  );
   if (sectionById) {
     return sectionById.id;
   }
 
   if (isModeGame) {
-    return undefined;
+    return defaultSection?.id;
   }
 
   // Existing map links use a chapter/course number rather than its database ID.
@@ -68,7 +76,10 @@ const Maplist: React.FC = () => {
   const requestedChapterId = parseId(queryParams.get("chapter"));
 
   const selectedSectionId = React.useMemo(
-    () => gameChapters ? getSelectedSectionId(gameChapters, requestedChapterId) : undefined,
+    () =>
+      gameChapters
+        ? getSelectedSectionId(gameChapters, requestedChapterId)
+        : undefined,
     [gameChapters, requestedChapterId],
   );
 
@@ -81,7 +92,7 @@ const Maplist: React.FC = () => {
     });
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     let isCurrent = true;
     setGame(null);
     setGameChapters(undefined);
@@ -126,7 +137,7 @@ const Maplist: React.FC = () => {
     };
   }, [gameId]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     let isCurrent = true;
     setCurrentSection(undefined);
     setDropdownActive(false);
@@ -172,14 +183,30 @@ const Maplist: React.FC = () => {
     );
   }
 
-  const sections = Array.isArray(gameChapters?.chapters) ? gameChapters.chapters : [];
-  const displayedSection = currentSection?.chapter?.id === selectedSectionId
-    ? currentSection
-    : undefined;
-  const sectionCategories = game.section_kind === "mode"
-    ? displayedSection?.chapter.category_portals ?? []
-    : game.category_portals;
-  const categories = Array.isArray(sectionCategories) ? sectionCategories : [];
+  const sections = Array.isArray(gameChapters?.chapters)
+    ? gameChapters.chapters
+    : [];
+  const displayedSection =
+    currentSection?.chapter?.id === selectedSectionId
+      ? currentSection
+      : undefined;
+  const gameCategories = Array.isArray(game.category_portals)
+    ? game.category_portals
+    : [];
+  const loadedModeCategories = displayedSection?.chapter.category_portals;
+  const modeCategoryFallback = gameCategories.map((category) => ({
+    category: category.category,
+    portal_count:
+      category.section_portals?.find(
+        (section) => section.section_id === selectedSectionId,
+      )?.portal_count ?? 0,
+  }));
+  const categories =
+    game.section_kind === "mode"
+      ? Array.isArray(loadedModeCategories) && loadedModeCategories.length > 0
+        ? loadedModeCategories
+        : modeCategoryFallback
+      : gameCategories;
   const selectedCategoryId = categories.some(
     (category) => category.category.id === requestedCategoryId,
   )
@@ -188,9 +215,9 @@ const Maplist: React.FC = () => {
   const selectedCategory = categories.find(
     (category) => category.category.id === selectedCategoryId,
   );
-  const maps = Array.isArray(displayedSection?.maps) ? displayedSection.maps : [];
-  const needsModeChoice = game.section_kind === "mode" && selectedSectionId === undefined;
-
+  const maps = Array.isArray(displayedSection?.maps)
+    ? displayedSection.maps
+    : [];
   return (
     <main>
       <Helmet>
@@ -206,33 +233,10 @@ const Maplist: React.FC = () => {
       </section>
       <section>
         <h1>{game.name}</h1>
-        {needsModeChoice ? (
-          sections.length === 0 ? (
-            <p className="game-empty-state">No sections or maps are available yet.</p>
-          ) : (
-            <section className="chapter-select-container">
-              <div>
-                <span style={{ fontSize: "18px", display: "block", marginTop: "10px" }}>
-                  Select a {game.section_label}
-                </span>
-              </div>
-              <div style={{ display: "flex", gap: "8px", margin: "12px 0" }}>
-                {sections
-                  .filter((section) => !section.is_disabled)
-                  .map((section) => (
-                    <button
-                      className="game-cat-button"
-                      key={section.id}
-                      onClick={() => updateSearchParam("chapter", section.id)}
-                    >
-                      {section.name}
-                    </button>
-                  ))}
-              </div>
-            </section>
-          )
-        ) : sections.length === 0 ? (
-          <p className="game-empty-state">No sections or maps are available yet.</p>
+        {sections.length === 0 ? (
+          <p className="game-empty-state">
+            No sections or maps are available yet.
+          </p>
         ) : (
           <>
             <div
@@ -243,8 +247,10 @@ const Maplist: React.FC = () => {
                 <div className="game-header-portal-count">
                   {selectedCategory ? (
                     <>
-                      <h2 className="portal-count">{selectedCategory.portal_count}</h2>
-                      <h3>portals</h3>
+                      <h2 className="portal-count">
+                        {selectedCategory.portal_count}
+                      </h2>
+                      <h3>{portalLabel(selectedCategory.portal_count)}</h3>
                     </>
                   ) : (
                     <span className="game-empty-state game-header-empty-state">
@@ -262,7 +268,9 @@ const Maplist: React.FC = () => {
                             ? "game-cat-button selected"
                             : "game-cat-button"
                         }
-                        onClick={() => updateSearchParam("cat", category.category.id)}
+                        onClick={() =>
+                          updateSearchParam("cat", category.category.id)
+                        }
                       >
                         <span>{category.category.name}</span>
                       </button>
@@ -282,7 +290,7 @@ const Maplist: React.FC = () => {
                     marginTop: "10px",
                   }}
                 >
-                  {game.section_label}
+                  Select {game.section_label}:
                 </span>
               </div>
               <div
@@ -311,19 +319,21 @@ const Maplist: React.FC = () => {
 
             <section className="maplist">
               {displayedSection && maps.length === 0 && (
-                <p className="game-empty-state">No maps are available in this section yet.</p>
+                <p className="game-empty-state">
+                  No maps are available in this section yet.
+                </p>
               )}
               {maps.map((map) => {
                 const mapCategories = Array.isArray(map.category_portals)
                   ? map.category_portals
                   : [];
-                const mapPortalCount = (
-                  map.is_disabled
+                const mapPortalCount =
+                  (map.is_disabled
                     ? mapCategories[0]?.portal_count
                     : mapCategories.find(
-                      (category) => category.category.id === selectedCategoryId,
-                    )?.portal_count
-                ) ?? 0;
+                        (category) =>
+                          category.category.id === selectedCategoryId,
+                      )?.portal_count) ?? 0;
                 return (
                   <div key={map.id} className="maplist-entry">
                     <Link to={"/maps/" + map.id}>
@@ -334,7 +344,7 @@ const Maplist: React.FC = () => {
                       >
                         <div className="blur map">
                           <span>{mapPortalCount}</span>
-                          <span>portals</span>
+                          <span>{portalLabel(mapPortalCount)}</span>
                         </div>
                       </div>
                       <div className="difficulty-bar">

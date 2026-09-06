@@ -8,6 +8,13 @@ export interface Category {
 export interface GameCategoryPortals {
   category: Category;
   portal_count: number;
+  section_portals?: GameCategorySectionPortals[];
+}
+
+export interface GameCategorySectionPortals {
+  section_id: number;
+  section_name: string;
+  portal_count: number;
 }
 
 export interface Game {

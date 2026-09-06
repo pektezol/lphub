@@ -21,13 +21,7 @@ const GameEntry: React.FC<GameEntryProps> = ({ game }) => {
         <span><b>{game.name}</b></span>
       </Link>
       <div id={String(game.id)} className='games-page-item-body'>
-        {game.section_kind === "mode" ? (
-          <Link className="games-page-item-body-item" to={"/games/" + game.id}>
-            <div>
-              <span className='games-page-item-body-item-title'>Choose a {game.section_label}</span>
-            </div>
-          </Link>
-        ) : categories.length > 0 ? (
+        {categories.length > 0 ? (
           categories.map((category) => (
             <GameCategory cat={category} game={game} key={category.category.id} />
           ))
