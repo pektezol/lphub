@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"sort"
+	"strings"
 
 	"lphub/database"
 	"lphub/models"
@@ -51,6 +52,259 @@ type MapShortWithGame struct {
 	SectionLabel string `json:"section_label"`
 	SectionName  string `json:"section_name"`
 	Map          string `json:"map"`
+}
+
+type cachedSearchMapGroup struct {
+	firstID      int
+	gameID       int
+	game         string
+	chapterID    int
+	sectionKind  string
+	sectionLabel string
+	sectionName  string
+	mapNames     []string
+}
+
+// cachedSearchMaps avoids a database query for every search request. Keep this
+// in sync with backend/database/insert/maps.sql.
+var cachedSearchMaps = buildCachedSearchMaps()
+
+func buildCachedSearchMaps() []MapShortWithGame {
+	groups := []cachedSearchMapGroup{
+		{
+			firstID:      1,
+			gameID:       1,
+			game:         "Portal 2 - Singleplayer",
+			chapterID:    1,
+			sectionKind:  "chapter",
+			sectionLabel: "Chapter",
+			sectionName:  "Chapter 1 - The Courtesy Call",
+			mapNames: []string{
+				"Container Ride", "Portal Carousel", "Portal Gun", "Smooth Jazz", "Cube Momentum",
+				"Future Starter", "Secret Panel", "Wakeup", "Incinerator",
+			},
+		},
+		{
+			firstID:      10,
+			gameID:       1,
+			game:         "Portal 2 - Singleplayer",
+			chapterID:    2,
+			sectionKind:  "chapter",
+			sectionLabel: "Chapter",
+			sectionName:  "Chapter 2 - The Cold Boot",
+			mapNames: []string{
+				"Laser Intro", "Laser Stairs", "Dual Lasers", "Laser Over Goo", "Catapult Intro", "Trust Fling",
+				"Pit Flings", "Fizzler Intro",
+			},
+		},
+		{
+			firstID:      18,
+			gameID:       1,
+			game:         "Portal 2 - Singleplayer",
+			chapterID:    3,
+			sectionKind:  "chapter",
+			sectionLabel: "Chapter",
+			sectionName:  "Chapter 3 - The Return",
+			mapNames: []string{
+				"Ceiling Catapult", "Ricochet", "Bridge Intro", "Bridge The Gap", "Turret Intro", "Laser Relays",
+				"Turret Blocker", "Laser vs Turret", "Pull The Rug",
+			},
+		},
+		{
+			firstID:      27,
+			gameID:       1,
+			game:         "Portal 2 - Singleplayer",
+			chapterID:    4,
+			sectionKind:  "chapter",
+			sectionLabel: "Chapter",
+			sectionName:  "Chapter 4 - The Surprise",
+			mapNames:     []string{"Column Blocker", "Laser Chaining", "Triple Laser", "Jail Break", "Escape"},
+		},
+		{
+			firstID:      32,
+			gameID:       1,
+			game:         "Portal 2 - Singleplayer",
+			chapterID:    5,
+			sectionKind:  "chapter",
+			sectionLabel: "Chapter",
+			sectionName:  "Chapter 5 - The Escape",
+			mapNames:     []string{"Turret Factory", "Turret Sabotage", "Neurotoxin Sabotage", "Core"},
+		},
+		{
+			firstID:      36,
+			gameID:       1,
+			game:         "Portal 2 - Singleplayer",
+			chapterID:    6,
+			sectionKind:  "chapter",
+			sectionLabel: "Chapter",
+			sectionName:  "Chapter 6 - The Fall",
+			mapNames:     []string{"Underground", "Cave Johnson", "Repulsion Intro", "Bomb Flings", "Crazy Box", "PotatOS"},
+		},
+		{
+			firstID:      42,
+			gameID:       1,
+			game:         "Portal 2 - Singleplayer",
+			chapterID:    7,
+			sectionKind:  "chapter",
+			sectionLabel: "Chapter",
+			sectionName:  "Chapter 7 - The Reunion",
+			mapNames:     []string{"Propulsion Intro", "Propulsion Flings", "Conversion Intro", "Three Gels"},
+		},
+		{
+			firstID:      46,
+			gameID:       1,
+			game:         "Portal 2 - Singleplayer",
+			chapterID:    8,
+			sectionKind:  "chapter",
+			sectionLabel: "Chapter",
+			sectionName:  "Chapter 8 - The Itch",
+			mapNames: []string{
+				"Test", "Funnel Intro", "Ceiling Button", "Wall Button", "Polarity", "Funnel Catch", "Stop The Box",
+				"Laser Catapult", "Laser Platform", "Propulsion Catch", "Repulsion Polarity",
+			},
+		},
+		{
+			firstID:      57,
+			gameID:       1,
+			game:         "Portal 2 - Singleplayer",
+			chapterID:    9,
+			sectionKind:  "chapter",
+			sectionLabel: "Chapter",
+			sectionName:  "Chapter 9 - The Part Where He Kills You",
+			mapNames:     []string{"Finale 1", "Finale 2", "Finale 3", "Finale 4"},
+		},
+		{
+			firstID:      61,
+			gameID:       2,
+			game:         "Portal 2 - Cooperative",
+			chapterID:    10,
+			sectionKind:  "course",
+			sectionLabel: "Course",
+			sectionName:  "Course 0 - Introduction",
+			mapNames:     []string{"Calibration", "Hub"},
+		},
+		{
+			firstID:      63,
+			gameID:       2,
+			game:         "Portal 2 - Cooperative",
+			chapterID:    11,
+			sectionKind:  "course",
+			sectionLabel: "Course",
+			sectionName:  "Course 1 - Team Building",
+			mapNames:     []string{"Doors", "Buttons", "Lasers", "Rat Maze", "Laser Crusher", "Behind The Scenes"},
+		},
+		{
+			firstID:      69,
+			gameID:       2,
+			game:         "Portal 2 - Cooperative",
+			chapterID:    12,
+			sectionKind:  "course",
+			sectionLabel: "Course",
+			sectionName:  "Course 2 - Mass And Velocity",
+			mapNames: []string{
+				"Flings", "Infinifling", "Team Retrieval", "Vertical Flings", "Catapults", "Multifling", "Fling Crushers",
+				"Industrial Fan",
+			},
+		},
+		{
+			firstID:      77,
+			gameID:       2,
+			game:         "Portal 2 - Cooperative",
+			chapterID:    13,
+			sectionKind:  "course",
+			sectionLabel: "Course",
+			sectionName:  "Course 3 - Hard-Light Surfaces",
+			mapNames: []string{
+				"Cooperative Bridges", "Bridge Swap", "Fling Block", "Catapult Block", "Bridge Fling", "Turret Walls",
+				"Turret Assassin", "Bridge Testing",
+			},
+		},
+		{
+			firstID:      85,
+			gameID:       2,
+			game:         "Portal 2 - Cooperative",
+			chapterID:    14,
+			sectionKind:  "course",
+			sectionLabel: "Course",
+			sectionName:  "Course 4 - Excursion Funnels",
+			mapNames: []string{
+				"Cooperative Funnels", "Funnel Drill", "Funnel Catch", "Funnel Laser", "Cooperative Polarity", "Funnel Hop",
+				"Advanced Polarity", "Funnel Maze", "Turret Warehouse",
+			},
+		},
+		{
+			firstID:      94,
+			gameID:       2,
+			game:         "Portal 2 - Cooperative",
+			chapterID:    15,
+			sectionKind:  "course",
+			sectionLabel: "Course",
+			sectionName:  "Course 5 - Mobility Gels",
+			mapNames: []string{
+				"Repulsion Jumps", "Double Bounce", "Bridge Repulsion", "Wall Repulsion", "Propulsion Crushers", "Turret Ninja",
+				"Propulsion Retrieval", "Vault Entrance",
+			},
+		},
+		{
+			firstID:      102,
+			gameID:       2,
+			game:         "Portal 2 - Cooperative",
+			chapterID:    16,
+			sectionKind:  "course",
+			sectionLabel: "Course",
+			sectionName:  "Course 6 - Art Therapy",
+			mapNames: []string{
+				"Separation", "Triple Axis", "Catapult Catch", "Bridge Gels", "Maintenance", "Bridge Catch", "Double Lift",
+				"Gel Maze", "Crazier Box",
+			},
+		},
+		{
+			firstID:      111,
+			gameID:       3,
+			game:         "Portal Stories: Mel",
+			chapterID:    17,
+			sectionKind:  "mode",
+			sectionLabel: "Mode",
+			sectionName:  "Story Mode",
+			mapNames: []string{
+				"Tram Ride", "Mel Intro", "Lift", "Garden", "Destroyed Garden", "Underbounce", "Once Upon", "Past Power",
+				"Ramp", "Firestorm", "Junkyard", "Concepts", "Paint Fling", "Faith Plate", "Transition", "Overgrown",
+				"Funnel Over Goo", "Two Of A Kind", "Destroyed", "Factory", "Core Access", "Finale",
+			},
+		},
+		{
+			firstID:      133,
+			gameID:       3,
+			game:         "Portal Stories: Mel",
+			chapterID:    18,
+			sectionKind:  "mode",
+			sectionLabel: "Mode",
+			sectionName:  "Advanced Mode",
+			mapNames: []string{
+				"Tram Ride", "Mel Intro", "Lift", "Garden", "Destroyed Garden", "Underbounce", "Once Upon", "Past Power",
+				"Ramp", "Firestorm", "Junkyard", "Concepts", "Paint Fling", "Faith Plate", "Transition", "Overgrown",
+				"Funnel Over Goo", "Two Of A Kind", "Destroyed", "Factory", "Core Access", "Finale",
+			},
+		},
+	}
+
+	maps := make([]MapShortWithGame, 0, 154)
+	for _, group := range groups {
+		for offset, name := range group.mapNames {
+			maps = append(maps, MapShortWithGame{
+				ID:           group.firstID + offset,
+				GameID:       group.gameID,
+				Game:         group.game,
+				ChapterID:    group.chapterID,
+				SectionKind:  group.sectionKind,
+				SectionLabel: group.sectionLabel,
+				SectionName:  group.sectionName,
+				Map:          name,
+			})
+		}
+	}
+
+	return maps
 }
 
 // GET Rankings LPHUB
@@ -215,53 +469,16 @@ func RankingsSteam(c *gin.Context) {
 //	@Success		200	{object}	models.Response{data=SearchResponse}
 //	@Router			/search [get]
 func SearchWithQuery(c *gin.Context) {
-	query := c.Query("q")
+	query := strings.ToLower(c.Query("q"))
 	response := SearchResponse{
 		Players: []models.UserShortWithAvatar{},
 		Maps:    []MapShortWithGame{},
 	}
 
-	mapRows, err := database.DB.Query(`
-		SELECT
-			m.id,
-			m.game_id,
-			g.name,
-			m.chapter_id,
-			g.section_kind,
-			g.section_label,
-			c.name,
-			m.name
-		FROM maps m
-		INNER JOIN games g ON g.id = m.game_id
-		INNER JOIN chapters c ON c.id = m.chapter_id
-		WHERE m.name ILIKE '%' || $1 || '%'
-		ORDER BY g.id, c.id, m.sort_order, m.id
-	`, query)
-	if err != nil {
-		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-		return
-	}
-	defer mapRows.Close()
-	for mapRows.Next() {
-		mapResult := MapShortWithGame{}
-		if err := mapRows.Scan(
-			&mapResult.ID,
-			&mapResult.GameID,
-			&mapResult.Game,
-			&mapResult.ChapterID,
-			&mapResult.SectionKind,
-			&mapResult.SectionLabel,
-			&mapResult.SectionName,
-			&mapResult.Map,
-		); err != nil {
-			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-			return
+	for _, cachedMap := range cachedSearchMaps {
+		if strings.Contains(strings.ToLower(cachedMap.Map), query) {
+			response.Maps = append(response.Maps, cachedMap)
 		}
-		response.Maps = append(response.Maps, mapResult)
-	}
-	if err := mapRows.Err(); err != nil {
-		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-		return
 	}
 
 	playerRows, err := database.DB.Query(
