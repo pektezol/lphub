@@ -36,6 +36,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
   });
 
   const [image, setImage] = React.useState<string>("");
+  const [difficulty, setDifficulty] = React.useState<number>(data.map.difficulty);
   const [md, setMd] = React.useState<string>("");
 
   const navigate = useNavigate();
@@ -74,6 +75,24 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
     if (await confirm("Edit Map Summary Image", "Are you sure you want to submit this to the database?")) {
       if (token) {
         const success = await API.put_map_image(token, mapID, image);
+        if (success) {
+          navigate(0);
+        } else {
+          alert("Error. Check logs.");
+        }
+      }
+    }
+  };
+
+  const _edit_map_difficulty = async () => {
+    if (!Number.isInteger(difficulty) || difficulty < 1 || difficulty > 10) {
+      alert("Difficulty must be a whole number between 1 and 10.");
+      return;
+    }
+
+    if (await confirm("Edit Map Difficulty", "Are you sure you want to submit this to the database?")) {
+      if (token) {
+        const success = await API.put_map_difficulty(token, mapID, difficulty);
         if (success) {
           navigate(0);
         } else {
@@ -148,6 +167,12 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
   }, [menu, categories]);
 
   React.useEffect(() => {
+    if (menu === 4) {
+      setDifficulty(data.map.difficulty);
+    }
+  }, [menu, data.map.difficulty]);
+
+  React.useEffect(() => {
     if (menu === 2 && !selectedRoute) {
       setMenu(0);
       return;
@@ -186,6 +211,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
       <div id='modview'>
         <div>
           <button onClick={() => setMenu(1)}>Edit Image</button>
+          <button onClick={() => setMenu(4)}>Edit Difficulty</button>
           <button disabled={!selectedRoute} onClick={() => setMenu(2)}>Edit Selected Route</button>
           <button disabled={categories.length === 0} onClick={() => setMenu(3)}>Add New Route</button>
           <button disabled={!selectedRoute} onClick={() => _delete_map_summary_route()}>Delete Selected Route</button>
@@ -218,6 +244,23 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
                 <img src={image} alt="" id='modview-menu-image-file' />
 
               </div>
+            </div>
+          )}
+
+        {// Edit Difficulty
+          menu === 4 && (
+            <div id='modview-menu-difficulty'>
+              <label htmlFor='modview-map-difficulty'>Difficulty (1-10):</label>
+              <input
+                id='modview-map-difficulty'
+                type="number"
+                min="1"
+                max="10"
+                step="1"
+                value={Number.isNaN(difficulty) ? "" : difficulty}
+                onChange={(e) => setDifficulty(e.target.value === "" ? Number.NaN : Number(e.target.value))}
+              />
+              <button onClick={_edit_map_difficulty}>Apply</button>
             </div>
           )}
 

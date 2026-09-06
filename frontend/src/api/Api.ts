@@ -23,6 +23,7 @@ import {
 import { download_demo } from "@api/Maps";
 import {
   delete_map_summary,
+  put_map_difficulty,
   post_map_summary,
   put_map_image,
   put_map_summary,
@@ -92,6 +93,8 @@ export const API = {
 
   put_map_image: (token: string, map_id: string, image: string) =>
     put_map_image(token, map_id, image),
+  put_map_difficulty: (token: string, map_id: string, difficulty: number) =>
+    put_map_difficulty(token, map_id, difficulty),
   put_map_summary: (token: string, map_id: string, content: ModMenuContent) =>
     put_map_summary(token, map_id, content),
 

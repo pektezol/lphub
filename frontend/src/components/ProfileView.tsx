@@ -73,26 +73,26 @@ const getProfileRecordSortValue = (
   const score = row.record?.scores[0];
 
   switch (key) {
-    case "mapName":
-      return row.mapName;
-    case "portals":
-      return score?.score_count;
-    case "wrDelta":
-      return score && row.record
-        ? score.score_count - row.record.map_wr_count
-        : undefined;
-    case "time":
-      return score?.score_time;
-    case "rank":
-      return row.record?.placement;
-    case "date": {
-      if (!score) {
-        return undefined;
-      }
-
-      const date = Date.parse(score.date);
-      return Number.isNaN(date) ? undefined : date;
+  case "mapName":
+    return row.mapName;
+  case "portals":
+    return score?.score_count;
+  case "wrDelta":
+    return score && row.record
+      ? score.score_count - row.record.map_wr_count
+      : undefined;
+  case "time":
+    return score?.score_time;
+  case "rank":
+    return row.record?.placement;
+  case "date": {
+    if (!score) {
+      return undefined;
     }
+
+    const date = Date.parse(score.date);
+    return Number.isNaN(date) ? undefined : date;
+  }
   }
 };
 

@@ -63,6 +63,13 @@ definitions:
     required:
     - route_id
     type: object
+  handlers.EditMapDifficultyRequest:
+    properties:
+      difficulty:
+        type: integer
+    required:
+    - difficulty
+    type: object
   handlers.EditMapDiscussionRequest:
     properties:
       content:
@@ -692,6 +699,40 @@ paths:
               type: object
       tags:
       - login
+  /maps/{mapid}/difficulty:
+    put:
+      description: Edit map difficulty with specified map id.
+      parameters:
+      - description: JWT Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Map ID
+        in: path
+        name: mapid
+        required: true
+        type: integer
+      - description: Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.EditMapDifficultyRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/handlers.EditMapDifficultyRequest'
+              type: object
+      tags:
+      - maps / summary
   /maps/{mapid}/discussions:
     get:
       description: Get map discussions with specified map id.

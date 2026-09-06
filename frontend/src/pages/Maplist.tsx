@@ -331,9 +331,9 @@ const Maplist: React.FC = () => {
                   (map.is_disabled
                     ? mapCategories[0]?.portal_count
                     : mapCategories.find(
-                        (category) =>
-                          category.category.id === selectedCategoryId,
-                      )?.portal_count) ?? 0;
+                      (category) =>
+                        category.category.id === selectedCategoryId,
+                    )?.portal_count) ?? 0;
                 return (
                   <div key={map.id} className="maplist-entry">
                     <Link to={"/maps/" + map.id}>

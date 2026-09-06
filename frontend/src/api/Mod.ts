@@ -13,6 +13,17 @@ export const put_map_image = async (token: string, map_id: string, image: string
   return response.data.success;
 };
 
+export const put_map_difficulty = async (token: string, map_id: string, difficulty: number): Promise<boolean> => {
+  const response = await axios.put(url(`maps/${map_id}/difficulty`), {
+    "difficulty": difficulty,
+  }, {
+    headers: {
+      "Authorization": token,
+    }
+  });
+  return response.data.success;
+};
+
 export const post_map_summary = async (token: string, map_id: string, content: ModMenuContent): Promise<boolean> => {
   const response = await axios.post(url(`maps/${map_id}/summary`), {
     "category_id": content.category_id,

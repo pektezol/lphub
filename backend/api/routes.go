@@ -33,6 +33,7 @@ func InitRoutes(router *gin.Engine) {
 		v1.PUT("/maps/:mapid/summary", IsAuthenticated, handlers.EditMapSummary)
 		v1.DELETE("/maps/:mapid/summary", IsAuthenticated, handlers.DeleteMapSummary)
 		v1.PUT("/maps/:mapid/image", IsAuthenticated, handlers.EditMapImage)
+		v1.PUT("/maps/:mapid/difficulty", IsAuthenticated, handlers.EditMapDifficulty)
 		// - Leaderboards
 		v1.GET("/maps/:mapid/leaderboards", RateLimit, handlers.FetchMapLeaderboards)
 		v1.POST("/maps/:mapid/record", IsAuthenticated, handlers.CreateRecordWithDemo)
