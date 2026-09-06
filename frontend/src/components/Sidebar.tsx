@@ -54,7 +54,6 @@ const Sidebar: React.FC<SidebarProps> = ({
       setSidebarOpen(false);
       _handle_sidebar_hide();
     }
-    // clusterfuck
     btn.forEach((_, i) => {
       btn[i].classList.remove("sidebar-button-selected");
       btn[i].classList.add("sidebar-button-deselected");
@@ -357,7 +356,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 onClick={_close_mobile_search_and_menu}
               >
                 <span>{q.game}</span>
-                <span>{q.section_label}: {q.section_name}</span>
+                <span>{q.section_name}</span>
                 <span>{q.map}</span>
               </Link>
             ))}
