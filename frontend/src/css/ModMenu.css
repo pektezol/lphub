@@ -112,8 +112,8 @@ div#modview>div:nth-child(2) {
     position: relative;
 }
 
-#modview-menu-add>div,
-#modview-menu-edit>div {
+#modview-menu-add>div:not(#modview-md),
+#modview-menu-edit>div:not(#modview-md) {
     display: grid;
     margin: 20px;
     width: 200px;
@@ -149,6 +149,7 @@ div#modview>div:nth-child(2) {
     border-radius: 20px;
     position: absolute;
     padding: 10px;
+    font-size: 20px;
     top: 400px;
     left: 50%;
     transform: translateX(-50%);
@@ -207,8 +208,8 @@ div#modview>div:nth-child(2) {
         font-size: 36px;
     }
 
-    #modview-menu-add>div,
-    #modview-menu-edit>div {
+    #modview-menu-add>div:not(#modview-md),
+    #modview-menu-edit>div:not(#modview-md) {
         width: 180px;
         font-size: 18px;
     }
@@ -222,6 +223,7 @@ div#modview>div:nth-child(2) {
         width: calc(100vw - 300px);
         height: 260px;
         top: 380px;
+        font-size: 18px;
     }
 
     #modview-md>p {
@@ -272,8 +274,8 @@ div#modview>div:nth-child(2) {
         width: 90vw;
     }
 
-    #modview-menu-add>div,
-    #modview-menu-edit>div {
+    #modview-menu-add>div:not(#modview-md),
+    #modview-menu-edit>div:not(#modview-md) {
         width: 90%;
     }
 
