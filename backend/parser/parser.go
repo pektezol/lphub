@@ -186,10 +186,18 @@ func ProcessDemo(demoFile io.Reader) (Result, error) {
 						}
 						return value
 					}
-					packetReader.SkipBits(3)
-					readVectorCoord()
-					readVectorCoord()
-					readVectorCoord()
+					x := packetReader.TryReadBool()
+					y := packetReader.TryReadBool()
+					z := packetReader.TryReadBool()
+					if x {
+						readVectorCoord()
+					}
+					if y {
+						readVectorCoord()
+					}
+					if z {
+						readVectorCoord()
+					}
 					packetReader.SkipBits(9)
 					if packetReader.TryReadBool() {
 						packetReader.SkipBits(22)
