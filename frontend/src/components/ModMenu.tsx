@@ -193,11 +193,6 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
   }, [menu, selectedRoute]);
 
   React.useEffect(() => {
-    const modview = document.querySelector("div#modview") as HTMLElement;
-    if (modview) {
-      modview.style.transform = showButton ? "translateY(-68%)" : "translateY(0%)";
-    }
-
     const modview_block = document.querySelector("#modview_block") as HTMLElement;
     if (modview_block) {
       modview_block.style.display = showButton ? "none" : "block";
@@ -208,7 +203,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
     <>
       {ConfirmDialogComponent}
       <div id="modview_block" />
-      <div id='modview'>
+      <div id='modview' className={showButton ? "is-collapsed" : ""}>
         <div>
           <button onClick={() => setMenu(1)}>Edit Image</button>
           <button onClick={() => setMenu(4)}>Edit Difficulty</button>

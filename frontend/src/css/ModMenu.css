@@ -6,7 +6,6 @@ div#modview {
     height: auto;
     /* background-color: red; */
 
-    transform: translateY(-68%);
 }
 
 div#modview>div>button {
@@ -22,6 +21,10 @@ div#modview>div>button:disabled {
 div#modview>div:nth-child(1) {
     display: grid;
     grid-template-columns: 50% 50%;
+}
+
+div#modview.is-collapsed>div:nth-child(1) {
+    display: none;
 }
 
 div#modview>div:nth-child(2) {
@@ -106,6 +109,7 @@ div#modview>div:nth-child(2) {
     font-size: 40px;
     display: grid;
     grid-template-columns: 20% 20% 20% 20% 20%;
+    position: relative;
 }
 
 #modview-menu-add>div,
@@ -146,7 +150,10 @@ div#modview>div:nth-child(2) {
     position: absolute;
     padding: 10px;
     top: 400px;
-    width: 1180px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-sizing: border-box;
+    width: min(1600px, calc(100vw - 340px));
     height: 300px;
     overflow-y: auto;
     word-wrap: break-word;
@@ -212,7 +219,7 @@ div#modview>div:nth-child(2) {
     }
 
     #modview-md {
-        width: 700px;
+        width: calc(100vw - 300px);
         height: 260px;
         top: 380px;
     }
@@ -276,8 +283,7 @@ div#modview>div:nth-child(2) {
     }
 
     #modview-md {
-        width: 90vw;
-        max-width: 600px;
+        width: calc(100vw - 2rem);
         top: 300px;
     }
 
