@@ -21,7 +21,7 @@ const docTemplate = `{
     "paths": {
         "/chapters/{chapterid}": {
             "get": {
-                "description": "Get maps from the specified chapter id.",
+                "description": "Get maps from the specified section id.",
                 "produces": [
                     "application/json"
                 ],
@@ -138,7 +138,7 @@ const docTemplate = `{
         },
         "/games/{gameid}": {
             "get": {
-                "description": "Get chapters from the specified game id.",
+                "description": "Get sections from the specified game id.",
                 "produces": [
                     "application/json"
                 ],
@@ -206,7 +206,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/handlers.ChaptersResponse"
+                                            "$ref": "#/definitions/handlers.GameMapsResponse"
                                         }
                                     }
                                 }
@@ -1393,8 +1393,8 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "User ID",
+                        "type": "string",
+                        "description": "Steam ID",
                         "name": "userid",
                         "in": "path",
                         "required": true
@@ -1421,6 +1421,46 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/users/{userid}/statistics": {
+            "get": {
+                "description": "Get a public competitive snapshot for a user, with an overall summary and one summary per game. Statistics include only active submissions on enabled maps.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Steam ID",
+                        "name": "userid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handlers.ProfileStatisticsResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1429,6 +1469,9 @@ const docTemplate = `{
             "properties": {
                 "chapter": {
                     "$ref": "#/definitions/models.Chapter"
+                },
+                "game": {
+                    "$ref": "#/definitions/models.Game"
                 },
                 "maps": {
                     "type": "array",
@@ -1586,6 +1629,20 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.GameMapsResponse": {
+            "type": "object",
+            "properties": {
+                "game": {
+                    "$ref": "#/definitions/models.Game"
+                },
+                "maps": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.MapSelect"
+                    }
+                }
+            }
+        },
         "handlers.LoginResponse": {
             "type": "object",
             "properties": {
@@ -1672,16 +1729,28 @@ const docTemplate = `{
         "handlers.MapShortWithGame": {
             "type": "object",
             "properties": {
-                "chapter": {
-                    "type": "string"
+                "chapter_id": {
+                    "type": "integer"
                 },
                 "game": {
                     "type": "string"
+                },
+                "game_id": {
+                    "type": "integer"
                 },
                 "id": {
                     "type": "integer"
                 },
                 "map": {
+                    "type": "string"
+                },
+                "section_kind": {
+                    "type": "string"
+                },
+                "section_label": {
+                    "type": "string"
+                },
+                "section_name": {
                     "type": "string"
                 }
             }
@@ -1694,6 +1763,50 @@ const docTemplate = `{
                 },
                 "summary": {
                     "$ref": "#/definitions/models.MapSummary"
+                }
+            }
+        },
+        "handlers.ProfileGameStatistics": {
+            "type": "object",
+            "properties": {
+                "active_submissions": {
+                    "type": "integer"
+                },
+                "best_portal_total": {
+                    "type": "integer"
+                },
+                "eleventh_plus": {
+                    "type": "integer"
+                },
+                "first": {
+                    "type": "integer"
+                },
+                "fourth_to_tenth": {
+                    "type": "integer"
+                },
+                "game_id": {
+                    "type": "integer"
+                },
+                "game_name": {
+                    "type": "string"
+                },
+                "is_coop": {
+                    "type": "boolean"
+                },
+                "maps_available": {
+                    "type": "integer"
+                },
+                "maps_played": {
+                    "type": "integer"
+                },
+                "median_wr_delta": {
+                    "type": "number"
+                },
+                "minimum_count_matches": {
+                    "type": "integer"
+                },
+                "second_to_third": {
+                    "type": "integer"
                 }
             }
         },
@@ -1731,8 +1844,14 @@ const docTemplate = `{
                 "category_id": {
                     "type": "integer"
                 },
+                "chapter_id": {
+                    "type": "integer"
+                },
                 "game_id": {
                     "type": "integer"
+                },
+                "game_name": {
+                    "type": "string"
                 },
                 "map_id": {
                     "type": "integer"
@@ -1751,6 +1870,15 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/handlers.ProfileScores"
                     }
+                },
+                "section_kind": {
+                    "type": "string"
+                },
+                "section_label": {
+                    "type": "string"
+                },
+                "section_name": {
+                    "type": "string"
                 }
             }
         },
@@ -1765,6 +1893,12 @@ const docTemplate = `{
                 },
                 "links": {
                     "$ref": "#/definitions/models.Links"
+                },
+                "mode_completions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handlers.ProfileSectionCompletion"
+                    }
                 },
                 "pagination": {
                     "$ref": "#/definitions/models.Pagination"
@@ -1811,6 +1945,81 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "score_time": {
+                    "type": "integer"
+                }
+            }
+        },
+        "handlers.ProfileSectionCompletion": {
+            "type": "object",
+            "properties": {
+                "chapter_id": {
+                    "type": "integer"
+                },
+                "completion_count": {
+                    "type": "integer"
+                },
+                "completion_total": {
+                    "type": "integer"
+                },
+                "game_id": {
+                    "type": "integer"
+                },
+                "game_name": {
+                    "type": "string"
+                },
+                "section_label": {
+                    "type": "string"
+                },
+                "section_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.ProfileStatisticsResponse": {
+            "type": "object",
+            "properties": {
+                "games": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handlers.ProfileGameStatistics"
+                    }
+                },
+                "overall": {
+                    "$ref": "#/definitions/handlers.ProfileStatisticsSummary"
+                }
+            }
+        },
+        "handlers.ProfileStatisticsSummary": {
+            "type": "object",
+            "properties": {
+                "active_submissions": {
+                    "type": "integer"
+                },
+                "best_portal_total": {
+                    "type": "integer"
+                },
+                "eleventh_plus": {
+                    "type": "integer"
+                },
+                "first": {
+                    "type": "integer"
+                },
+                "fourth_to_tenth": {
+                    "type": "integer"
+                },
+                "maps_available": {
+                    "type": "integer"
+                },
+                "maps_played": {
+                    "type": "integer"
+                },
+                "median_wr_delta": {
+                    "type": "number"
+                },
+                "minimum_count_matches": {
+                    "type": "integer"
+                },
+                "second_to_third": {
                     "type": "integer"
                 }
             }
@@ -2005,12 +2214,27 @@ const docTemplate = `{
                 },
                 "portal_count": {
                     "type": "integer"
+                },
+                "section_portals": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SectionCategoryPortals"
+                    }
                 }
             }
         },
         "models.Chapter": {
             "type": "object",
             "properties": {
+                "category_portals": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.CategoryPortal"
+                    }
+                },
+                "game_id": {
+                    "type": "integer"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -2022,12 +2246,24 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "section_kind": {
+                    "type": "string"
+                },
+                "section_label": {
+                    "type": "string"
                 }
             }
         },
         "models.Game": {
             "type": "object",
             "properties": {
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Category"
+                    }
+                },
                 "category_portals": {
                     "type": "array",
                     "items": {
@@ -2044,6 +2280,12 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "section_kind": {
+                    "type": "string"
+                },
+                "section_label": {
                     "type": "string"
                 }
             }
@@ -2068,10 +2310,28 @@ const docTemplate = `{
         "models.Map": {
             "type": "object",
             "properties": {
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Category"
+                    }
+                },
+                "chapter_id": {
+                    "type": "integer"
+                },
                 "chapter_name": {
                     "type": "string"
                 },
+                "counterpart": {
+                    "$ref": "#/definitions/models.MapCounterpart"
+                },
                 "difficulty": {
+                    "type": "integer"
+                },
+                "engine_map_name": {
+                    "type": "string"
+                },
+                "game_id": {
                     "type": "integer"
                 },
                 "game_name": {
@@ -2090,6 +2350,44 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "map_name": {
+                    "type": "string"
+                },
+                "section_kind": {
+                    "type": "string"
+                },
+                "section_label": {
+                    "type": "string"
+                },
+                "sort_order": {
+                    "type": "integer"
+                },
+                "variant_key": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.MapCounterpart": {
+            "type": "object",
+            "properties": {
+                "chapter_id": {
+                    "type": "integer"
+                },
+                "game_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "map_name": {
+                    "type": "string"
+                },
+                "section_kind": {
+                    "type": "string"
+                },
+                "section_label": {
+                    "type": "string"
+                },
+                "section_name": {
                     "type": "string"
                 }
             }
@@ -2143,7 +2441,13 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.CategoryPortal"
                     }
                 },
+                "chapter_id": {
+                    "type": "integer"
+                },
                 "difficulty": {
+                    "type": "integer"
+                },
+                "game_id": {
                     "type": "integer"
                 },
                 "id": {
@@ -2157,13 +2461,31 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "section_kind": {
+                    "type": "string"
+                },
+                "section_label": {
+                    "type": "string"
+                },
+                "section_name": {
+                    "type": "string"
+                },
+                "sort_order": {
+                    "type": "integer"
                 }
             }
         },
         "models.MapShort": {
             "type": "object",
             "properties": {
+                "chapter_id": {
+                    "type": "integer"
+                },
                 "difficulty": {
+                    "type": "integer"
+                },
+                "game_id": {
                     "type": "integer"
                 },
                 "id": {
@@ -2179,6 +2501,18 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "portal_count": {
+                    "type": "integer"
+                },
+                "section_kind": {
+                    "type": "string"
+                },
+                "section_label": {
+                    "type": "string"
+                },
+                "section_name": {
+                    "type": "string"
+                },
+                "sort_order": {
                     "type": "integer"
                 }
             }
@@ -2220,6 +2554,20 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.SectionCategoryPortals": {
+            "type": "object",
+            "properties": {
+                "portal_count": {
+                    "type": "integer"
+                },
+                "section_id": {
+                    "type": "integer"
+                },
+                "section_name": {
+                    "type": "string"
                 }
             }
         },

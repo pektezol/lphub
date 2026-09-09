@@ -76,6 +76,11 @@ type ScoreResponse struct {
 	Records any `json:"records"`
 }
 
+func isProfileUserID(id string) bool {
+	match, _ := regexp.MatchString("^[0-9]{17}$", id)
+	return match
+}
+
 // GET Profile
 //
 //	@Description	Get profile page of session user.
@@ -103,14 +108,13 @@ func Profile(c *gin.Context) {
 //	@Tags			users
 //	@Accept			json
 //	@Produce		json
-//	@Param			userid	path		int	true	"User ID"
+//	@Param			userid	path		string	true	"Steam ID"
 //	@Success		200		{object}	models.Response{data=ProfileResponse}
 //	@Router			/users/{userid} [get]
 func FetchUser(c *gin.Context) {
 	id := c.Param("userid")
 	// Check if id is all numbers and 17 length
-	match, _ := regexp.MatchString("^[0-9]{17}$", id)
-	if !match {
+	if !isProfileUserID(id) {
 		c.JSON(http.StatusOK, models.ErrorResponse("User not found."))
 		return
 	}

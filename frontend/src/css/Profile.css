@@ -164,6 +164,228 @@ span.titles {
     border-radius: 0 24px 24px 0;
 }
 
+#section2.profile>button.is-active {
+    background-color: #3b4061;
+    color: white;
+}
+
+#section2.profile>button:focus-visible {
+    outline: 2px solid white;
+    outline-offset: -4px;
+}
+
+#profile-statistics-panel {
+    margin: 20px;
+    display: block;
+    background-color: #202232;
+    border-radius: 24px;
+}
+
+.profile-statistics {
+    padding: 20px;
+}
+
+.profile-statistics-scope {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.profile-statistics-scope>button,
+.profile-statistics-error>button {
+    min-height: 38px;
+    padding: 6px 16px;
+    border: 0;
+    border-radius: 18px;
+    color: inherit;
+    background-color: #2b2e46;
+    cursor: pointer;
+    font: inherit;
+}
+
+.profile-statistics-scope>button.is-active {
+    background-color: #4a5079;
+    color: white;
+}
+
+.profile-statistics-scope>button:focus-visible,
+.profile-statistics-error>button:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
+}
+
+.profile-statistics-note {
+    margin: 0 0 14px;
+    color: #c9c9d4;
+    font-size: 15px;
+}
+
+.profile-statistics-overview {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.profile-statistics-card {
+    min-height: 116px;
+    padding: 16px;
+    border-radius: 16px;
+    background-color: #2b2e46;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.profile-statistics-card>span {
+    color: #d4d4dc;
+    font-size: 16px;
+}
+
+.profile-statistics-card>span[title],
+.profile-statistics-games th[title] {
+    cursor: help;
+    text-decoration: underline dotted;
+    text-underline-offset: 3px;
+}
+
+.profile-statistics-card>strong {
+    color: white;
+    font-size: 34px;
+    line-height: 1;
+}
+
+.profile-statistics-card>strong>small {
+    color: #d4d4dc;
+    font-size: 17px;
+    font-weight: normal;
+}
+
+.profile-statistics-distribution,
+.profile-statistics-games {
+    margin-top: 22px;
+}
+
+.profile-statistics-distribution>h2,
+.profile-statistics-games>h2 {
+    margin: 0 0 10px;
+    color: white;
+    font-size: 23px;
+    font-weight: normal;
+}
+
+.profile-statistics-bars {
+    display: grid;
+    gap: 10px;
+    padding: 16px;
+    border-radius: 16px;
+    background-color: #2b2e46;
+}
+
+.profile-statistics-bar {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr) 36px;
+    gap: 10px;
+    align-items: center;
+}
+
+.profile-statistics-bar>span:first-child,
+.profile-statistics-bar>output {
+    color: #d4d4dc;
+    font-size: 16px;
+}
+
+.profile-statistics-bar>output {
+    text-align: right;
+}
+
+.profile-statistics-bar-track {
+    height: 16px;
+    overflow: hidden;
+    border-radius: 8px;
+    background-color: #202232;
+}
+
+.profile-statistics-bar-fill {
+    display: block;
+    min-width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background-color: #8d91bc;
+}
+
+.profile-statistics-bar-fill.first {
+    background-color: #d6b85d;
+}
+
+.profile-statistics-bar-fill.second-to-third {
+    background-color: #aeb6c9;
+}
+
+.profile-statistics-bar-fill.fourth-to-tenth {
+    background-color: #7691bb;
+}
+
+.profile-statistics-bar-fill.eleventh-plus {
+    background-color: #6d7196;
+}
+
+.profile-statistics-table-wrap {
+    overflow-x: auto;
+    border-radius: 16px;
+}
+
+.profile-statistics-games table {
+    width: 100%;
+    min-width: 670px;
+    border-collapse: collapse;
+    background-color: #2b2e46;
+}
+
+.profile-statistics-games th,
+.profile-statistics-games td {
+    padding: 13px 16px;
+    border-bottom: 1px solid #202232;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.profile-statistics-games thead th {
+    color: white;
+    font-size: 16px;
+    font-weight: normal;
+}
+
+.profile-statistics-games tbody th,
+.profile-statistics-games tbody td {
+    color: #d4d4dc;
+    font-weight: normal;
+}
+
+.profile-statistics-games tbody tr:last-child th,
+.profile-statistics-games tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.profile-statistics-empty,
+.profile-statistics-loading,
+.profile-statistics-error {
+    margin-top: 22px;
+    padding: 28px;
+    border-radius: 16px;
+    background-color: #2b2e46;
+    color: #d4d4dc;
+    text-align: center;
+}
+
+.profile-statistics-error {
+    margin: 0;
+}
+
+.profile-statistics-error>p {
+    margin: 0 0 16px;
+}
+
 #section3.profile1>hr {
     border: 1px solid #2b2e46;
     margin: 8px 20px 0px 20px;
@@ -409,6 +631,14 @@ span.titles {
         font-size: 18px;
         grid-template-columns: 16% 16% 5% 16% 5% 14% 14% 14%;
     }
+
+    #profile-statistics-panel {
+        margin: 18px;
+    }
+
+    .profile-statistics-overview {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 @media screen and (max-width: 768px) {
@@ -488,6 +718,63 @@ span.titles {
         max-width: 100%;
         box-sizing: border-box;
         overflow-x: auto;
+    }
+
+    #profile-statistics-panel {
+        margin: 20px;
+        width: calc(100% - 40px);
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .profile-statistics {
+        padding: 16px;
+    }
+
+    .profile-statistics-scope {
+        flex-wrap: nowrap;
+        gap: 6px;
+        overflow-x: auto;
+        padding-bottom: 2px;
+    }
+
+    .profile-statistics-scope>button {
+        flex: 0 0 auto;
+        padding: 6px 8px;
+        font-size: 14px;
+    }
+
+    .profile-statistics-overview {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .profile-statistics-card {
+        min-height: 100px;
+        padding: 12px;
+    }
+
+    .profile-statistics-card>span {
+        font-size: 14px;
+    }
+
+    .profile-statistics-card>strong {
+        font-size: 28px;
+    }
+
+    .profile-statistics-distribution>h2,
+    .profile-statistics-games>h2 {
+        font-size: 20px;
+    }
+
+    .profile-statistics-bar {
+        grid-template-columns: 66px minmax(0, 1fr) 28px;
+        gap: 7px;
+    }
+
+    .profile-statistics-bar>span:first-child,
+    .profile-statistics-bar>output {
+        font-size: 14px;
     }
 
     #profileboard-nav {

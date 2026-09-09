@@ -6,7 +6,11 @@ import { API } from "@api/Api";
 import "@css/Profile.css";
 import type { Game, GameChapters } from "@customTypes/Game";
 import type { Map as GameMap } from "@customTypes/Map";
-import type { UserProfile } from "@customTypes/Profile";
+import type {
+  ProfileStatistics as ProfileStatisticsData,
+  UserProfile,
+} from "@customTypes/Profile";
+import ProfileStatistics from "@components/ProfileStatistics";
 import useConfirm from "@hooks/UseConfirm";
 import useMessage from "@hooks/UseMessage";
 import useMessageLoad from "@hooks/UseMessageLoad";
@@ -34,6 +38,8 @@ const mapNameCollator = new Intl.Collator(undefined, {
 type ProfileRecordSortKey =
   "mapName" | "portals" | "wrDelta" | "time" | "rank" | "date";
 type ProfileRecordSortDirection = "ascending" | "descending";
+type ProfileContentTab = "records" | "statistics";
+type ProfileStatisticsStatus = "idle" | "loading" | "success" | "error";
 
 interface ProfileRecordSort {
   key: ProfileRecordSortKey;
@@ -52,6 +58,7 @@ export interface ProfileViewProps {
   viewerToken?: string;
   editable?: boolean;
   onProfileRefresh?: () => void | Promise<void>;
+  statisticsRevision?: number;
 }
 
 const isScoreBasedSort = (key: ProfileRecordSortKey): boolean =>
@@ -143,6 +150,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
   viewerToken,
   editable = false,
   onProfileRefresh,
+  statisticsRevision,
 }) => {
   const { confirm, ConfirmDialogComponent } = useConfirm();
   const { message, MessageDialogComponent } = useMessage();
@@ -159,6 +167,18 @@ const ProfileView: React.FC<ProfileViewProps> = ({
     null,
   );
   const [maps, setMaps] = React.useState<GameMap[]>([]);
+  const [activeTab, setActiveTab] =
+    React.useState<ProfileContentTab>("records");
+  const [statistics, setStatistics] =
+    React.useState<ProfileStatisticsData | null>(null);
+  const [statisticsStatus, setStatisticsStatus] =
+    React.useState<ProfileStatisticsStatus>("idle");
+  const [statisticsRequestVersion, setStatisticsRequestVersion] =
+    React.useState(0);
+  const statisticsCacheRef = React.useRef<ProfileStatisticsData | null>(null);
+  const profileTabRefs = React.useRef<
+    Partial<Record<ProfileContentTab, HTMLButtonElement | null>>
+  >({});
 
   const canEdit = editable && Boolean(viewerToken);
   const selectedGame = games.find((candidate) => candidate.id === Number(game));
@@ -219,6 +239,45 @@ const ProfileView: React.FC<ProfileViewProps> = ({
     setExpandedRecordIDs(new Set());
   };
 
+  const invalidateStatistics = React.useCallback(() => {
+    statisticsCacheRef.current = null;
+    setStatistics(null);
+    setStatisticsStatus("idle");
+    setStatisticsRequestVersion((currentVersion) => currentVersion + 1);
+  }, []);
+
+  const handleProfileTabKeyDown = (
+    event: React.KeyboardEvent<HTMLButtonElement>,
+    currentTab: ProfileContentTab,
+  ) => {
+    const tabs: ProfileContentTab[] = ["records", "statistics"];
+    const currentIndex = tabs.indexOf(currentTab);
+    let nextTab: ProfileContentTab | undefined;
+
+    switch (event.key) {
+    case "ArrowRight":
+    case "ArrowDown":
+      nextTab = tabs[(currentIndex + 1) % tabs.length];
+      break;
+    case "ArrowLeft":
+    case "ArrowUp":
+      nextTab = tabs[(currentIndex - 1 + tabs.length) % tabs.length];
+      break;
+    case "Home":
+      nextTab = tabs[0];
+      break;
+    case "End":
+      nextTab = tabs[tabs.length - 1];
+      break;
+    default:
+      return;
+    }
+
+    event.preventDefault();
+    setActiveTab(nextTab);
+    requestAnimationFrame(() => profileTabRefs.current[nextTab]?.focus());
+  };
+
   const updateProfile = async () => {
     if (!canEdit || !viewerToken) {
       return;
@@ -226,6 +285,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
 
     try {
       await API.post_profile(viewerToken);
+      invalidateStatistics();
       await onProfileRefresh?.();
     } catch {
       await message("Refresh Profile", "Could not refresh profile.");
@@ -258,6 +318,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
         return;
       }
 
+      invalidateStatistics();
       await message("Delete Record", "Successfully deleted record.");
       await onProfileRefresh?.();
     } catch {
@@ -489,7 +550,40 @@ const ProfileView: React.FC<ProfileViewProps> = ({
 
   React.useEffect(() => {
     resetBoard();
-  }, [profile]);
+    invalidateStatistics();
+  }, [invalidateStatistics, profile, statisticsRevision]);
+
+  React.useEffect(() => {
+    if (
+      activeTab !== "statistics" ||
+      statisticsCacheRef.current !== null
+    ) {
+      return;
+    }
+
+    let cancelled = false;
+    setStatisticsStatus("loading");
+
+    void (async () => {
+      try {
+        const statisticsData = await API.get_user_statistics(profile.steam_id);
+        if (!cancelled) {
+          statisticsCacheRef.current = statisticsData;
+          setStatistics(statisticsData);
+          setStatisticsStatus("success");
+        }
+      } catch {
+        if (!cancelled) {
+          setStatistics(null);
+          setStatisticsStatus("error");
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeTab, profile, statisticsRequestVersion]);
 
   return (
     <>
@@ -635,129 +729,198 @@ const ProfileView: React.FC<ProfileViewProps> = ({
           </div>
         </section>
 
-        <section id="section2" className="profile">
-          <button type="button">
+        <section
+          id="section2"
+          className="profile"
+          role="tablist"
+          aria-label="Profile content"
+        >
+          <button
+            ref={(element) => {
+              profileTabRefs.current.records = element;
+            }}
+            id="profile-records-tab"
+            type="button"
+            role="tab"
+            className={activeTab === "records" ? "is-active" : ""}
+            aria-selected={activeTab === "records"}
+            aria-controls="section3"
+            tabIndex={activeTab === "records" ? 0 : -1}
+            onClick={() => setActiveTab("records")}
+            onKeyDown={(event) => handleProfileTabKeyDown(event, "records")}
+          >
             <img src={FlagIcon} alt="" />
             &nbsp;Player Records
           </button>
-          <button type="button">
+          <button
+            ref={(element) => {
+              profileTabRefs.current.statistics = element;
+            }}
+            id="profile-statistics-tab"
+            type="button"
+            role="tab"
+            className={activeTab === "statistics" ? "is-active" : ""}
+            aria-selected={activeTab === "statistics"}
+            aria-controls="profile-statistics-panel"
+            tabIndex={activeTab === "statistics" ? 0 : -1}
+            onClick={() => setActiveTab("statistics")}
+            onKeyDown={(event) =>
+              handleProfileTabKeyDown(event, "statistics")
+            }
+          >
             <img src={StatisticsIcon} alt="" />
             &nbsp;Statistics
           </button>
         </section>
 
-        <section id="section3" className="profile1">
-          <div id="profileboard-nav">
-            <select
-              id="select-game"
-              value={game}
-              onChange={(event) => {
-                setGame(event.currentTarget.value);
-                setChapter("0");
-                setChapterData(null);
-                setMaps([]);
-                resetBoard();
-              }}
-            >
-              <option value="0">All Scores</option>
-              {games.map((availableGame) => (
-                <option value={availableGame.id} key={availableGame.id}>
-                  {availableGame.name}
-                </option>
-              ))}
-            </select>
-
-            {game === "0" ? (
-              <select disabled value="0">
-                <option value="0">{allSectionsLabel}</option>
-              </select>
-            ) : chapterData === null ? (
-              <select disabled aria-label="Loading chapters" value="0">
-                <option value="0" />
-              </select>
-            ) : (
+        {activeTab === "records" ? (
+          <section
+            id="section3"
+            className="profile1"
+            role="tabpanel"
+            aria-labelledby="profile-records-tab"
+            tabIndex={0}
+          >
+            <div id="profileboard-nav">
               <select
-                id="select-chapter"
-                value={chapter}
+                id="select-game"
+                value={game}
                 onChange={(event) => {
-                  setChapter(event.currentTarget.value);
+                  setGame(event.currentTarget.value);
+                  setChapter("0");
+                  setChapterData(null);
                   setMaps([]);
                   resetBoard();
                 }}
               >
-                <option value="0">{allSectionsLabel}</option>
-                {chapterData.chapters
-                  .filter((availableChapter) => !availableChapter.is_disabled)
-                  .map((availableChapter) => (
-                    <option
-                      value={availableChapter.id}
-                      key={availableChapter.id}
-                    >
-                      {availableChapter.name}
-                    </option>
-                  ))}
+                <option value="0">All Scores</option>
+                {games.map((availableGame) => (
+                  <option value={availableGame.id} key={availableGame.id}>
+                    {availableGame.name}
+                  </option>
+                ))}
               </select>
-            )}
-          </div>
-          <div id="profileboard-top">
-            <span>{renderSortHeader("mapName", "Map Name")}</span>
-            <span style={{ justifyContent: "center" }}>
-              {renderSortHeader("portals", "Portals")}
-            </span>
-            <span style={{ justifyContent: "center" }}>
-              {renderSortHeader("wrDelta", "WRΔ")}
-            </span>
-            <span style={{ justifyContent: "center" }}>
-              {renderSortHeader("time", "Time")}
-            </span>
-            <span> </span>
-            <span>{renderSortHeader("rank", "Rank")}</span>
-            <span>{renderSortHeader("date", "Date")}</span>
-            <div id="page-number">
-              <div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (currentPage > 1) {
-                      setPageNumber(currentPage - 1);
-                      setExpandedRecordIDs(new Set());
-                    }
+
+              {game === "0" ? (
+                <select disabled value="0">
+                  <option value="0">{allSectionsLabel}</option>
+                </select>
+              ) : chapterData === null ? (
+                <select disabled aria-label="Loading chapters" value="0">
+                  <option value="0" />
+                </select>
+              ) : (
+                <select
+                  id="select-chapter"
+                  value={chapter}
+                  onChange={(event) => {
+                    setChapter(event.currentTarget.value);
+                    setMaps([]);
+                    resetBoard();
                   }}
                 >
-                  <i
-                    className="triangle"
-                    style={{ position: "relative", left: "-5px" }}
-                  />
-                </button>
-                <span>
-                  {currentPage}/{pageMax}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (currentPage < pageMax) {
-                      setPageNumber(currentPage + 1);
-                      setExpandedRecordIDs(new Set());
-                    }
-                  }}
-                >
-                  <i
-                    className="triangle"
-                    style={{
-                      position: "relative",
-                      left: "5px",
-                      transform: "rotate(180deg)",
+                  <option value="0">{allSectionsLabel}</option>
+                  {chapterData.chapters
+                    .filter((availableChapter) => !availableChapter.is_disabled)
+                    .map((availableChapter) => (
+                      <option
+                        value={availableChapter.id}
+                        key={availableChapter.id}
+                      >
+                        {availableChapter.name}
+                      </option>
+                    ))}
+                </select>
+              )}
+            </div>
+            <div id="profileboard-top">
+              <span>{renderSortHeader("mapName", "Map Name")}</span>
+              <span style={{ justifyContent: "center" }}>
+                {renderSortHeader("portals", "Portals")}
+              </span>
+              <span style={{ justifyContent: "center" }}>
+                {renderSortHeader("wrDelta", "WRΔ")}
+              </span>
+              <span style={{ justifyContent: "center" }}>
+                {renderSortHeader("time", "Time")}
+              </span>
+              <span> </span>
+              <span>{renderSortHeader("rank", "Rank")}</span>
+              <span>{renderSortHeader("date", "Date")}</span>
+              <div id="page-number">
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (currentPage > 1) {
+                        setPageNumber(currentPage - 1);
+                        setExpandedRecordIDs(new Set());
+                      }
                     }}
-                  />
-                </button>
+                  >
+                    <i
+                      className="triangle"
+                      style={{ position: "relative", left: "-5px" }}
+                    />
+                  </button>
+                  <span>
+                    {currentPage}/{pageMax}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (currentPage < pageMax) {
+                        setPageNumber(currentPage + 1);
+                        setExpandedRecordIDs(new Set());
+                      }
+                    }}
+                  >
+                    <i
+                      className="triangle"
+                      style={{
+                        position: "relative",
+                        left: "5px",
+                        transform: "rotate(180deg)",
+                      }}
+                    />
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-          <hr />
-          <div id="profileboard-records">
-            {pageRows.map(renderProfileBoardRow)}
-          </div>
-        </section>
+            <hr />
+            <div id="profileboard-records">
+              {pageRows.map(renderProfileBoardRow)}
+            </div>
+          </section>
+        ) : (
+          <section
+            id="profile-statistics-panel"
+            className="profile1 profile-statistics-panel"
+            role="tabpanel"
+            aria-labelledby="profile-statistics-tab"
+            tabIndex={0}
+          >
+            {statisticsStatus === "error" ? (
+              <div className="profile-statistics-error" role="alert">
+                <p>Statistics could not be loaded. Player Records remains available.</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    invalidateStatistics();
+                  }}
+                >
+                  Retry statistics
+                </button>
+              </div>
+            ) : statisticsStatus === "success" && statistics ? (
+              <ProfileStatistics statistics={statistics} />
+            ) : (
+              <div className="profile-statistics-loading" role="status">
+                Loading statistics…
+              </div>
+            )}
+          </section>
+        )}
       </main>
     </>
   );

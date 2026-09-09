@@ -20,6 +20,30 @@ export interface UserProfile {
   pagination: Pagination;
 };
 
+export interface ProfileStatistics {
+  overall: ProfileStatisticsSummary;
+  games: ProfileGameStatistics[];
+};
+
+export interface ProfileStatisticsSummary {
+  maps_played: number;
+  maps_available: number;
+  minimum_count_matches: number;
+  active_submissions: number;
+  median_wr_delta: number | null;
+  best_portal_total: number;
+  first: number;
+  second_to_third: number;
+  fourth_to_tenth: number;
+  eleventh_plus: number;
+};
+
+export interface ProfileGameStatistics extends ProfileStatisticsSummary {
+  game_id: number;
+  game_name: string;
+  is_coop: boolean;
+};
+
 interface UserProfileTitles {
   name: string;
   color: string;

@@ -4,6 +4,8 @@ definitions:
     properties:
       chapter:
         $ref: '#/definitions/models.Chapter'
+      game:
+        $ref: '#/definitions/models.Game'
       maps:
         items:
           $ref: '#/definitions/models.MapSelect'
@@ -108,6 +110,15 @@ definitions:
     - score_count
     - user_name
     type: object
+  handlers.GameMapsResponse:
+    properties:
+      game:
+        $ref: '#/definitions/models.Game'
+      maps:
+        items:
+          $ref: '#/definitions/models.MapSelect'
+        type: array
+    type: object
   handlers.LoginResponse:
     properties:
       token:
@@ -164,13 +175,21 @@ definitions:
     type: object
   handlers.MapShortWithGame:
     properties:
-      chapter:
-        type: string
+      chapter_id:
+        type: integer
       game:
         type: string
+      game_id:
+        type: integer
       id:
         type: integer
       map:
+        type: string
+      section_kind:
+        type: string
+      section_label:
+        type: string
+      section_name:
         type: string
     type: object
   handlers.MapSummaryResponse:
@@ -179,6 +198,35 @@ definitions:
         $ref: '#/definitions/models.Map'
       summary:
         $ref: '#/definitions/models.MapSummary'
+    type: object
+  handlers.ProfileGameStatistics:
+    properties:
+      active_submissions:
+        type: integer
+      best_portal_total:
+        type: integer
+      eleventh_plus:
+        type: integer
+      first:
+        type: integer
+      fourth_to_tenth:
+        type: integer
+      game_id:
+        type: integer
+      game_name:
+        type: string
+      is_coop:
+        type: boolean
+      maps_available:
+        type: integer
+      maps_played:
+        type: integer
+      median_wr_delta:
+        type: number
+      minimum_count_matches:
+        type: integer
+      second_to_third:
+        type: integer
     type: object
   handlers.ProfileRankings:
     properties:
@@ -202,8 +250,12 @@ definitions:
     properties:
       category_id:
         type: integer
+      chapter_id:
+        type: integer
       game_id:
         type: integer
+      game_name:
+        type: string
       map_id:
         type: integer
       map_name:
@@ -216,6 +268,12 @@ definitions:
         items:
           $ref: '#/definitions/handlers.ProfileScores'
         type: array
+      section_kind:
+        type: string
+      section_label:
+        type: string
+      section_name:
+        type: string
     type: object
   handlers.ProfileResponse:
     properties:
@@ -225,6 +283,10 @@ definitions:
         type: string
       links:
         $ref: '#/definitions/models.Links'
+      mode_completions:
+        items:
+          $ref: '#/definitions/handlers.ProfileSectionCompletion'
+        type: array
       pagination:
         $ref: '#/definitions/models.Pagination'
       profile:
@@ -255,6 +317,55 @@ definitions:
       score_count:
         type: integer
       score_time:
+        type: integer
+    type: object
+  handlers.ProfileSectionCompletion:
+    properties:
+      chapter_id:
+        type: integer
+      completion_count:
+        type: integer
+      completion_total:
+        type: integer
+      game_id:
+        type: integer
+      game_name:
+        type: string
+      section_label:
+        type: string
+      section_name:
+        type: string
+    type: object
+  handlers.ProfileStatisticsResponse:
+    properties:
+      games:
+        items:
+          $ref: '#/definitions/handlers.ProfileGameStatistics'
+        type: array
+      overall:
+        $ref: '#/definitions/handlers.ProfileStatisticsSummary'
+    type: object
+  handlers.ProfileStatisticsSummary:
+    properties:
+      active_submissions:
+        type: integer
+      best_portal_total:
+        type: integer
+      eleventh_plus:
+        type: integer
+      first:
+        type: integer
+      fourth_to_tenth:
+        type: integer
+      maps_available:
+        type: integer
+      maps_played:
+        type: integer
+      median_wr_delta:
+        type: number
+      minimum_count_matches:
+        type: integer
+      second_to_third:
         type: integer
     type: object
   handlers.RankingsResponse:
@@ -381,9 +492,19 @@ definitions:
         $ref: '#/definitions/models.Category'
       portal_count:
         type: integer
+      section_portals:
+        items:
+          $ref: '#/definitions/models.SectionCategoryPortals'
+        type: array
     type: object
   models.Chapter:
     properties:
+      category_portals:
+        items:
+          $ref: '#/definitions/models.CategoryPortal'
+        type: array
+      game_id:
+        type: integer
       id:
         type: integer
       image:
@@ -392,9 +513,17 @@ definitions:
         type: boolean
       name:
         type: string
+      section_kind:
+        type: string
+      section_label:
+        type: string
     type: object
   models.Game:
     properties:
+      categories:
+        items:
+          $ref: '#/definitions/models.Category'
+        type: array
       category_portals:
         items:
           $ref: '#/definitions/models.CategoryPortal'
@@ -406,6 +535,10 @@ definitions:
       is_coop:
         type: boolean
       name:
+        type: string
+      section_kind:
+        type: string
+      section_label:
         type: string
     type: object
   models.Links:
@@ -421,9 +554,21 @@ definitions:
     type: object
   models.Map:
     properties:
+      categories:
+        items:
+          $ref: '#/definitions/models.Category'
+        type: array
+      chapter_id:
+        type: integer
       chapter_name:
         type: string
+      counterpart:
+        $ref: '#/definitions/models.MapCounterpart'
       difficulty:
+        type: integer
+      engine_map_name:
+        type: string
+      game_id:
         type: integer
       game_name:
         type: string
@@ -436,6 +581,31 @@ definitions:
       is_disabled:
         type: boolean
       map_name:
+        type: string
+      section_kind:
+        type: string
+      section_label:
+        type: string
+      sort_order:
+        type: integer
+      variant_key:
+        type: string
+    type: object
+  models.MapCounterpart:
+    properties:
+      chapter_id:
+        type: integer
+      game_id:
+        type: integer
+      id:
+        type: integer
+      map_name:
+        type: string
+      section_kind:
+        type: string
+      section_label:
+        type: string
+      section_name:
         type: string
     type: object
   models.MapHistory:
@@ -470,7 +640,11 @@ definitions:
         items:
           $ref: '#/definitions/models.CategoryPortal'
         type: array
+      chapter_id:
+        type: integer
       difficulty:
+        type: integer
+      game_id:
         type: integer
       id:
         type: integer
@@ -480,10 +654,22 @@ definitions:
         type: boolean
       name:
         type: string
+      section_kind:
+        type: string
+      section_label:
+        type: string
+      section_name:
+        type: string
+      sort_order:
+        type: integer
     type: object
   models.MapShort:
     properties:
+      chapter_id:
+        type: integer
       difficulty:
+        type: integer
+      game_id:
         type: integer
       id:
         type: integer
@@ -494,6 +680,14 @@ definitions:
       name:
         type: string
       portal_count:
+        type: integer
+      section_kind:
+        type: string
+      section_label:
+        type: string
+      section_name:
+        type: string
+      sort_order:
         type: integer
     type: object
   models.MapSummary:
@@ -521,6 +715,15 @@ definitions:
         type: string
       success:
         type: boolean
+    type: object
+  models.SectionCategoryPortals:
+    properties:
+      portal_count:
+        type: integer
+      section_id:
+        type: integer
+      section_name:
+        type: string
     type: object
   models.Title:
     properties:
@@ -566,7 +769,7 @@ info:
 paths:
   /chapters/{chapterid}:
     get:
-      description: Get maps from the specified chapter id.
+      description: Get maps from the specified section id.
       parameters:
       - description: Chapter ID
         in: path
@@ -636,7 +839,7 @@ paths:
       - games & chapters
   /games/{gameid}:
     get:
-      description: Get chapters from the specified game id.
+      description: Get sections from the specified game id.
       parameters:
       - description: Game ID
         in: path
@@ -676,7 +879,7 @@ paths:
             - $ref: '#/definitions/models.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/handlers.ChaptersResponse'
+                  $ref: '#/definitions/handlers.GameMapsResponse'
               type: object
       tags:
       - games & chapters
@@ -1384,11 +1587,11 @@ paths:
       - application/json
       description: Get profile page of another user.
       parameters:
-      - description: User ID
+      - description: Steam ID
         in: path
         name: userid
         required: true
-        type: integer
+        type: string
       produces:
       - application/json
       responses:
@@ -1400,6 +1603,31 @@ paths:
             - properties:
                 data:
                   $ref: '#/definitions/handlers.ProfileResponse'
+              type: object
+      tags:
+      - users
+  /users/{userid}/statistics:
+    get:
+      description: Get a public competitive snapshot for a user, with an overall summary
+        and one summary per game. Statistics include only active submissions on enabled
+        maps.
+      parameters:
+      - description: Steam ID
+        in: path
+        name: userid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/handlers.ProfileStatisticsResponse'
               type: object
       tags:
       - users

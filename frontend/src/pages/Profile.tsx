@@ -9,9 +9,15 @@ interface ProfileProps {
   authentication: AuthenticationState;
   gameData: Game[];
   onProfileRefresh: () => void | Promise<void>;
+  statisticsRevision: number;
 }
 
-const Profile: React.FC<ProfileProps> = ({ authentication, gameData, onProfileRefresh }) => {
+const Profile: React.FC<ProfileProps> = ({
+  authentication,
+  gameData,
+  onProfileRefresh,
+  statisticsRevision,
+}) => {
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -31,6 +37,7 @@ const Profile: React.FC<ProfileProps> = ({ authentication, gameData, onProfileRe
       viewerToken={authentication.token}
       editable
       onProfileRefresh={onProfileRefresh}
+      statisticsRevision={statisticsRevision}
     />
   );
 };

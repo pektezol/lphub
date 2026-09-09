@@ -1,6 +1,11 @@
 import { MapDiscussionContent, ModMenuContent } from "@customTypes/Content";
 import { delete_token, get_token } from "@api/Auth";
-import { get_user, get_profile, post_profile } from "@api/User";
+import {
+  get_user,
+  get_user_statistics,
+  get_profile,
+  post_profile,
+} from "@api/User";
 import {
   get_games,
   get_chapters,
@@ -40,6 +45,7 @@ export const API = {
   delete_token: () => delete_token(),
   // User
   get_user: (user_id: string) => get_user(user_id),
+  get_user_statistics: (user_id: string) => get_user_statistics(user_id),
   get_profile: (token: string) => get_profile(token),
   post_profile: (token: string) => post_profile(token),
   // Games

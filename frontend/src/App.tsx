@@ -26,6 +26,8 @@ const App: React.FC = () => {
   const [games, setGames] = React.useState<Game[]>([]);
 
   const [uploadRunDialog, setUploadRunDialog] = React.useState<boolean>(false);
+  const [profileStatisticsRevision, setProfileStatisticsRevision] =
+    React.useState(0);
 
   const _fetch_games = async () => {
     try {
@@ -117,6 +119,7 @@ const App: React.FC = () => {
       <UploadRunDialog token={token} open={uploadRunDialog} onClose={(updateProfile) => {
         setUploadRunDialog(false);
         if (updateProfile) {
+          setProfileStatisticsRevision((currentRevision) => currentRevision + 1);
           void _set_profile();
         }
       }} games={games} />
@@ -127,7 +130,7 @@ const App: React.FC = () => {
       />
       <Routes>
         <Route path="/" element={<Homepage />} />
-        <Route path="/profile" element={<Profile authentication={authentication} gameData={games} onProfileRefresh={_set_profile} />} />
+        <Route path="/profile" element={<Profile authentication={authentication} gameData={games} onProfileRefresh={_set_profile} statisticsRevision={profileStatisticsRevision} />} />
         <Route path="/users/*" element={<User profile={profile} token={token} gameData={games} />} />
         <Route path="/games" element={<Games games={games} />} />
         <Route path='/games/:id' element={<Maplist />}></Route>
