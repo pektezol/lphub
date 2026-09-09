@@ -129,7 +129,8 @@ BEGIN
             ORDER BY sp.score_count ASC, sp.score_time ASC
         ) AS rank
     FROM records_sp sp
-    WHERE sp.is_deleted = false
+    INNER JOIN maps m ON m.id = sp.map_id
+    WHERE sp.is_deleted = false AND m.game_id = 1
     ),
     best_scores AS (
         SELECT 
@@ -181,7 +182,8 @@ BEGIN
             ORDER BY mp.score_count ASC, mp.score_time ASC
         ) AS rank
     FROM records_mp mp
-    WHERE mp.is_deleted = false
+    INNER JOIN maps m ON m.id = mp.map_id
+    WHERE mp.is_deleted = false AND m.game_id = 2
     ),
     best_scores AS (
         SELECT 

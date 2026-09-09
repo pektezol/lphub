@@ -162,7 +162,7 @@ func fetchProfileRecords(ctx context.Context, userID string) ([]ProfileRecords, 
 	INNER JOIN maps m ON sp.map_id = m.id
 	INNER JOIN games g ON g.id = m.game_id
 	INNER JOIN chapters c ON c.id = m.chapter_id
-	WHERE sp.user_id = $1 AND sp.is_deleted = false ORDER BY sp.map_id, sp.score_count, sp.score_time`, `SELECT * FROM get_placements_singleplayer($1)`)
+	WHERE sp.user_id = $1 AND sp.is_deleted = false AND m.game_id = 1 ORDER BY sp.map_id, sp.score_count, sp.score_time`, `SELECT * FROM get_placements_singleplayer($1)`)
 	if err != nil {
 		return nil, err
 	}
@@ -171,7 +171,7 @@ func fetchProfileRecords(ctx context.Context, userID string) ([]ProfileRecords, 
 	INNER JOIN maps m ON mp.map_id = m.id
 	INNER JOIN games g ON g.id = m.game_id
 	INNER JOIN chapters c ON c.id = m.chapter_id
-	WHERE (mp.host_id = $1 OR mp.partner_id = $1) AND mp.is_deleted = false ORDER BY mp.map_id, mp.score_count, mp.score_time`, `SELECT * FROM get_placements_multiplayer($1)`)
+	WHERE (mp.host_id = $1 OR mp.partner_id = $1) AND mp.is_deleted = false AND m.game_id = 2 ORDER BY mp.map_id, mp.score_count, mp.score_time`, `SELECT * FROM get_placements_multiplayer($1)`)
 	if err != nil {
 		return nil, err
 	}
