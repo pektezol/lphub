@@ -166,6 +166,15 @@ func fetchProfileRecords(ctx context.Context, userID string) ([]ProfileRecords, 
 	if err != nil {
 		return nil, err
 	}
+	mel, err := fetchProfileRecordGroup(ctx, userID, `SELECT sp.id, m.game_id, m.chapter_id, sp.map_id, m."name", COALESCE((SELECT mh.score_count FROM map_history mh WHERE mh.map_id = sp.map_id AND mh.category_id = 1 ORDER BY mh.score_count ASC LIMIT 1), 0) AS wr_count, sp.score_count, sp.score_time, sp.demo_id, sp.record_date, g.name, g.section_kind, g.section_label, c.name
+	FROM records_sp sp
+	INNER JOIN maps m ON sp.map_id = m.id
+	INNER JOIN games g ON g.id = m.game_id
+	INNER JOIN chapters c ON c.id = m.chapter_id
+	WHERE sp.user_id = $1 AND sp.is_deleted = false AND m.game_id = 3 ORDER BY sp.map_id, sp.score_count, sp.score_time`, `SELECT * FROM get_placements_mel($1)`)
+	if err != nil {
+		return nil, err
+	}
 	multiplayer, err := fetchProfileRecordGroup(ctx, userID, `SELECT mp.id, m.game_id, m.chapter_id, mp.map_id, m."name", COALESCE((SELECT mh.score_count FROM map_history mh WHERE mh.map_id = mp.map_id AND mh.category_id = 1 ORDER BY mh.score_count ASC LIMIT 1), 0) AS wr_count,  mp.score_count, mp.score_time, CASE WHEN host_id = $1 THEN mp.host_demo_id WHEN partner_id = $1 THEN mp.partner_demo_id END demo_id, mp.record_date, g.name, g.section_kind, g.section_label, c.name
 	FROM records_mp mp
 	INNER JOIN maps m ON mp.map_id = m.id
@@ -175,7 +184,7 @@ func fetchProfileRecords(ctx context.Context, userID string) ([]ProfileRecords, 
 	if err != nil {
 		return nil, err
 	}
-	return append(singleplayer, multiplayer...), nil
+	return append(append(singleplayer, multiplayer...), mel...), nil
 }
 
 func fetchProfilePlacements(ctx context.Context, userID, query string) (map[int]int, error) {

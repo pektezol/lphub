@@ -163,6 +163,57 @@ $$ LANGUAGE plpgsql;
 
 
 
+CREATE OR REPLACE FUNCTION get_placements_mel(player_id TEXT)
+RETURNS TABLE (
+    map_id SMALLINT,
+    placement BIGINT
+) AS $$
+BEGIN
+	RETURN QUERY
+	WITH ranked_scores AS (
+    SELECT
+        sp.map_id,
+        sp.user_id,
+        sp.score_count,
+        sp.score_time,
+        ROW_NUMBER() OVER (
+            PARTITION BY sp.map_id, sp.user_id
+            ORDER BY sp.score_count ASC, sp.score_time ASC
+        ) AS rank
+    FROM records_sp sp
+    INNER JOIN maps m ON m.id = sp.map_id
+    WHERE sp.is_deleted = false AND m.game_id = 3
+    ),
+    best_scores AS (
+        SELECT
+            rs.map_id,
+            rs.user_id,
+            rs.score_count,
+            rs.score_time
+        FROM ranked_scores rs
+        WHERE rs.rank = 1
+    ),
+    ranked_placements AS (
+        SELECT
+            bs.map_id,
+            bs.user_id,
+            RANK() OVER (
+                PARTITION BY bs.map_id
+                ORDER BY bs.score_count ASC, bs.score_time ASC
+            ) AS placement
+        FROM best_scores AS bs
+    )
+    SELECT
+        rp.map_id,
+        rp.placement
+    FROM ranked_placements rp
+    WHERE rp.user_id = get_placements_mel.player_id
+    ORDER BY rp.map_id, rp.placement;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
 CREATE OR REPLACE FUNCTION get_placements_multiplayer(player_id TEXT)
 RETURNS TABLE (
     map_id SMALLINT, 
