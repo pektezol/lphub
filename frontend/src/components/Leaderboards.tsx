@@ -8,15 +8,33 @@ import { API } from "@api/Api";
 import useMessage from "@hooks/UseMessage";
 import "@css/Maps.css";
 
-interface LeaderboardsProps {
-  mapID: string;
+export type LeaderboardStatus =
+  | "loading"
+  | "ready"
+  | "empty"
+  | "unavailable"
+  | "error";
+
+export interface LeaderboardResource {
+  status: LeaderboardStatus;
+  data?: MapLeaderboard;
 }
 
-const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
-  const [data, setData] = React.useState<MapLeaderboard | undefined>(undefined);
-  const [status, setStatus] = React.useState<"loading" | "ready" | "empty" | "unavailable" | "error">("loading");
-  const [pageNumber, setPageNumber] = React.useState<number>(1);
-  const [token, setToken] = React.useState<string | undefined>(undefined);
+interface LeaderboardsProps {
+  activePage: number;
+  resource: LeaderboardResource;
+  token?: string;
+  onPageChange: (page: number) => void;
+}
+
+const Leaderboards: React.FC<LeaderboardsProps> = ({
+  activePage,
+  resource,
+  token,
+  onPageChange,
+}) => {
+  const { message, MessageDialogComponent } = useMessage();
+  const { data, status } = resource;
 
   const _download_demo = async (demoID: string) => {
     if (!token) {
@@ -29,45 +47,6 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
       await message("Download Demo", errorMessage);
     }
   };
-
-  const { message, MessageDialogComponent } = useMessage();
-
-  React.useEffect(() => {
-    let isCurrent = true;
-
-    const fetchMapLeaderboards = async () => {
-      setStatus("loading");
-      setData(undefined);
-
-      try {
-        const mapLeaderboards = await API.get_map_leaderboard(mapID, pageNumber.toString());
-        if (!isCurrent) {
-          return;
-        }
-
-        if (mapLeaderboards) {
-          setData(mapLeaderboards);
-          setStatus(mapLeaderboards.records.length === 0 ? "empty" : "ready");
-        } else {
-          setStatus("unavailable");
-        }
-      } catch {
-        if (isCurrent) {
-          setStatus("error");
-        }
-      }
-    };
-
-    void fetchMapLeaderboards();
-
-    return () => {
-      isCurrent = false;
-    };
-  }, [mapID, pageNumber]);
-
-  React.useEffect(() => {
-    API.get_token().then(setToken);
-  }, []);
 
   if (status === "loading") {
     return (
@@ -125,10 +104,10 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({ mapID }) => {
           <div id='page-number'>
             <div>
 
-              <button onClick={() => pageNumber === 1 ? null : setPageNumber(prevPageNumber => prevPageNumber - 1)}
+              <button onClick={() => activePage === 1 ? null : onPageChange(activePage - 1)}
               ><i className='triangle' style={{ position: "relative", left: "-5px", }}></i> </button>
               <span>{data.pagination.current_page}/{data.pagination.total_pages}</span>
-              <button onClick={() => pageNumber === data.pagination.total_pages ? null : setPageNumber(prevPageNumber => prevPageNumber + 1)}
+              <button onClick={() => activePage === data.pagination.total_pages ? null : onPageChange(activePage + 1)}
               ><i className='triangle' style={{ position: "relative", left: "5px", transform: "rotate(180deg)" }}></i> </button>
             </div>
           </div>

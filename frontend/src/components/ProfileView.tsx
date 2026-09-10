@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { API } from "@api/Api";
 import "@css/Profile.css";
 import type { Game, GameChapters } from "@customTypes/Game";
+import type { GameChapter } from "@customTypes/Chapters";
 import type { Map as GameMap } from "@customTypes/Map";
 import type { UserProfile } from "@customTypes/Profile";
 import useConfirm from "@hooks/UseConfirm";
@@ -46,6 +47,28 @@ interface ProfileBoardRow {
   record?: UserProfile["records"][number];
 }
 
+interface ProfileCacheScope {
+  profileID: string;
+  gameChapters: Map<string, GameChapters>;
+  gameChapterRequests: Map<string, Promise<GameChapters | undefined>>;
+  maps: Map<string, GameMap[]>;
+  mapRequests: Map<string, Promise<GameMap[] | undefined>>;
+  isActive: boolean;
+  lifecycle: number;
+}
+
+interface ProfileChapterResource {
+  profileID: string;
+  gameID: string;
+  data: GameChapters;
+}
+
+interface ProfileMapsResource {
+  profileID: string;
+  cacheKey: string;
+  data: GameMap[];
+}
+
 export interface ProfileViewProps {
   profile: UserProfile;
   games: Game[];
@@ -65,6 +88,39 @@ const formatProfileMapName = (
   sectionKind === "mode"
     ? "[" + sectionName.replace(/\s+Mode$/, "") + "] " + mapName
     : mapName;
+
+const getProfileMapsCacheKey = (gameID: string, chapterID: string): string =>
+  chapterID === "0" ? `game:${gameID}` : `chapter:${chapterID}`;
+
+const clearProfileCache = (cache: ProfileCacheScope) => {
+  cache.gameChapters.clear();
+  cache.gameChapterRequests.clear();
+  cache.maps.clear();
+  cache.mapRequests.clear();
+};
+
+const isValidGameChapters = (
+  data: GameChapters | undefined,
+  gameID: string,
+): data is GameChapters =>
+  Boolean(
+    data &&
+      data.game?.id === Number(gameID) &&
+      Array.isArray(data.chapters),
+  );
+
+const isValidChapterMaps = (
+  data: GameChapter | undefined,
+  gameID: string,
+  chapterID: string,
+): data is GameChapter =>
+  Boolean(
+    data &&
+      data.game?.id === Number(gameID) &&
+      data.chapter?.id === Number(chapterID) &&
+      data.chapter.game_id === Number(gameID) &&
+      Array.isArray(data.maps),
+  );
 
 const getProfileRecordSortValue = (
   row: ProfileBoardRow,
@@ -155,10 +211,159 @@ const ProfileView: React.FC<ProfileViewProps> = ({
   );
   const [game, setGame] = React.useState("0");
   const [chapter, setChapter] = React.useState("0");
-  const [chapterData, setChapterData] = React.useState<GameChapters | null>(
-    null,
+  const [chapterDataResource, setChapterDataResource] = React.useState<
+    ProfileChapterResource | undefined
+  >(undefined);
+  const [mapsResource, setMapsResource] = React.useState<
+    ProfileMapsResource | undefined
+  >(undefined);
+  const profileCacheScopeRef = React.useRef<ProfileCacheScope | undefined>(
+    undefined,
   );
-  const [maps, setMaps] = React.useState<GameMap[]>([]);
+
+  const loadGameChapters = React.useCallback(
+    (cache: ProfileCacheScope, gameID: string) => {
+      const cached = cache.gameChapters.get(gameID);
+      if (cached) {
+        return Promise.resolve(cached);
+      }
+
+      const inFlight = cache.gameChapterRequests.get(gameID);
+      if (inFlight) {
+        return inFlight;
+      }
+
+      const request = API.get_games_chapters(gameID)
+        .then((data) => {
+          if (!isValidGameChapters(data, gameID)) {
+            return undefined;
+          }
+
+          if (cache.isActive) {
+            cache.gameChapters.set(gameID, data);
+          }
+          return data;
+        })
+        .catch(() => undefined);
+
+      cache.gameChapterRequests.set(gameID, request);
+      void request.then(() => {
+        if (cache.gameChapterRequests.get(gameID) === request) {
+          cache.gameChapterRequests.delete(gameID);
+        }
+      });
+      return request;
+    },
+    [],
+  );
+
+  const loadMaps = React.useCallback(
+    (cache: ProfileCacheScope, gameID: string, chapterID: string) => {
+      const cacheKey = getProfileMapsCacheKey(gameID, chapterID);
+      const cached = cache.maps.get(cacheKey);
+      if (cached) {
+        return Promise.resolve(cached);
+      }
+
+      const inFlight = cache.mapRequests.get(cacheKey);
+      if (inFlight) {
+        return inFlight;
+      }
+
+      const request: Promise<GameMap[] | undefined> = (chapterID === "0"
+        ? API.get_game_maps(gameID).then((gameMaps) =>
+          Array.isArray(gameMaps) ? gameMaps : undefined,
+        )
+        : API.get_chapters(chapterID).then((chapterMaps) =>
+          isValidChapterMaps(chapterMaps, gameID, chapterID)
+            ? chapterMaps.maps
+            : undefined,
+        )
+      )
+        .then((data) => {
+          if (data === undefined) {
+            return undefined;
+          }
+
+          if (cache.isActive) {
+            cache.maps.set(cacheKey, data);
+          }
+          return data;
+        })
+        .catch(() => undefined);
+
+      cache.mapRequests.set(cacheKey, request);
+      void request.then(() => {
+        if (cache.mapRequests.get(cacheKey) === request) {
+          cache.mapRequests.delete(cacheKey);
+        }
+      });
+      return request;
+    },
+    [],
+  );
+
+  React.useEffect(() => {
+    let cache = profileCacheScopeRef.current;
+    if (!cache || cache.profileID !== profile.steam_id) {
+      if (cache) {
+        cache.isActive = false;
+        clearProfileCache(cache);
+      }
+      cache = {
+        profileID: profile.steam_id,
+        gameChapters: new Map(),
+        gameChapterRequests: new Map(),
+        maps: new Map(),
+        mapRequests: new Map(),
+        isActive: true,
+        lifecycle: 0,
+      };
+      profileCacheScopeRef.current = cache;
+    }
+    cache.isActive = true;
+    cache.lifecycle += 1;
+    const lifecycle = cache.lifecycle;
+
+    return () => {
+      cache.isActive = false;
+      void Promise.resolve().then(() => {
+        if (
+          profileCacheScopeRef.current === cache &&
+          cache.lifecycle === lifecycle
+        ) {
+          clearProfileCache(cache);
+          profileCacheScopeRef.current = undefined;
+        }
+      });
+    };
+  }, [profile.steam_id]);
+
+  const profileCache = profileCacheScopeRef.current;
+  const activeProfileCache =
+    profileCache?.isActive && profileCache.profileID === profile.steam_id
+      ? profileCache
+      : undefined;
+  const mapsCacheKey =
+    game === "0" ? undefined : getProfileMapsCacheKey(game, chapter);
+  const cachedChapterData =
+    game === "0" ? undefined : activeProfileCache?.gameChapters.get(game);
+  const cachedMaps =
+    mapsCacheKey === undefined
+      ? undefined
+      : activeProfileCache?.maps.get(mapsCacheKey);
+  const chapterData =
+    cachedChapterData ??
+    (chapterDataResource?.profileID === profile.steam_id &&
+    chapterDataResource.gameID === game
+      ? chapterDataResource.data
+      : null);
+  const maps =
+    cachedMaps ??
+    (mapsResource?.profileID === profile.steam_id &&
+    mapsResource.cacheKey === mapsCacheKey
+      ? mapsResource.data
+      : []);
 
   const canEdit = editable && Boolean(viewerToken);
   const selectedGame = games.find((candidate) => candidate.id === Number(game));
@@ -432,60 +637,106 @@ const ProfileView: React.FC<ProfileViewProps> = ({
 
   React.useEffect(() => {
     if (game === "0") {
-      setChapterData(null);
+      setChapterDataResource(undefined);
       return;
     }
 
     let cancelled = false;
-    setChapterData(null);
+    const cache = profileCacheScopeRef.current;
+    if (
+      !cache ||
+      !cache.isActive ||
+      cache.profileID !== profile.steam_id
+    ) {
+      setChapterDataResource(undefined);
+      return () => {
+        cancelled = true;
+      };
+    }
 
-    void (async () => {
-      try {
-        const gameChapters = await API.get_games_chapters(game);
-        if (!cancelled) {
-          setChapterData(gameChapters ?? null);
-        }
-      } catch {
-        if (!cancelled) {
-          setChapterData(null);
-        }
+    const cached = cache.gameChapters.get(game);
+    if (cached) {
+      setChapterDataResource({
+        profileID: cache.profileID,
+        gameID: game,
+        data: cached,
+      });
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    setChapterDataResource(undefined);
+    void loadGameChapters(cache, game).then((data) => {
+      if (!cancelled) {
+        setChapterDataResource(
+          data
+            ? {
+              profileID: cache.profileID,
+              gameID: game,
+              data,
+            }
+            : undefined,
+        );
       }
-    })();
+    });
 
     return () => {
       cancelled = true;
     };
-  }, [game]);
+  }, [game, loadGameChapters, profile.steam_id]);
 
   React.useEffect(() => {
     if (game === "0") {
-      setMaps([]);
+      setMapsResource(undefined);
       return;
     }
 
     let cancelled = false;
-    setMaps([]);
+    const cacheKey = getProfileMapsCacheKey(game, chapter);
+    const cache = profileCacheScopeRef.current;
+    if (
+      !cache ||
+      !cache.isActive ||
+      cache.profileID !== profile.steam_id
+    ) {
+      setMapsResource(undefined);
+      return () => {
+        cancelled = true;
+      };
+    }
 
-    void (async () => {
-      try {
-        const gameMaps =
-          chapter === "0"
-            ? await API.get_game_maps(game)
-            : ((await API.get_chapters(chapter))?.maps ?? []);
-        if (!cancelled) {
-          setMaps(gameMaps);
-        }
-      } catch {
-        if (!cancelled) {
-          setMaps([]);
-        }
+    const cached = cache.maps.get(cacheKey);
+    if (cached) {
+      setMapsResource({
+        profileID: cache.profileID,
+        cacheKey,
+        data: cached,
+      });
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    setMapsResource(undefined);
+    void loadMaps(cache, game, chapter).then((data) => {
+      if (!cancelled) {
+        setMapsResource(
+          data
+            ? {
+              profileID: cache.profileID,
+              cacheKey,
+              data,
+            }
+            : undefined,
+        );
       }
-    })();
+    });
 
     return () => {
       cancelled = true;
     };
-  }, [chapter, game]);
+  }, [chapter, game, loadMaps, profile.steam_id]);
 
   React.useEffect(() => {
     resetBoard();
@@ -654,8 +905,8 @@ const ProfileView: React.FC<ProfileViewProps> = ({
               onChange={(event) => {
                 setGame(event.currentTarget.value);
                 setChapter("0");
-                setChapterData(null);
-                setMaps([]);
+                setChapterDataResource(undefined);
+                setMapsResource(undefined);
                 resetBoard();
               }}
             >
@@ -681,7 +932,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                 value={chapter}
                 onChange={(event) => {
                   setChapter(event.currentTarget.value);
-                  setMaps([]);
+                  setMapsResource(undefined);
                   resetBoard();
                 }}
               >

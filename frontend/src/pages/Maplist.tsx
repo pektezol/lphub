@@ -60,12 +60,36 @@ const getDifficultyClass = (difficulty: number) => {
   return "one";
 };
 
+const isValidGameChapter = (
+  section: GameChapter | undefined,
+  sectionId: number,
+  gameId: number,
+): section is GameChapter =>
+  Boolean(
+    section &&
+      section.game?.id === gameId &&
+      section.chapter?.id === sectionId &&
+      section.chapter.game_id === gameId &&
+      Array.isArray(section.maps),
+  );
+
+interface ChapterCacheScope {
+  gameId: number | undefined;
+  chapters: Map<number, GameChapter>;
+  requests: Map<number, Promise<GameChapter | undefined>>;
+  isActive: boolean;
+  lifecycle: number;
+}
+
 const Maplist: React.FC = () => {
   const [game, setGame] = React.useState<Game | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [gameChapters, setGameChapters] = React.useState<GamesChapters>();
   const [currentSection, setCurrentSection] = React.useState<GameChapter>();
   const [dropdownActive, setDropdownActive] = React.useState(false);
+  const chapterCacheScopeRef = React.useRef<ChapterCacheScope | undefined>(
+    undefined,
+  );
 
   const { id: gameIdParam } = useParams<{ id: string }>();
   const location = useLocation();
@@ -77,10 +101,10 @@ const Maplist: React.FC = () => {
 
   const selectedSectionId = React.useMemo(
     () =>
-      gameChapters
+      gameChapters && gameChapters.game.id === gameId
         ? getSelectedSectionId(gameChapters, requestedChapterId)
         : undefined,
-    [gameChapters, requestedChapterId],
+    [gameChapters, gameId, requestedChapterId],
   );
 
   const updateSearchParam = (name: "cat" | "chapter", value: number) => {
@@ -94,6 +118,25 @@ const Maplist: React.FC = () => {
 
   React.useEffect(() => {
     let isCurrent = true;
+    let cacheScope = chapterCacheScopeRef.current;
+    if (!cacheScope || cacheScope.gameId !== gameId) {
+      if (cacheScope) {
+        cacheScope.isActive = false;
+        cacheScope.chapters.clear();
+        cacheScope.requests.clear();
+      }
+      cacheScope = {
+        gameId,
+        chapters: new Map(),
+        requests: new Map(),
+        isActive: true,
+        lifecycle: 0,
+      };
+      chapterCacheScopeRef.current = cacheScope;
+    }
+    cacheScope.isActive = true;
+    cacheScope.lifecycle += 1;
+    const lifecycle = cacheScope.lifecycle;
     setGame(null);
     setGameChapters(undefined);
     setCurrentSection(undefined);
@@ -104,6 +147,17 @@ const Maplist: React.FC = () => {
       setIsLoading(false);
       return () => {
         isCurrent = false;
+        cacheScope.isActive = false;
+        void Promise.resolve().then(() => {
+          if (
+            chapterCacheScopeRef.current === cacheScope &&
+            cacheScope.lifecycle === lifecycle
+          ) {
+            cacheScope.chapters.clear();
+            cacheScope.requests.clear();
+            chapterCacheScopeRef.current = undefined;
+          }
+        });
       };
     }
 
@@ -113,7 +167,12 @@ const Maplist: React.FC = () => {
         if (!isCurrent) {
           return;
         }
-        if (!chapters || !chapters.game || typeof chapters.game !== "object") {
+        if (
+          !chapters ||
+          !chapters.game ||
+          typeof chapters.game !== "object" ||
+          chapters.game.id !== gameId
+        ) {
           setGame(null);
           setGameChapters(undefined);
           return;
@@ -134,6 +193,17 @@ const Maplist: React.FC = () => {
     void fetchGame();
     return () => {
       isCurrent = false;
+      cacheScope.isActive = false;
+      void Promise.resolve().then(() => {
+        if (
+          chapterCacheScopeRef.current === cacheScope &&
+          cacheScope.lifecycle === lifecycle
+        ) {
+          cacheScope.chapters.clear();
+          cacheScope.requests.clear();
+          chapterCacheScopeRef.current = undefined;
+        }
+      });
     };
   }, [gameId]);
 
@@ -146,23 +216,69 @@ const Maplist: React.FC = () => {
         isCurrent = false;
       };
     }
-    const fetchSection = async () => {
-      try {
-        const section = await API.get_chapters(selectedSectionId.toString());
-        if (isCurrent) {
-          setCurrentSection(section);
+
+    const cacheScope = chapterCacheScopeRef.current;
+    if (
+      !cacheScope ||
+      !cacheScope.isActive ||
+      cacheScope.gameId !== gameId
+    ) {
+      return () => {
+        isCurrent = false;
+      };
+    }
+    const chapterCache = cacheScope.chapters;
+    const chapterRequests = cacheScope.requests;
+    const cachedSection = chapterCache.get(selectedSectionId);
+    if (cachedSection) {
+      setCurrentSection(cachedSection);
+      return () => {
+        isCurrent = false;
+      };
+    }
+
+    let request = chapterRequests.get(selectedSectionId);
+    if (!request) {
+      const chapterId = selectedSectionId;
+      const requestedGameId = gameId;
+      const createdRequest = API.get_chapters(chapterId.toString())
+        .then((section) => {
+          if (
+            requestedGameId === undefined ||
+            !isValidGameChapter(section, chapterId, requestedGameId)
+          ) {
+            return undefined;
+          }
+
+          if (
+            cacheScope.isActive &&
+            cacheScope.gameId === requestedGameId
+          ) {
+            chapterCache.set(chapterId, section);
+          }
+          return section;
+        })
+        .catch(() => undefined);
+
+      chapterRequests.set(chapterId, createdRequest);
+      void createdRequest.then(() => {
+        if (chapterRequests.get(chapterId) === createdRequest) {
+          chapterRequests.delete(chapterId);
         }
-      } catch {
-        if (isCurrent) {
-          setCurrentSection(undefined);
-        }
+      });
+      request = createdRequest;
+    }
+
+    void request.then((section) => {
+      if (isCurrent) {
+        setCurrentSection(section);
       }
-    };
-    void fetchSection();
+    });
+
     return () => {
       isCurrent = false;
     };
-  }, [selectedSectionId]);
+  }, [gameId, selectedSectionId]);
 
   if (isLoading || (game !== null && game.id !== gameId)) {
     return <main />;
@@ -186,10 +302,18 @@ const Maplist: React.FC = () => {
   const sections = Array.isArray(gameChapters?.chapters)
     ? gameChapters.chapters
     : [];
+  const chapterCacheScope = chapterCacheScopeRef.current;
+  const cachedSection =
+    selectedSectionId === undefined ||
+    !chapterCacheScope ||
+    chapterCacheScope.gameId !== gameId
+      ? undefined
+      : chapterCacheScope.chapters.get(selectedSectionId);
   const displayedSection =
-    currentSection?.chapter?.id === selectedSectionId
+    cachedSection ??
+    (currentSection?.chapter?.id === selectedSectionId
       ? currentSection
-      : undefined;
+      : undefined);
   const gameCategories = Array.isArray(game.category_portals)
     ? game.category_portals
     : [];
