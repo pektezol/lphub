@@ -16,32 +16,7 @@ Full list of contributors can be found in the [CONTRIBUTORS](https://github.com/
 
 ## Documentation
 
-Full API documentation can be found at https://lp.pektezol.dev/api/v1/
-
-## Development
-
-Run the frontend against the hosted API:
-
-```sh
-cd frontend
-npm run dev
-```
-
-Run the frontend against a local backend instead:
-
-```sh
-cd backend
-go run .
-```
-
-Then, in another terminal:
-
-```sh
-cd frontend
-npm run dev:local
-```
-
-The local backend must be configured to listen on port `4000`.
+Full API documentation can be found at https://lp.portal2.sr/api/v1/
 
 ## License
 
@@ -51,18 +26,14 @@ This project is licensed under the GNU Affero General Public License v3.0 - see 
 
 If you have any questions or feedback, please feel free to contact us at our [Discord](https://discord.gg/xq6TySyA4c).
 
-## Support
-
-If you want to support the creator, you can do it via using GitHub sponsorships by clicking [here](https://github.com/sponsors/pektezol).
-
 ## Privacy Policy
 
-* We store a JWT (JSON Web Token) on your device as a cookie to facilitate authentication to LPHUB.
-* We collect and store your publicly available id, username, avatar link, and country code from Steam during your first login to LPHUB. The exact date and time of your LPHUB account creation is also stored.
-* In a case of profile update, newly changed values replaces the old data, and the update time is also stored.
-* All of the demo proof submitted by users are stored in a publicly accessible Backblaze B2 bucket. By submitting demo as a proof, you agree that your demo proof becomes available to the public.
-* Any information, ideas, or solutions shared on LPHUB are intended to be openly accessible and available for collaborative purposes. Users should understand that the content they contribute might be viewed and used by others for the purpose of generating insights and solutions.
-* At any time, Privacy Policy may get updated to reflect changes in LPHUB. The effective date at the bottom of the README indicates when the most recent changes were made.
+- We store a JWT (JSON Web Token) on your device as a cookie to facilitate authentication to LPHUB.
+- We collect and store your publicly available id, username, avatar link, and country code from Steam during your first login to LPHUB. The exact date and time of your LPHUB account creation is also stored.
+- In a case of profile update, newly changed values replaces the old data, and the update time is also stored.
+- All of the demo proof submitted by users are stored in a publicly accessible Backblaze B2 bucket. By submitting demo as a proof, you agree that your demo proof becomes available to the public.
+- Any information, ideas, or solutions shared on LPHUB are intended to be openly accessible and available for collaborative purposes. Users should understand that the content they contribute might be viewed and used by others for the purpose of generating insights and solutions.
+- At any time, Privacy Policy may get updated to reflect changes in LPHUB. The effective date at the bottom of the README indicates when the most recent changes were made.
 
 ## Disclaimer
 
@@ -80,4 +51,4 @@ By using LPHUB, you acknowledge that you have read and understood this disclaime
 
 ## Last Update
 
-2024-11-25
+2026-09-10
