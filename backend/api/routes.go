@@ -36,7 +36,8 @@ func InitRoutes(router *gin.Engine) {
 		v1.PUT("/maps/:mapid/difficulty", IsAuthenticated, handlers.EditMapDifficulty)
 		// - Leaderboards
 		v1.GET("/maps/:mapid/leaderboards", RateLimit, handlers.FetchMapLeaderboards)
-		v1.POST("/maps/:mapid/record", IsAuthenticated, handlers.CreateRecordWithDemo)
+		v1.OPTIONS("/maps/:mapid/record", AllowRecordUploadCORS)
+		v1.POST("/maps/:mapid/record", AllowRecordUploadCORS, IsAuthenticated, handlers.CreateRecordWithDemo)
 		v1.DELETE("/maps/:mapid/record/:recordid", IsAuthenticated, handlers.DeleteRecord)
 		v1.GET("/demos", RateLimit, IsAuthenticated, handlers.DownloadDemoWithID)
 		// - Discussions
