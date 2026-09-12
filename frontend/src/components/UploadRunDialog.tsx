@@ -1,6 +1,6 @@
 import React from "react";
 import { UploadRunContent } from "@customTypes/Content";
-import { ScoreboardTempUpdate, SourceDemoParser, NetMessages } from "@nekz/sdp";
+import { SourceDemoParser } from "@nekz/sdp";
 
 import "@css/UploadRunDialog.css";
 import { Game } from "@customTypes/Game";
@@ -17,6 +17,8 @@ interface UploadRunDialogProps {
   onClose: (updateProfile: boolean) => void;
   games: Game[];
 }
+
+const DEMO_HEADER_SIZE = 1072;
 
 const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose, games }) => {
 
@@ -151,45 +153,55 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
       return;
     }
 
-    const demo = SourceDemoParser.default()
-      .setOptions({ packets: true, header: true })
-      .parse(await host_demo.arrayBuffer());
-    const scoreboard = demo.findPacket<NetMessages.SvcUserMessage>((msg) => {
-      return msg instanceof NetMessages.SvcUserMessage && msg.userMessage instanceof ScoreboardTempUpdate;
-    });
-
-    if (!scoreboard) {
-      await message("Error", "Error while processing demo: Unable to get scoreboard result. Either there is a demo that is corrupt or haven't been recorded in challenge mode.");
+    if (host_demo.size < DEMO_HEADER_SIZE) {
+      await message("Error", "Error while processing demo: The selected file is too small to be a valid demo.");
       return;
     }
 
-    if (!demo.mapName || !MapNames[demo.mapName]) {
+    setIsUploading(true);
+    messageLoad("Reading demo header...");
+
+    let mapName: string | undefined;
+    try {
+      const demo = SourceDemoParser.default()
+        .setOptions({ header: true, messages: false })
+        .parse(await host_demo.slice(0, DEMO_HEADER_SIZE).arrayBuffer());
+      mapName = demo.mapName;
+    } catch {
+      messageLoadClose();
+      setIsUploading(false);
+      await message("Error", "Error while processing demo: Unable to read the demo header. Please select a valid .dem file.");
+      return;
+    }
+    messageLoadClose();
+
+    if (!mapName || !MapNames[mapName]) {
+      setIsUploading(false);
       await message("Error", "Error while processing demo: Invalid map name.");
       return;
     }
-    const map = MapNames[demo.mapName];
+    const map = MapNames[mapName];
 
     if (map.game_id !== selectedGame.id) {
+      setIsUploading(false);
       await message("Error", "Error while processing demo: Demo does not belong to the selected game.");
       return;
     }
 
-    const { portalScore, timeScore } = scoreboard.userMessage?.as<ScoreboardTempUpdate>() ?? {};
-
-    const userConfirmed = await confirm("Upload Record", `Map Name: ${demo.mapName}\nPortal Count: ${portalScore}\nTicks: ${timeScore}\n\nAre you sure you want to upload this demo?`);
+    const userConfirmed = await confirm("Upload Record", `Map Name: ${mapName}\n\nThe score will be verified after upload.\n\nAre you sure you want to upload this demo?`);
 
     if (!userConfirmed) {
+      setIsUploading(false);
       return;
     }
 
     const uploadTarget = selectedGame.is_coop ? "demos" : "demo";
     messageLoad(`Uploading ${uploadTarget}...`);
-    setIsUploading(true);
 
     let success = false;
     let response = "Could not upload the demo. Please try again.";
     try {
-      [success, response] = await API.post_record(
+      const result = await API.post_record(
         token,
         uploadRunContent,
         map.id,
@@ -202,6 +214,11 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
           );
         },
       );
+      success = result.success;
+      response = result.message;
+      if (success && result.data) {
+        response += `\n\nPortal Count: ${result.data.score_count}\nTicks: ${result.data.score_time}`;
+      }
     } catch {
       // Keep the dialog responsive when the request fails before the API can respond.
     } finally {

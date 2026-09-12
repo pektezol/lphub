@@ -9,6 +9,15 @@ type MapLeaderboardResponse = Omit<MapLeaderboard, "records"> & {
 
 export type UploadProgressHandler = (percentage: number) => void;
 
+export interface RecordUploadResult {
+  success: boolean;
+  message: string;
+  data: {
+    score_count: number;
+    score_time: number;
+  } | null;
+}
+
 export const get_map_summary = async (map_id: string): Promise<MapSummary> => {
   const response = await axios.get(url(`maps/${map_id}/summary`));
   return response.data.data;
@@ -85,11 +94,11 @@ export const post_record = async (
   map_id: number,
   isCoop: boolean,
   onUploadProgress?: UploadProgressHandler,
-): Promise<[boolean, string]> => {
+): Promise<RecordUploadResult> => {
   const formData = isCoop && run.partner_demo
     ? { "host_demo": run.host_demo, "partner_demo": run.partner_demo }
     : { "host_demo": run.host_demo };
-  const response = await axios.postForm(url(`maps/${map_id}/record`), formData, {
+  const response = await axios.postForm<RecordUploadResult>(url(`maps/${map_id}/record`), formData, {
     headers: {
       "Authorization": token,
     },
@@ -101,7 +110,7 @@ export const post_record = async (
       onUploadProgress(Math.min(100, Math.round((event.loaded / event.total) * 100)));
     },
   });
-  return [response.data.success, response.data.message];
+  return response.data;
 };
 
 export const delete_map_record = async (token: string, map_id: number, record_id: number): Promise<boolean> => {
