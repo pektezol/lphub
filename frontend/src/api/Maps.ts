@@ -7,6 +7,8 @@ type MapLeaderboardResponse = Omit<MapLeaderboard, "records"> & {
   records: (Omit<MapLeaderboardRecordSingleplayer, "kind"> | Omit<MapLeaderboardRecordMultiplayer, "kind">)[];
 };
 
+export type UploadProgressHandler = (percentage: number) => void;
+
 export const get_map_summary = async (map_id: string): Promise<MapSummary> => {
   const response = await axios.get(url(`maps/${map_id}/summary`));
   return response.data.data;
@@ -77,14 +79,27 @@ export const delete_map_discussion = async (token: string, map_id: string, discu
   return response.data.success;
 };
 
-export const post_record = async (token: string, run: UploadRunContent, map_id: number, isCoop: boolean): Promise<[boolean, string]> => {
+export const post_record = async (
+  token: string,
+  run: UploadRunContent,
+  map_id: number,
+  isCoop: boolean,
+  onUploadProgress?: UploadProgressHandler,
+): Promise<[boolean, string]> => {
   const formData = isCoop && run.partner_demo
     ? { "host_demo": run.host_demo, "partner_demo": run.partner_demo }
     : { "host_demo": run.host_demo };
   const response = await axios.postForm(url(`maps/${map_id}/record`), formData, {
     headers: {
       "Authorization": token,
-    }
+    },
+    onUploadProgress: (event) => {
+      if (!onUploadProgress || !event.total) {
+        return;
+      }
+
+      onUploadProgress(Math.min(100, Math.round((event.loaded / event.total) * 100)));
+    },
   });
   return [response.data.success, response.data.message];
 };

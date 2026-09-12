@@ -3,7 +3,6 @@ import MessageDialogLoad from "@components/MessageDialogLoad";
 
 const useMessageLoad = () => {
   const [isOpen, setIsOpen] = React.useState(false);
-
   const [title, setTitle] = React.useState<string>("");
   const [resolvePromise, setResolvePromise] = React.useState<(() => void) | null>(null);
 
@@ -13,6 +12,10 @@ const useMessageLoad = () => {
     return new Promise((resolve) => {
       setResolvePromise(() => resolve);
     });
+  };
+
+  const messageLoadUpdate = (title: string) => {
+    setTitle(title);
   };
 
   const messageLoadClose = () => {
@@ -29,7 +32,7 @@ const useMessageLoad = () => {
     </div>
   );
 
-  return { messageLoad, messageLoadClose, MessageDialogLoadComponent };
+  return { messageLoad, messageLoadUpdate, messageLoadClose, MessageDialogLoadComponent };
 };
 
 export default useMessageLoad;

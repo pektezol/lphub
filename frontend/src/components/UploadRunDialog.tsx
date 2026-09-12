@@ -22,7 +22,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
 
   const { message, MessageDialogComponent } = useMessage();
   const { confirm, ConfirmDialogComponent } = useConfirm();
-  const { messageLoad, messageLoadClose, MessageDialogLoadComponent } = useMessageLoad();
+  const { messageLoad, messageLoadUpdate, messageLoadClose, MessageDialogLoadComponent } = useMessageLoad();
 
   const navigate = useNavigate();
 
@@ -30,6 +30,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
     host_demo: null,
     partner_demo: null,
   });
+  const [isUploading, setIsUploading] = React.useState(false);
 
   const [selectedGameID, setSelectedGameID] = React.useState<number | null>(null);
   const selectedGame = games.find((game) => game.id === selectedGameID);
@@ -130,7 +131,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
   };
 
   const _upload_run = async () => {
-    if (!token) {
+    if (!token || isUploading) {
       return;
     }
 
@@ -181,9 +182,33 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
       return;
     }
 
-    messageLoad("Uploading...");
-    const [success, response] = await API.post_record(token, uploadRunContent, map.id, selectedGame.is_coop);
-    messageLoadClose();
+    const uploadTarget = selectedGame.is_coop ? "demos" : "demo";
+    messageLoad(`Uploading ${uploadTarget}...`);
+    setIsUploading(true);
+
+    let success = false;
+    let response = "Could not upload the demo. Please try again.";
+    try {
+      [success, response] = await API.post_record(
+        token,
+        uploadRunContent,
+        map.id,
+        selectedGame.is_coop,
+        (percentage) => {
+          messageLoadUpdate(
+            percentage === 100
+              ? `Processing uploaded ${uploadTarget}...`
+              : `Uploading ${uploadTarget}... ${percentage}%`,
+          );
+        },
+      );
+    } catch {
+      // Keep the dialog responsive when the request fails before the API can respond.
+    } finally {
+      messageLoadClose();
+      setIsUploading(false);
+    }
+
     await message("Upload Record", response);
     if (success) {
       setUploadRunContent({
@@ -295,8 +320,8 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
               }
             </div>
             <div className='upload-run-buttons-container'>
-              <button onClick={_upload_run} disabled={!selectedGame}>Submit</button>
-              <button onClick={() => {
+              <button onClick={_upload_run} disabled={!selectedGame || isUploading}>Submit</button>
+              <button disabled={isUploading} onClick={() => {
                 onClose(false);
                 setUploadRunContent({
                   host_demo: null,

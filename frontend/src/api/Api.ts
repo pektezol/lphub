@@ -19,6 +19,7 @@ import {
   delete_map_discussion,
   post_record,
   delete_map_record,
+  type UploadProgressHandler,
 } from "@api/Maps";
 import { download_demo } from "@api/Maps";
 import {
@@ -75,7 +76,8 @@ export const API = {
     run: UploadRunContent,
     map_id: number,
     isCoop: boolean,
-  ) => post_record(token, run, map_id, isCoop),
+    onUploadProgress?: UploadProgressHandler,
+  ) => post_record(token, run, map_id, isCoop, onUploadProgress),
 
   delete_map_discussion: (
     token: string,
