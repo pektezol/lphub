@@ -48,6 +48,6 @@ func main() {
 	// router.Use(cors.Default()) // ONLY FOR DEV
 	database.ConnectDB()
 	api.InitRoutes(router)
-	router.MaxMultipartMemory = 250 << 20 // 250 mb limit for demos
+	router.MaxMultipartMemory = 16 << 20 // Keep large demo uploads on disk instead of in memory.
 	router.Run(fmt.Sprintf(":%s", os.Getenv("PORT")))
 }

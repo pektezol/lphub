@@ -43,6 +43,12 @@ type RecordResponse struct {
 //	@Success		200				{object}	models.Response{data=RecordResponse}
 //	@Router			/maps/{mapid}/record [post]
 func CreateRecordWithDemo(c *gin.Context) {
+	defer func() {
+		if c.Request.MultipartForm != nil {
+			_ = c.Request.MultipartForm.RemoveAll()
+		}
+	}()
+
 	id := c.Param("mapid")
 	mapID, err := strconv.Atoi(id)
 	if err != nil {
