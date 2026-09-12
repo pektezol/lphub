@@ -1,5 +1,5 @@
 import axios from "axios";
-import { url } from "@api/Api";
+import { recordUploadUrl, url } from "@api/Api";
 import { MapDiscussionContent, UploadRunContent } from "@customTypes/Content";
 import { MapSummary, MapLeaderboard, MapDiscussions, MapDiscussion, MapLeaderboardRecordMultiplayer, MapLeaderboardRecordSingleplayer } from "@customTypes/Map";
 
@@ -98,7 +98,7 @@ export const post_record = async (
   const formData = isCoop && run.partner_demo
     ? { "host_demo": run.host_demo, "partner_demo": run.partner_demo }
     : { "host_demo": run.host_demo };
-  const response = await axios.postForm<RecordUploadResult>(url(`maps/${map_id}/record`), formData, {
+  const response = await axios.postForm<RecordUploadResult>(recordUploadUrl(`maps/${map_id}/record`), formData, {
     headers: {
       "Authorization": token,
     },

@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import { UploadRunContent } from "@customTypes/Content";
 import { SourceDemoParser } from "@nekz/sdp";
 
@@ -219,8 +220,12 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
       if (success && result.data) {
         response += `\n\nPortal Count: ${result.data.score_count}\nTicks: ${result.data.score_time}`;
       }
-    } catch {
-      // Keep the dialog responsive when the request fails before the API can respond.
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 413) {
+        response = "The demo is too large for this upload server. Please contact an administrator.";
+      } else if (axios.isAxiosError(error) && error.code === "ERR_NETWORK") {
+        response = "Could not reach the upload server. Please check your connection and try again.";
+      }
     } finally {
       messageLoadClose();
       setIsUploading(false);

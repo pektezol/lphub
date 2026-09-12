@@ -108,7 +108,17 @@ export const API = {
 };
 
 const BASE_API_URL: string = "/api/v1/";
+const RECORD_UPLOAD_API_URL: string = import.meta.env.DEV
+  ? BASE_API_URL
+  : "https://lp.pektezol.dev/api/v1/";
 
 export function url(path: string): string {
   return BASE_API_URL + path;
+}
+
+export function recordUploadUrl(path: string): string {
+  const baseUrl = RECORD_UPLOAD_API_URL.endsWith("/")
+    ? RECORD_UPLOAD_API_URL
+    : `${RECORD_UPLOAD_API_URL}/`;
+  return baseUrl + path;
 }
