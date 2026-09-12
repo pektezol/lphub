@@ -4,6 +4,7 @@ import (
 	"context"
 	stdsql "database/sql"
 	"fmt"
+	"hash/fnv"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -28,6 +29,21 @@ type RecordRequest struct {
 type RecordResponse struct {
 	ScoreCount int `json:"score_count"`
 	ScoreTime  int `json:"score_time"`
+}
+
+func duplicateRecordExists(tx *stdsql.Tx, lockKey, query string, args ...any) (bool, error) {
+	hasher := fnv.New64a()
+	_, _ = hasher.Write([]byte(lockKey))
+	if _, err := tx.Exec(`SELECT pg_advisory_xact_lock($1)`, int64(hasher.Sum64())); err != nil {
+		return false, err
+	}
+
+	var exists bool
+	if err := tx.QueryRow(query, args...).Scan(&exists); err != nil {
+		return false, err
+	}
+
+	return exists, nil
 }
 
 // POST Record
@@ -196,7 +212,29 @@ func CreateRecordWithDemo(c *gin.Context) {
 		}
 		sql := `INSERT INTO records_mp(map_id,score_count,score_time,host_id,partner_id,host_demo_id,partner_demo_id) 
 		VALUES($1, $2, $3, $4, $5, $6, $7)`
-		_, err := tx.Exec(sql, mapID, hostDemoScoreCount, hostDemoScoreTime, convertedHostSteamID, convertedPartnerSteamID, hostDemoUUID, partnerDemoUUID)
+		duplicate, err := duplicateRecordExists(
+			tx,
+			fmt.Sprintf("mp:%d:%s:%s:%d:%d", mapID, convertedHostSteamID, convertedPartnerSteamID, hostDemoScoreCount, hostDemoScoreTime),
+			`SELECT EXISTS (
+				SELECT 1 FROM records_mp
+				WHERE map_id = $1 AND host_id = $2 AND partner_id = $3
+					AND score_count = $4 AND score_time = $5 AND is_deleted = false
+			)`,
+			mapID, convertedHostSteamID, convertedPartnerSteamID, hostDemoScoreCount, hostDemoScoreTime,
+		)
+		if err != nil {
+			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+			return
+		}
+		if duplicate {
+			c.JSON(http.StatusOK, models.Response{
+				Success: true,
+				Message: "An identical record already exists.",
+				Data:    RecordResponse{ScoreCount: hostDemoScoreCount, ScoreTime: hostDemoScoreTime},
+			})
+			return
+		}
+		_, err = tx.Exec(sql, mapID, hostDemoScoreCount, hostDemoScoreTime, convertedHostSteamID, convertedPartnerSteamID, hostDemoUUID, partnerDemoUUID)
 		if err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
@@ -204,7 +242,29 @@ func CreateRecordWithDemo(c *gin.Context) {
 	} else {
 		sql := `INSERT INTO records_sp(map_id,score_count,score_time,user_id,demo_id) 
 		VALUES($1, $2, $3, $4, $5)`
-		_, err := tx.Exec(sql, mapID, hostDemoScoreCount, hostDemoScoreTime, user.(models.User).SteamID, hostDemoUUID)
+		duplicate, err := duplicateRecordExists(
+			tx,
+			fmt.Sprintf("sp:%d:%s:%d:%d", mapID, user.(models.User).SteamID, hostDemoScoreCount, hostDemoScoreTime),
+			`SELECT EXISTS (
+				SELECT 1 FROM records_sp
+				WHERE map_id = $1 AND user_id = $2
+					AND score_count = $3 AND score_time = $4 AND is_deleted = false
+			)`,
+			mapID, user.(models.User).SteamID, hostDemoScoreCount, hostDemoScoreTime,
+		)
+		if err != nil {
+			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+			return
+		}
+		if duplicate {
+			c.JSON(http.StatusOK, models.Response{
+				Success: true,
+				Message: "An identical record already exists.",
+				Data:    RecordResponse{ScoreCount: hostDemoScoreCount, ScoreTime: hostDemoScoreTime},
+			})
+			return
+		}
+		_, err = tx.Exec(sql, mapID, hostDemoScoreCount, hostDemoScoreTime, user.(models.User).SteamID, hostDemoUUID)
 		if err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
