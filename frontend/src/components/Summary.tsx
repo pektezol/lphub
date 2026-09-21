@@ -17,6 +17,22 @@ function isTheoreticalRoute(runnerName: string): boolean {
   return runnerName === placeholderRunnerName;
 }
 
+function findPreferredRouteIndex(
+  routes: MapSummary["summary"]["routes"],
+  categoryID: number | undefined,
+): number {
+  const firstCompletedRouteIndex = routes.findIndex(
+    (route) =>
+      route.category.id === categoryID
+      && !isTheoreticalRoute(route.history.runner_name),
+  );
+  if (firstCompletedRouteIndex !== -1) {
+    return firstCompletedRouteIndex;
+  }
+
+  return routes.findIndex((route) => route.category.id === categoryID);
+}
+
 const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) => {
 
   const [selectedCategory, setSelectedCategory] = React.useState<number | undefined>(undefined);
@@ -48,7 +64,7 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
   };
 
   function _select_category(categoryID: number) {
-    const routeIndex = data.summary.routes.findIndex(route => route.category.id === categoryID);
+    const routeIndex = findPreferredRouteIndex(data.summary.routes, categoryID);
     setSelectedCategory(categoryID);
     setSelectedRun(routeIndex === -1 ? undefined : routeIndex);
   };
@@ -63,7 +79,7 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
       ? selectedCategory
       : categories[0]?.id;
     setSelectedCategory(categoryID);
-    const routeIndex = data.summary.routes.findIndex(route => route.category.id === categoryID);
+    const routeIndex = findPreferredRouteIndex(data.summary.routes, categoryID);
     setSelectedRun(routeIndex === -1 ? undefined : routeIndex);
   }, [categories, data, selectedCategory, setSelectedRun]);
 
