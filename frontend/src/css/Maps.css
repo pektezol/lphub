@@ -381,6 +381,12 @@ p>span.portal-count {
     color: white;
 }
 
+.theoretical-route-note {
+    color: #c9c9d5;
+    font-size: 0.6em;
+    font-weight: normal;
+}
+
 #description-text {
     display: block;
     font-size: 21px;

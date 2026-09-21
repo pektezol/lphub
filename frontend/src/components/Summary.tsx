@@ -11,6 +11,12 @@ interface SummaryProps {
   data: MapSummary;
 }
 
+const placeholderRunnerName = "Placeholder";
+
+function isTheoreticalRoute(runnerName: string): boolean {
+  return runnerName === placeholderRunnerName;
+}
+
 const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) => {
 
   const [selectedCategory, setSelectedCategory] = React.useState<number | undefined>(undefined);
@@ -33,6 +39,8 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
     : data.summary.routes[selectedRun]?.category.id === selectedCategory
       ? data.summary.routes[selectedRun]
       : undefined;
+  const selectedRouteIsTheoretical = selectedRoute !== undefined
+    && isTheoreticalRoute(selectedRoute.history.runner_name);
 
   function _select_run(idx: number) {
     const route = categoryRoutes[idx];
@@ -95,17 +103,21 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
                 <div id='records'>
 
                   {categoryRoutes
-                    .map((r, index) => (
-                      <button className='record' key={r.route_id} style={{ backgroundColor: selectedRoute === r ? "#161723" : "#2b2e46" }} onClick={() => {
-                        _select_run(index);
-                      }}>
-                        <span>{new Date(r.history.date).toLocaleDateString(
-                          "en-US", { month: "long", day: "numeric", year: "numeric" }
-                        )}</span>
-                        <span>{r.history.score_count}</span>
-                        <span>{r.history.runner_name}</span>
-                      </button>
-                    ))}
+                    .map((r, index) => {
+                      const routeIsTheoretical = isTheoreticalRoute(r.history.runner_name);
+
+                      return (
+                        <button className='record' key={r.route_id} style={{ backgroundColor: selectedRoute === r ? "#161723" : "#2b2e46" }} onClick={() => {
+                          _select_run(index);
+                        }}>
+                          <span>{routeIsTheoretical ? "-" : new Date(r.history.date).toLocaleDateString(
+                            "en-US", { month: "long", day: "numeric", year: "numeric" }
+                          )}</span>
+                          <span>{r.history.score_count}</span>
+                          <span>{routeIsTheoretical ? `${r.history.runner_name}*` : r.history.runner_name}</span>
+                        </button>
+                      );
+                    })}
                 </div>
               </>
             }
@@ -157,7 +169,14 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
               {selectedRoute.showcase !== "" ?
                 <iframe title='Showcase video' src={"https://www.youtube.com/embed/" + _get_youtube_id(selectedRoute.showcase)}> </iframe>
                 : ""}
-              <h3>Route Description</h3>
+              <h3>
+                Route Description
+                {selectedRouteIsTheoretical && (
+                  <span className='theoretical-route-note'>
+                    {" *: This is a theoretical route that hasn't been completed yet."}
+                  </span>
+                )}
+              </h3>
               <span id='description-text'>
                 <ReactMarkdown>
                   {selectedRoute.description}
