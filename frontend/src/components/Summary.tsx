@@ -111,9 +111,9 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
             {categoryRoutes.length === 0 ? <h5>There are no records for this category.</h5> :
               <>
                 <div className='record-top'>
-                  <span>Date</span>
                   <span>Record</span>
                   <span>First Completion</span>
+                  <span>Date</span>
                 </div>
                 <hr />
                 <div id='records'>
@@ -126,11 +126,11 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
                         <button className='record' key={r.route_id} style={{ backgroundColor: selectedRoute === r ? "#161723" : "#2b2e46" }} onClick={() => {
                           _select_run(index);
                         }}>
-                          <span>{routeIsTheoretical ? "-" : new Date(r.history.date).toLocaleDateString(
+                          <span>{routeIsTheoretical ? `${r.history.score_count}*` : r.history.score_count}</span>
+                          <span>{routeIsTheoretical ? "TBD" : r.history.runner_name}</span>
+                          <span>{routeIsTheoretical ? "TBD" : new Date(r.history.date).toLocaleDateString(
                             "en-US", { month: "long", day: "numeric", year: "numeric" }
                           )}</span>
-                          <span>{r.history.score_count}</span>
-                          <span>{routeIsTheoretical ? `${r.history.runner_name}*` : r.history.runner_name}</span>
                         </button>
                       );
                     })}
