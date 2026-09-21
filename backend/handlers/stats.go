@@ -111,6 +111,7 @@ func Timeline(c *gin.Context) {
 			FROM map_history mh
 			INNER JOIN maps m ON m.id = mh.map_id
 			WHERE mh.category_id = 1 AND m.game_id = 1 AND mh.record_date >= '2013-01-01'
+				AND mh.user_name <> 'Placeholder'
 			ORDER BY record_date
 		),
 		map_best_at_date AS (
@@ -124,10 +125,12 @@ func Timeline(c *gin.Context) {
 				FROM map_history mh
 				INNER JOIN maps m ON m.id = mh.map_id
 				WHERE mh.category_id = 1 AND m.game_id = 1
+					AND mh.user_name <> 'Placeholder'
 			) map_ids
 			LEFT JOIN map_history mh ON mh.map_id = map_ids.map_id
 				AND mh.category_id = 1 
 				AND mh.record_date <= ds.date
+				AND mh.user_name <> 'Placeholder'
 			GROUP BY ds.date, map_ids.map_id
 		)
 		SELECT 
@@ -144,6 +147,7 @@ func Timeline(c *gin.Context) {
 			FROM map_history mh
 			INNER JOIN maps m ON m.id = mh.map_id
 			WHERE mh.category_id = 1 AND m.game_id = 2 AND mh.record_date >= '2013-01-01'
+				AND mh.user_name <> 'Placeholder'
 			ORDER BY record_date
 		),
 		map_best_at_date AS (
@@ -157,10 +161,12 @@ func Timeline(c *gin.Context) {
 				FROM map_history mh
 				INNER JOIN maps m ON m.id = mh.map_id
 				WHERE mh.category_id = 1 AND m.game_id = 2
+					AND mh.user_name <> 'Placeholder'
 			) map_ids
 			LEFT JOIN map_history mh ON mh.map_id = map_ids.map_id
 				AND mh.category_id = 1 
 				AND mh.record_date <= ds.date
+				AND mh.user_name <> 'Placeholder'
 			GROUP BY ds.date, map_ids.map_id
 		)
 		SELECT 

@@ -97,6 +97,7 @@ func fetchCategoryPortals(gameID, chapterID int) ([]models.CategoryPortal, error
 			INNER JOIN maps listed_map ON listed_map.id = mh.map_id
 			WHERE listed_map.game_id = $1
 				AND ($2 = 0 OR listed_map.chapter_id = $2)
+				AND mh.user_name <> 'Placeholder'
 			GROUP BY mh.map_id, mh.category_id
 		) best ON best.category_id = gc.category_id
 		WHERE gc.game_id = $1
@@ -145,6 +146,7 @@ func fetchSectionCategoryPortals(gameID int) ([]models.CategoryPortal, error) {
 			FROM map_history mh
 			INNER JOIN maps listed_map ON listed_map.id = mh.map_id
 			WHERE listed_map.game_id = $1
+				AND mh.user_name <> 'Placeholder'
 			GROUP BY listed_map.chapter_id, mh.category_id, mh.map_id
 		) best ON best.chapter_id = game_section.id AND best.category_id = gc.category_id
 		WHERE gc.game_id = $1 AND game_section.is_disabled = false
@@ -317,6 +319,7 @@ func fetchMapsForScope(gameID, chapterID int) ([]models.MapSelect, error) {
 		LEFT JOIN (
 			SELECT map_id, category_id, MIN(score_count) AS score_count
 			FROM map_history
+			WHERE user_name <> 'Placeholder'
 			GROUP BY map_id, category_id
 		) best ON best.map_id = m.id AND best.category_id = gc.category_id
 		WHERE m.game_id = $1 AND ($2 = 0 OR m.chapter_id = $2)
