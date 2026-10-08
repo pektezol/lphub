@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"os"
@@ -10,6 +11,22 @@ import (
 )
 
 var DB *sql.DB
+
+// BeginAuditTx starts a transaction and sets the actor for audit triggers on
+// that transaction's connection. The setting is local to the transaction, so
+// it is cleared automatically on commit or rollback and cannot leak through
+// the connection pool.
+func BeginAuditTx(ctx context.Context, userID string) (*sql.Tx, error) {
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+	if _, err := tx.ExecContext(ctx, `SELECT set_config('app.user_id', $1, true)`, userID); err != nil {
+		_ = tx.Rollback()
+		return nil, err
+	}
+	return tx, nil
+}
 
 func ConnectDB() {
 	host := os.Getenv("DB_HOST")

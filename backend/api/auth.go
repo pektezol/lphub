@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -56,12 +55,6 @@ func IsAuthenticated(c *gin.Context) {
 				moderator = true
 			}
 			user.Titles = append(user.Titles, title)
-		}
-		// Set user id variable in db session for audit logging
-		_, err = database.DB.Exec(fmt.Sprintf("SET app.user_id = '%s';", user.SteamID))
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusOK, models.ErrorResponse("Session failed to start."))
-			return
 		}
 		c.Set("user", user)
 		c.Set("mod", moderator)

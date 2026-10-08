@@ -109,7 +109,7 @@ func CreateRecordWithDemo(c *gin.Context) {
 	var hostSteamID, partnerSteamID string
 	var hostDemoServerNumber, partnerDemoServerNumber int
 	// Create database transaction for inserts
-	tx, err := database.DB.Begin()
+	tx, err := database.BeginAuditTx(c.Request.Context(), user.(models.User).SteamID)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
@@ -389,11 +389,17 @@ func DeleteRecord(c *gin.Context) {
 		c.JSON(http.StatusOK, models.ErrorResponse("Selected map does not exist."))
 		return
 	}
+	tx, err := database.BeginAuditTx(c.Request.Context(), user.(models.User).SteamID)
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	defer tx.Rollback()
 	if isCoop {
 		// Validate if cooperative record does exist
 		var validateRecordID int
 		sql = `SELECT mp.id FROM records_mp mp WHERE mp.id = $1 AND mp.map_id = $2 AND (mp.host_id = $3 OR mp.partner_id = $3) AND is_deleted = false`
-		err = database.DB.QueryRow(sql, recordID, mapID, user.(models.User).SteamID).Scan(&validateRecordID)
+		err = tx.QueryRowContext(c.Request.Context(), sql, recordID, mapID, user.(models.User).SteamID).Scan(&validateRecordID)
 		if err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
@@ -404,7 +410,7 @@ func DeleteRecord(c *gin.Context) {
 		}
 		// Remove record
 		sql = `UPDATE records_mp SET is_deleted = true WHERE id = $1`
-		_, err = database.DB.Exec(sql, recordID)
+		_, err = tx.ExecContext(c.Request.Context(), sql, recordID)
 		if err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
@@ -413,7 +419,7 @@ func DeleteRecord(c *gin.Context) {
 		// Validate if singleplayer record does exist
 		var validateRecordID int
 		sql = `SELECT sp.id FROM records_sp sp WHERE sp.id = $1 AND sp.map_id = $2 AND sp.user_id = $3 AND is_deleted = false`
-		err = database.DB.QueryRow(sql, recordID, mapID, user.(models.User).SteamID).Scan(&validateRecordID)
+		err = tx.QueryRowContext(c.Request.Context(), sql, recordID, mapID, user.(models.User).SteamID).Scan(&validateRecordID)
 		if err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
@@ -424,11 +430,15 @@ func DeleteRecord(c *gin.Context) {
 		}
 		// Remove record
 		sql = `UPDATE records_sp SET is_deleted = true WHERE id = $1`
-		_, err = database.DB.Exec(sql, recordID)
+		_, err = tx.ExecContext(c.Request.Context(), sql, recordID)
 		if err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
 		}
+	}
+	if err = tx.Commit(); err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
 	}
 	c.JSON(http.StatusOK, models.Response{
 		Success: true,

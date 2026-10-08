@@ -58,6 +58,7 @@ func CreateMapSummary(c *gin.Context) {
 		c.JSON(http.StatusOK, models.ErrorResponse("Insufficient permissions."))
 		return
 	}
+	sessionUser, _ := c.Get("user")
 	// Bind parameter and body
 	id := c.Param("mapid")
 	mapID, err := strconv.Atoi(id)
@@ -71,7 +72,7 @@ func CreateMapSummary(c *gin.Context) {
 		return
 	}
 	// Start database transaction
-	tx, err := database.DB.Begin()
+	tx, err := database.BeginAuditTx(c.Request.Context(), sessionUser.(models.User).SteamID)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
@@ -133,6 +134,7 @@ func EditMapSummary(c *gin.Context) {
 		c.JSON(http.StatusOK, models.ErrorResponse("Insufficient permissions."))
 		return
 	}
+	sessionUser, _ := c.Get("user")
 	// Bind parameter and body
 	id := c.Param("mapid")
 	// we get mapid in path parameters, but it's not really used anywhere here lol.
@@ -147,7 +149,7 @@ func EditMapSummary(c *gin.Context) {
 		return
 	}
 	// Start database transaction
-	tx, err := database.DB.Begin()
+	tx, err := database.BeginAuditTx(c.Request.Context(), sessionUser.(models.User).SteamID)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
@@ -187,6 +189,7 @@ func DeleteMapSummary(c *gin.Context) {
 		c.JSON(http.StatusOK, models.ErrorResponse("Insufficient permissions."))
 		return
 	}
+	sessionUser, _ := c.Get("user")
 	// Bind parameter and body
 	id := c.Param("mapid")
 	// we get mapid in path parameters, but it's not really used anywhere here lol.
@@ -201,7 +204,7 @@ func DeleteMapSummary(c *gin.Context) {
 		return
 	}
 	// Start database transaction
-	tx, err := database.DB.Begin()
+	tx, err := database.BeginAuditTx(c.Request.Context(), sessionUser.(models.User).SteamID)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return

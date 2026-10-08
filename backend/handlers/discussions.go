@@ -168,8 +168,18 @@ func CreateMapDiscussion(c *gin.Context) {
 	}
 	sql := `INSERT INTO map_discussions (map_id,user_id,title,"content")
 	VALUES($1,$2,$3,$4);`
-	_, err = database.DB.Exec(sql, mapID, user.(models.User).SteamID, request.Title, request.Content)
+	tx, err := database.BeginAuditTx(c.Request.Context(), user.(models.User).SteamID)
 	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	defer tx.Rollback()
+	_, err = tx.ExecContext(c.Request.Context(), sql, mapID, user.(models.User).SteamID, request.Title, request.Content)
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	if err = tx.Commit(); err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
@@ -210,14 +220,24 @@ func CreateMapDiscussionComment(c *gin.Context) {
 	}
 	sql := `INSERT INTO map_discussions_comments (discussion_id,user_id,comment)
 	VALUES($1,$2,$3);`
-	_, err = database.DB.Exec(sql, discussionID, user.(models.User).SteamID, request.Comment)
+	tx, err := database.BeginAuditTx(c.Request.Context(), user.(models.User).SteamID)
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	defer tx.Rollback()
+	_, err = tx.ExecContext(c.Request.Context(), sql, discussionID, user.(models.User).SteamID, request.Comment)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
 	sql = `UPDATE map_discussions SET updated_at = $2 WHERE id = $1`
-	_, err = database.DB.Exec(sql, discussionID, time.Now().UTC())
+	_, err = tx.ExecContext(c.Request.Context(), sql, discussionID, time.Now().UTC())
 	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	if err = tx.Commit(); err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
@@ -257,7 +277,13 @@ func EditMapDiscussion(c *gin.Context) {
 		return
 	}
 	sql := `UPDATE map_discussions SET title = $4, content = $5, updated_at = $6 WHERE id = $1 AND map_id = $2 AND user_id = $3 AND is_deleted = false`
-	result, err := database.DB.Exec(sql, discussionID, mapID, user.(models.User).SteamID, request.Title, request.Content, time.Now().UTC())
+	tx, err := database.BeginAuditTx(c.Request.Context(), user.(models.User).SteamID)
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	defer tx.Rollback()
+	result, err := tx.ExecContext(c.Request.Context(), sql, discussionID, mapID, user.(models.User).SteamID, request.Title, request.Content, time.Now().UTC())
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
@@ -269,6 +295,10 @@ func EditMapDiscussion(c *gin.Context) {
 	}
 	if affectedRows == 0 {
 		c.JSON(http.StatusOK, models.ErrorResponse("You can only edit your own post."))
+		return
+	}
+	if err = tx.Commit(); err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
 	c.JSON(http.StatusOK, models.Response{
@@ -301,7 +331,13 @@ func DeleteMapDiscussion(c *gin.Context) {
 	}
 	user, _ := c.Get("user")
 	sql := `UPDATE map_discussions SET is_deleted = true WHERE id = $1 AND map_id = $2 AND user_id = $3`
-	result, err := database.DB.Exec(sql, discussionID, mapID, user.(models.User).SteamID)
+	tx, err := database.BeginAuditTx(c.Request.Context(), user.(models.User).SteamID)
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	defer tx.Rollback()
+	result, err := tx.ExecContext(c.Request.Context(), sql, discussionID, mapID, user.(models.User).SteamID)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
@@ -313,6 +349,10 @@ func DeleteMapDiscussion(c *gin.Context) {
 	}
 	if affectedRows == 0 {
 		c.JSON(http.StatusOK, models.ErrorResponse("You can only delete your own post."))
+		return
+	}
+	if err = tx.Commit(); err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
 	c.JSON(http.StatusOK, models.Response{

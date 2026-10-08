@@ -168,8 +168,18 @@ func UpdateUser(c *gin.Context) {
 	}
 	// Update profile
 	sql := `UPDATE users SET user_name = $1, avatar_link = $2, country_code = $3, updated_at = $4 WHERE steam_id = $5`
-	_, err = database.DB.Exec(sql, profile.PersonaName, profile.AvatarFull, profile.LocCountryCode, time.Now().UTC(), user.(models.User).SteamID)
+	tx, err := database.BeginAuditTx(c.Request.Context(), user.(models.User).SteamID)
 	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	defer tx.Rollback()
+	_, err = tx.ExecContext(c.Request.Context(), sql, profile.PersonaName, profile.AvatarFull, profile.LocCountryCode, time.Now().UTC(), user.(models.User).SteamID)
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	if err = tx.Commit(); err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
@@ -210,8 +220,18 @@ func UpdateCountryCode(c *gin.Context) {
 		return
 	}
 	// Valid code, update profile
-	_, err = database.DB.Exec(`UPDATE users SET country_code = $1 WHERE steam_id = $2`, validCode, user.(models.User).SteamID)
+	tx, err := database.BeginAuditTx(c.Request.Context(), user.(models.User).SteamID)
 	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	defer tx.Rollback()
+	_, err = tx.ExecContext(c.Request.Context(), `UPDATE users SET country_code = $1 WHERE steam_id = $2`, validCode, user.(models.User).SteamID)
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	if err = tx.Commit(); err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
