@@ -14,7 +14,7 @@ const GameCategory: React.FC<GameCategoryProps> = ({cat, game}) => {
 
   if (game.section_kind === "mode") {
     return (
-      <div className="games-page-item-body-item games-page-item-body-item-mode">
+      <Link className="games-page-item-body-item games-page-item-body-item-mode" to={"/games/" + game.id + "?cat=" + cat.category.id}>
         <span className='games-page-item-body-item-title'>{cat.category.name}</span>
         <div className="games-page-item-body-item-mode-counts">
           {sectionPortals.map((section) => (
@@ -24,7 +24,7 @@ const GameCategory: React.FC<GameCategoryProps> = ({cat, game}) => {
             </span>
           ))}
         </div>
-      </div>
+      </Link>
     );
   }
 
