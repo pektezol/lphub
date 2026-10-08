@@ -48,7 +48,6 @@ interface MapHistoryPoint {
   scoreCount: number;
   runnerName: string;
   routeIndex: number;
-  isCurrent?: boolean;
 }
 
 interface MapHistoryTooltipProps {
@@ -104,29 +103,6 @@ const Summary: React.FC<SummaryProps> = ({
         ),
     [data.summary.routes, selectedCategory],
   );
-  const mapHistoryChartData = React.useMemo<MapHistoryPoint[]>(() => {
-    if (mapHistoryPoints.length === 0) {
-      return [];
-    }
-
-    const lastPoint = mapHistoryPoints[mapHistoryPoints.length - 1];
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
-    const todayTimestamp = today.getTime();
-    if (lastPoint.timestamp >= todayTimestamp) {
-      return mapHistoryPoints;
-    }
-
-    return [
-      ...mapHistoryPoints,
-      {
-        ...lastPoint,
-        timestamp: todayTimestamp,
-        date: today.toISOString(),
-        isCurrent: true,
-      },
-    ];
-  }, [mapHistoryPoints]);
   const selectedRoute =
     selectedRun === undefined
       ? undefined
@@ -164,11 +140,7 @@ const Summary: React.FC<SummaryProps> = ({
         <strong>
           {point.scoreCount} {portalLabel(point.scoreCount)}
         </strong>
-        <span>
-          {point.isCurrent
-            ? "Current record remains in effect"
-            : point.runnerName}
-        </span>
+        <span>{point.runnerName}</span>
       </div>
     );
   };
@@ -179,10 +151,6 @@ const Summary: React.FC<SummaryProps> = ({
     payload: MapHistoryPoint;
   }) => {
     const point = props.payload;
-    if (point.isCurrent) {
-      return <g />;
-    }
-
     const selectPoint = () => _select_history_point(point);
     const handleKeyDown = (event: React.KeyboardEvent<SVGGElement>) => {
       if (event.key === "Enter" || event.key === " ") {
@@ -348,7 +316,7 @@ const Summary: React.FC<SummaryProps> = ({
               <div className="map-history-chart">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart
-                    data={mapHistoryChartData}
+                    data={mapHistoryPoints}
                     margin={{ top: 12, right: 18, left: 0, bottom: 4 }}
                   >
                     <CartesianGrid
@@ -361,7 +329,7 @@ const Summary: React.FC<SummaryProps> = ({
                       type="number"
                       scale="time"
                       domain={
-                        mapHistoryChartData.length === 1
+                        mapHistoryPoints.length === 1
                           ? [
                               mapHistoryPoints[0].timestamp - 86_400_000,
                               mapHistoryPoints[0].timestamp + 86_400_000,
