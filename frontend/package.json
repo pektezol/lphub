@@ -13,7 +13,7 @@
     "react-dom": "^18.3.1",
     "react-helmet": "^6.1.0",
     "react-markdown": "^9.0.1",
-    "react-router-dom": "^6.26.1",
+    "react-router-dom": "^7.18.4",
     "recharts": "^3.3.0"
   },
   "scripts": {
@@ -28,10 +28,10 @@
   "devDependencies": {
     "@eslint/js": "^9.38.0",
     "@types/react-helmet": "^6.1.11",
-    "@vitejs/plugin-react": "^4.3.1",
+    "@vitejs/plugin-react": "^6.1.2",
     "eslint": "^8.57.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.2",
-    "vite": "^5.4.2"
+    "vite": "^8.3.4"
   }
 }
