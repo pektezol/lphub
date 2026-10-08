@@ -3,10 +3,10 @@
     position: absolute;
     opacity: 10%;
     height: 50%;
-    width: 100%
+    width: 100%;
 }
 
-#background-image>img {
+#background-image > img {
     object-fit: cover;
     width: 100%;
     height: 100%;
@@ -35,12 +35,12 @@
     font-size: 18px;
     font-family: inherit;
     border: none;
-    transition: background-color .1s;
+    transition: background-color 0.1s;
 }
 
 /* #section1>div>.nav-button:nth-child(1){border-radius: 0px;}:nth-child(1){border-radius: 20px 0 0 20px;}
 #section1>div>.nav-button:nth-child(2){border-radius: 0 20px 20px 0;margin-left: 2px;} */
-.nav-button>span {
+.nav-button > span {
     padding: 0 8px 0 8px;
 }
 
@@ -58,7 +58,7 @@
     grid-template-columns: 1fr 1fr 1fr;
 }
 
-#section2>.nav-button {
+#section2 > .nav-button {
     height: 50px;
     font-size: 22px;
     display: flex;
@@ -66,18 +66,17 @@
     place-items: center;
 }
 
-#section2>.nav-button>img {
+#section2 > .nav-button > img {
     scale: 1.2;
 }
 
-#section2>.nav-button:nth-child(1) {
+#section2 > .nav-button:nth-child(1) {
     border-radius: 30px 0 0 30px;
 }
 
-#section2>.nav-button:nth-child(3) {
+#section2 > .nav-button:nth-child(3) {
     border-radius: 0 30px 30px 0;
 }
-
 
 /* Section 3: category + history */
 
@@ -94,10 +93,9 @@
     height: 350px;
     border-radius: 24px;
     overflow: hidden;
-
 }
 
-#category>p {
+#category > p {
     margin-bottom: 20px;
     text-align: center;
     font-size: 50px;
@@ -105,7 +103,7 @@
     color: white;
 }
 
-p>span.portal-count {
+p > span.portal-count {
     font-weight: bold;
     font-size: 100px;
     vertical-align: -15%;
@@ -120,7 +118,7 @@ p>span.portal-count {
     filter: blur(4px) contrast(80%) brightness(80%);
 }
 
-#category>span {
+#category > span {
     margin-top: 70px;
     background-color: #202232;
 
@@ -128,7 +126,7 @@ p>span.portal-count {
     gap: 2px;
 }
 
-#category>span>button {
+#category > span > button {
     font-family: inherit;
     font-size: 18px;
     border: none;
@@ -136,12 +134,10 @@ p>span.portal-count {
     color: inherit;
 
     cursor: pointer;
-    transition: background-color .1s;
+    transition: background-color 0.1s;
 }
 
-
-
-#history>div>hr {
+#history > div > hr {
     border: 1px solid #2b2e46;
     margin: 8px 20px 0px 20px;
 }
@@ -151,7 +147,6 @@ p>span.portal-count {
     background-color: #202232;
     border-radius: 24px;
     box-sizing: border-box;
-
 }
 
 #records {
@@ -188,16 +183,16 @@ p>span.portal-count {
 
     border: 0;
     cursor: pointer;
-    transition: background-color .1s;
+    transition: background-color 0.1s;
 }
 
-#history>span {
+#history > span {
     border-top: #202232 solid 2px;
     display: grid;
     grid-template-columns: 1fr 1fr;
 }
 
-#history>span>button {
+#history > span > button {
     width: 100%;
     height: 40px;
     font-family: inherit;
@@ -206,98 +201,73 @@ p>span.portal-count {
     color: inherit;
 
     cursor: pointer;
-    transition: background-color .1s;
+    transition: background-color 0.1s;
 }
 
-#history>span>button:nth-child(1) {
+#history > span > button:nth-child(1) {
     border-radius: 0 0 0 24px;
 }
 
-#history>span>button:nth-child(2) {
+#history > span > button:nth-child(2) {
     border-radius: 0 0 24px 0;
 }
 
-#graph {
-    display: grid;
-    grid-template-columns: 20px 1fr;
-    grid-template-rows: 1fr 20px;
+.map-history-chart {
     height: 293px;
-
-    margin: 10px 10px 5px 10px;
-    overflow: hidden;
+    min-width: 0;
+    margin: 10px 10px 5px;
 }
 
-#graph>div:nth-child(1) {
-    /* numbers */
-    width: 20px;
-    display: grid;
-    place-items: center;
-    /* background-color: blue; */
+.map-history-chart svg {
+    overflow: visible;
 }
 
-#graph>div:nth-child(1)>span {
-    font-size: 12px;
-    line-height: 0;
-}
-
-#graph>div:nth-child(2) {
-    /* big graph */
-    position: relative;
-    display: grid;
-}
-
-#graph>div:nth-child(2)>tr {
-    display: flex;
-    align-items: center;
-    grid-template-columns: repeat(auto-fit, minmax(1px, 1fr));
-}
-
-#graph>div:nth-child(2)>tr>td.graph_hor {
-    width: 100%;
-    height: 0;
-    padding: 0;
-
-    outline: 1px solid red;
-}
-
-#graph>div:nth-child(2)>tr>td.graph_ver {
-    width: 0;
-    height: 100%;
-    padding: 0;
-
-    outline: 1px solid blue;
-    transform: translateY(50%);
-    z-index: 0;
-    overflow: hidden;
-}
-
-#graph>div:nth-child(3) {
-    /* dates */
-    padding-right: 20px;
-    z-index: 1;
-    height: 16px;
-    background-color: #202232;
-    grid-column: 1 /3;
-    font-size: 12px;
-    display: grid;
-    padding-top: 8px;
-    grid-template-columns: repeat(auto-fit, minmax(1px, 1fr));
-}
-
-.graph-button {
-    position: absolute;
-    padding: 0;
-    border: 5px solid white;
-    border-radius: 20px;
+.map-history-point {
     cursor: pointer;
-    transform: translateX(-50%);
+    outline: none;
 }
 
-#history>div>h5 {
+.map-history-point:focus-visible circle:last-child {
+    stroke: #fff;
+    stroke-width: 3px;
+}
+
+.map-history-tooltip {
+    display: grid;
+    gap: 3px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: #2b2e46;
+    color: #cdcfdf;
+    font-family: BarlowSemiCondensed-Regular;
+}
+
+.map-history-tooltip p,
+.map-history-tooltip strong,
+.map-history-tooltip span {
+    margin: 0;
+}
+
+.map-history-tooltip strong {
+    color: #fff;
+    font-family: BarlowSemiCondensed-SemiBold;
+    font-size: 18px;
+}
+
+.map-history-empty {
+    display: grid;
+    min-height: 293px;
+    margin: 0;
+    place-items: center;
+    color: #cdcfdf;
+    font-size: 18px;
+    text-align: center;
+}
+
+#history > div > h5 {
     text-align: center;
     height: 197px;
 }
-
 
 /* Section 4: Difficulty + count */
 
@@ -321,18 +291,18 @@ p>span.portal-count {
     box-sizing: border-box;
 }
 
-#difficulty>span:nth-child(1),
-#count>span:nth-child(1) {
+#difficulty > span:nth-child(1),
+#count > span:nth-child(1) {
     padding-top: 10px;
     font-size: 18px;
-    color: #cdcfdf
+    color: #cdcfdf;
 }
 
-#difficulty>span:nth-child(2) {
+#difficulty > span:nth-child(2) {
     font-size: 40px;
 }
 
-#difficulty>div {
+#difficulty > div {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     padding: 0 calc(50% - 125px) 0 calc(50% - 125px);
@@ -346,10 +316,10 @@ p>span.portal-count {
     background-color: #2b2e46;
 }
 
-#count>div {
+#count > div {
     padding-top: 10px;
     font-size: 50px;
-    color: white
+    color: white;
 }
 
 /* Section 5: route desc + video */
@@ -364,10 +334,7 @@ p>span.portal-count {
     min-height: 342px;
 }
 
-
-
-
-#description>iframe {
+#description > iframe {
     margin: 20px;
     float: right;
     border: 0;
@@ -376,7 +343,7 @@ p>span.portal-count {
     height: 342px;
 }
 
-#description>h3 {
+#description > h3 {
     margin: 0 0 10px 0;
     color: white;
 }
@@ -394,15 +361,14 @@ p>span.portal-count {
     text-align: justify;
 }
 
-#description-text>b {
+#description-text > b {
     font-size: inherit;
 }
 
-#description-text>a {
+#description-text > a {
     font-size: inherit;
     color: #3c91e6;
 }
-
 
 /* Section 6: leaderboards */
 #section6 {
@@ -412,11 +378,9 @@ p>span.portal-count {
 
     border-radius: 24px;
     padding: 10px 10px 0 10px;
-
 }
 
-
-#section6>hr {
+#section6 > hr {
     border: 1px solid #2b2e46;
     margin: 8px 20px 0px 20px;
 }
@@ -429,8 +393,7 @@ p>span.portal-count {
     margin: 0 20px 0 20px;
 }
 
-#leaderboard-top>span {
-
+#leaderboard-top > span {
     display: flex;
     place-items: flex-end;
 }
@@ -447,7 +410,7 @@ p>span.portal-count {
     flex-direction: row-reverse;
 }
 
-#page-number>div {
+#page-number > div {
     width: 100px;
     place-items: center;
     display: grid;
@@ -455,7 +418,7 @@ p>span.portal-count {
     text-align: center;
 }
 
-#page-number>div>button {
+#page-number > div > button {
     width: 30px;
     height: 30px;
     background-color: #202232;
@@ -481,37 +444,37 @@ p>span.portal-count {
     display: grid;
 
     border: 0;
-    transition: background-color .1s;
+    transition: background-color 0.1s;
     background-color: #2b2e46;
     box-sizing: border-box;
 }
 
-.leaderboard-record>span:nth-child(1) {
+.leaderboard-record > span:nth-child(1) {
     display: grid;
 }
 
-.leaderboard-record>span:nth-child(4) {
+.leaderboard-record > span:nth-child(4) {
     display: grid;
 }
 
-.leaderboard-record>span:last-child {
+.leaderboard-record > span:last-child {
     flex-direction: row-reverse;
 }
 
-.leaderboard-record>span {
+.leaderboard-record > span {
     display: flex;
     place-items: center;
     height: 44px;
 }
 
-.leaderboard-record>div>a>span>img {
+.leaderboard-record > div > a > span > img {
     height: 36px;
     border-radius: 50px;
     padding: 0;
-    scale: .95;
+    scale: 0.95;
 }
 
-.leaderboard-record>div {
+.leaderboard-record > div {
     display: grid;
     grid-template-columns: 50% 50%;
     place-items: left;
@@ -520,7 +483,7 @@ p>span.portal-count {
     overflow: hidden;
 }
 
-.leaderboard-record>div>a>span {
+.leaderboard-record > div > a > span {
     display: flex;
     place-items: center;
     height: 44px;
@@ -530,7 +493,7 @@ p>span.portal-count {
     white-space: nowrap;
 }
 
-.leaderboard-record>span>button {
+.leaderboard-record > span > button {
     background-color: #0000;
     border: 0;
     cursor: pointer;
@@ -571,7 +534,6 @@ p>span.portal-count {
     margin: 10px 20px 10px 20px;
 }
 
-
 #section7 {
     margin: 40px 0 20px 0;
     background-color: #202232;
@@ -587,11 +549,11 @@ p>span.portal-count {
     margin: 0 0 20px 0;
 }
 
-#discussion-search>input::placeholder {
+#discussion-search > input::placeholder {
     color: #aaa;
 }
 
-#discussion-search>input {
+#discussion-search > input {
     background-color: #2b2e46;
     font-size: 20px;
     padding-left: 10px;
@@ -601,11 +563,11 @@ p>span.portal-count {
     font-family: inherit;
 }
 
-#discussion-search>div>button:hover {
+#discussion-search > div > button:hover {
     filter: brightness(75%);
 }
 
-#discussion-search>div>button {
+#discussion-search > div > button {
     padding: 7px 16px;
     margin: 8px 0;
     border: 0;
@@ -618,21 +580,21 @@ p>span.portal-count {
     cursor: pointer;
     color: white;
 
-    transition: filter .2s;
+    transition: filter 0.2s;
 }
 
-#discussion-search>div {
+#discussion-search > div {
     background-color: #2b2e46;
     border-radius: 0 16px 16px 0;
 }
 
-#discussion-post>button:nth-child(1)>span>b {
+#discussion-post > button:nth-child(1) > span > b {
     font-size: 18px;
     color: #cdcfdf;
     font-weight: lighter;
 }
 
-#discussion-post>button:nth-child(1) {
+#discussion-post > button:nth-child(1) {
     background-color: #2b2e46;
     display: grid;
     grid-template-columns: minmax(0, 1fr) 150px;
@@ -650,17 +612,17 @@ p>span.portal-count {
     overflow: hidden;
 }
 
-#discussion-post>button:nth-child(1)>span:nth-child(1) {
+#discussion-post > button:nth-child(1) > span:nth-child(1) {
     font-size: 32px;
 }
 
-#discussion-post>button:nth-child(1)>span:nth-child(3) {
+#discussion-post > button:nth-child(1) > span:nth-child(3) {
     color: #aaa;
     font-size: 18px;
 }
 
-#discussion-post>button:nth-child(1)>span:nth-child(4) {
-    opacity: .7;
+#discussion-post > button:nth-child(1) > span:nth-child(4) {
+    opacity: 0.7;
     height: 40px;
     display: flex;
     place-items: end;
@@ -671,11 +633,11 @@ p>span.portal-count {
     height: 100px;
 }
 
-#discussion-post>button>button:hover {
+#discussion-post > button > button:hover {
     filter: brightness(75%);
 }
 
-#discussion-post>button>button {
+#discussion-post > button > button {
     padding: 7px 16px;
 
     border: 0;
@@ -687,11 +649,10 @@ p>span.portal-count {
     cursor: pointer;
     color: white;
 
-    transition: filter .2s;
+    transition: filter 0.2s;
 }
 
-
-#discussion-create>div {
+#discussion-create > div {
     display: grid;
     text-align: start;
 }
@@ -703,15 +664,15 @@ p>span.portal-count {
     word-wrap: break-word;
 }
 
-#discussion-create>span {
+#discussion-create > span {
     padding-left: 20px;
 }
 
-#discussion-create>div>input::placeholder {
+#discussion-create > div > input::placeholder {
     color: #aaa;
 }
 
-#discussion-create>div>input {
+#discussion-create > div > input {
     background-color: #2b2e46;
     font-size: 20px;
     padding-left: 10px;
@@ -722,7 +683,7 @@ p>span.portal-count {
     font-family: inherit;
 }
 
-#discussion-create>div>input:nth-child(2) {
+#discussion-create > div > input:nth-child(2) {
     font-size: 16px;
 }
 
@@ -745,12 +706,10 @@ p>span.portal-count {
     width: min-content;
     grid-column: 1 / span 2;
 
-
-    transition: filter .2s;
+    transition: filter 0.2s;
 }
 
-
-#discussion-thread>div:nth-child(1) {
+#discussion-thread > div:nth-child(1) {
     display: grid;
     grid-template-columns: 1fr 40px;
     height: auto;
@@ -758,8 +717,8 @@ p>span.portal-count {
     word-wrap: break-word;
 }
 
-#discussion-create>button:nth-child(2),
-#discussion-thread>div>button {
+#discussion-create > button:nth-child(2),
+#discussion-thread > div > button {
     height: 40px;
     float: inline-end;
     color: #cdcfdf;
@@ -769,49 +728,46 @@ p>span.portal-count {
     cursor: pointer;
 }
 
-
-#discussion-thread>div:nth-child(2)>a>img {
+#discussion-thread > div:nth-child(2) > a > img {
     width: 60px;
     height: 60px;
     border-radius: 100px;
     margin: 20px 0 0 0;
 }
 
-#discussion-thread>div:nth-child(2)>div {
+#discussion-thread > div:nth-child(2) > div {
     height: max-content;
     padding: 20px 0 0 10px;
     display: inline-grid;
     grid-template-columns: min-content 1fr;
     overflow: hidden;
-
 }
 
-#discussion-thread>div:nth-child(2)>div>span:nth-child(1) {
+#discussion-thread > div:nth-child(2) > div > span:nth-child(1) {
     font-weight: bold;
     height: 30px;
 }
 
-#discussion-thread>div:nth-child(2)>div>span:nth-child(2) {
+#discussion-thread > div:nth-child(2) > div > span:nth-child(2) {
     opacity: 0.6;
     height: 30px;
     font-size: 80%;
     padding-left: 10px;
 }
 
-#discussion-thread>div:nth-child(2)>div>span:nth-child(3) {
+#discussion-thread > div:nth-child(2) > div > span:nth-child(3) {
     grid-column: 1 / span 2;
     height: max-content;
     word-wrap: break-word;
 }
 
-#discussion-thread>div:nth-child(2) {
+#discussion-thread > div:nth-child(2) {
     display: grid;
     grid-template-columns: 60px 1fr;
     font-size: 20px;
     max-height: 522px;
     overflow-y: auto;
 }
-
 
 #discussion-send {
     height: 48px;
@@ -821,11 +777,11 @@ p>span.portal-count {
     margin: 10px 0 0 0;
 }
 
-#discussion-send>input::placeholder {
+#discussion-send > input::placeholder {
     color: #aaa;
 }
 
-#discussion-send>input {
+#discussion-send > input {
     background-color: #2b2e46;
     padding-left: 10px;
     color: white;
@@ -835,17 +791,16 @@ p>span.portal-count {
     font-family: inherit;
 }
 
-#discussion-send>div {
+#discussion-send > div {
     background-color: #2b2e46;
     border-radius: 0 16px 16px 0;
-
 }
 
-#discussion-send>div>button:hover {
+#discussion-send > div > button:hover {
     filter: brightness(75%);
 }
 
-#discussion-send>div>button {
+#discussion-send > div > button {
     padding: 7px 20px;
     margin: 8px 0;
     font-size: 16px;
@@ -858,10 +813,8 @@ p>span.portal-count {
     cursor: pointer;
     color: white;
 
-    transition: filter .2s;
+    transition: filter 0.2s;
 }
-
-
 
 .triangle {
     display: inline-block;
@@ -887,7 +840,7 @@ p>span.portal-count {
         gap: 2px;
     }
 
-    #section2>.nav-button {
+    #section2 > .nav-button {
         height: 45px;
         font-size: 20px;
     }
@@ -904,11 +857,11 @@ p>span.portal-count {
         max-width: 100%;
     }
 
-    #category>p {
+    #category > p {
         font-size: 44px;
     }
 
-    p>span.portal-count {
+    p > span.portal-count {
         font-size: 88px;
     }
 
@@ -932,11 +885,11 @@ p>span.portal-count {
         margin: 36px 0 0 0;
     }
 
-    #difficulty>span:nth-child(2) {
+    #difficulty > span:nth-child(2) {
         font-size: 36px;
     }
 
-    #count>div {
+    #count > div {
         font-size: 44px;
     }
 
@@ -948,7 +901,7 @@ p>span.portal-count {
         min-height: 300px;
     }
 
-    #description>iframe {
+    #description > iframe {
         width: 100%;
         max-width: 100%;
         height: 250px;
@@ -957,7 +910,7 @@ p>span.portal-count {
         box-sizing: border-box;
     }
 
-    #description>h3 {
+    #description > h3 {
         font-size: 2.2rem;
     }
 
@@ -981,7 +934,7 @@ p>span.portal-count {
         grid-template-columns: 4% 5% 38% 5% 4% 14% 14% 16%;
     }
 
-    .leaderboard-record>div>a>span>img {
+    .leaderboard-record > div > a > span > img {
         height: 32px;
     }
 
@@ -989,18 +942,18 @@ p>span.portal-count {
         margin: 36px 0 18px 0;
     }
 
-    #discussion-search>input,
-    #discussion-send>input {
+    #discussion-search > input,
+    #discussion-send > input {
         font-size: 18px;
     }
 
-    #discussion-thread>div:nth-child(2) {
+    #discussion-thread > div:nth-child(2) {
         font-size: 18px;
         max-height: 460px;
     }
 }
 
-/* 
+/*
 @media screen and (max-width: 1480px) {
     #section3.summary1 {
         grid-template-columns: auto;
@@ -1084,7 +1037,7 @@ p>span.portal-count {
         box-sizing: border-box;
     }
 
-    #section2>.nav-button {
+    #section2 > .nav-button {
         border-radius: 0;
         font-size: 18px;
         height: 45px;
@@ -1098,15 +1051,15 @@ p>span.portal-count {
         align-items: center;
     }
 
-    #section2>.nav-button:nth-child(1) {
+    #section2 > .nav-button:nth-child(1) {
         border-radius: 20px 20px 0 0;
     }
 
-    #section2>.nav-button:nth-child(3) {
+    #section2 > .nav-button:nth-child(3) {
         border-radius: 0 0 20px 20px;
     }
 
-    #section2>.nav-button>span {
+    #section2 > .nav-button > span {
         padding: 0 8px;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -1115,7 +1068,7 @@ p>span.portal-count {
         flex: 0 1 auto;
     }
 
-    #section2>.nav-button>img {
+    #section2 > .nav-button > img {
         scale: 1;
         flex-shrink: 0;
     }
@@ -1152,7 +1105,7 @@ p>span.portal-count {
         width: 100%;
     }
 
-    #description>iframe {
+    #description > iframe {
         width: 100%;
         max-width: 100%;
         height: 250px;
@@ -1197,16 +1150,16 @@ p>span.portal-count {
         justify-content: flex-end;
     }
 
-    #leaderboard-top>span,
-    #leaderboard-top>div#runner {
+    #leaderboard-top > span,
+    #leaderboard-top > div#runner {
         display: none;
     }
 
-    #leaderboard-top>div#page-number {
+    #leaderboard-top > div#page-number {
         display: flex;
     }
 
-    #section6>hr {
+    #section6 > hr {
         display: none;
     }
 
@@ -1221,13 +1174,13 @@ p>span.portal-count {
         align-items: center;
     }
 
-    .leaderboard-record>div {
+    .leaderboard-record > div {
         display: grid;
         align-items: center;
         height: 44px;
     }
 
-    .leaderboard-record>div>a>span {
+    .leaderboard-record > div > a > span {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -1237,8 +1190,8 @@ p>span.portal-count {
         height: 44px;
     }
 
-    .leaderboard-record>span:nth-child(7),
-    .leaderboard-record>span:nth-child(8) {
+    .leaderboard-record > span:nth-child(7),
+    .leaderboard-record > span:nth-child(8) {
         display: none;
     }
 
@@ -1246,16 +1199,16 @@ p>span.portal-count {
         margin: 10px 10px 10px 10px;
     }
 
-    .leaderboard-record>div>a>span>img {
+    .leaderboard-record > div > a > span > img {
         height: 28px;
     }
 
-    .leaderboard-record>span>button:has(img[alt="download"]),
-    .leaderboard-record>span>button:has(img[alt="demo_id"]) {
+    .leaderboard-record > span > button:has(img[alt="download"]),
+    .leaderboard-record > span > button:has(img[alt="demo_id"]) {
         display: none;
     }
 
-    #page-number>div {
+    #page-number > div {
         width: 80px;
     }
 
@@ -1271,17 +1224,17 @@ p>span.portal-count {
         box-sizing: border-box;
     }
 
-    #discussion-search>input {
+    #discussion-search > input {
         width: 100%;
         box-sizing: border-box;
     }
 
-    #discussion-search>div>button {
+    #discussion-search > div > button {
         padding: 7px 10px;
         font-size: 14px;
     }
 
-    #discussion-post>button:nth-child(1) {
+    #discussion-post > button:nth-child(1) {
         width: 100%;
         box-sizing: border-box;
         overflow: hidden;
@@ -1292,12 +1245,12 @@ p>span.portal-count {
         box-sizing: border-box;
     }
 
-    #discussion-create>div>input {
+    #discussion-create > div > input {
         width: 100%;
         box-sizing: border-box;
     }
 
-    #discussion-thread>div:nth-child(1) {
+    #discussion-thread > div:nth-child(1) {
         width: 100%;
         box-sizing: border-box;
     }
@@ -1307,7 +1260,7 @@ p>span.portal-count {
         box-sizing: border-box;
     }
 
-    #discussion-send>input {
+    #discussion-send > input {
         width: 100%;
         box-sizing: border-box;
     }
