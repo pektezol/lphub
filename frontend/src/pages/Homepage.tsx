@@ -15,12 +15,24 @@ interface PortalCountTooltipProps {
   }[];
 }
 
+interface HomepageCache {
+  portalCountData?: {
+    singleplayer: PortalCountData[];
+    multiplayer: PortalCountData[];
+  };
+  portalCountRequest?: Promise<void>;
+  recentScores?: ScoreLog[];
+  recentScoresRequest?: Promise<void>;
+}
+
+const homepageCache: HomepageCache = {};
+
 const Homepage: React.FC = () => {
-  const [portalCountDataSingleplayer, setPortalCountDataSingleplayer] = React.useState<PortalCountData[]>([]);
-  const [portalCountDataMultiplayer, setPortalCountDataMultiplayer] = React.useState<PortalCountData[]>([]);
-  const [recentScores, setRecentScores] = React.useState<ScoreLog[]>([]);
-  const [isLoading, setIsLoading] = React.useState<boolean>(true);
-  const [isLoadingScores, setIsLoadingScores] = React.useState<boolean>(true);
+  const [portalCountDataSingleplayer, setPortalCountDataSingleplayer] = React.useState<PortalCountData[]>(homepageCache.portalCountData?.singleplayer ?? []);
+  const [portalCountDataMultiplayer, setPortalCountDataMultiplayer] = React.useState<PortalCountData[]>(homepageCache.portalCountData?.multiplayer ?? []);
+  const [recentScores, setRecentScores] = React.useState<ScoreLog[]>(homepageCache.recentScores ?? []);
+  const [isLoading, setIsLoading] = React.useState<boolean>(!homepageCache.portalCountData);
+  const [isLoadingScores, setIsLoadingScores] = React.useState<boolean>(!homepageCache.recentScores);
   const [selectedMode, setSelectedMode] = React.useState<"singleplayer" | "multiplayer">("singleplayer");
 
   const processTimelineData = (data: PortalCountData[]): PortalCountData[] => {
@@ -91,24 +103,72 @@ const Homepage: React.FC = () => {
     [processedDataMultiplayer]
   );
 
-  const fetchPortalCountData = async () => {
-    setIsLoading(true);
-    const data = await API.get_portal_count_history();
-    setPortalCountDataSingleplayer(data?.timeline_singleplayer || []);
-    setPortalCountDataMultiplayer(data?.timeline_multiplayer || []);
-    setIsLoading(false);
-  };
-
-  const fetchRecentScores = async () => {
-    setIsLoadingScores(true);
-    const scores = await API.get_recent_scores();
-    setRecentScores(scores);
-    setIsLoadingScores(false);
-  };
-
   React.useEffect(() => {
+    let isActive = true;
+
+    const fetchPortalCountData = () => {
+      if (homepageCache.portalCountData) {
+        setPortalCountDataSingleplayer(homepageCache.portalCountData.singleplayer);
+        setPortalCountDataMultiplayer(homepageCache.portalCountData.multiplayer);
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+      const request = homepageCache.portalCountRequest ??= API.get_portal_count_history()
+        .then((data) => {
+          homepageCache.portalCountData = {
+            singleplayer: data?.timeline_singleplayer ?? [],
+            multiplayer: data?.timeline_multiplayer ?? [],
+          };
+        })
+        .finally(() => {
+          homepageCache.portalCountRequest = undefined;
+        });
+
+      void request.then(() => {
+        if (isActive && homepageCache.portalCountData) {
+          setPortalCountDataSingleplayer(homepageCache.portalCountData.singleplayer);
+          setPortalCountDataMultiplayer(homepageCache.portalCountData.multiplayer);
+          setIsLoading(false);
+        }
+      }).catch(() => {
+        if (isActive) setIsLoading(false);
+      });
+    };
+
+    const fetchRecentScores = () => {
+      if (homepageCache.recentScores) {
+        setRecentScores(homepageCache.recentScores);
+        setIsLoadingScores(false);
+        return;
+      }
+
+      setIsLoadingScores(true);
+      const request = homepageCache.recentScoresRequest ??= API.get_recent_scores()
+        .then((scores) => {
+          homepageCache.recentScores = scores;
+        })
+        .finally(() => {
+          homepageCache.recentScoresRequest = undefined;
+        });
+
+      void request.then(() => {
+        if (isActive && homepageCache.recentScores) {
+          setRecentScores(homepageCache.recentScores);
+          setIsLoadingScores(false);
+        }
+      }).catch(() => {
+        if (isActive) setIsLoadingScores(false);
+      });
+    };
+
     fetchPortalCountData();
     fetchRecentScores();
+
+    return () => {
+      isActive = false;
+    };
   }, []);
 
   const CustomTooltip = ({ active, payload }: PortalCountTooltipProps) => {
