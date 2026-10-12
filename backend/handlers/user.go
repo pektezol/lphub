@@ -150,9 +150,9 @@ func respondProfile(c *gin.Context, user models.User, links models.Links, ownPro
 	})
 }
 
-// PUT Profile
+// POST Profile
 //
-//	@Description	Update profile page of session user.
+//	@Description	Refresh the session user's profile details from Steam.
 //	@Tags			users
 //	@Accept			json
 //	@Produce		json

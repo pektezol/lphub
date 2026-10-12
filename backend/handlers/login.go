@@ -23,11 +23,10 @@ type LoginResponse struct {
 
 // Login
 //
-//	@Description	Get (redirect) login page for Steam auth.
+//	@Description	Starts Steam OpenID authentication. The browser is redirected to Steam and then back to the application.
 //	@Tags			login
-//	@Accept			json
-//	@Produce		json
-//	@Success		200	{object}	models.Response{data=LoginResponse}
+//	@Success		301	{string}	string	"Redirect to Steam or the application home page"
+//	@Success		307	{string}	string	"Redirect to the application after successful authentication"
 //	@Router			/login [get]
 func Login(c *gin.Context) {
 	log.Println(c.Request.Host)
@@ -107,7 +106,6 @@ func Login(c *gin.Context) {
 //	@Produce		json
 //
 //	@Success		200	{object}	models.Response{data=LoginResponse}
-//	@Failure		404	{object}	models.Response
 //	@Router			/token [get]
 func GetCookie(c *gin.Context) {
 	cookie, err := c.Cookie("token")
@@ -131,7 +129,6 @@ func GetCookie(c *gin.Context) {
 //	@Produce		json
 //
 //	@Success		200	{object}	models.Response{data=LoginResponse}
-//	@Failure		404	{object}	models.Response
 //	@Router			/token [delete]
 func DeleteCookie(c *gin.Context) {
 	cookie, err := c.Cookie("token")

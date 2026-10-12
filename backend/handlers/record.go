@@ -454,6 +454,7 @@ func DeleteRecord(c *gin.Context) {
 //	@Accept			json
 //	@Produce		octet-stream
 //	@Param			uuid	query	string	true	"Demo UUID"
+//	@Param			Authorization	header	string	true	"JWT token"
 //	@Success		200		{file}	binary	"Demo File"
 //	@Router			/demos [get]
 func DownloadDemoWithID(c *gin.Context) {

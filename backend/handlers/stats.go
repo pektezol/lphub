@@ -46,6 +46,7 @@ type TimelineResponse struct {
 //	@Param			wr_delta	query	int	false	"Only return runs with this exact wr_delta (0 selects WR-count runs)"
 //	@Produce		json
 //	@Success		200	{object}	models.Response{data=ScoresResponse}
+//	@Failure		400	{object}	models.Response	"Invalid query parameter"
 //	@Router			/stats/scores [get]
 func Scores(c *gin.Context) {
 	response := ScoresResponse{Logs: []ScoresDetails{}}

@@ -4,6 +4,8 @@ definitions:
     properties:
       chapter:
         $ref: '#/definitions/models.Chapter'
+      game:
+        $ref: '#/definitions/models.Game'
       maps:
         items:
           $ref: '#/definitions/models.MapSelect'
@@ -108,6 +110,15 @@ definitions:
     - score_count
     - user_name
     type: object
+  handlers.GameMapsResponse:
+    properties:
+      game:
+        $ref: '#/definitions/models.Game'
+      maps:
+        items:
+          $ref: '#/definitions/models.MapSelect'
+        type: array
+    type: object
   handlers.LoginResponse:
     properties:
       token:
@@ -164,13 +175,21 @@ definitions:
     type: object
   handlers.MapShortWithGame:
     properties:
-      chapter:
-        type: string
+      chapter_id:
+        type: integer
       game:
         type: string
+      game_id:
+        type: integer
       id:
         type: integer
       map:
+        type: string
+      section_kind:
+        type: string
+      section_label:
+        type: string
+      section_name:
         type: string
     type: object
   handlers.MapSummaryResponse:
@@ -202,8 +221,12 @@ definitions:
     properties:
       category_id:
         type: integer
+      chapter_id:
+        type: integer
       game_id:
         type: integer
+      game_name:
+        type: string
       map_id:
         type: integer
       map_name:
@@ -216,6 +239,12 @@ definitions:
         items:
           $ref: '#/definitions/handlers.ProfileScores'
         type: array
+      section_kind:
+        type: string
+      section_label:
+        type: string
+      section_name:
+        type: string
     type: object
   handlers.ProfileResponse:
     properties:
@@ -225,6 +254,10 @@ definitions:
         type: string
       links:
         $ref: '#/definitions/models.Links'
+      mode_completions:
+        items:
+          $ref: '#/definitions/handlers.ProfileSectionCompletion'
+        type: array
       pagination:
         $ref: '#/definitions/models.Pagination'
       profile:
@@ -256,6 +289,23 @@ definitions:
         type: integer
       score_time:
         type: integer
+    type: object
+  handlers.ProfileSectionCompletion:
+    properties:
+      chapter_id:
+        type: integer
+      completion_count:
+        type: integer
+      completion_total:
+        type: integer
+      game_id:
+        type: integer
+      game_name:
+        type: string
+      section_label:
+        type: string
+      section_name:
+        type: string
     type: object
   handlers.RankingsResponse:
     properties:
@@ -306,14 +356,14 @@ definitions:
         $ref: '#/definitions/models.MapShort'
       score_count:
         type: integer
-      score_time:
-        type: integer
       score_rank:
         type: integer
-      wr_delta:
+      score_time:
         type: integer
       user:
         $ref: '#/definitions/models.UserShort'
+      wr_delta:
+        type: integer
     type: object
   handlers.ScoresResponse:
     properties:
@@ -385,9 +435,19 @@ definitions:
         $ref: '#/definitions/models.Category'
       portal_count:
         type: integer
+      section_portals:
+        items:
+          $ref: '#/definitions/models.SectionCategoryPortals'
+        type: array
     type: object
   models.Chapter:
     properties:
+      category_portals:
+        items:
+          $ref: '#/definitions/models.CategoryPortal'
+        type: array
+      game_id:
+        type: integer
       id:
         type: integer
       image:
@@ -396,9 +456,17 @@ definitions:
         type: boolean
       name:
         type: string
+      section_kind:
+        type: string
+      section_label:
+        type: string
     type: object
   models.Game:
     properties:
+      categories:
+        items:
+          $ref: '#/definitions/models.Category'
+        type: array
       category_portals:
         items:
           $ref: '#/definitions/models.CategoryPortal'
@@ -410,6 +478,10 @@ definitions:
       is_coop:
         type: boolean
       name:
+        type: string
+      section_kind:
+        type: string
+      section_label:
         type: string
     type: object
   models.Links:
@@ -425,9 +497,21 @@ definitions:
     type: object
   models.Map:
     properties:
+      categories:
+        items:
+          $ref: '#/definitions/models.Category'
+        type: array
+      chapter_id:
+        type: integer
       chapter_name:
         type: string
+      counterpart:
+        $ref: '#/definitions/models.MapCounterpart'
       difficulty:
+        type: integer
+      engine_map_name:
+        type: string
+      game_id:
         type: integer
       game_name:
         type: string
@@ -440,6 +524,31 @@ definitions:
       is_disabled:
         type: boolean
       map_name:
+        type: string
+      section_kind:
+        type: string
+      section_label:
+        type: string
+      sort_order:
+        type: integer
+      variant_key:
+        type: string
+    type: object
+  models.MapCounterpart:
+    properties:
+      chapter_id:
+        type: integer
+      game_id:
+        type: integer
+      id:
+        type: integer
+      map_name:
+        type: string
+      section_kind:
+        type: string
+      section_label:
+        type: string
+      section_name:
         type: string
     type: object
   models.MapHistory:
@@ -474,7 +583,11 @@ definitions:
         items:
           $ref: '#/definitions/models.CategoryPortal'
         type: array
+      chapter_id:
+        type: integer
       difficulty:
+        type: integer
+      game_id:
         type: integer
       id:
         type: integer
@@ -484,10 +597,22 @@ definitions:
         type: boolean
       name:
         type: string
+      section_kind:
+        type: string
+      section_label:
+        type: string
+      section_name:
+        type: string
+      sort_order:
+        type: integer
     type: object
   models.MapShort:
     properties:
+      chapter_id:
+        type: integer
       difficulty:
+        type: integer
+      game_id:
         type: integer
       id:
         type: integer
@@ -498,6 +623,14 @@ definitions:
       name:
         type: string
       portal_count:
+        type: integer
+      section_kind:
+        type: string
+      section_label:
+        type: string
+      section_name:
+        type: string
+      sort_order:
         type: integer
     type: object
   models.MapSummary:
@@ -525,6 +658,15 @@ definitions:
         type: string
       success:
         type: boolean
+    type: object
+  models.SectionCategoryPortals:
+    properties:
+      portal_count:
+        type: integer
+      section_id:
+        type: integer
+      section_name:
+        type: string
     type: object
   models.Title:
     properties:
@@ -570,7 +712,7 @@ info:
 paths:
   /chapters/{chapterid}:
     get:
-      description: Get maps from the specified chapter id.
+      description: Get maps from the specified section id.
       parameters:
       - description: Chapter ID
         in: path
@@ -589,10 +731,6 @@ paths:
                 data:
                   $ref: '#/definitions/handlers.ChapterMapsResponse'
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.Response'
       tags:
       - games & chapters
   /demos:
@@ -604,6 +742,11 @@ paths:
       - description: Demo UUID
         in: query
         name: uuid
+        required: true
+        type: string
+      - description: JWT token
+        in: header
+        name: Authorization
         required: true
         type: string
       produces:
@@ -632,15 +775,11 @@ paths:
                     $ref: '#/definitions/models.Game'
                   type: array
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.Response'
       tags:
       - games & chapters
   /games/{gameid}:
     get:
-      description: Get chapters from the specified game id.
+      description: Get sections from the specified game id.
       parameters:
       - description: Game ID
         in: path
@@ -680,27 +819,23 @@ paths:
             - $ref: '#/definitions/models.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/handlers.ChaptersResponse'
+                  $ref: '#/definitions/handlers.GameMapsResponse'
               type: object
       tags:
       - games & chapters
   /login:
     get:
-      consumes:
-      - application/json
-      description: Get (redirect) login page for Steam auth.
-      produces:
-      - application/json
+      description: Starts Steam OpenID authentication. The browser is redirected to
+        Steam and then back to the application.
       responses:
-        "200":
-          description: OK
+        "301":
+          description: Redirect to Steam or the application home page
           schema:
-            allOf:
-            - $ref: '#/definitions/models.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/handlers.LoginResponse'
-              type: object
+            type: string
+        "307":
+          description: Redirect to the application after successful authentication
+          schema:
+            type: string
       tags:
       - login
   /maps/{mapid}/difficulty:
@@ -971,7 +1106,7 @@ paths:
         in: query
         name: page
         type: integer
-      - description: 'Number of Records Per Page (default: 20)'
+      - description: 'Number of records per page (default: 20)'
         in: query
         name: pageSize
         type: integer
@@ -1206,7 +1341,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Update profile page of session user.
+      description: Refresh the session user's profile details from Steam.
       parameters:
       - description: JWT Token
         in: header
@@ -1311,18 +1446,19 @@ paths:
     get:
       description: Get score logs of every player.
       parameters:
-      - type: integer
-        description: Maximum number of score entries to return (default 100)
+      - description: Maximum number of score entries to return (default 100)
+        in: query
         name: limit
+        type: integer
+      - description: Only return runs with score_time less than this tick count
         in: query
-      - type: integer
-        description: Only return runs with score_time less than this tick count
         name: max_ticks
+        type: integer
+      - description: Only return runs with this exact wr_delta (0 selects WR-count
+          runs)
         in: query
-      - type: integer
-        description: Only return runs with this exact wr_delta (0 selects WR-count runs)
         name: wr_delta
-        in: query
+        type: integer
       produces:
       - application/json
       responses:
@@ -1335,6 +1471,10 @@ paths:
                 data:
                   $ref: '#/definitions/handlers.ScoresResponse'
               type: object
+        "400":
+          description: Invalid query parameter
+          schema:
+            $ref: '#/definitions/models.Response'
       tags:
       - stats
   /stats/timeline:
@@ -1369,10 +1509,6 @@ paths:
                 data:
                   $ref: '#/definitions/handlers.LoginResponse'
               type: object
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/models.Response'
       tags:
       - auth
     get:
@@ -1389,10 +1525,6 @@ paths:
                 data:
                   $ref: '#/definitions/handlers.LoginResponse'
               type: object
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/models.Response'
       tags:
       - auth
   /users/{userid}:

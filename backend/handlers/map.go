@@ -488,7 +488,7 @@ func FetchMapSummary(c *gin.Context) {
 //	@Produce		json
 //	@Param			mapid		path		int	true	"Map ID"
 //	@Param			page		query		int	false	"Page Number (default: 1)"
-//	@Param			pageSize	query		int	false	"Number of Records Per Page (default: 20)"
+//	@Param			pageSize	query		int	false	"Number of records per page (default: 20)"
 //	@Success		200			{object}	models.Response{data=MapLeaderboardsResponse}
 //	@Router			/maps/{mapid}/leaderboards [get]
 func FetchMapLeaderboards(c *gin.Context) {
@@ -687,7 +687,6 @@ func FetchMapLeaderboards(c *gin.Context) {
 //	@Tags			games & chapters
 //	@Produce		json
 //	@Success		200	{object}	models.Response{data=[]models.Game}
-//	@Failure		400	{object}	models.Response
 //	@Router			/games [get]
 func FetchGames(c *gin.Context) {
 	rows, err := database.DB.Query(`SELECT id FROM games ORDER BY id`)
@@ -821,7 +820,6 @@ func FetchMaps(c *gin.Context) {
 //	@Produce		json
 //	@Param			chapterid	path		int	true	"Chapter ID"
 //	@Success		200			{object}	models.Response{data=ChapterMapsResponse}
-//	@Failure		400			{object}	models.Response
 //	@Router			/chapters/{chapterid} [get]
 func FetchChapterMaps(c *gin.Context) {
 	chapterID, err := strconv.Atoi(c.Param("chapterid"))
