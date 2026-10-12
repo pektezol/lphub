@@ -1,6 +1,7 @@
 package api
 
 import (
+	"crypto/subtle"
 	"fmt"
 	"net/http"
 	"os"
@@ -64,4 +65,19 @@ func IsAuthenticated(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusOK, models.ErrorResponse("Token is invalid."))
 		return
 	}
+}
+
+// IsDemoAuthenticated accepts either a normal user JWT or the dedicated
+// service token configured for demo downloads. The service token is only
+// accepted on routes that explicitly use this middleware.
+func IsDemoAuthenticated(c *gin.Context) {
+	serviceToken := os.Getenv("DEMO_SERVICE_TOKEN")
+	providedToken := c.GetHeader("Authorization")
+	if serviceToken != "" && len(providedToken) == len(serviceToken) &&
+		subtle.ConstantTimeCompare([]byte(providedToken), []byte(serviceToken)) == 1 {
+		c.Set("service_auth", true)
+		c.Next()
+		return
+	}
+	IsAuthenticated(c)
 }

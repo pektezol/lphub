@@ -463,15 +463,19 @@ func DownloadDemoWithID(c *gin.Context) {
 		c.JSON(http.StatusOK, models.ErrorResponse("Invalid id given."))
 		return
 	}
-	user, exists := c.Get("user")
-	if !exists {
-		c.JSON(http.StatusOK, models.ErrorResponse("Authentication required."))
-		return
-	}
-	authUser, ok := user.(models.User)
-	if !ok {
-		c.JSON(http.StatusOK, models.ErrorResponse("Authentication required."))
-		return
+	var changedBy interface{}
+	if serviceAuth, _ := c.Get("service_auth"); serviceAuth != true {
+		user, exists := c.Get("user")
+		if !exists {
+			c.JSON(http.StatusOK, models.ErrorResponse("Authentication required."))
+			return
+		}
+		authUser, ok := user.(models.User)
+		if !ok {
+			c.JSON(http.StatusOK, models.ErrorResponse("Authentication required."))
+			return
+		}
+		changedBy = authUser.SteamID
 	}
 	var checkedUUID string
 	err := database.DB.QueryRow("SELECT d.id FROM demos d WHERE d.id = $1", uuid).Scan(&checkedUUID)
@@ -483,7 +487,7 @@ func DownloadDemoWithID(c *gin.Context) {
 		`INSERT INTO audit (table_name, operation_type, old_data, new_data, changed_by)
 		VALUES ('demos', 'DOWNLOAD', NULL, jsonb_build_object('id', $1::text), $2)`,
 		uuid,
-		authUser.SteamID,
+		changedBy,
 	)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
