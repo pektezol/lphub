@@ -44,6 +44,7 @@ type TimelineResponse struct {
 //	@Param			limit		query	int	false	"Maximum number of score entries to return (default 100)"
 //	@Param			max_ticks	query	int	false	"Only return runs with score_time less than or equal this tick count"
 //	@Param			max_rank	query	int	false	"Only return runs ranked at or better than this rank by score count and time (1 selects world records)"
+//	@Param			hide_obsolete	query	bool	false	"Only return each user's personal best runs per map"
 //	@Param			wr_delta	query	int	false	"Only return runs with this exact wr_delta (0 selects WR-count runs)"
 //	@Param			start		query	string	false	"Include scores on or after this date (YYYY-MM-DD)"
 //	@Param			end			query	string	false	"Include scores through this date (YYYY-MM-DD)"
@@ -75,6 +76,15 @@ func Scores(c *gin.Context) {
 			return
 		}
 		maxRank = &parsed
+	}
+	hideObsolete := false
+	if value, exists := c.GetQuery("hide_obsolete"); exists {
+		parsed, parseErr := strconv.ParseBool(value)
+		if parseErr != nil {
+			c.JSON(http.StatusBadRequest, models.ErrorResponse("hide_obsolete must be a boolean"))
+			return
+		}
+		hideObsolete = parsed
 	}
 	var wrDelta *int
 	if value, exists := c.GetQuery("wr_delta"); exists {
@@ -125,6 +135,15 @@ func Scores(c *gin.Context) {
 		SELECT map_id, host_id, partner_id,
 			RANK() OVER (PARTITION BY map_id ORDER BY score_count, score_time) AS score_rank
 		FROM mp_best
+	), user_runs AS (
+		SELECT map_id, user_id, score_count, score_time
+		FROM records_sp WHERE is_deleted = false
+		UNION ALL
+		SELECT map_id, host_id AS user_id, score_count, score_time
+		FROM records_mp WHERE is_deleted = false
+		UNION ALL
+		SELECT map_id, partner_id AS user_id, score_count, score_time
+		FROM records_mp WHERE is_deleted = false
 	), placements AS (
 		SELECT map_id, user_id, MIN(score_rank) AS score_rank
 		FROM (
@@ -178,8 +197,14 @@ func Scores(c *gin.Context) {
 		AND ($3::date IS NULL OR rs.record_date >= $3)
 		AND ($4::date IS NULL OR rs.record_date < $4)
 		AND ($5::integer IS NULL OR placements.score_rank <= $5)
-	ORDER BY rs.record_date DESC LIMIT $6;`
-	rows, err := database.DB.Query(sql, maxTicks, wrDelta, startDate, endDate, maxRank, limit)
+		AND (NOT $6::boolean OR NOT EXISTS (
+			SELECT 1 FROM user_runs better
+			WHERE better.map_id = rs.map_id AND better.user_id = rs.user_id
+				AND (better.score_count < rs.score_count
+					OR (better.score_count = rs.score_count AND better.score_time < rs.score_time))
+		))
+	ORDER BY rs.record_date DESC LIMIT $7;`
+	rows, err := database.DB.Query(sql, maxTicks, wrDelta, startDate, endDate, maxRank, hideObsolete, limit)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return

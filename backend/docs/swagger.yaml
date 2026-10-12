@@ -1460,6 +1460,10 @@ paths:
         in: query
         name: max_rank
         type: integer
+      - description: Only return each user's personal best runs per map
+        in: query
+        name: hide_obsolete
+        type: boolean
       - description: Only return runs with this exact wr_delta (0 selects WR-count
           runs)
         in: query

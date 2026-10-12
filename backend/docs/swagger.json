@@ -1251,6 +1251,12 @@
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "description": "Only return each user's personal best runs per map",
+                        "name": "hide_obsolete",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "Only return runs with this exact wr_delta (0 selects WR-count runs)",
                         "name": "wr_delta",
