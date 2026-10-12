@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
 import "@css/Maplist.css";
+import "@css/ResourceState.css";
 import { API } from "@api/Api";
 import { Game } from "@customTypes/Game";
 import { GameChapter, GamesChapters } from "@customTypes/Chapters";
@@ -67,10 +68,10 @@ const isValidGameChapter = (
 ): section is GameChapter =>
   Boolean(
     section &&
-      section.game?.id === gameId &&
-      section.chapter?.id === sectionId &&
-      section.chapter.game_id === gameId &&
-      Array.isArray(section.maps),
+    section.game?.id === gameId &&
+    section.chapter?.id === sectionId &&
+    section.chapter.game_id === gameId &&
+    Array.isArray(section.maps),
   );
 
 interface ChapterCacheScope {
@@ -84,6 +85,7 @@ interface ChapterCacheScope {
 const Maplist: React.FC = () => {
   const [game, setGame] = React.useState<Game | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
+  const [loadError, setLoadError] = React.useState(false);
   const [gameChapters, setGameChapters] = React.useState<GamesChapters>();
   const [currentSection, setCurrentSection] = React.useState<GameChapter>();
   const [dropdownActive, setDropdownActive] = React.useState(false);
@@ -138,6 +140,7 @@ const Maplist: React.FC = () => {
     cacheScope.lifecycle += 1;
     const lifecycle = cacheScope.lifecycle;
     setGame(null);
+    setLoadError(false);
     setGameChapters(undefined);
     setCurrentSection(undefined);
     setDropdownActive(false);
@@ -183,6 +186,7 @@ const Maplist: React.FC = () => {
         if (isCurrent) {
           setGame(null);
           setGameChapters(undefined);
+          setLoadError(true);
         }
       } finally {
         if (isCurrent) {
@@ -218,11 +222,7 @@ const Maplist: React.FC = () => {
     }
 
     const cacheScope = chapterCacheScopeRef.current;
-    if (
-      !cacheScope ||
-      !cacheScope.isActive ||
-      cacheScope.gameId !== gameId
-    ) {
+    if (!cacheScope || !cacheScope.isActive || cacheScope.gameId !== gameId) {
       return () => {
         isCurrent = false;
       };
@@ -250,10 +250,7 @@ const Maplist: React.FC = () => {
             return undefined;
           }
 
-          if (
-            cacheScope.isActive &&
-            cacheScope.gameId === requestedGameId
-          ) {
+          if (cacheScope.isActive && cacheScope.gameId === requestedGameId) {
             chapterCache.set(chapterId, section);
           }
           return section;
@@ -285,16 +282,14 @@ const Maplist: React.FC = () => {
   }
   if (!game) {
     return (
-      <main>
-        <section style={{ marginTop: "20px" }}>
-          <Link to="/games">
-            <button className="nav-button" style={{ borderRadius: "20px" }}>
-              <i className="triangle"></i>
-              <span>Games List</span>
-            </button>
-          </Link>
-        </section>
-        <p>Game not found.</p>
+      <main className="resource-not-found">
+        <h1>{loadError ? "Game Unavailable" : "Game Not Found"}</h1>
+        <p>
+          {loadError
+            ? "We couldn’t load this game. Please try again later."
+            : "We couldn’t find a game with that ID."}
+        </p>
+        <Link to="/games">Return to Games</Link>
       </main>
     );
   }

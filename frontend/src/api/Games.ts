@@ -37,6 +37,9 @@ export const get_chapters = async (chapter_id: string): Promise<GameChapter | un
 
 export const get_games_chapters = async (game_id: string): Promise<GamesChapters | undefined> => {
   const response = await axios.get(url(`games/${game_id}`));
+  if (!response.data?.success) {
+    return undefined;
+  }
   const gameChapters = response.data?.data;
 
   if (!gameChapters || typeof gameChapters !== "object") {

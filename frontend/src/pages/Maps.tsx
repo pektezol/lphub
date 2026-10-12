@@ -9,13 +9,10 @@ import Leaderboards, {
 } from "@components/Leaderboards";
 import Discussions from "@components/Discussions";
 import ModMenu from "@components/ModMenu";
-import {
-  MapDiscussions,
-  MapLeaderboard,
-  MapSummary,
-} from "@customTypes/Map";
+import { MapDiscussions, MapLeaderboard, MapSummary } from "@customTypes/Map";
 import { API } from "@api/Api";
 import "@css/Maps.css";
+import "@css/ResourceState.css";
 
 interface MapProps {
   token?: string;
@@ -62,9 +59,9 @@ const isValidMapSummary = (
 ): summary is MapSummary =>
   Boolean(
     summary &&
-      summary.map?.id === Number(mapID) &&
-      summary.summary &&
-      Array.isArray(summary.summary.routes),
+    summary.map?.id === Number(mapID) &&
+    summary.summary &&
+    Array.isArray(summary.summary.routes),
   );
 
 const isValidMapDiscussions = (
@@ -78,11 +75,11 @@ const isValidMapLeaderboard = (
 ): leaderboard is MapLeaderboard =>
   Boolean(
     leaderboard &&
-      leaderboard.map?.id === Number(mapID) &&
-      Array.isArray(leaderboard.records) &&
-      leaderboard.pagination &&
-      Number.isInteger(leaderboard.pagination.current_page) &&
-      Number.isInteger(leaderboard.pagination.total_pages),
+    leaderboard.map?.id === Number(mapID) &&
+    Array.isArray(leaderboard.records) &&
+    leaderboard.pagination &&
+    Number.isInteger(leaderboard.pagination.current_page) &&
+    Number.isInteger(leaderboard.pagination.total_pages),
   );
 
 const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
@@ -98,9 +95,12 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
   const [mapDiscussionsResource, setMapDiscussionsResource] = React.useState<
     ScopedResource<MapDiscussions>
   >({ mapID: "", status: "loading" });
-  const [leaderboardResource, setLeaderboardResource] = React.useState<
-    ScopedLeaderboardResource
-  >({ mapID: "", page: 1, status: "loading" });
+  const [leaderboardResource, setLeaderboardResource] =
+    React.useState<ScopedLeaderboardResource>({
+      mapID: "",
+      page: 1,
+      status: "loading",
+    });
   const mapCacheRef = React.useRef<MapCache | undefined>(undefined);
   const activeLeaderboardPageRef = React.useRef<number>(1);
 
@@ -127,6 +127,14 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
     const request = API.get_map_summary(cache.mapID)
       .then((summary) => {
         if (!isValidMapSummary(summary, cache.mapID)) {
+          if (summary === undefined) {
+            entry.status = "unavailable";
+            delete entry.inFlight;
+            if (cache.summary === entry) {
+              publish(entry);
+            }
+            return undefined;
+          }
           throw new Error("Invalid map summary response.");
         }
 
@@ -333,10 +341,7 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
     return () => {
       cache.isActive = false;
       void Promise.resolve().then(() => {
-        if (
-          mapCacheRef.current === cache &&
-          cache.lifecycle === lifecycle
-        ) {
+        if (mapCacheRef.current === cache && cache.lifecycle === lifecycle) {
           clearMapCache(cache);
           mapCacheRef.current = undefined;
         }
@@ -370,11 +375,7 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
 
       const cache = mapCacheRef.current;
       const page = activeLeaderboardPageRef.current;
-      if (
-        !cache ||
-        cache.mapID !== mapID ||
-        cache.leaderboards.has(page)
-      ) {
+      if (!cache || cache.mapID !== mapID || cache.leaderboards.has(page)) {
         return;
       }
       void loadLeaderboardPage(cache, page);
@@ -401,9 +402,10 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
       };
     }
 
-    const cachedPage = mapCacheRef.current?.mapID === mapID
-      ? mapCacheRef.current.leaderboards.get(leaderboardPage)
-      : undefined;
+    const cachedPage =
+      mapCacheRef.current?.mapID === mapID
+        ? mapCacheRef.current.leaderboards.get(leaderboardPage)
+        : undefined;
     if (cachedPage) {
       return { status: cachedPage.status, data: cachedPage.data };
     }
@@ -418,6 +420,23 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
   const mapDiscussionsData = activeDiscussionsResource.data;
 
   if (!mapSummaryData) {
+    if (
+      activeSummaryResource.status === "unavailable" ||
+      activeSummaryResource.status === "error"
+    ) {
+      const failed = activeSummaryResource.status === "error";
+      return (
+        <main className="resource-not-found">
+          <h1>{failed ? "Map Unavailable" : "Map Not Found"}</h1>
+          <p>
+            {failed
+              ? "We couldn’t load this map. Please try again later."
+              : "We couldn’t find a map with that ID."}
+          </p>
+          <Link to="/games">Return to Games</Link>
+        </main>
+      );
+    }
     // loading placeholder
     return (
       <>

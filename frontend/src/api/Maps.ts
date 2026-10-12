@@ -18,8 +18,11 @@ export interface RecordUploadResult {
   } | null;
 }
 
-export const get_map_summary = async (map_id: string): Promise<MapSummary> => {
+export const get_map_summary = async (map_id: string): Promise<MapSummary | undefined> => {
   const response = await axios.get(url(`maps/${map_id}/summary`));
+  if (!response.data?.success) {
+    return undefined;
+  }
   return response.data.data;
 };
 

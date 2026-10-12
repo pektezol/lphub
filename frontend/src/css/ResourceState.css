@@ -1,0 +1,29 @@
+.resource-not-found {
+  display: flex;
+  min-height: 60vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.resource-not-found h1 {
+  margin: 0 0 0.5rem;
+  color: #fff;
+}
+
+.resource-not-found p {
+  margin: 0 0 1.5rem;
+  font-size: 1.25rem;
+}
+
+.resource-not-found a {
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+  background: #2b2e46;
+  text-decoration: none;
+}
+
+.resource-not-found a:hover {
+  background: #383c59;
+}

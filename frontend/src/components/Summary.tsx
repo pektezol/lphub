@@ -289,13 +289,13 @@ const Summary: React.FC<SummaryProps> = ({
                           {routeIsTheoretical
                             ? "TBD"
                             : new Date(r.history.date).toLocaleDateString(
-                                "en-US",
-                                {
-                                  month: "long",
-                                  day: "numeric",
-                                  year: "numeric",
-                                },
-                              )}
+                              "en-US",
+                              {
+                                month: "long",
+                                day: "numeric",
+                                year: "numeric",
+                              },
+                            )}
                         </span>
                       </button>
                     );
@@ -331,9 +331,9 @@ const Summary: React.FC<SummaryProps> = ({
                       domain={
                         mapHistoryPoints.length === 1
                           ? [
-                              mapHistoryPoints[0].timestamp - 86_400_000,
-                              mapHistoryPoints[0].timestamp + 86_400_000,
-                            ]
+                            mapHistoryPoints[0].timestamp - 86_400_000,
+                            mapHistoryPoints[0].timestamp + 86_400_000,
+                          ]
                           : ["dataMin", "dataMax"]
                       }
                       stroke="#CDCFDF"
