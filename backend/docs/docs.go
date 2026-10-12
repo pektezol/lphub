@@ -1246,8 +1246,14 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "Only return runs with score_time less than this tick count",
+                        "description": "Only return runs with score_time less than or equal this tick count",
                         "name": "max_ticks",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Only return runs ranked at or better than this rank by score count and time (1 selects world records)",
+                        "name": "max_rank",
                         "in": "query"
                     },
                     {

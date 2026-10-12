@@ -42,7 +42,8 @@ type TimelineResponse struct {
 //	@Description	Get score logs of every player.
 //	@Tags			stats
 //	@Param			limit		query	int	false	"Maximum number of score entries to return (default 100)"
-//	@Param			max_ticks	query	int	false	"Only return runs with score_time less than this tick count"
+//	@Param			max_ticks	query	int	false	"Only return runs with score_time less than or equal this tick count"
+//	@Param			max_rank	query	int	false	"Only return runs ranked at or better than this rank by score count and time (1 selects world records)"
 //	@Param			wr_delta	query	int	false	"Only return runs with this exact wr_delta (0 selects WR-count runs)"
 //	@Param			start		query	string	false	"Include scores on or after this date (YYYY-MM-DD)"
 //	@Param			end			query	string	false	"Include scores through this date (YYYY-MM-DD)"
@@ -65,6 +66,15 @@ func Scores(c *gin.Context) {
 			return
 		}
 		maxTicks = &parsed
+	}
+	var maxRank *int
+	if value, exists := c.GetQuery("max_rank"); exists {
+		parsed, parseErr := strconv.Atoi(value)
+		if parseErr != nil || parsed < 1 {
+			c.JSON(http.StatusBadRequest, models.ErrorResponse("max_rank must be a positive integer"))
+			return
+		}
+		maxRank = &parsed
 	}
 	var wrDelta *int
 	if value, exists := c.GetQuery("wr_delta"); exists {
@@ -163,12 +173,13 @@ func Scores(c *gin.Context) {
 		WHERE category_id = 1 AND user_name <> 'Placeholder'
 		GROUP BY map_id
 	) wr ON wr.map_id = rs.map_id
-	WHERE ($1::integer IS NULL OR rs.score_time < $1)
+	WHERE ($1::integer IS NULL OR rs.score_time <= $1)
 		AND ($2::integer IS NULL OR GREATEST(rs.score_count - COALESCE(wr.score_count, rs.score_count), 0) = $2)
 		AND ($3::date IS NULL OR rs.record_date >= $3)
 		AND ($4::date IS NULL OR rs.record_date < $4)
-	ORDER BY rs.record_date DESC LIMIT $5;`
-	rows, err := database.DB.Query(sql, maxTicks, wrDelta, startDate, endDate, limit)
+		AND ($5::integer IS NULL OR placements.score_rank <= $5)
+	ORDER BY rs.record_date DESC LIMIT $6;`
+	rows, err := database.DB.Query(sql, maxTicks, wrDelta, startDate, endDate, maxRank, limit)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
