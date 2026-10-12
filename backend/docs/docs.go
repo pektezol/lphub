@@ -1255,6 +1255,18 @@ const docTemplate = `{
                         "description": "Only return runs with this exact wr_delta (0 selects WR-count runs)",
                         "name": "wr_delta",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Include scores on or after this date (YYYY-MM-DD)",
+                        "name": "start",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Include scores through this date (YYYY-MM-DD)",
+                        "name": "end",
+                        "in": "query"
                     }
                 ],
                 "responses": {

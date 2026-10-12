@@ -1459,6 +1459,14 @@ paths:
         in: query
         name: wr_delta
         type: integer
+      - description: Include scores on or after this date (YYYY-MM-DD)
+        in: query
+        name: start
+        type: string
+      - description: Include scores through this date (YYYY-MM-DD)
+        in: query
+        name: end
+        type: string
       produces:
       - application/json
       responses:
