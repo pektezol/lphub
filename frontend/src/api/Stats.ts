@@ -44,10 +44,10 @@ export async function get_portal_count_history(): Promise<RecordsTimelineRespons
 }
 
 export async function get_recent_scores(): Promise<ScoreLog[]> {
-  const response = await axios.get(url("stats/scores"));
+  const response = await axios.get(url("stats/scores"), { params: { limit: 5 } });
   if (!response.data.data) {
     return [];
   }
-  return response.data.data.scores.slice(0, 5);
+  return response.data.data.scores;
 }
 
