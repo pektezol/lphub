@@ -1248,6 +1248,26 @@ const docTemplate = `{
         "/stats/scores": {
             "get": {
                 "description": "Get score logs of every player.",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Maximum number of score entries to return (default 100)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Only return runs with score_time less than this tick count",
+                        "name": "max_ticks",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Only return runs with this exact wr_delta (0 selects WR-count runs)",
+                        "name": "wr_delta",
+                        "in": "query"
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -1891,6 +1911,12 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "score_time": {
+                    "type": "integer"
+                },
+                "score_rank": {
+                    "type": "integer"
+                },
+                "wr_delta": {
                     "type": "integer"
                 },
                 "user": {
