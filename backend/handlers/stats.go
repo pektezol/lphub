@@ -16,15 +16,15 @@ type ScoresResponse struct {
 }
 
 type ScoresDetails struct {
-	Game       models.Game      `json:"game"`
-	User       models.UserShort `json:"user"`
-	Map        models.MapShort  `json:"map"`
-	ScoreCount int              `json:"score_count"`
-	ScoreTime  int              `json:"score_time"`
-	ScoreRank  int              `json:"score_rank"`
-	WRDelta    int              `json:"wr_delta"`
-	DemoID     string           `json:"demo_id"`
-	Date       time.Time        `json:"date"`
+	Game         models.Game      `json:"game"`
+	User         models.UserShort `json:"user"`
+	Map          models.MapShort  `json:"map"`
+	ScoreCount   int              `json:"score_count"`
+	ScoreTime    int              `json:"score_time"`
+	ScoreRank    int              `json:"score_rank"`
+	ScoreWRDelta int              `json:"score_wr_delta"`
+	DemoID       string           `json:"demo_id"`
+	Date         time.Time        `json:"date"`
 }
 
 type TimelinePoint struct {
@@ -151,7 +151,7 @@ func Scores(c *gin.Context) {
 	}
 	for rows.Next() {
 		score := ScoresDetails{}
-		err = rows.Scan(&score.Game.ID, &score.Game.Name, &score.Game.IsCoop, &score.Map.ID, &score.Map.Name, &score.User.SteamID, &score.User.UserName, &score.ScoreCount, &score.ScoreTime, &score.ScoreRank, &score.WRDelta, &score.DemoID, &score.Date)
+		err = rows.Scan(&score.Game.ID, &score.Game.Name, &score.Game.IsCoop, &score.Map.ID, &score.Map.Name, &score.User.SteamID, &score.User.UserName, &score.ScoreCount, &score.ScoreTime, &score.ScoreRank, &score.ScoreWRDelta, &score.DemoID, &score.Date)
 		if err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return

@@ -1969,11 +1969,11 @@ const docTemplate = `{
                 "score_time": {
                     "type": "integer"
                 },
+                "score_wr_delta": {
+                    "type": "integer"
+                },
                 "user": {
                     "$ref": "#/definitions/models.UserShort"
-                },
-                "wr_delta": {
-                    "type": "integer"
                 }
             }
         },
