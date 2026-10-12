@@ -44,6 +44,8 @@ type TimelineResponse struct {
 //	@Param			limit		query	int	false	"Maximum number of score entries to return (default 100)"
 //	@Param			max_ticks	query	int	false	"Only return runs with score_time less than this tick count"
 //	@Param			wr_delta	query	int	false	"Only return runs with this exact wr_delta (0 selects WR-count runs)"
+//	@Param			start		query	string	false	"Include scores on or after this date (YYYY-MM-DD)"
+//	@Param			end			query	string	false	"Include scores through this date (YYYY-MM-DD)"
 //	@Produce		json
 //	@Success		200	{object}	models.Response{data=ScoresResponse}
 //	@Failure		400	{object}	models.Response	"Invalid query parameter"
@@ -72,6 +74,26 @@ func Scores(c *gin.Context) {
 			return
 		}
 		wrDelta = &parsed
+	}
+	var startDate *time.Time
+	if value, exists := c.GetQuery("start"); exists {
+		parsed, parseErr := time.Parse("2006-01-02", value)
+		if parseErr != nil {
+			c.JSON(http.StatusBadRequest, models.ErrorResponse("start must be a date in YYYY-MM-DD format"))
+			return
+		}
+		startDate = &parsed
+	}
+	var endDate *time.Time
+	if value, exists := c.GetQuery("end"); exists {
+		parsed, parseErr := time.Parse("2006-01-02", value)
+		if parseErr != nil {
+			c.JSON(http.StatusBadRequest, models.ErrorResponse("end must be a date in YYYY-MM-DD format"))
+			return
+		}
+		// Make the supplied end date inclusive while using an exclusive SQL bound.
+		parsed = parsed.AddDate(0, 0, 1)
+		endDate = &parsed
 	}
 	sql := `WITH sp_best AS (
 		SELECT DISTINCT ON (map_id, user_id)
@@ -143,8 +165,10 @@ func Scores(c *gin.Context) {
 	) wr ON wr.map_id = rs.map_id
 	WHERE ($1::integer IS NULL OR rs.score_time < $1)
 		AND ($2::integer IS NULL OR GREATEST(rs.score_count - COALESCE(wr.score_count, rs.score_count), 0) = $2)
-	ORDER BY rs.record_date DESC LIMIT $3;`
-	rows, err := database.DB.Query(sql, maxTicks, wrDelta, limit)
+		AND ($3::date IS NULL OR rs.record_date >= $3)
+		AND ($4::date IS NULL OR rs.record_date < $4)
+	ORDER BY rs.record_date DESC LIMIT $5;`
+	rows, err := database.DB.Query(sql, maxTicks, wrDelta, startDate, endDate, limit)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
