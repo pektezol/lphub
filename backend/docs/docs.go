@@ -2064,14 +2064,14 @@ const docTemplate = `{
         "handlers.TimelineImprovement": {
             "type": "object",
             "properties": {
-                "map_name": {
-                    "type": "string"
+                "map": {
+                    "$ref": "#/definitions/models.MapShort"
                 },
                 "score_delta": {
                     "type": "integer"
                 },
-                "user_name": {
-                    "type": "string"
+                "user": {
+                    "$ref": "#/definitions/models.UserShort"
                 }
             }
         },
