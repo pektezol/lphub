@@ -28,8 +28,15 @@ type ScoresDetails struct {
 }
 
 type TimelinePoint struct {
-	Date  string `json:"date"`
-	Count int    `json:"count"`
+	Date         string                `json:"date"`
+	Count        int                   `json:"count"`
+	Improvements []TimelineImprovement `json:"improvements"`
+}
+
+type TimelineImprovement struct {
+	UserName   string `json:"user_name"`
+	MapName    string `json:"map_name"`
+	ScoreDelta int    `json:"score_delta"`
 }
 
 type TimelineResponse struct {
@@ -323,8 +330,9 @@ func Timeline(c *gin.Context) {
 			return
 		}
 		result.Singleplayer = append(result.Singleplayer, TimelinePoint{
-			Date:  dateTime.Format("2006-01-02"),
-			Count: count,
+			Date:         dateTime.Format("2006-01-02"),
+			Count:        count,
+			Improvements: []TimelineImprovement{},
 		})
 	}
 
@@ -342,9 +350,61 @@ func Timeline(c *gin.Context) {
 			return
 		}
 		result.Multiplayer = append(result.Multiplayer, TimelinePoint{
-			Date:  dateTime.Format("2006-01-02"),
-			Count: count,
+			Date:         dateTime.Format("2006-01-02"),
+			Count:        count,
+			Improvements: []TimelineImprovement{},
 		})
+	}
+	if err := rows.Err(); err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	rows, err = database.DB.Query(`
+			WITH history AS (
+				SELECT mh.id, mh.map_id, mh.record_date, mh.user_name, mh.score_count,
+					m.game_id, m.name,
+					LAG(mh.score_count) OVER (
+						PARTITION BY mh.map_id ORDER BY mh.record_date, mh.id
+					) AS previous_score_count
+				FROM map_history mh
+				INNER JOIN maps m ON m.id = mh.map_id
+				WHERE mh.category_id = 1 AND m.game_id IN (1, 2)
+					AND mh.user_name <> 'Placeholder'
+			)
+			SELECT record_date, game_id, user_name, name,
+				COALESCE(previous_score_count, score_count) - score_count AS score_delta
+			FROM history
+			WHERE record_date >= '2013-01-01'
+			ORDER BY record_date, name, id`)
+	if err != nil {
+		return
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var date time.Time
+		var gameID int
+		var improvement TimelineImprovement
+		if err := rows.Scan(&date, &gameID, &improvement.UserName, &improvement.MapName, &improvement.ScoreDelta); err != nil {
+			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+			return
+		}
+		points := result.Singleplayer
+		if gameID == 2 {
+			points = result.Multiplayer
+		}
+		for i := range points {
+			if points[i].Date == date.Format("2006-01-02") {
+				if points[i].Improvements == nil {
+					points[i].Improvements = []TimelineImprovement{}
+				}
+				points[i].Improvements = append(points[i].Improvements, improvement)
+				break
+			}
+		}
+	}
+	if err := rows.Err(); err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
 	}
 	c.JSON(http.StatusOK, models.Response{
 		Success: true,

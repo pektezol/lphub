@@ -404,12 +404,25 @@ definitions:
       user_name:
         type: string
     type: object
+  handlers.TimelineImprovement:
+    properties:
+      map_name:
+        type: string
+      score_delta:
+        type: integer
+      user_name:
+        type: string
+    type: object
   handlers.TimelinePoint:
     properties:
       count:
         type: integer
       date:
         type: string
+      improvements:
+        items:
+          $ref: '#/definitions/handlers.TimelineImprovement'
+        type: array
     type: object
   handlers.TimelineResponse:
     properties:

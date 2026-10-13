@@ -2061,6 +2061,20 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.TimelineImprovement": {
+            "type": "object",
+            "properties": {
+                "map_name": {
+                    "type": "string"
+                },
+                "score_delta": {
+                    "type": "integer"
+                },
+                "user_name": {
+                    "type": "string"
+                }
+            }
+        },
         "handlers.TimelinePoint": {
             "type": "object",
             "properties": {
@@ -2069,6 +2083,12 @@ const docTemplate = `{
                 },
                 "date": {
                     "type": "string"
+                },
+                "improvements": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handlers.TimelineImprovement"
+                    }
                 }
             }
         },
