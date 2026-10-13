@@ -210,7 +210,7 @@ func CreateRecordWithDemo(c *gin.Context) {
 			c.JSON(http.StatusOK, models.ErrorResponse("Partner SteamID does not match an account on LPHUB."))
 			return
 		}
-		sql := `INSERT INTO records_mp(map_id,score_count,score_time,host_id,partner_id,host_demo_id,partner_demo_id) 
+		sql := `INSERT INTO records_mp(map_id,score_count,score_time,host_id,partner_id,host_demo_id,partner_demo_id)
 		VALUES($1, $2, $3, $4, $5, $6, $7)`
 		duplicate, err := duplicateRecordExists(
 			tx,
@@ -240,7 +240,7 @@ func CreateRecordWithDemo(c *gin.Context) {
 			return
 		}
 	} else {
-		sql := `INSERT INTO records_sp(map_id,score_count,score_time,user_id,demo_id) 
+		sql := `INSERT INTO records_sp(map_id,score_count,score_time,user_id,demo_id)
 		VALUES($1, $2, $3, $4, $5)`
 		duplicate, err := duplicateRecordExists(
 			tx,
@@ -463,8 +463,9 @@ func DownloadDemoWithID(c *gin.Context) {
 		c.JSON(http.StatusOK, models.ErrorResponse("Invalid id given."))
 		return
 	}
-	var changedBy interface{}
-	if serviceAuth, _ := c.Get("service_auth"); serviceAuth != true {
+	serviceAuth, _ := c.Get("service_auth")
+	changedBy := "76560000000000000"
+	if serviceAuth != true {
 		user, exists := c.Get("user")
 		if !exists {
 			c.JSON(http.StatusOK, models.ErrorResponse("Authentication required."))
@@ -483,7 +484,7 @@ func DownloadDemoWithID(c *gin.Context) {
 		c.JSON(http.StatusOK, models.ErrorResponse("Given id does not match a demo."))
 		return
 	}
-	_, err = database.DB.Exec(
+	_, err = database.DB.ExecContext(c.Request.Context(),
 		`INSERT INTO audit (table_name, operation_type, old_data, new_data, changed_by)
 		VALUES ('demos', 'DOWNLOAD', NULL, jsonb_build_object('id', $1::text), $2)`,
 		uuid,
