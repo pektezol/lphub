@@ -32,11 +32,13 @@
 
 .stats-grid {
     display: grid;
-    grid-template-columns: 4fr 1fr;
+    grid-template-columns: 240px minmax(0, 1fr) 240px;
     gap: 20px;
 }
 
 .stats-container {
+    grid-column: 2;
+    grid-row: 1;
     background: #202232;
     border-radius: 24px;
     padding: 20px;
@@ -171,11 +173,23 @@
 
 /* Recent Scores */
 .recent-scores-container {
+    box-sizing: border-box;
+    width: 240px;
     background: #202232;
     border-radius: 24px;
     padding: 20px;
     display: flex;
     flex-direction: column;
+}
+
+.personal-bests-container {
+    grid-column: 3;
+    grid-row: 1;
+}
+
+.world-records-container {
+    grid-column: 1;
+    grid-row: 1;
 }
 
 .recent-scores-header {
@@ -219,6 +233,7 @@
     font-family: BarlowSemiCondensed-SemiBold;
     font-size: 18px;
     color: #FFF;
+    line-height: 1.2;
     margin-bottom: 4px;
 }
 
@@ -226,13 +241,22 @@
     font-family: BarlowSemiCondensed-Regular;
     font-size: 16px;
     color: #CDCFDF;
+    line-height: 1.2;
     margin-bottom: 2px;
+}
+
+.score-user a,
+.score-map a {
+    color: inherit;
+    font: inherit;
+    text-decoration: none;
 }
 
 .score-portals {
     font-family: BarlowSemiCondensed-Regular;
     font-size: 14px;
     color: #888;
+    line-height: 1.2;
 }
 
 .score-date {
@@ -442,6 +466,13 @@
     .stats-grid {
         grid-template-columns: 1fr;
         gap: 15px;
+    }
+
+    .stats-container,
+    .personal-bests-container,
+    .world-records-container {
+        grid-column: auto;
+        grid-row: auto;
     }
 
     .stats-container {

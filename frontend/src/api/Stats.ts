@@ -4,6 +4,19 @@ import { url } from "./Api";
 export interface PortalCountData {
   date: string;
   count: number;
+  improvements?: RecordImprovement[];
+}
+
+export interface RecordImprovement {
+  user: {
+    steam_id: string;
+    user_name: string;
+  };
+  map: {
+    id: number;
+    name: string;
+  };
+  score_delta: number;
 }
 
 export interface RecordsTimelineResponse {
