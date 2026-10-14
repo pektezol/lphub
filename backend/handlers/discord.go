@@ -162,7 +162,7 @@ func sendRankOneRecordNotification(ctx context.Context, mapID int, mapName, mapI
 		Username:  "lp.portal2.sr",
 		AvatarURL: siteBaseURL + "/logo.png",
 		Embeds: []discordEmbed{{
-			Title:       "WR: " + mapName,
+			Title:       mapName,
 			URL:         fmt.Sprintf("%s/maps/%d", siteBaseURL, mapID),
 			Description: players,
 			Color:       embedColor,
