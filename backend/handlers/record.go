@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"hash/fnv"
 	"io"
+	"log"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -116,6 +117,7 @@ func CreateRecordWithDemo(c *gin.Context) {
 	}
 	// Defer to a rollback in case anything fails
 	defer tx.Rollback()
+	var rankOneNotification *rankOneRecordNotification
 	for i, header := range demoFileHeaders {
 		uuid := uuid.New().String()
 		// Upload & insert into demos
@@ -234,10 +236,27 @@ func CreateRecordWithDemo(c *gin.Context) {
 			})
 			return
 		}
-		_, err = tx.Exec(sql, mapID, hostDemoScoreCount, hostDemoScoreTime, convertedHostSteamID, convertedPartnerSteamID, hostDemoUUID, partnerDemoUUID)
+		var insertedRecordID int
+		err = tx.QueryRowContext(c.Request.Context(), sql+" RETURNING id", mapID, hostDemoScoreCount, hostDemoScoreTime, convertedHostSteamID, convertedPartnerSteamID, hostDemoUUID, partnerDemoUUID).Scan(&insertedRecordID)
 		if err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
+		}
+		rank, rankErr := recordIsUniqueRankOne(c.Request.Context(), tx, mapID, isCoop, insertedRecordID, hostDemoScoreCount, hostDemoScoreTime)
+		if rankErr != nil {
+			log.Printf("discord rank-one notification: check rank: %v", rankErr)
+		} else if rank.UniqueFirst {
+			var mapName, mapImage, hostUserName, partnerUserName string
+			err = tx.QueryRowContext(c.Request.Context(), `SELECT m.name, m.image, host.user_name, partner.user_name
+				FROM maps m
+				INNER JOIN users host ON host.steam_id = $2
+				INNER JOIN users partner ON partner.steam_id = $3
+				WHERE m.id = $1`, mapID, convertedHostSteamID, convertedPartnerSteamID).Scan(&mapName, &mapImage, &hostUserName, &partnerUserName)
+			if err != nil {
+				log.Printf("discord rank-one notification: load record details: %v", err)
+			} else {
+				rankOneNotification = &rankOneRecordNotification{mapID: mapID, mapName: mapName, mapImage: mapImage, isCoop: true, hostSteamID: convertedHostSteamID, hostUserName: hostUserName, partnerSteamID: convertedPartnerSteamID, partnerUserName: partnerUserName, portalCount: hostDemoScoreCount, scoreTicks: hostDemoScoreTime, rank: rank}
+			}
 		}
 	} else {
 		sql := `INSERT INTO records_sp(map_id,score_count,score_time,user_id,demo_id)
@@ -264,10 +283,24 @@ func CreateRecordWithDemo(c *gin.Context) {
 			})
 			return
 		}
-		_, err = tx.Exec(sql, mapID, hostDemoScoreCount, hostDemoScoreTime, user.(models.User).SteamID, hostDemoUUID)
+		var insertedRecordID int
+		err = tx.QueryRowContext(c.Request.Context(), sql+" RETURNING id", mapID, hostDemoScoreCount, hostDemoScoreTime, user.(models.User).SteamID, hostDemoUUID).Scan(&insertedRecordID)
 		if err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
+		}
+		rank, rankErr := recordIsUniqueRankOne(c.Request.Context(), tx, mapID, isCoop, insertedRecordID, hostDemoScoreCount, hostDemoScoreTime)
+		if rankErr != nil {
+			log.Printf("discord rank-one notification: check rank: %v", rankErr)
+		} else if rank.UniqueFirst {
+			var mapName, mapImage, hostUserName string
+			err = tx.QueryRowContext(c.Request.Context(), `SELECT m.name, m.image, u.user_name
+				FROM maps m INNER JOIN users u ON u.steam_id = $2 WHERE m.id = $1`, mapID, user.(models.User).SteamID).Scan(&mapName, &mapImage, &hostUserName)
+			if err != nil {
+				log.Printf("discord rank-one notification: load record details: %v", err)
+			} else {
+				rankOneNotification = &rankOneRecordNotification{mapID: mapID, mapName: mapName, mapImage: mapImage, hostSteamID: user.(models.User).SteamID, hostUserName: hostUserName, portalCount: hostDemoScoreCount, scoreTicks: hostDemoScoreTime, rank: rank}
+			}
 		}
 	}
 	if os.Getenv("ENV") == "DEV" {
@@ -300,6 +333,9 @@ func CreateRecordWithDemo(c *gin.Context) {
 			if err = tx.Commit(); err != nil {
 				c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 				return
+			}
+			if rankOneNotification != nil {
+				rankOneNotification.send(c.Request.Context())
 			}
 			c.JSON(http.StatusOK, models.Response{
 				Success: true,
@@ -345,6 +381,9 @@ func CreateRecordWithDemo(c *gin.Context) {
 	if err = tx.Commit(); err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
+	}
+	if rankOneNotification != nil {
+		rankOneNotification.send(c.Request.Context())
 	}
 	c.JSON(http.StatusOK, models.Response{
 		Success: true,
