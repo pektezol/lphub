@@ -131,3 +131,47 @@ body {
         padding-right: 2rem;
     }
 }
+.moderation-page {
+  padding: 24px;
+  color: #e5e6ef;
+}
+
+.suggestion-card {
+  margin: 20px 0;
+  padding: 18px;
+  background: #2b2e46;
+  border-radius: 8px;
+}
+
+.suggestion-card section {
+  margin: 18px 0;
+  padding: 12px;
+  background: #22253a;
+  overflow-wrap: anywhere;
+}
+
+.suggestion-card button,
+.route-description-suggestion button,
+#description > button {
+  margin: 6px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.route-description-suggestion textarea {
+  display: block;
+  width: min(100%, 800px);
+  min-height: 160px;
+}
+
+.route-description-preview {
+  width: min(100%, 800px);
+  padding: 12px;
+  background: #22253a;
+}
+
+@media (max-width: 768px) {
+  .moderation-page {
+    padding: 16px;
+  }
+}

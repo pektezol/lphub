@@ -17,6 +17,7 @@ import { Game } from "@customTypes/Game";
 import { API } from "./api/Api";
 import Maplist from "@pages/Maplist";
 import Rankings from "@pages/Rankings";
+import Moderation from "@pages/Moderation";
 import { get_user_mod_from_token } from "./utils/Jwt";
 import { AuthenticationState } from "@customTypes/Auth";
 
@@ -122,6 +123,7 @@ const App: React.FC = () => {
       }} games={games} />
       <Sidebar
         profile={profile}
+        isModerator={isModerator}
         onLogout={() => setAuthentication({ status: "guest" })}
         onUploadRun={() => setUploadRunDialog(true)}
       />
@@ -132,6 +134,7 @@ const App: React.FC = () => {
         <Route path="/games" element={<Games games={games} />} />
         <Route path='/games/:id' element={<Maplist />}></Route>
         <Route path="/maps/:id" element={<Maps token={token} isModerator={isModerator} />} />
+        <Route path="/moderation" element={<Moderation token={token} isModerator={isModerator} />} />
         <Route path="/rules" element={<Rules />} />
         <Route path="/about" element={<About />} />
         <Route path='/rankings' element={<Rankings />}></Route>

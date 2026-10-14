@@ -31,6 +31,11 @@ import {
 } from "@api/Mod";
 import { get_portal_count_history, get_recent_scores } from "@api/Stats";
 import { UploadRunContent } from "@customTypes/Content";
+import {
+  get_route_description_suggestions,
+  post_route_description_suggestion,
+  review_route_description_suggestion,
+} from "@api/Mod";
 
 // add new api call function entries here
 // example usage: API.get_games();
@@ -102,6 +107,9 @@ export const API = {
 
   delete_map_summary: (token: string, map_id: string, route_id: number) =>
     delete_map_summary(token, map_id, route_id),
+  post_route_description_suggestion: post_route_description_suggestion,
+  get_route_description_suggestions: get_route_description_suggestions,
+  review_route_description_suggestion: review_route_description_suggestion,
   // Stats
   get_portal_count_history: () => get_portal_count_history(),
   get_recent_scores: () => get_recent_scores(),

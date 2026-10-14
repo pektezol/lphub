@@ -21,6 +21,7 @@ interface SidebarProps {
   profile?: UserProfile;
   onLogout: () => void;
   onUploadRun: () => void;
+  isModerator: boolean;
 }
 
 const SEARCH_DEBOUNCE_MS = 250;
@@ -29,6 +30,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   profile,
   onLogout,
   onUploadRun,
+  isModerator,
 }) => {
   const [searchData, setSearchData] = React.useState<Search | undefined>(
     undefined,
@@ -207,6 +209,8 @@ const Sidebar: React.FC<SidebarProps> = ({
       handle_sidebar_click(5);
     } else if (path.includes("about")) {
       handle_sidebar_click(6);
+    } else if (path.includes("moderation")) {
+      handle_sidebar_click(7);
     }
   }, [path]);
 
@@ -312,6 +316,15 @@ const Sidebar: React.FC<SidebarProps> = ({
             )}
 
             <Login profile={profile} onLogout={onLogout} />
+
+            {isModerator && (
+              <Link to="/moderation" tabIndex={-1} onClick={_close_mobile_menu}>
+                <button className="sidebar-button">
+                  <img src={HelpIcon} alt="" />
+                  <span>Moderation</span>
+                </button>
+              </Link>
+            )}
 
             <Link to="/rules" tabIndex={-1} onClick={_close_mobile_menu}>
               <button className="sidebar-button">

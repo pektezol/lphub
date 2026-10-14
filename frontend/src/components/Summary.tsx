@@ -1,5 +1,6 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
+import { Link } from "react-router-dom";
 import {
   CartesianGrid,
   Line,
@@ -12,12 +13,14 @@ import {
 
 import { MapSummary } from "@customTypes/Map";
 import { portalLabel } from "@utils/Portal";
+import { API } from "@api/Api";
 import "@css/Maps.css";
 
 interface SummaryProps {
   selectedRun?: number;
   setSelectedRun: (x: number | undefined) => void;
   data: MapSummary;
+  token?: string;
 }
 
 const placeholderRunnerName = "Placeholder";
@@ -59,7 +62,12 @@ const Summary: React.FC<SummaryProps> = ({
   selectedRun,
   setSelectedRun,
   data,
+  token,
 }) => {
+  const [editingDescription, setEditingDescription] = React.useState(false);
+  const [suggestedDescription, setSuggestedDescription] = React.useState("");
+  const [suggestionMessage, setSuggestionMessage] = React.useState("");
+  const [submittingSuggestion, setSubmittingSuggestion] = React.useState(false);
   const [selectedCategory, setSelectedCategory] = React.useState<
     number | undefined
   >(undefined);
@@ -495,6 +503,42 @@ const Summary: React.FC<SummaryProps> = ({
               <span id="description-text">
                 <ReactMarkdown>{selectedRoute.description}</ReactMarkdown>
               </span>
+              {token ? (
+                <>
+                  {!editingDescription ? (
+                    <button type="button" onClick={() => {
+                      setSuggestedDescription(selectedRoute.description);
+                      setSuggestionMessage("");
+                      setEditingDescription(true);
+                    }}>Suggest edit</button>
+                  ) : (
+                    <div className="route-description-suggestion">
+                      <label>
+                        Proposed Markdown
+                        <textarea value={suggestedDescription} onChange={(event) => setSuggestedDescription(event.target.value)} rows={8} />
+                      </label>
+                      <h4>Preview</h4>
+                      <div className="route-description-preview"><ReactMarkdown>{suggestedDescription}</ReactMarkdown></div>
+                      <button type="button" disabled={submittingSuggestion || !suggestedDescription.trim()} onClick={async () => {
+                        setSubmittingSuggestion(true);
+                        try {
+                          const success = await API.post_route_description_suggestion(token, data.map.id, selectedRoute.route_id, suggestedDescription);
+                          setSuggestionMessage(success ? "Suggestion submitted for review." : "Could not submit suggestion.");
+                          if (success) setEditingDescription(false);
+                        } catch {
+                          setSuggestionMessage("Could not submit suggestion. Please try again.");
+                        } finally {
+                          setSubmittingSuggestion(false);
+                        }
+                      }}>{submittingSuggestion ? "Submitting…" : "Submit suggestion"}</button>
+                      <button type="button" onClick={() => setEditingDescription(false)}>Cancel</button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <p><Link to="/api/v1/login">Log in</Link> to suggest an edit.</p>
+              )}
+              {suggestionMessage && <p role="status">{suggestionMessage}</p>}
             </div>
           </section>
         </>

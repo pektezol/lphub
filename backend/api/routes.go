@@ -34,6 +34,9 @@ func InitRoutes(router *gin.Engine) {
 		v1.DELETE("/maps/:mapid/summary", IsAuthenticated, handlers.DeleteMapSummary)
 		v1.PUT("/maps/:mapid/image", IsAuthenticated, handlers.EditMapImage)
 		v1.PUT("/maps/:mapid/difficulty", IsAuthenticated, handlers.EditMapDifficulty)
+		v1.POST("/maps/:mapid/routes/:routeid/description-suggestions", IsAuthenticated, handlers.CreateRouteDescriptionSuggestion)
+		v1.GET("/moderation/route-description-suggestions", IsAuthenticated, handlers.ListRouteDescriptionSuggestions)
+		v1.POST("/moderation/route-description-suggestions/:suggestionid/review", IsAuthenticated, handlers.ReviewRouteDescriptionSuggestion)
 		// - Leaderboards
 		v1.GET("/maps/:mapid/leaderboards", RateLimit, handlers.FetchMapLeaderboards)
 		v1.OPTIONS("/maps/:mapid/record", AllowRecordUploadCORS)

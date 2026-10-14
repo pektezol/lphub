@@ -565,6 +565,7 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
             selectedRun={selectedRun}
             setSelectedRun={setSelectedRun}
             data={mapSummaryData}
+            token={token}
           />
         )}
         {navState === 1 && (
