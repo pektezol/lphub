@@ -142,7 +142,8 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({
                   <button onClick={() => { message("Demo Information", `Host Demo ID: ${r.host_demo_id} \nParnter Demo ID: ${r.partner_demo_id}`); }}><img src={ThreedotIcon} alt="demo_id" /></button>
                   <button title="Download Demo" onClick={() => _download_demo(r.partner_demo_id)}><img src={DownloadIcon} alt="download" style={{ filter: "hue-rotate(160deg) contrast(60%) saturate(1000%)" }} /></button>
                   <button title="Download Demo" onClick={() => _download_demo(r.host_demo_id)}><img src={DownloadIcon} alt="download" style={{ filter: "hue-rotate(300deg) contrast(60%) saturate(1000%)" }} /></button>
-                  {r.autorender_id && <AutorenderLink autorenderID={r.autorender_id} />}
+                  {r.host_autorender_id && <AutorenderLink autorenderID={r.host_autorender_id} playerLabel="Blue" />}
+                  {r.partner_autorender_id && <AutorenderLink autorenderID={r.partner_autorender_id} playerLabel="Orange" />}
                 </span>
               ) : r.kind === "singleplayer" && (
 
