@@ -39,6 +39,7 @@ func InitRoutes(router *gin.Engine) {
 		v1.OPTIONS("/maps/:mapid/record", AllowRecordUploadCORS)
 		v1.POST("/maps/:mapid/record", AllowRecordUploadCORS, IsAuthenticated, handlers.CreateRecordWithDemo)
 		v1.DELETE("/maps/:mapid/record/:recordid", IsAuthenticated, handlers.DeleteRecord)
+		v1.PUT("/demos/autorender", IsDemoAuthenticated, handlers.SetAutorenderID)
 		v1.GET("/demos", RateLimit, IsDemoAuthenticated, handlers.DownloadDemoWithID)
 		// - Discussions
 		v1.GET("/maps/:mapid/discussions", RateLimit, handlers.FetchMapDiscussions)

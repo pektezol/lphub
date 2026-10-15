@@ -171,7 +171,13 @@ definitions:
         $ref: '#/definitions/models.Map'
       pagination:
         $ref: '#/definitions/models.Pagination'
-      records: {}
+      records:
+        items:
+          properties:
+            autorender_id:
+              type: string
+          type: object
+        type: array
     type: object
   handlers.MapShortWithGame:
     properties:
@@ -279,6 +285,8 @@ definitions:
     type: object
   handlers.ProfileScores:
     properties:
+      autorender_id:
+        type: string
       date:
         type: string
       demo_id:
@@ -343,6 +351,16 @@ definitions:
         type: integer
       score_time:
         type: integer
+    type: object
+  handlers.SetAutorenderIDRequest:
+    properties:
+      autorender_id:
+        type: string
+      demo_id:
+        type: string
+    required:
+    - autorender_id
+    - demo_id
     type: object
   handlers.ScoresDetails:
     properties:
@@ -1204,6 +1222,37 @@ paths:
             $ref: '#/definitions/models.Response'
       tags:
       - maps / leaderboards
+  /records/autorender:
+    put:
+      consumes:
+      - application/json
+      description: Set the auto-rendered video ID for the record associated with a demo.
+      parameters:
+      - description: Moderator JWT or DEMO_SERVICE_TOKEN
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Demo and autorender IDs
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.SetAutorenderIDRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/handlers.SetAutorenderIDRequest'
+              type: object
+      tags:
+      - demo
   /maps/{mapid}/summary:
     delete:
       description: Delete map summary with specified map id.

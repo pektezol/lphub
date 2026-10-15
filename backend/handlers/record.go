@@ -32,6 +32,110 @@ type RecordResponse struct {
 	ScoreTime  int `json:"score_time"`
 }
 
+type SetAutorenderIDRequest struct {
+	DemoID       string `json:"demo_id" binding:"required"`
+	AutorenderID string `json:"autorender_id" binding:"required"`
+}
+
+// PUT Autorender ID
+//
+//	@Description	Set the auto-rendered video ID for the record associated with a demo.
+//	@Tags			demo
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header	string			true	"Moderator JWT or DEMO_SERVICE_TOKEN"
+//	@Param			request			body	SetAutorenderIDRequest	true	"Demo and autorender IDs"
+//	@Success		200				{object}	models.Response{data=SetAutorenderIDRequest}
+//	@Router			/records/autorender [put]
+func SetAutorenderID(c *gin.Context) {
+	var request SetAutorenderIDRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	if _, err := uuid.Parse(request.DemoID); err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse("Invalid demo ID."))
+		return
+	}
+	request.AutorenderID = strings.TrimSpace(request.AutorenderID)
+	if request.AutorenderID == "" {
+		c.JSON(http.StatusOK, models.ErrorResponse("Autorender ID cannot be empty."))
+		return
+	}
+
+	serviceAuth, _ := c.Get("service_auth")
+	var tx *stdsql.Tx
+	var err error
+	if serviceAuth == true {
+		// The service has no user identity. The audit trigger records its change
+		// with a null changed_by value.
+		tx, err = database.DB.BeginTx(c.Request.Context(), nil)
+	} else {
+		mod, exists := c.Get("mod")
+		if !exists || mod != true {
+			c.JSON(http.StatusOK, models.ErrorResponse("Insufficient permissions."))
+			return
+		}
+		user, exists := c.Get("user")
+		if !exists {
+			c.JSON(http.StatusOK, models.ErrorResponse("Authentication required."))
+			return
+		}
+		tx, err = database.BeginAuditTx(c.Request.Context(), user.(models.User).SteamID)
+	}
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	defer tx.Rollback()
+
+	result, err := tx.ExecContext(c.Request.Context(),
+		`UPDATE records_sp SET autorender_id = $1 WHERE demo_id = $2`,
+		request.AutorenderID, request.DemoID,
+	)
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	updated, err := result.RowsAffected()
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	if updated == 0 {
+		result, err = tx.ExecContext(c.Request.Context(),
+			`UPDATE records_mp SET autorender_id = $1 WHERE host_demo_id = $2 OR partner_demo_id = $2`,
+			request.AutorenderID, request.DemoID,
+		)
+		if err != nil {
+			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+			return
+		}
+		updated, err = result.RowsAffected()
+		if err != nil {
+			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+			return
+		}
+	}
+	if updated == 0 {
+		c.JSON(http.StatusOK, models.ErrorResponse("No record found for the given demo ID."))
+		return
+	}
+	if updated > 1 {
+		c.JSON(http.StatusOK, models.ErrorResponse("Demo ID matches multiple records."))
+		return
+	}
+	if err := tx.Commit(); err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	c.JSON(http.StatusOK, models.Response{
+		Success: true,
+		Message: "Successfully set autorender ID.",
+		Data:    request,
+	})
+}
+
 func duplicateRecordExists(tx *stdsql.Tx, lockKey, query string, args ...any) (bool, error) {
 	hasher := fnv.New64a()
 	_, _ = hasher.Write([]byte(lockKey))

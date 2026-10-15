@@ -6,7 +6,7 @@ BEGIN
         TG_OP,
         CASE WHEN TG_OP = 'DELETE' OR TG_OP = 'UPDATE' THEN row_to_json(OLD) ELSE NULL END,
         CASE WHEN TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN row_to_json(NEW) ELSE NULL END,
-        current_setting('app.user_id', true)::TEXT
+        NULLIF(current_setting('app.user_id', true), '')::TEXT
     );
     RETURN NULL;
 END;

@@ -40,13 +40,14 @@ type GameMapsResponse struct {
 }
 
 type RecordSingleplayer struct {
-	Placement  int                        `json:"placement"`
-	RecordID   int                        `json:"record_id"`
-	ScoreCount int                        `json:"score_count"`
-	ScoreTime  int                        `json:"score_time"`
-	User       models.UserShortWithAvatar `json:"user"`
-	DemoID     string                     `json:"demo_id"`
-	RecordDate time.Time                  `json:"record_date"`
+	Placement    int                        `json:"placement"`
+	RecordID     int                        `json:"record_id"`
+	ScoreCount   int                        `json:"score_count"`
+	ScoreTime    int                        `json:"score_time"`
+	User         models.UserShortWithAvatar `json:"user"`
+	DemoID       string                     `json:"demo_id"`
+	AutorenderID *string                    `json:"autorender_id,omitempty"`
+	RecordDate   time.Time                  `json:"record_date"`
 }
 
 type RecordMultiplayer struct {
@@ -58,6 +59,7 @@ type RecordMultiplayer struct {
 	Partner       models.UserShortWithAvatar `json:"partner"`
 	HostDemoID    string                     `json:"host_demo_id"`
 	PartnerDemoID string                     `json:"partner_demo_id"`
+	AutorenderID  *string                    `json:"autorender_id,omitempty"`
 	RecordDate    time.Time                  `json:"record_date"`
 }
 
@@ -528,11 +530,11 @@ func FetchMapLeaderboards(c *gin.Context) {
 				sub.id, sub.host_id, host.user_name, host.avatar_link,
 				sub.partner_id, partner.user_name, partner.avatar_link,
 				sub.score_count, sub.score_time, sub.host_demo_id,
-				sub.partner_demo_id, sub.record_date
+				sub.partner_demo_id, sub.autorender_id, sub.record_date
 			FROM (
 				SELECT
 					id, host_id, partner_id, score_count, score_time,
-					host_demo_id, partner_demo_id, record_date,
+					host_demo_id, partner_demo_id, autorender_id, record_date,
 					ROW_NUMBER() OVER (
 						PARTITION BY host_id, partner_id
 						ORDER BY score_count, score_time
@@ -565,6 +567,7 @@ func FetchMapLeaderboards(c *gin.Context) {
 				&record.ScoreTime,
 				&record.HostDemoID,
 				&record.PartnerDemoID,
+				&record.AutorenderID,
 				&record.RecordDate,
 			); err != nil {
 				c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
@@ -593,10 +596,10 @@ func FetchMapLeaderboards(c *gin.Context) {
 		rows, err := database.DB.Query(`
 			SELECT
 				sub.id, sub.user_id, users.user_name, users.avatar_link,
-				sub.score_count, sub.score_time, sub.demo_id, sub.record_date
+				sub.score_count, sub.score_time, sub.demo_id, sub.autorender_id, sub.record_date
 			FROM (
 				SELECT
-					id, user_id, score_count, score_time, demo_id, record_date,
+					id, user_id, score_count, score_time, demo_id, autorender_id, record_date,
 					ROW_NUMBER() OVER (
 						PARTITION BY user_id
 						ORDER BY score_count, score_time
@@ -624,6 +627,7 @@ func FetchMapLeaderboards(c *gin.Context) {
 				&record.ScoreCount,
 				&record.ScoreTime,
 				&record.DemoID,
+				&record.AutorenderID,
 				&record.RecordDate,
 			); err != nil {
 				c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))

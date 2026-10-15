@@ -64,11 +64,12 @@ type ProfileRecords struct {
 }
 
 type ProfileScores struct {
-	RecordID   int       `json:"record_id"`
-	DemoID     string    `json:"demo_id"`
-	ScoreCount int       `json:"score_count"`
-	ScoreTime  int       `json:"score_time"`
-	Date       time.Time `json:"date"`
+	RecordID     int       `json:"record_id"`
+	DemoID       string    `json:"demo_id"`
+	AutorenderID *string   `json:"autorender_id,omitempty"`
+	ScoreCount   int       `json:"score_count"`
+	ScoreTime    int       `json:"score_time"`
+	Date         time.Time `json:"date"`
 }
 
 type ScoreResponse struct {
