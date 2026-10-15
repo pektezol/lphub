@@ -39,7 +39,7 @@ type SetAutorenderIDRequest struct {
 
 // PUT Autorender ID
 //
-//	@Description	Set the auto-rendered video ID for the record associated with a demo.
+//	@Description	Set the auto-rendered video ID for a record demo, keeping cooperative host and partner IDs separate.
 //	@Tags			demo
 //	@Accept			json
 //	@Produce		json
@@ -104,7 +104,10 @@ func SetAutorenderID(c *gin.Context) {
 	}
 	if updated == 0 {
 		result, err = tx.ExecContext(c.Request.Context(),
-			`UPDATE records_mp SET autorender_id = $1 WHERE host_demo_id = $2 OR partner_demo_id = $2`,
+			`UPDATE records_mp
+			SET host_autorender_id = CASE WHEN host_demo_id = $2 THEN $1 ELSE host_autorender_id END,
+			    partner_autorender_id = CASE WHEN partner_demo_id = $2 THEN $1 ELSE partner_autorender_id END
+			WHERE host_demo_id = $2 OR partner_demo_id = $2`,
 			request.AutorenderID, request.DemoID,
 		)
 		if err != nil {

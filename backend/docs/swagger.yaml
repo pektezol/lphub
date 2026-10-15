@@ -1445,12 +1445,12 @@ paths:
               type: object
       tags:
       - rankings
-  /records/autorender:
+  /demos/autorender:
     put:
       consumes:
       - application/json
-      description: Set the auto-rendered video ID for the record associated with a
-        demo.
+      description: Set the auto-rendered video ID for a record demo, keeping cooperative
+        host and partner IDs separate.
       parameters:
       - description: Moderator JWT or DEMO_SERVICE_TOKEN
         in: header

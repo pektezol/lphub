@@ -1189,9 +1189,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/records/autorender": {
+        "/demos/autorender": {
             "put": {
-                "description": "Set the auto-rendered video ID for the record associated with a demo.",
+                "description": "Set the auto-rendered video ID for a record demo, keeping cooperative host and partner IDs separate.",
                 "consumes": [
                     "application/json"
                 ],
