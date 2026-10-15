@@ -421,6 +421,7 @@ const Homepage: React.FC = () => {
                       <Link to={`/maps/${score.map.id}`}>
                         {score.map.name}
                       </Link>
+                      {` | #${score.score_rank}`}
                     </div>
                     <div className="score-portals">
                       {score.score_count} {portalLabel(score.score_count)}

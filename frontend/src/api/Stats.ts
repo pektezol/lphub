@@ -45,6 +45,7 @@ export interface ScoreLog {
     difficulty: number;
   };
   score_count: number;
+  score_rank: number;
   date: string;
 }
 
