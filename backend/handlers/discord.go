@@ -148,7 +148,7 @@ func sendRankOneRecordNotification(ctx context.Context, mapID int, mapName, mapI
 		if portalDelta != 0 {
 			portalText = fmt.Sprintf("%s (%+d)", portalText, portalDelta)
 		}
-		if scoreTicks != rank.PreviousScoreTicks {
+		if portalDelta == 0 && scoreTicks != rank.PreviousScoreTicks {
 			timeText = fmt.Sprintf("%s (%+.2f)", timeText, timeDeltaSeconds)
 		}
 		if portalDelta < 0 {
