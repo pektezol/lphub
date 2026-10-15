@@ -161,6 +161,14 @@ func Scores(c *gin.Context) {
 			SELECT map_id, partner_id AS user_id, score_rank FROM mp_ranked
 		) user_ranks
 		GROUP BY map_id, user_id
+	), leaderboard_wrs AS (
+		SELECT map_id, MIN(score_count) AS score_count
+		FROM (
+			SELECT map_id, score_count FROM records_sp WHERE is_deleted = false
+			UNION ALL
+			SELECT map_id, score_count FROM records_mp WHERE is_deleted = false
+		) leaderboard_records
+		GROUP BY map_id
 	)
 	SELECT g.id,
 		g."name",
@@ -193,12 +201,7 @@ func Scores(c *gin.Context) {
 	JOIN maps m ON rs.map_id = m.id
 	JOIN games g ON m.game_id = g.id 
 	LEFT JOIN placements ON placements.map_id = rs.map_id AND placements.user_id = rs.user_id
-	LEFT JOIN (
-		SELECT map_id, MIN(score_count) AS score_count
-		FROM map_history
-		WHERE category_id = 1 AND user_name <> 'Placeholder'
-		GROUP BY map_id
-	) wr ON wr.map_id = rs.map_id
+	LEFT JOIN leaderboard_wrs wr ON wr.map_id = rs.map_id
 	WHERE ($1::integer IS NULL OR rs.score_time <= $1)
 		AND ($2::integer IS NULL OR GREATEST(rs.score_count - COALESCE(wr.score_count, rs.score_count), 0) = $2)
 		AND ($3::date IS NULL OR rs.record_date >= $3)
