@@ -46,7 +46,7 @@ type SetAutorenderIDRequest struct {
 //	@Param			Authorization	header	string			true	"Moderator JWT or DEMO_SERVICE_TOKEN"
 //	@Param			request			body	SetAutorenderIDRequest	true	"Demo and autorender IDs"
 //	@Success		200				{object}	models.Response{data=SetAutorenderIDRequest}
-//	@Router			/records/autorender [put]
+//	@Router			/demos/autorender [put]
 func SetAutorenderID(c *gin.Context) {
 	var request SetAutorenderIDRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
