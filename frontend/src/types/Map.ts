@@ -55,6 +55,7 @@ export interface MapLeaderboardRecordSingleplayer {
   score_time: number;
   user: UserShort;
   demo_id: string;
+  autorender_id?: string;
   record_date: string;
 };
 
@@ -68,6 +69,7 @@ export interface MapLeaderboardRecordMultiplayer {
   partner: UserShort;
   host_demo_id: string;
   partner_demo_id: string;
+  autorender_id?: string;
   record_date: string;
 };
 

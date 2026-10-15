@@ -299,101 +299,101 @@ const Homepage: React.FC = () => {
                 <div className="loading-spinner"></div>
               </div>
             ) : (selectedMode === "singleplayer"
-                ? processedDataSingleplayer
-                : processedDataMultiplayer
-              ).length > 0 ? (
-              <>
-                <div className="chart-wrapper">
-                  <ResponsiveContainer width="100%" height={400}>
-                    <AreaChart
-                      data={
-                        selectedMode === "singleplayer"
-                          ? processedDataSingleplayer
-                          : processedDataMultiplayer
-                      }
-                      margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                    >
-                      <defs>
-                        <linearGradient
-                          id="colorCount"
-                          x1="0"
-                          y1="0"
-                          x2="0"
-                          y2="1"
-                        >
-                          <stop
-                            offset="5%"
-                            stopColor="#CDCFDF"
-                            stopOpacity={0.6}
-                          />
-                          <stop
-                            offset="95%"
-                            stopColor="#CDCFDF"
-                            stopOpacity={0.05}
-                          />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid
-                        strokeDasharray="3 3"
-                        stroke="#202232"
-                        opacity={0.5}
-                      />
-                      <XAxis
-                        dataKey="date"
-                        stroke="#CDCFDF"
-                        tick={{
-                          fill: "#CDCFDF",
-                          fontFamily: "BarlowSemiCondensed-Regular",
-                        }}
-                        ticks={
+              ? processedDataSingleplayer
+              : processedDataMultiplayer
+            ).length > 0 ? (
+                <>
+                  <div className="chart-wrapper">
+                    <ResponsiveContainer width="100%" height={400}>
+                      <AreaChart
+                        data={
                           selectedMode === "singleplayer"
-                            ? yearlyTicksSingleplayer
-                            : yearlyTicksMultiplayer
+                            ? processedDataSingleplayer
+                            : processedDataMultiplayer
                         }
-                        tickFormatter={(date) => {
-                          const d = new Date(date);
-                          return d.getFullYear().toString();
-                        }}
-                      />
-                      <YAxis
-                        stroke="#CDCFDF"
-                        tick={{
-                          fill: "#CDCFDF",
-                          fontFamily: "BarlowSemiCondensed-Regular",
-                        }}
-                      />
-                      <Tooltip content={<CustomTooltip />} />
-                      <Area
-                        type="monotone"
-                        dataKey="count"
-                        stroke="#FFF"
-                        strokeWidth={2}
-                        fillOpacity={1}
-                        fill="url(#colorCount)"
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="mode-toggle-container">
-                  <button
-                    onClick={() => setSelectedMode("singleplayer")}
-                    className={`mode-toggle-button ${selectedMode === "singleplayer" ? "selected" : ""}`}
-                  >
+                        margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                      >
+                        <defs>
+                          <linearGradient
+                            id="colorCount"
+                            x1="0"
+                            y1="0"
+                            x2="0"
+                            y2="1"
+                          >
+                            <stop
+                              offset="5%"
+                              stopColor="#CDCFDF"
+                              stopOpacity={0.6}
+                            />
+                            <stop
+                              offset="95%"
+                              stopColor="#CDCFDF"
+                              stopOpacity={0.05}
+                            />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid
+                          strokeDasharray="3 3"
+                          stroke="#202232"
+                          opacity={0.5}
+                        />
+                        <XAxis
+                          dataKey="date"
+                          stroke="#CDCFDF"
+                          tick={{
+                            fill: "#CDCFDF",
+                            fontFamily: "BarlowSemiCondensed-Regular",
+                          }}
+                          ticks={
+                            selectedMode === "singleplayer"
+                              ? yearlyTicksSingleplayer
+                              : yearlyTicksMultiplayer
+                          }
+                          tickFormatter={(date) => {
+                            const d = new Date(date);
+                            return d.getFullYear().toString();
+                          }}
+                        />
+                        <YAxis
+                          stroke="#CDCFDF"
+                          tick={{
+                            fill: "#CDCFDF",
+                            fontFamily: "BarlowSemiCondensed-Regular",
+                          }}
+                        />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Area
+                          type="monotone"
+                          dataKey="count"
+                          stroke="#FFF"
+                          strokeWidth={2}
+                          fillOpacity={1}
+                          fill="url(#colorCount)"
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="mode-toggle-container">
+                    <button
+                      onClick={() => setSelectedMode("singleplayer")}
+                      className={`mode-toggle-button ${selectedMode === "singleplayer" ? "selected" : ""}`}
+                    >
                     Singleplayer
-                  </button>
-                  <button
-                    onClick={() => setSelectedMode("multiplayer")}
-                    className={`mode-toggle-button ${selectedMode === "multiplayer" ? "selected" : ""}`}
-                  >
+                    </button>
+                    <button
+                      onClick={() => setSelectedMode("multiplayer")}
+                      className={`mode-toggle-button ${selectedMode === "multiplayer" ? "selected" : ""}`}
+                    >
                     Multiplayer
-                  </button>
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="chart-empty">
+                  <p>No data available yet.</p>
                 </div>
-              </>
-            ) : (
-              <div className="chart-empty">
-                <p>No data available yet.</p>
-              </div>
-            )}
+              )}
           </div>
 
           <div className="recent-scores-container personal-bests-container">

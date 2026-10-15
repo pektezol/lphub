@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { DownloadIcon, ThreedotIcon } from "@images/Images";
+import AutorenderLink from "@components/AutorenderLink";
 import { MapLeaderboard } from "@customTypes/Map";
 import { ticks_to_time, time_ago } from "@utils/Time";
 import { API } from "@api/Api";
@@ -139,14 +140,16 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({
               {r.kind === "multiplayer" ? (
                 <span>
                   <button onClick={() => { message("Demo Information", `Host Demo ID: ${r.host_demo_id} \nParnter Demo ID: ${r.partner_demo_id}`); }}><img src={ThreedotIcon} alt="demo_id" /></button>
-                  <button onClick={() => _download_demo(r.partner_demo_id)}><img src={DownloadIcon} alt="download" style={{ filter: "hue-rotate(160deg) contrast(60%) saturate(1000%)" }} /></button>
-                  <button onClick={() => _download_demo(r.host_demo_id)}><img src={DownloadIcon} alt="download" style={{ filter: "hue-rotate(300deg) contrast(60%) saturate(1000%)" }} /></button>
+                  <button title="Download Demo" onClick={() => _download_demo(r.partner_demo_id)}><img src={DownloadIcon} alt="download" style={{ filter: "hue-rotate(160deg) contrast(60%) saturate(1000%)" }} /></button>
+                  <button title="Download Demo" onClick={() => _download_demo(r.host_demo_id)}><img src={DownloadIcon} alt="download" style={{ filter: "hue-rotate(300deg) contrast(60%) saturate(1000%)" }} /></button>
+                  {r.autorender_id && <AutorenderLink autorenderID={r.autorender_id} />}
                 </span>
               ) : r.kind === "singleplayer" && (
 
                 <span>
                   <button onClick={() => { message("Demo Information", `Demo ID: ${r.demo_id}`); }}><img src={ThreedotIcon} alt="demo_id" /></button>
-                  <button onClick={() => _download_demo(r.demo_id)}><img src={DownloadIcon} alt="download" /></button>
+                  <button title="Download Demo" onClick={() => _download_demo(r.demo_id)}><img src={DownloadIcon} alt="download" /></button>
+                  {r.autorender_id && <AutorenderLink autorenderID={r.autorender_id} />}
                 </span>
               )}
             </span>

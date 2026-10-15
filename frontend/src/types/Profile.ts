@@ -56,6 +56,7 @@ interface UserProfileRecords {
 interface UserProfileRecordsScores {
   record_id: number;
   demo_id: string;
+  autorender_id?: string;
   score_count: number;
   score_time: number;
   date: string;

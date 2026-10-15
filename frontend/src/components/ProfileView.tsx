@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 
 import { API } from "@api/Api";
+import AutorenderLink from "@components/AutorenderLink";
 import "@css/Profile.css";
 import type { Game, GameChapters } from "@customTypes/Game";
 import type { GameChapter } from "@customTypes/Chapters";
@@ -612,6 +613,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
               )}
               <button
                 type="button"
+                title="Download Demo"
                 onClick={() => {
                   void downloadDemo(score.demo_id);
                 }}
@@ -619,6 +621,9 @@ const ProfileView: React.FC<ProfileViewProps> = ({
               >
                 <img src={DownloadIcon} alt="download" />
               </button>
+              {score.autorender_id && (
+                <AutorenderLink autorenderID={score.autorender_id} />
+              )}
               {index === 0 && record.scores.length > 1 && (
                 <button
                   type="button"
