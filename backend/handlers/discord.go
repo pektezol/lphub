@@ -77,14 +77,10 @@ type rankOneRecordNotification struct {
 }
 
 func formatRecordMapTitle(mapName, mapMode string) string {
-	prefix := ""
-	switch mapMode {
-	case "Story Mode":
-		prefix = "[Story]"
-	case "Advanced Mode":
-		prefix = "[Advanced]"
+	if mapMode == "Advanced Mode" {
+		return "Advanced " + mapName
 	}
-	return prefix + mapName
+	return mapName
 }
 
 func (notification *rankOneRecordNotification) send(ctx context.Context) {
