@@ -262,6 +262,9 @@ func formatRecordTime(ticks int) string {
 	minutes := totalMilliseconds / 60000
 	seconds := (totalMilliseconds / 1000) % 60
 	milliseconds := totalMilliseconds % 1000
+	if minutes == 0 {
+		return fmt.Sprintf("%d.%03d", seconds, milliseconds)
+	}
 	return fmt.Sprintf("%d:%02d.%03d", minutes, seconds, milliseconds)
 }
 
