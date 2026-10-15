@@ -1127,58 +1127,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/records/autorender": {
-            "put": {
-                "description": "Set the auto-rendered video ID for the record associated with a demo.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "demo"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Moderator JWT or DEMO_SERVICE_TOKEN",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "Demo and autorender IDs",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/handlers.SetAutorenderIDRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/handlers.SetAutorenderIDRequest"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
         "/rankings/lphub": {
             "get": {
                 "description": "Get rankings of every player from LPHUB.",
@@ -1232,6 +1180,58 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "$ref": "#/definitions/handlers.RankingsSteamResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/records/autorender": {
+            "put": {
+                "description": "Set the auto-rendered video ID for the record associated with a demo.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "demo"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Moderator JWT or DEMO_SERVICE_TOKEN",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Demo and autorender IDs",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.SetAutorenderIDRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handlers.SetAutorenderIDRequest"
                                         }
                                     }
                                 }
@@ -1756,17 +1756,7 @@ const docTemplate = `{
                 "pagination": {
                     "$ref": "#/definitions/models.Pagination"
                 },
-                "records": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "autorender_id": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
+                "records": {}
             }
         },
         "handlers.MapShortWithGame": {
@@ -1931,13 +1921,13 @@ const docTemplate = `{
         "handlers.ProfileScores": {
             "type": "object",
             "properties": {
+                "autorender_id": {
+                    "type": "string"
+                },
                 "date": {
                     "type": "string"
                 },
                 "demo_id": {
-                    "type": "string"
-                },
-                "autorender_id": {
                     "type": "string"
                 },
                 "record_id": {
@@ -2034,21 +2024,6 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.SetAutorenderIDRequest": {
-            "type": "object",
-            "required": [
-                "autorender_id",
-                "demo_id"
-            ],
-            "properties": {
-                "autorender_id": {
-                    "type": "string"
-                },
-                "demo_id": {
-                    "type": "string"
-                }
-            }
-        },
         "handlers.ScoresDetails": {
             "type": "object",
             "properties": {
@@ -2106,6 +2081,21 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.UserShortWithAvatar"
                     }
+                }
+            }
+        },
+        "handlers.SetAutorenderIDRequest": {
+            "type": "object",
+            "required": [
+                "autorender_id",
+                "demo_id"
+            ],
+            "properties": {
+                "autorender_id": {
+                    "type": "string"
+                },
+                "demo_id": {
+                    "type": "string"
                 }
             }
         },
