@@ -64,7 +64,7 @@ type recordRankResult struct {
 
 type rankOneRecordNotification struct {
 	mapID           int
-	mapName         string
+	mapTitle        string
 	mapImage        string
 	isCoop          bool
 	hostSteamID     string
@@ -76,11 +76,22 @@ type rankOneRecordNotification struct {
 	rank            recordRankResult
 }
 
+func formatRecordMapTitle(mapName, mapMode string) string {
+	prefix := ""
+	switch mapMode {
+	case "Story Mode":
+		prefix = "[Story]"
+	case "Advanced Mode":
+		prefix = "[Advanced]"
+	}
+	return prefix + mapName
+}
+
 func (notification *rankOneRecordNotification) send(ctx context.Context) {
 	sendRankOneRecordNotification(
 		ctx,
 		notification.mapID,
-		notification.mapName,
+		notification.mapTitle,
 		notification.mapImage,
 		notification.isCoop,
 		notification.hostSteamID,
@@ -128,7 +139,7 @@ func recordIsUniqueRankOne(ctx context.Context, tx *sql.Tx, mapID int, isCoop bo
 	return rank, err
 }
 
-func sendRankOneRecordNotification(ctx context.Context, mapID int, mapName, mapImage string, isCoop bool, hostSteamID, hostUserName, partnerSteamID, partnerUserName string, portalCount, scoreTicks int, rank recordRankResult) {
+func sendRankOneRecordNotification(ctx context.Context, mapID int, mapTitle, mapImage string, isCoop bool, hostSteamID, hostUserName, partnerSteamID, partnerUserName string, portalCount, scoreTicks int, rank recordRankResult) {
 	webhookURL := strings.TrimSpace(os.Getenv(discordRecordWebhookEnv))
 	if webhookURL == "" {
 		return
@@ -162,7 +173,7 @@ func sendRankOneRecordNotification(ctx context.Context, mapID int, mapName, mapI
 		Username:  "lp.portal2.sr",
 		AvatarURL: siteBaseURL + "/logo.png",
 		Embeds: []discordEmbed{{
-			Title:       mapName,
+			Title:       mapTitle,
 			URL:         fmt.Sprintf("%s/maps/%d", siteBaseURL, mapID),
 			Description: players,
 			Color:       embedColor,

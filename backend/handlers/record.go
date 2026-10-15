@@ -359,7 +359,7 @@ func CreateRecordWithDemo(c *gin.Context) {
 			if err != nil {
 				log.Printf("discord rank-one notification: load record details: %v", err)
 			} else {
-				rankOneNotification = &rankOneRecordNotification{mapID: mapID, mapName: mapName, mapImage: mapImage, isCoop: true, hostSteamID: convertedHostSteamID, hostUserName: hostUserName, partnerSteamID: convertedPartnerSteamID, partnerUserName: partnerUserName, portalCount: hostDemoScoreCount, scoreTicks: hostDemoScoreTime, rank: rank}
+				rankOneNotification = &rankOneRecordNotification{mapID: mapID, mapTitle: mapName, mapImage: mapImage, isCoop: true, hostSteamID: convertedHostSteamID, hostUserName: hostUserName, partnerSteamID: convertedPartnerSteamID, partnerUserName: partnerUserName, portalCount: hostDemoScoreCount, scoreTicks: hostDemoScoreTime, rank: rank}
 			}
 		}
 	} else {
@@ -397,13 +397,13 @@ func CreateRecordWithDemo(c *gin.Context) {
 		if rankErr != nil {
 			log.Printf("discord rank-one notification: check rank: %v", rankErr)
 		} else if rank.UniqueFirst {
-			var mapName, mapImage, hostUserName string
-			err = tx.QueryRowContext(c.Request.Context(), `SELECT m.name, m.image, u.user_name
-				FROM maps m INNER JOIN users u ON u.steam_id = $2 WHERE m.id = $1`, mapID, user.(models.User).SteamID).Scan(&mapName, &mapImage, &hostUserName)
+			var mapName, mapMode, mapImage, hostUserName string
+			err = tx.QueryRowContext(c.Request.Context(), `SELECT m.name, c.name, m.image, u.user_name
+				FROM maps m INNER JOIN chapters c ON c.id = m.chapter_id INNER JOIN users u ON u.steam_id = $2 WHERE m.id = $1`, mapID, user.(models.User).SteamID).Scan(&mapName, &mapMode, &mapImage, &hostUserName)
 			if err != nil {
 				log.Printf("discord rank-one notification: load record details: %v", err)
 			} else {
-				rankOneNotification = &rankOneRecordNotification{mapID: mapID, mapName: mapName, mapImage: mapImage, hostSteamID: user.(models.User).SteamID, hostUserName: hostUserName, portalCount: hostDemoScoreCount, scoreTicks: hostDemoScoreTime, rank: rank}
+				rankOneNotification = &rankOneRecordNotification{mapID: mapID, mapTitle: formatRecordMapTitle(mapName, mapMode), mapImage: mapImage, hostSteamID: user.(models.User).SteamID, hostUserName: hostUserName, portalCount: hostDemoScoreCount, scoreTicks: hostDemoScoreTime, rank: rank}
 			}
 		}
 	}
