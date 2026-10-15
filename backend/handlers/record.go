@@ -67,9 +67,9 @@ func SetAutorenderID(c *gin.Context) {
 	var tx *stdsql.Tx
 	var err error
 	if serviceAuth == true {
-		// The service has no user identity. The audit trigger records its change
-		// with a null changed_by value.
-		tx, err = database.DB.BeginTx(c.Request.Context(), nil)
+		// Keep service-token changes attributable to the same service actor used
+		// when auditing demo downloads.
+		tx, err = database.BeginAuditTx(c.Request.Context(), "76560000000000000")
 	} else {
 		mod, exists := c.Get("mod")
 		if !exists || mod != true {
