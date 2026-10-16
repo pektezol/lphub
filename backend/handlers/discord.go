@@ -270,9 +270,9 @@ func formatRecordTime(ticks int) string {
 	seconds := (totalMilliseconds / 1000) % 60
 	milliseconds := totalMilliseconds % 1000
 	if minutes == 0 {
-		return fmt.Sprintf("%d.%03d", seconds, milliseconds)
+		return fmt.Sprintf("%d.%02d", seconds, milliseconds)
 	}
-	return fmt.Sprintf("%d:%02d.%03d", minutes, seconds, milliseconds)
+	return fmt.Sprintf("%d:%02d.%02d", minutes, seconds, milliseconds)
 }
 
 func escapeDiscordMarkdown(value string) string {
