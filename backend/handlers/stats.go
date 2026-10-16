@@ -151,16 +151,12 @@ func Scores(c *gin.Context) {
 		UNION ALL
 		SELECT map_id, partner_id AS user_id, score_count, score_time
 		FROM records_mp WHERE is_deleted = false
-	), placements AS (
-		SELECT map_id, user_id, MIN(score_rank) AS score_rank
-		FROM (
-			SELECT map_id, user_id, score_rank FROM sp_ranked
-			UNION ALL
-			SELECT map_id, host_id AS user_id, score_rank FROM mp_ranked
-			UNION ALL
-			SELECT map_id, partner_id AS user_id, score_rank FROM mp_ranked
-		) user_ranks
-		GROUP BY map_id, user_id
+	), sp_placements AS (
+		SELECT map_id, user_id, score_rank
+		FROM sp_ranked
+	), mp_placements AS (
+		SELECT map_id, host_id, partner_id, score_rank
+		FROM mp_ranked
 	), leaderboard_wrs AS (
 		SELECT map_id, MIN(score_count) AS score_count
 		FROM (
@@ -179,34 +175,41 @@ func Scores(c *gin.Context) {
 		u.user_name,
 		rs.score_count,
 		rs.score_time,
-		COALESCE(placements.score_rank, 0),
+		COALESCE(mp_placements.score_rank, sp_placements.score_rank, 0),
 		GREATEST(rs.score_count - COALESCE(wr.score_count, rs.score_count), 0),
 		rs.demo_id,
 		rs.record_date
 	FROM (
-		SELECT id, map_id, user_id, score_count, score_time, demo_id, record_date
+		SELECT id, map_id, user_id, NULL::text AS host_id, NULL::text AS partner_id,
+			score_count, score_time, demo_id, record_date
 		FROM records_sp WHERE is_deleted = false
 
 		UNION ALL
 
-		SELECT id, map_id, host_id AS user_id, score_count, score_time, host_demo_id AS demo_id, record_date
+		SELECT id, map_id, host_id AS user_id, host_id, partner_id,
+			score_count, score_time, host_demo_id AS demo_id, record_date
 		FROM records_mp WHERE is_deleted = false
 
 		UNION ALL
 
-		SELECT id, map_id, partner_id AS user_id, score_count, score_time, partner_demo_id AS demo_id, record_date
+		SELECT id, map_id, partner_id AS user_id, host_id, partner_id,
+			score_count, score_time, partner_demo_id AS demo_id, record_date
 		FROM records_mp WHERE is_deleted = false
 	) AS rs
 	JOIN users u ON rs.user_id = u.steam_id
 	JOIN maps m ON rs.map_id = m.id
 	JOIN games g ON m.game_id = g.id 
-	LEFT JOIN placements ON placements.map_id = rs.map_id AND placements.user_id = rs.user_id
+	LEFT JOIN sp_placements ON sp_placements.map_id = rs.map_id
+		AND sp_placements.user_id = rs.user_id
+	LEFT JOIN mp_placements ON mp_placements.map_id = rs.map_id
+		AND mp_placements.host_id = rs.host_id
+		AND mp_placements.partner_id = rs.partner_id
 	LEFT JOIN leaderboard_wrs wr ON wr.map_id = rs.map_id
 	WHERE ($1::integer IS NULL OR rs.score_time <= $1)
 		AND ($2::integer IS NULL OR GREATEST(rs.score_count - COALESCE(wr.score_count, rs.score_count), 0) = $2)
 		AND ($3::date IS NULL OR rs.record_date >= $3)
 		AND ($4::date IS NULL OR rs.record_date < $4)
-		AND ($5::integer IS NULL OR placements.score_rank <= $5)
+		AND ($5::integer IS NULL OR COALESCE(mp_placements.score_rank, sp_placements.score_rank) <= $5)
 		AND (NOT $6::boolean OR NOT EXISTS (
 			SELECT 1 FROM user_runs better
 			WHERE better.map_id = rs.map_id AND better.user_id = rs.user_id
