@@ -56,7 +56,7 @@ type discordEmbedField struct {
 }
 
 type recordRankResult struct {
-	UniqueFirst         bool
+	IsRankOne           bool
 	HasPrevious         bool
 	PreviousPortalCount int
 	PreviousScoreTicks  int
@@ -100,7 +100,7 @@ func (notification *rankOneRecordNotification) send(ctx context.Context) {
 	)
 }
 
-func recordIsUniqueRankOne(ctx context.Context, tx *sql.Tx, mapID int, isCoop bool, recordID, scoreCount, scoreTime int) (recordRankResult, error) {
+func recordIsRankOne(ctx context.Context, tx *sql.Tx, mapID int, isCoop bool, recordID, scoreCount, scoreTime int) (recordRankResult, error) {
 	if strings.TrimSpace(os.Getenv(discordRecordWebhookEnv)) == "" {
 		return recordRankResult{}, nil
 	}
@@ -125,14 +125,21 @@ func recordIsUniqueRankOne(ctx context.Context, tx *sql.Tx, mapID int, isCoop bo
 	} else if err != sql.ErrNoRows {
 		return recordRankResult{}, err
 	}
+	rank.IsRankOne = scoreIsRankOne(scoreCount, scoreTime, rank)
+	return rank, nil
+}
 
-	query := fmt.Sprintf(`SELECT NOT EXISTS (
-		SELECT 1 FROM %s
-		WHERE map_id = $1 AND id <> $2 AND is_deleted = false
-			AND (score_count < $3 OR (score_count = $3 AND score_time <= $4))
-	)`, table)
-	err = tx.QueryRowContext(ctx, query, mapID, recordID, scoreCount, scoreTime).Scan(&rank.UniqueFirst)
-	return rank, err
+func scoreIsRankOne(scoreCount, scoreTicks int, previous recordRankResult) bool {
+	return !previous.HasPrevious || scoreCount < previous.PreviousPortalCount ||
+		(scoreCount == previous.PreviousPortalCount && scoreTicks <= previous.PreviousScoreTicks)
+}
+
+func formatRecordTimeDelta(scoreTicks, previousScoreTicks int) string {
+	if scoreTicks == previousScoreTicks {
+		return "(-0.00)"
+	}
+	deltaSeconds := float64(scoreTicks-previousScoreTicks) / 60.0
+	return fmt.Sprintf("(%+.2f)", deltaSeconds)
 }
 
 func sendRankOneRecordNotification(ctx context.Context, mapID int, mapTitle, mapImage string, isCoop bool, hostSteamID, hostUserName, partnerSteamID, partnerUserName string, portalCount, scoreTicks int, rank recordRankResult) {
@@ -151,12 +158,11 @@ func sendRankOneRecordNotification(ctx context.Context, mapID int, mapTitle, map
 	embedColor := defaultRecordColor
 	if rank.HasPrevious {
 		portalDelta := portalCount - rank.PreviousPortalCount
-		timeDeltaSeconds := float64(scoreTicks-rank.PreviousScoreTicks) / 60.0
 		if portalDelta != 0 {
 			portalText = fmt.Sprintf("%s (%+d)", portalText, portalDelta)
 		}
-		if portalDelta == 0 && scoreTicks != rank.PreviousScoreTicks {
-			timeText = fmt.Sprintf("%s (%+.2f)", timeText, timeDeltaSeconds)
+		if portalDelta == 0 {
+			timeText = fmt.Sprintf("%s %s", timeText, formatRecordTimeDelta(scoreTicks, rank.PreviousScoreTicks))
 		}
 		if portalDelta < 0 {
 			embedColor = portalRecordColor

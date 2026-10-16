@@ -349,10 +349,10 @@ func CreateRecordWithDemo(c *gin.Context) {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
 		}
-		rank, rankErr := recordIsUniqueRankOne(c.Request.Context(), tx, mapID, isCoop, insertedRecordID, hostDemoScoreCount, hostDemoScoreTime)
+		rank, rankErr := recordIsRankOne(c.Request.Context(), tx, mapID, isCoop, insertedRecordID, hostDemoScoreCount, hostDemoScoreTime)
 		if rankErr != nil {
 			log.Printf("discord rank-one notification: check rank: %v", rankErr)
-		} else if rank.UniqueFirst {
+		} else if rank.IsRankOne {
 			var mapName, mapImage, hostUserName, partnerUserName string
 			err = tx.QueryRowContext(c.Request.Context(), `SELECT m.name, m.image, host.user_name, partner.user_name
 				FROM maps m
@@ -396,10 +396,10 @@ func CreateRecordWithDemo(c *gin.Context) {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
 		}
-		rank, rankErr := recordIsUniqueRankOne(c.Request.Context(), tx, mapID, isCoop, insertedRecordID, hostDemoScoreCount, hostDemoScoreTime)
+		rank, rankErr := recordIsRankOne(c.Request.Context(), tx, mapID, isCoop, insertedRecordID, hostDemoScoreCount, hostDemoScoreTime)
 		if rankErr != nil {
 			log.Printf("discord rank-one notification: check rank: %v", rankErr)
-		} else if rank.UniqueFirst {
+		} else if rank.IsRankOne {
 			var mapName, mapMode, mapImage, hostUserName string
 			err = tx.QueryRowContext(c.Request.Context(), `SELECT m.name, c.name, m.image, u.user_name
 				FROM maps m INNER JOIN chapters c ON c.id = m.chapter_id INNER JOIN users u ON u.steam_id = $2 WHERE m.id = $1`, mapID, user.(models.User).SteamID).Scan(&mapName, &mapMode, &mapImage, &hostUserName)
