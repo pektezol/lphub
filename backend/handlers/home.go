@@ -23,6 +23,8 @@ type RankingsResponse struct {
 	Singleplayer []models.UserRanking `json:"rankings_singleplayer"`
 	Multiplayer  []models.UserRanking `json:"rankings_multiplayer"`
 	Overall      []models.UserRanking `json:"rankings_overall"`
+	MelStory     []models.UserRanking `json:"rankings_mel_story"`
+	MelAdvanced  []models.UserRanking `json:"rankings_mel_advanced"`
 }
 
 type SteamUserRanking struct {
@@ -319,6 +321,8 @@ func RankingsLPHUB(c *gin.Context) {
 		Singleplayer: []models.UserRanking{},
 		Multiplayer:  []models.UserRanking{},
 		Overall:      []models.UserRanking{},
+		MelStory:     []models.UserRanking{},
+		MelAdvanced:  []models.UserRanking{},
 	}
 	rows, err := database.DB.Query(`SELECT * FROM get_rankings_singleplayer()`)
 	if err != nil {
@@ -389,6 +393,35 @@ func RankingsLPHUB(c *gin.Context) {
 	assignPlacements(response.Singleplayer)
 	assignPlacements(response.Multiplayer)
 	assignPlacements(response.Overall)
+	for _, mode := range []struct {
+		id     int
+		target *[]models.UserRanking
+	}{
+		{id: 17, target: &response.MelStory},
+		{id: 18, target: &response.MelAdvanced},
+	} {
+		melRows, err := database.DB.Query(`SELECT * FROM get_rankings_mel($1)`, mode.id)
+		if err != nil {
+			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+			return
+		}
+		for melRows.Next() {
+			ranking := models.UserRanking{}
+			if err := melRows.Scan(&ranking.User.SteamID, &ranking.User.UserName, &ranking.User.AvatarLink, &ranking.TotalScore); err != nil {
+				melRows.Close()
+				c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+				return
+			}
+			*mode.target = append(*mode.target, ranking)
+		}
+		if err := melRows.Err(); err != nil {
+			melRows.Close()
+			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+			return
+		}
+		melRows.Close()
+		assignPlacements(*mode.target)
+	}
 
 	c.JSON(http.StatusOK, models.Response{
 		Success: true,

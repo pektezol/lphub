@@ -311,6 +311,14 @@ definitions:
     type: object
   handlers.RankingsResponse:
     properties:
+      rankings_mel_advanced:
+        items:
+          $ref: '#/definitions/models.UserRanking'
+        type: array
+      rankings_mel_story:
+        items:
+          $ref: '#/definitions/models.UserRanking'
+        type: array
       rankings_multiplayer:
         items:
           $ref: '#/definitions/models.UserRanking'
@@ -781,6 +789,38 @@ paths:
           description: Demo File
           schema:
             type: file
+      tags:
+      - demo
+  /demos/autorender:
+    put:
+      consumes:
+      - application/json
+      description: Set the auto-rendered video ID for a record demo, keeping cooperative
+        host and partner IDs separate.
+      parameters:
+      - description: Moderator JWT or DEMO_SERVICE_TOKEN
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Demo and autorender IDs
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.SetAutorenderIDRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/handlers.SetAutorenderIDRequest'
+              type: object
       tags:
       - demo
   /games:
@@ -1445,38 +1485,6 @@ paths:
               type: object
       tags:
       - rankings
-  /demos/autorender:
-    put:
-      consumes:
-      - application/json
-      description: Set the auto-rendered video ID for a record demo, keeping cooperative
-        host and partner IDs separate.
-      parameters:
-      - description: Moderator JWT or DEMO_SERVICE_TOKEN
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Demo and autorender IDs
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/handlers.SetAutorenderIDRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/models.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/handlers.SetAutorenderIDRequest'
-              type: object
-      tags:
-      - demo
   /search:
     get:
       description: Get all user and map data matching to the query.

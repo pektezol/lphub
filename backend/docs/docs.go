@@ -97,6 +97,58 @@ const docTemplate = `{
                 }
             }
         },
+        "/demos/autorender": {
+            "put": {
+                "description": "Set the auto-rendered video ID for a record demo, keeping cooperative host and partner IDs separate.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "demo"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Moderator JWT or DEMO_SERVICE_TOKEN",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Demo and autorender IDs",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.SetAutorenderIDRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handlers.SetAutorenderIDRequest"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/games": {
             "get": {
                 "description": "Get games from the leaderboards.",
@@ -1189,58 +1241,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/demos/autorender": {
-            "put": {
-                "description": "Set the auto-rendered video ID for a record demo, keeping cooperative host and partner IDs separate.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "demo"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Moderator JWT or DEMO_SERVICE_TOKEN",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "Demo and autorender IDs",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/handlers.SetAutorenderIDRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/handlers.SetAutorenderIDRequest"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
         "/search": {
             "get": {
                 "description": "Get all user and map data matching to the query.",
@@ -1970,6 +1970,18 @@ const docTemplate = `{
         "handlers.RankingsResponse": {
             "type": "object",
             "properties": {
+                "rankings_mel_advanced": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.UserRanking"
+                    }
+                },
+                "rankings_mel_story": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.UserRanking"
+                    }
+                },
                 "rankings_multiplayer": {
                     "type": "array",
                     "items": {
