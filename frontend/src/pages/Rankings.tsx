@@ -15,7 +15,9 @@ enum LeaderboardTypes {
 enum RankingCategories {
   rankings_overall,
   rankings_multiplayer,
-  rankings_singleplayer
+  rankings_singleplayer,
+  rankings_mel_story,
+  rankings_mel_advanced
 }
 
 const getLeaderboardForCategory = (
@@ -28,6 +30,15 @@ const getLeaderboardForCategory = (
 
   if (category === RankingCategories.rankings_multiplayer) {
     return rankings.rankings_multiplayer;
+  }
+
+  if (category === RankingCategories.rankings_mel_story || category === RankingCategories.rankings_mel_advanced) {
+    if (!("rankings_mel_story" in rankings)) {
+      return [];
+    }
+    return category === RankingCategories.rankings_mel_story
+      ? rankings.rankings_mel_story
+      : rankings.rankings_mel_advanced;
   }
 
   return rankings.rankings_overall;
@@ -45,6 +56,11 @@ const Rankings: React.FC = () => {
     const currentRequestId = ++requestId.current;
 
     setCurrentRankingType(leaderboardType);
+    if (leaderboardType === LeaderboardTypes.unofficial) {
+      setCurrentLeaderboardType(category => category === RankingCategories.rankings_mel_story || category === RankingCategories.rankings_mel_advanced
+        ? RankingCategories.rankings_singleplayer
+        : category);
+    }
     setIsLoading(true);
     setHasLoadError(false);
 
@@ -112,6 +128,14 @@ const Rankings: React.FC = () => {
           <button type="button" disabled={categoryControlsDisabled} onClick={() => setCurrentLeaderboardType(RankingCategories.rankings_overall)} className={`nav-2-btn ${currentLeaderboardType === RankingCategories.rankings_overall ? "selected" : ""}`}>
             <span>Overall</span>
           </button>
+          {currentRankingType === LeaderboardTypes.official && <>
+            <button type="button" disabled={categoryControlsDisabled} onClick={() => setCurrentLeaderboardType(RankingCategories.rankings_mel_story)} className={`nav-2-btn ${currentLeaderboardType === RankingCategories.rankings_mel_story ? "selected" : ""}`}>
+              <span>Mel (Story)</span>
+            </button>
+            <button type="button" disabled={categoryControlsDisabled} onClick={() => setCurrentLeaderboardType(RankingCategories.rankings_mel_advanced)} className={`nav-2-btn ${currentLeaderboardType === RankingCategories.rankings_mel_advanced ? "selected" : ""}`}>
+              <span>Mel (Advanced)</span>
+            </button>
+          </>}
         </div>
       </section>
 

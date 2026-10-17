@@ -22,6 +22,8 @@ export interface Ranking {
     rankings_overall: RankingType[];
     rankings_singleplayer: RankingType[];
     rankings_multiplayer: RankingType[];
+    rankings_mel_story: RankingType[];
+    rankings_mel_advanced: RankingType[];
 }
 
 export interface SteamRanking {

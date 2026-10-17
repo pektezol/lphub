@@ -5,7 +5,9 @@ import { RankingType, SteamRankingType } from "@customTypes/Ranking";
 enum RankingCategories {
     rankings_overall,
     rankings_multiplayer,
-    rankings_singleplayer
+    rankings_singleplayer,
+    rankings_mel_story,
+    rankings_mel_advanced
 }
 
 interface RankingEntryProps {
