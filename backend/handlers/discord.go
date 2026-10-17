@@ -271,14 +271,14 @@ func formatRecordTime(ticks int) string {
 	if ticks < 0 {
 		ticks = 0
 	}
-	totalMilliseconds := (ticks*1000 + 30) / 60
-	minutes := totalMilliseconds / 60000
-	seconds := (totalMilliseconds / 1000) % 60
-	milliseconds := totalMilliseconds % 1000
+	totalCentiseconds := (ticks*100 + 30) / 60
+	minutes := totalCentiseconds / 6000
+	seconds := (totalCentiseconds / 100) % 60
+	centiseconds := totalCentiseconds % 100
 	if minutes == 0 {
-		return fmt.Sprintf("%d.%02d", seconds, milliseconds)
+		return fmt.Sprintf("%d.%02d", seconds, centiseconds)
 	}
-	return fmt.Sprintf("%d:%02d.%02d", minutes, seconds, milliseconds)
+	return fmt.Sprintf("%d:%02d.%02d", minutes, seconds, centiseconds)
 }
 
 func escapeDiscordMarkdown(value string) string {
