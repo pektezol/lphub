@@ -2,11 +2,11 @@ main {
     overflow: auto;
     overflow-x: hidden;
     position: relative;
-    width: calc(100% - 320px - 4rem);
+    width: calc(100% - 320px - 2rem);
     height: 100vh;
     left: 320px;
-    padding-right: 2rem;
-    padding-left: 2rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
     font-size: 2.5rem;
     font-family: BarlowSemiCondensed-Regular;
     color: #cdcfdf;
@@ -121,13 +121,5 @@ body {
         width: 2.5rem;
         height: 2.5rem;
         border: 0.25rem solid #FFF;
-    }
-}
-
-@media screen and (min-width: 1920px) {
-    main {
-        width: calc(100% - 25rem);
-        left: 23rem;
-        padding-right: 2rem;
     }
 }
