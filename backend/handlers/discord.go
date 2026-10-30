@@ -271,7 +271,7 @@ func formatRecordTime(ticks int) string {
 	if ticks < 0 {
 		ticks = 0
 	}
-	totalCentiseconds := (ticks*100 + 30) / 60
+	totalCentiseconds := ticks * 100 / 60
 	minutes := totalCentiseconds / 6000
 	seconds := (totalCentiseconds / 100) % 60
 	centiseconds := totalCentiseconds % 100
