@@ -46,7 +46,7 @@ type TimelineResponse struct {
 
 // GET Scores
 //
-//	@Description	Get score logs of every player.
+//	@Description	Get score logs of every player. Scores listed in autorender_overrides are included regardless of filters and limit.
 //	@Tags			stats
 //	@Param			limit		query	int	false	"Maximum number of score entries to return (default 100)"
 //	@Param			max_ticks	query	int	false	"Only return runs with score_time less than or equal this tick count"
@@ -165,9 +165,9 @@ func Scores(c *gin.Context) {
 			SELECT map_id, score_count FROM records_mp WHERE is_deleted = false
 		) leaderboard_records
 		GROUP BY map_id
-	)
-	SELECT g.id,
-		g."name",
+	), score_rows AS (
+	SELECT g.id AS game_id,
+		g."name" AS game_name,
 		g.is_coop,
 		rs.map_id,
 		m.name AS map_name,
@@ -175,8 +175,8 @@ func Scores(c *gin.Context) {
 		u.user_name,
 		rs.score_count,
 		rs.score_time,
-		COALESCE(mp_placements.score_rank, sp_placements.score_rank, 0),
-		GREATEST(rs.score_count - COALESCE(wr.score_count, rs.score_count), 0),
+		COALESCE(mp_placements.score_rank, sp_placements.score_rank, 0) AS score_rank,
+		GREATEST(rs.score_count - COALESCE(wr.score_count, rs.score_count), 0) AS score_wr_delta,
 		rs.demo_id,
 		rs.record_date
 	FROM (
@@ -205,18 +205,35 @@ func Scores(c *gin.Context) {
 		AND mp_placements.host_id = rs.host_id
 		AND mp_placements.partner_id = rs.partner_id
 	LEFT JOIN leaderboard_wrs wr ON wr.map_id = rs.map_id
-	WHERE ($1::integer IS NULL OR rs.score_time <= $1)
-		AND ($2::integer IS NULL OR GREATEST(rs.score_count - COALESCE(wr.score_count, rs.score_count), 0) = $2)
-		AND ($3::date IS NULL OR rs.record_date >= $3)
-		AND ($4::date IS NULL OR rs.record_date < $4)
-		AND ($5::integer IS NULL OR COALESCE(mp_placements.score_rank, sp_placements.score_rank) <= $5)
+	), regular_scores AS (
+		SELECT * FROM score_rows
+		WHERE ($1::integer IS NULL OR score_time <= $1)
+		AND ($2::integer IS NULL OR score_wr_delta = $2)
+		AND ($3::date IS NULL OR record_date >= $3)
+		AND ($4::date IS NULL OR record_date < $4)
+		AND ($5::integer IS NULL OR score_rank <= $5)
+		AND NOT EXISTS (
+			SELECT 1 FROM autorender_overrides o WHERE o.demo_id = score_rows.demo_id
+		)
 		AND (NOT $6::boolean OR NOT EXISTS (
 			SELECT 1 FROM user_runs better
-			WHERE better.map_id = rs.map_id AND better.user_id = rs.user_id
-				AND (better.score_count < rs.score_count
-					OR (better.score_count = rs.score_count AND better.score_time < rs.score_time))
+			WHERE better.map_id = score_rows.map_id AND better.user_id = score_rows.steam_id
+				AND (better.score_count < score_rows.score_count
+					OR (better.score_count = score_rows.score_count AND better.score_time < score_rows.score_time))
 		))
-	ORDER BY rs.record_date DESC LIMIT $7;`
+		ORDER BY record_date DESC LIMIT $7
+	), forced_scores AS (
+		SELECT score_rows.* FROM score_rows
+		JOIN autorender_overrides o ON o.demo_id = score_rows.demo_id
+	), combined AS (
+		SELECT regular_scores.*, false AS is_override FROM regular_scores
+		UNION ALL
+		SELECT forced_scores.*, true AS is_override FROM forced_scores
+	)
+	SELECT game_id, game_name, is_coop, map_id, map_name, steam_id, user_name,
+		score_count, score_time, score_rank, score_wr_delta, demo_id, record_date
+	FROM combined
+	ORDER BY is_override, record_date DESC;`
 	rows, err := database.DB.Query(sql, maxTicks, wrDelta, startDate, endDate, maxRank, hideObsolete, limit)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))

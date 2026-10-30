@@ -131,6 +131,10 @@ CREATE TABLE demos (
   PRIMARY KEY (id)
 );
 
+CREATE TABLE autorender_overrides (
+  demo_id UUID PRIMARY KEY REFERENCES demos(id)
+);
+
 CREATE TABLE records_sp (
   id SERIAL,
   map_id SMALLINT NOT NULL,
