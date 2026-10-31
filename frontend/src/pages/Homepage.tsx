@@ -385,7 +385,7 @@ const Homepage: React.FC = () => {
                       onClick={() => setSelectedMode("multiplayer")}
                       className={`mode-toggle-button ${selectedMode === "multiplayer" ? "selected" : ""}`}
                     >
-                    Multiplayer
+                    Cooperative
                     </button>
                   </div>
                 </>
