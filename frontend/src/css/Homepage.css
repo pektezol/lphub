@@ -1,7 +1,7 @@
 .hero-section {
     text-align: center;
     padding: 20px 20px;
-    margin: 20px;
+    margin: 25px 20px;
     background: #202232;
     border-radius: 24px;
 }
@@ -27,7 +27,7 @@
 }
 
 .stats-section {
-    margin: 20px;
+    margin: 25px 20px;
 }
 
 .stats-grid {
@@ -351,7 +351,6 @@
 /* Responsive Design */
 @media screen and (min-width: 769px) and (max-width: 1024px) {
     .hero-section {
-        margin: 18px;
         padding: 40px 18px;
     }
 
