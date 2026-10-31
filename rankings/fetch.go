@@ -207,7 +207,7 @@ func fetchPlayerInfo(players []*Player) error {
 		ids = append(ids, strconv.FormatInt(int64(player.SteamID), 10))
 	}
 
-	url := fmt.Sprintf("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=%s&steamids=%s", os.Getenv("API_KEY"), strings.Join(ids, ","))
+	url := fmt.Sprintf("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=%s&steamids=%s", os.Getenv("API_KEY"), strings.Join(ids, ","))
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Println(err.Error())

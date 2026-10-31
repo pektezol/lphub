@@ -147,7 +147,7 @@ func DeleteCookie(c *gin.Context) {
 }
 
 func GetPlayerSummaries(steamId, apiKey string) (models.PlayerSummaries, error) {
-	url := fmt.Sprintf("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=%s&steamids=%s", apiKey, steamId)
+	url := fmt.Sprintf("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=%s&steamids=%s", apiKey, steamId)
 	resp, err := http.Get(url)
 	if err != nil {
 		return models.PlayerSummaries{}, err

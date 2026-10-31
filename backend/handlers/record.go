@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	stdsql "database/sql"
+	"errors"
 	"fmt"
 	"hash/fnv"
 	"io"
@@ -36,6 +37,8 @@ type SetAutorenderIDRequest struct {
 	DemoID       string `json:"demo_id" binding:"required"`
 	AutorenderID string `json:"autorender_id" binding:"required"`
 }
+
+const maxRecordRequestBodyBytes = 256 << 20
 
 // PUT Autorender ID
 //
@@ -172,6 +175,11 @@ func CreateRecordWithDemo(c *gin.Context) {
 			_ = c.Request.MultipartForm.RemoveAll()
 		}
 	}()
+	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, maxRecordRequestBodyBytes)
+	if c.Request.ContentLength > maxRecordRequestBodyBytes {
+		c.JSON(http.StatusRequestEntityTooLarge, models.ErrorResponse("Request body exceeds the 256 MiB limit."))
+		return
+	}
 
 	id := c.Param("mapid")
 	mapID, err := strconv.Atoi(id)
@@ -200,6 +208,11 @@ func CreateRecordWithDemo(c *gin.Context) {
 	// Get record request
 	var record RecordRequest
 	if err := c.ShouldBind(&record); err != nil {
+		var maxBytesErr *http.MaxBytesError
+		if errors.As(err, &maxBytesErr) {
+			c.JSON(http.StatusRequestEntityTooLarge, models.ErrorResponse("Request body exceeds the 256 MiB limit."))
+			return
+		}
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
@@ -216,6 +229,7 @@ func CreateRecordWithDemo(c *gin.Context) {
 	var hostDemoScoreCount, hostDemoScoreTime int
 	var hostSteamID, partnerSteamID string
 	var hostDemoServerNumber, partnerDemoServerNumber int
+	parserResults := make([]parser.Result, len(demoFileHeaders))
 	// Create database transaction for inserts
 	tx, err := database.BeginAuditTx(c.Request.Context(), user.(models.User).SteamID)
 	if err != nil {
@@ -239,6 +253,7 @@ func CreateRecordWithDemo(c *gin.Context) {
 			c.JSON(http.StatusOK, models.ErrorResponse("Error while processing demo: "+err.Error()))
 			return
 		}
+		parserResults[i] = parserResult
 		if mapID != parserResult.MapID {
 			c.JSON(http.StatusOK, models.ErrorResponse("Demo map does not match selected map id."))
 			return
@@ -247,10 +262,12 @@ func CreateRecordWithDemo(c *gin.Context) {
 			c.JSON(http.StatusOK, models.ErrorResponse("Demo engine map does not match the selected map."))
 			return
 		}
-		hostDemoScoreCount = parserResult.PortalCount
-		hostDemoScoreTime = parserResult.TickCount
-		hostSteamID = parserResult.HostSteamID
-		partnerSteamID = parserResult.PartnerSteamID
+		if i == 0 {
+			hostDemoScoreCount = parserResult.PortalCount
+			hostDemoScoreTime = parserResult.TickCount
+			hostSteamID = parserResult.HostSteamID
+			partnerSteamID = parserResult.PartnerSteamID
+		}
 		if hostDemoScoreCount == 0 && hostDemoScoreTime == 0 {
 			c.JSON(http.StatusOK, models.ErrorResponse("Processing demo went wrong. Please contact a web admin and provide the demo in question."))
 			return
@@ -286,8 +303,32 @@ func CreateRecordWithDemo(c *gin.Context) {
 	}
 	// Insert into records
 	if isCoop {
+		hostResult := parserResults[0]
+		partnerResult := parserResults[1]
+		if !hostResult.IsHost || partnerResult.IsHost {
+			c.JSON(http.StatusOK, models.ErrorResponse("Coop submissions must contain a host demo followed by a partner demo."))
+			return
+		}
 		if hostDemoServerNumber != partnerDemoServerNumber {
 			c.JSON(http.StatusOK, models.ErrorResponse(fmt.Sprintf("Host and partner demo server numbers (%d & %d) does not match!", hostDemoServerNumber, partnerDemoServerNumber)))
+			return
+		}
+		if hostResult.PortalCount != partnerResult.PortalCount || hostResult.TickCount != partnerResult.TickCount {
+			c.JSON(http.StatusOK, models.ErrorResponse("Host and partner demos must have identical portal counts and times."))
+			return
+		}
+		hostPlayerIDs := [2]int64{convertSteamID64(hostResult.HostSteamID), convertSteamID64(hostResult.PartnerSteamID)}
+		partnerPlayerIDs := [2]int64{convertSteamID64(partnerResult.HostSteamID), convertSteamID64(partnerResult.PartnerSteamID)}
+		if hostPlayerIDs[0] == 0 || hostPlayerIDs[1] == 0 || partnerPlayerIDs[0] == 0 || partnerPlayerIDs[1] == 0 {
+			c.JSON(http.StatusOK, models.ErrorResponse("Coop demos contain an invalid SteamID."))
+			return
+		}
+		if hostPlayerIDs[0] == hostPlayerIDs[1] || partnerPlayerIDs[0] == partnerPlayerIDs[1] {
+			c.JSON(http.StatusOK, models.ErrorResponse("Coop demos must contain two distinct players."))
+			return
+		}
+		if !sameSteamIDPair(hostPlayerIDs, partnerPlayerIDs) {
+			c.JSON(http.StatusOK, models.ErrorResponse("Host and partner demos must contain the same two players."))
 			return
 		}
 		convertedHostSteamID := strconv.FormatInt(convertSteamID64(hostSteamID), 10)
@@ -693,13 +734,21 @@ func convertSteamID(steamID64 int64) int64 {
 func convertSteamID64(steamID string) int64 {
 	const baseSteam64ID = 76561197960265728 // Origin of this value remains unclear
 	parts := strings.Split(steamID, ":")
-	userId, err := strconv.Atoi(parts[2])
-	if err != nil {
+	if len(parts) != 3 || parts[0] != "STEAM_0" || (parts[1] != "0" && parts[1] != "1") {
 		return 0
 	}
-	steam64ID := baseSteam64ID + int64(userId*2) // Reason for multiplication by 2 is unknown
+	userID, err := strconv.ParseUint(parts[2], 10, 32)
+	if err != nil || userID == 0 {
+		return 0
+	}
+	steam64ID := baseSteam64ID + int64(userID*2) // Reason for multiplication by 2 is unknown
 	if parts[1] == "1" {
 		steam64ID++
 	}
 	return steam64ID
+}
+
+func sameSteamIDPair(first, second [2]int64) bool {
+	return (first[0] == second[0] && first[1] == second[1]) ||
+		(first[0] == second[1] && first[1] == second[0])
 }
