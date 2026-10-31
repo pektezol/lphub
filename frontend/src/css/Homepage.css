@@ -351,7 +351,6 @@
 /* Responsive Design */
 @media screen and (min-width: 769px) and (max-width: 1024px) {
     .hero-section {
-        margin: 18px;
         padding: 40px 18px;
     }
 

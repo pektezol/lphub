@@ -97,7 +97,7 @@ body {
 
 @media screen and (min-width: 769px) and (max-width: 1024px) {
     main {
-        width: calc(70% - 1rem);
+        width: calc(100% - 280px - 2rem);
         left: 280px;
         font-size: 2rem;
     }

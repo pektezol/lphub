@@ -326,7 +326,6 @@ span.titles {
 
 @media screen and (min-width: 769px) and (max-width: 1024px) {
     #section1.profile {
-        margin: 18px;
         grid-template-columns: 220px 1fr;
         height: 180px;
     }

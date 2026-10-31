@@ -140,12 +140,11 @@ span>b {
 @media screen and (min-width: 769px) and (max-width: 1024px) {
     .games-page {
         left: 280px;
-        width: calc(100% - 280px);
+        width: calc(100% - 280px - 2rem);
     }
 
     .games-page-item-content {
-        left: 40px;
-        width: calc(100% - 80px);
+        width: calc(100% - 40px - 2rem);
     }
 
     .games-page-header {
@@ -194,7 +193,7 @@ span>b {
     }
 
     .games-page-item-content {
-        left: 20px;
+        left: 0;
         width: calc(100% - 40px);
     }
 
