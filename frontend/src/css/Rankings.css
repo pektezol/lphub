@@ -42,11 +42,12 @@
 }
 
 .nav-1 div {
-    width: 60%;
+    width: 65%;
 }
 
 .nav-2 div {
-    width: 75%;
+    width: 100%;
+    max-width: 1500px;
 }
 
 .rankings-leaderboard {
@@ -60,7 +61,7 @@
 
 .ranks-container {
     display: flex;
-    width: calc(60% - 20px);
+    width: 65%;
     padding: 8px 8px;
     background-color: #202232;
     border-radius: 32px;
@@ -123,16 +124,16 @@
 
 @media screen and (min-width: 769px) and (max-width: 1024px) {
     .nav-container button {
-        font-size: 23px;
+        font-size: 20px;
         padding: 9px 0px;
     }
 
     .nav-1 div {
-        width: 70%;
+        width: 100%;
     }
 
     .nav-2 div {
-        width: 82%;
+        width: 100%;
     }
 
     .rankings-leaderboard {
@@ -140,7 +141,7 @@
     }
 
     .ranks-container {
-        width: calc(70% - 20px);
+        width: 100%;
     }
 
     .leaderboard-entry {
