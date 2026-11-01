@@ -9,7 +9,12 @@ import Leaderboards, {
 } from "@components/Leaderboards";
 import Discussions from "@components/Discussions";
 import ModMenu from "@components/ModMenu";
-import { MapDiscussions, MapLeaderboard, MapSummary } from "@customTypes/Map";
+import {
+  Map as MapData,
+  MapDiscussions,
+  MapLeaderboard,
+  MapSummary,
+} from "@customTypes/Map";
 import { API } from "@api/Api";
 import "@css/Maps.css";
 import "@css/ResourceState.css";
@@ -45,6 +50,11 @@ interface ScopedResource<T> {
 interface ScopedLeaderboardResource extends LeaderboardResource {
   mapID: string;
   page: number;
+}
+
+interface GameMapListResource {
+  gameID: number;
+  maps: MapData[];
 }
 
 const clearMapCache = (cache: MapCache) => {
@@ -101,7 +111,11 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
       page: 1,
       status: "loading",
     });
+  const [gameMapListResource, setGameMapListResource] = React.useState<
+    GameMapListResource | undefined
+  >(undefined);
   const mapCacheRef = React.useRef<MapCache | undefined>(undefined);
+  const gameMapListCacheRef = React.useRef<Map<number, MapData[]>>(new Map());
   const activeLeaderboardPageRef = React.useRef<number>(1);
 
   const loadMapSummary = React.useCallback((cache: MapCache) => {
@@ -419,6 +433,54 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
       : undefined;
   const mapDiscussionsData = activeDiscussionsResource.data;
 
+  React.useEffect(() => {
+    if (!mapSummaryData) {
+      return;
+    }
+
+    let isCurrent = true;
+    const gameID = mapSummaryData.map.game_id;
+    const cachedMaps = gameMapListCacheRef.current.get(gameID);
+    if (cachedMaps) {
+      setGameMapListResource({ gameID, maps: cachedMaps });
+      return () => {
+        isCurrent = false;
+      };
+    }
+
+    void API.get_game_maps(gameID.toString())
+      .then((maps) => {
+        const gameMaps = Array.isArray(maps) ? maps : [];
+        gameMapListCacheRef.current.set(gameID, gameMaps);
+        if (isCurrent) {
+          setGameMapListResource({ gameID, maps: gameMaps });
+        }
+      })
+      .catch(() => undefined);
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [mapSummaryData]);
+
+  const activeGameMaps =
+    mapSummaryData && gameMapListResource?.gameID === mapSummaryData.map.game_id
+      ? gameMapListResource.maps
+      : undefined;
+  const currentMapIndex =
+    activeGameMaps?.findIndex((map) => map.id === mapSummaryData?.map.id) ?? -1;
+  const previousMap =
+    activeGameMaps && currentMapIndex > 0
+      ? activeGameMaps[currentMapIndex - 1]
+      : undefined;
+  const nextMap =
+    activeGameMaps &&
+    currentMapIndex >= 0 &&
+    currentMapIndex < activeGameMaps.length - 1
+      ? activeGameMaps[currentMapIndex + 1]
+      : undefined;
+  const hasMapNavigation = activeGameMaps !== undefined && currentMapIndex >= 0;
+
   if (!mapSummaryData) {
     if (
       activeSummaryResource.status === "unavailable" ||
@@ -497,51 +559,106 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
       </div>
       <main>
         <section id="section1" className="summary1">
-          <div>
-            <Link to="/games">
-              <button
-                className="nav-button"
-                style={{ borderRadius: "20px 0px 0px 20px" }}
-              >
-                <i className="triangle"></i>
-                <span>Games List</span>
-              </button>
-            </Link>
-            <Link
-              to={
-                "/games/" +
-                mapSummaryData.map.game_id +
-                "?chapter=" +
-                mapSummaryData.map.chapter_id
-              }
-            >
-              <button
-                className="nav-button"
-                style={{ borderRadius: "0px 20px 20px 0px", marginLeft: "2px" }}
-              >
-                <i className="triangle"></i>
-                <span>{mapSummaryData.map.chapter_name}</span>
-              </button>
-            </Link>
-            {mapSummaryData.map.counterpart && (
-              <Link to={"/maps/" + mapSummaryData.map.counterpart.id}>
+          <div className="map-page-header">
+            <div className="map-page-breadcrumbs">
+              <Link to="/games">
                 <button
                   className="nav-button"
-                  style={{ borderRadius: "20px", marginLeft: "8px" }}
+                  style={{ borderRadius: "20px 0px 0px 20px" }}
                 >
-                  <span>
-                    View {mapSummaryData.map.counterpart.section_name}
-                  </span>
+                  <i className="triangle"></i>
+                  <span>Games List</span>
                 </button>
               </Link>
-            )}
-            <br />
-            <span>
-              <b>{mapSummaryData.map.map_name}</b>
-              {mapSummaryData.map.section_kind === "mode"
-                ? " — " + mapSummaryData.map.chapter_name
-                : ""}
-            </span>
+              <Link
+                to={
+                  "/games/" +
+                  mapSummaryData.map.game_id +
+                  "?chapter=" +
+                  mapSummaryData.map.chapter_id
+                }
+              >
+                <button
+                  className="nav-button"
+                  style={{
+                    borderRadius: "0px 20px 20px 0px",
+                    marginLeft: "2px",
+                  }}
+                >
+                  <i className="triangle"></i>
+                  <span>{mapSummaryData.map.chapter_name}</span>
+                </button>
+              </Link>
+              {mapSummaryData.map.counterpart && (
+                <Link to={"/maps/" + mapSummaryData.map.counterpart.id}>
+                  <button
+                    className="nav-button"
+                    style={{ borderRadius: "20px", marginLeft: "8px" }}
+                  >
+                    <span>
+                      View {mapSummaryData.map.counterpart.section_name}
+                    </span>
+                  </button>
+                </Link>
+              )}
+            </div>
+
+            <div className="map-page-neighbor-navigation">
+              {hasMapNavigation && previousMap ? (
+                <Link
+                  className="nav-button"
+                  to={`/maps/${previousMap.id}`}
+                  aria-label={`Previous map: ${previousMap.name}`}
+                >
+                  <span>← Previous: {previousMap.name}</span>
+                </Link>
+              ) : hasMapNavigation ? (
+                <button
+                  className="nav-button"
+                  type="button"
+                  disabled
+                  aria-label="No previous map"
+                >
+                  <span>← Previous</span>
+                </button>
+              ) : (
+                <span
+                  className="map-page-navigation-placeholder"
+                  aria-hidden="true"
+                />
+              )}
+
+              <span className="map-page-title">
+                <b>{mapSummaryData.map.map_name}</b>
+                {mapSummaryData.map.section_kind === "mode"
+                  ? " — " + mapSummaryData.map.chapter_name
+                  : ""}
+              </span>
+
+              {hasMapNavigation && nextMap ? (
+                <Link
+                  className="nav-button"
+                  to={`/maps/${nextMap.id}`}
+                  aria-label={`Next map: ${nextMap.name}`}
+                >
+                  <span>Next: {nextMap.name} →</span>
+                </Link>
+              ) : hasMapNavigation ? (
+                <button
+                  className="nav-button"
+                  type="button"
+                  disabled
+                  aria-label="No next map"
+                >
+                  <span>Next →</span>
+                </button>
+              ) : (
+                <span
+                  className="map-page-navigation-placeholder"
+                  aria-hidden="true"
+                />
+              )}
+            </div>
           </div>
         </section>
 
