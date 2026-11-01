@@ -450,7 +450,7 @@ func assignPlacements(rankings []models.UserRanking) {
 
 	placement, ties := 1, 0
 	for index := range rankings {
-		if index > 0 && rankings[index-1].TotalScore == rankings[index].TotalScore && rankings[index-1].TotalTimeTicks == rankings[index].TotalTimeTicks {
+		if index > 0 && rankings[index-1].TotalScore == rankings[index].TotalScore {
 			ties++
 			rankings[index].Placement = placement - ties
 		} else {
