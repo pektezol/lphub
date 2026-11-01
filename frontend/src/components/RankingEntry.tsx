@@ -28,7 +28,7 @@ const RankingEntry: React.FC<RankingEntryProps> = (prop) => {
           </Link>
         </div>
         <span>{prop.curRankingData.total_score}</span>
-        <span>{ticks_to_time(prop.curRankingData.total_time_ticks)}</span>
+        <span>{ticks_to_time(prop.curRankingData.total_time_ticks, false)}</span>
       </div>
     );
   } else {

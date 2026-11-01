@@ -29,20 +29,21 @@ export function time_ago(date: Date) {
   return Math.floor(seconds) + " seconds ago";
 };
 
-export function ticks_to_time(ticks: number) {
+export function ticks_to_time(ticks: number, showMilliseconds = true) {
   let seconds = Math.floor(ticks / 60);
   let minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
 
   const milliseconds = Math.floor((ticks % 60) * 1000 / 60);
+  const fractionalSeconds = showMilliseconds ? `.${milliseconds.toString().padStart(3, "0")}` : "";
   seconds = seconds % 60;
   minutes = minutes % 60;
 
   if (hours > 0) {
-    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}.${milliseconds.toString().padStart(3, "0")}`;
+    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}${fractionalSeconds}`;
   } else if (minutes > 0) {
-    return `${minutes}:${seconds.toString().padStart(2, "0")}.${milliseconds.toString().padStart(3, "0")}`;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}${fractionalSeconds}`;
   } else {
-    return `${seconds}.${milliseconds.toString().padStart(3, "0")}`;
+    return `${seconds}${fractionalSeconds}`;
   }
 };
