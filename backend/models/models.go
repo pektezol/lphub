@@ -124,9 +124,10 @@ type MapRecords struct {
 }
 
 type UserRanking struct {
-	Placement  int                 `json:"placement"`
-	User       UserShortWithAvatar `json:"user"`
-	TotalScore int                 `json:"total_score"`
+	Placement      int                 `json:"placement"`
+	User           UserShortWithAvatar `json:"user"`
+	TotalScore     int                 `json:"total_score"`
+	TotalTimeTicks int64               `json:"total_time_ticks"`
 }
 
 type Game struct {

@@ -17,39 +17,44 @@ RETURNS TABLE (
     steam_id TEXT,
     user_name TEXT,
     avatar_link TEXT,
-    total_min_score_count BIGINT
+    total_min_score_count BIGINT,
+    total_time_ticks BIGINT
 ) AS $$
-BEGIN
-    RETURN QUERY
-    SELECT 
-        u.steam_id, 
-        u.user_name, 
-        u.avatar_link, 
-        (
-            SELECT SUM(min_score_count) AS total_min_score_count 
-            FROM (
-                SELECT sp.user_id, MIN(sp.score_count) AS min_score_count 
-                FROM records_sp sp
-                INNER JOIN maps m ON m.id = sp.map_id
-                WHERE sp.is_deleted = false AND m.game_id = 1
-                GROUP BY sp.user_id, sp.map_id
-            ) AS subquery 
-            WHERE user_id = u.steam_id
-        )
-    FROM records_sp sp
-    INNER JOIN maps m ON m.id = sp.map_id
-    JOIN users u ON u.steam_id = sp.user_id 
-    WHERE sp.is_deleted = false AND m.game_id = 1
+    WITH ranked_scores AS (
+        SELECT
+            sp.user_id,
+            sp.map_id,
+            sp.score_count,
+            sp.score_time,
+            ROW_NUMBER() OVER (
+                PARTITION BY sp.user_id, sp.map_id
+                ORDER BY sp.score_count ASC, sp.score_time ASC
+            ) AS row_number
+        FROM records_sp sp
+        JOIN maps m ON m.id = sp.map_id
+        WHERE sp.is_deleted = false AND m.game_id = 1
+    ), best_scores AS (
+        SELECT user_id, map_id, score_count, score_time
+        FROM ranked_scores
+        WHERE row_number = 1
+    )
+    SELECT
+        u.steam_id,
+        u.user_name,
+        u.avatar_link,
+        SUM(b.score_count)::BIGINT,
+        SUM(b.score_time)::BIGINT
+    FROM best_scores b
+    JOIN users u ON u.steam_id = b.user_id
     GROUP BY u.steam_id, u.user_name, u.avatar_link
-    HAVING COUNT(DISTINCT sp.map_id) = (
-        SELECT COUNT(m.name) 
-        FROM maps m 
-        INNER JOIN games g ON m.game_id = g.id 
+    HAVING COUNT(DISTINCT b.map_id) = (
+        SELECT COUNT(m.name)
+        FROM maps m
+        JOIN games g ON m.game_id = g.id
         WHERE g.id = 1 AND m.is_disabled = false
     )
-    ORDER BY total_min_score_count ASC;
-END;
-$$ LANGUAGE plpgsql;
+    ORDER BY SUM(b.score_count) ASC;
+$$ LANGUAGE sql STABLE;
 
 
 
@@ -58,56 +63,52 @@ RETURNS TABLE (
     steam_id TEXT,
     user_name TEXT,
     avatar_link TEXT,
-    total_min_score_count BIGINT
+    total_min_score_count BIGINT,
+    total_time_ticks BIGINT
 ) AS $$
-BEGIN
-    RETURN QUERY
-    SELECT 
-        u.steam_id, 
-        u.user_name, 
-        u.avatar_link, 
-        (
-            SELECT SUM(min_score_count) AS total_min_score_count 
-            FROM (
-                SELECT DISTINCT ON (map_id, player_id)
-                    map_id,
-                    player_id,
-                    MIN(score_count) AS min_score_count
-                FROM (
-                    SELECT 
-                        mp.map_id, 
-                        mp.host_id AS player_id, 
-                        mp.score_count
-                    FROM records_mp mp
-                    INNER JOIN maps m ON m.id = mp.map_id
-                    WHERE mp.is_deleted = false AND m.game_id = 2
-                    UNION ALL
-                    SELECT 
-                        mp.map_id, 
-                        mp.partner_id AS player_id, 
-                        mp.score_count
-                    FROM records_mp mp
-                    INNER JOIN maps m ON m.id = mp.map_id
-                    WHERE mp.is_deleted = false AND m.game_id = 2
-                ) AS player_scores
-                GROUP BY map_id, player_id
-            ) AS subquery
-            WHERE player_id = u.steam_id
-        )
-    FROM records_mp mp
-    INNER JOIN maps m ON m.id = mp.map_id
-    JOIN users u ON u.steam_id = mp.host_id OR u.steam_id = mp.partner_id
-    WHERE mp.is_deleted = false AND m.game_id = 2
+    WITH player_scores AS (
+        SELECT mp.map_id, mp.host_id AS player_id, mp.score_count, mp.score_time
+        FROM records_mp mp
+        JOIN maps m ON m.id = mp.map_id
+        WHERE mp.is_deleted = false AND m.game_id = 2
+        UNION ALL
+        SELECT mp.map_id, mp.partner_id AS player_id, mp.score_count, mp.score_time
+        FROM records_mp mp
+        JOIN maps m ON m.id = mp.map_id
+        WHERE mp.is_deleted = false AND m.game_id = 2
+    ), ranked_scores AS (
+        SELECT
+            map_id,
+            player_id,
+            score_count,
+            score_time,
+            ROW_NUMBER() OVER (
+                PARTITION BY map_id, player_id
+                ORDER BY score_count ASC, score_time ASC
+            ) AS row_number
+        FROM player_scores
+    ), best_scores AS (
+        SELECT map_id, player_id, score_count, score_time
+        FROM ranked_scores
+        WHERE row_number = 1
+    )
+    SELECT
+        u.steam_id,
+        u.user_name,
+        u.avatar_link,
+        SUM(b.score_count)::BIGINT,
+        SUM(b.score_time)::BIGINT
+    FROM best_scores b
+    JOIN users u ON u.steam_id = b.player_id
     GROUP BY u.steam_id, u.user_name, u.avatar_link
-    HAVING COUNT(DISTINCT mp.map_id) = (
-        SELECT COUNT(m.name) 
-        FROM maps m 
-        INNER JOIN games g ON m.game_id = g.id 
+    HAVING COUNT(DISTINCT b.map_id) = (
+        SELECT COUNT(m.name)
+        FROM maps m
+        JOIN games g ON m.game_id = g.id
         WHERE g.id = 2 AND m.is_disabled = false
     )
-    ORDER BY total_min_score_count ASC;
-END;
-$$ LANGUAGE plpgsql;
+    ORDER BY SUM(b.score_count) ASC;
+$$ LANGUAGE sql STABLE;
 
 
 
@@ -116,19 +117,36 @@ RETURNS TABLE (
     steam_id TEXT,
     user_name TEXT,
     avatar_link TEXT,
-    total_min_score_count BIGINT
+    total_min_score_count BIGINT,
+    total_time_ticks BIGINT
 ) AS $$
     WITH enabled_maps AS (
         SELECT id FROM maps
         WHERE game_id = 3 AND chapter_id = mode_id AND is_disabled = false
-    ), best_scores AS (
-        SELECT sp.user_id, sp.map_id, MIN(sp.score_count) AS score_count
+    ), ranked_scores AS (
+        SELECT
+            sp.user_id,
+            sp.map_id,
+            sp.score_count,
+            sp.score_time,
+            ROW_NUMBER() OVER (
+                PARTITION BY sp.user_id, sp.map_id
+                ORDER BY sp.score_count ASC, sp.score_time ASC
+            ) AS row_number
         FROM records_sp sp
         JOIN enabled_maps m ON m.id = sp.map_id
         WHERE sp.is_deleted = false
-        GROUP BY sp.user_id, sp.map_id
+    ), best_scores AS (
+        SELECT user_id, map_id, score_count, score_time
+        FROM ranked_scores
+        WHERE row_number = 1
     )
-    SELECT u.steam_id, u.user_name, u.avatar_link, SUM(b.score_count)::BIGINT
+    SELECT
+        u.steam_id,
+        u.user_name,
+        u.avatar_link,
+        SUM(b.score_count)::BIGINT,
+        SUM(b.score_time)::BIGINT
     FROM best_scores b
     JOIN users u ON u.steam_id = b.user_id
     GROUP BY u.steam_id, u.user_name, u.avatar_link

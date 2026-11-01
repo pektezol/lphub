@@ -337,6 +337,7 @@ func RankingsLPHUB(c *gin.Context) {
 			&ranking.User.UserName,
 			&ranking.User.AvatarLink,
 			&ranking.TotalScore,
+			&ranking.TotalTimeTicks,
 		); err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
@@ -361,6 +362,7 @@ func RankingsLPHUB(c *gin.Context) {
 			&ranking.User.UserName,
 			&ranking.User.AvatarLink,
 			&ranking.TotalScore,
+			&ranking.TotalTimeTicks,
 		); err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
@@ -376,8 +378,9 @@ func RankingsLPHUB(c *gin.Context) {
 		for _, mpRanking := range response.Multiplayer {
 			if spRanking.User.SteamID == mpRanking.User.SteamID {
 				response.Overall = append(response.Overall, models.UserRanking{
-					User:       spRanking.User,
-					TotalScore: spRanking.TotalScore + mpRanking.TotalScore,
+					User:           spRanking.User,
+					TotalScore:     spRanking.TotalScore + mpRanking.TotalScore,
+					TotalTimeTicks: spRanking.TotalTimeTicks + mpRanking.TotalTimeTicks,
 				})
 				break
 			}
@@ -407,7 +410,7 @@ func RankingsLPHUB(c *gin.Context) {
 		}
 		for melRows.Next() {
 			ranking := models.UserRanking{}
-			if err := melRows.Scan(&ranking.User.SteamID, &ranking.User.UserName, &ranking.User.AvatarLink, &ranking.TotalScore); err != nil {
+			if err := melRows.Scan(&ranking.User.SteamID, &ranking.User.UserName, &ranking.User.AvatarLink, &ranking.TotalScore, &ranking.TotalTimeTicks); err != nil {
 				melRows.Close()
 				c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 				return

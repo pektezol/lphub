@@ -138,7 +138,7 @@ func fetchProfileLeaderboard(ctx context.Context, query string) ([]models.UserRa
 	rankings := []models.UserRanking{}
 	for rows.Next() {
 		var ranking models.UserRanking
-		if err := rows.Scan(&ranking.User.SteamID, &ranking.User.UserName, &ranking.User.AvatarLink, &ranking.TotalScore); err != nil {
+		if err := rows.Scan(&ranking.User.SteamID, &ranking.User.UserName, &ranking.User.AvatarLink, &ranking.TotalScore, &ranking.TotalTimeTicks); err != nil {
 			return nil, err
 		}
 		rankings = append(rankings, ranking)

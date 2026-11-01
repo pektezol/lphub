@@ -2584,6 +2584,9 @@ const docTemplate = `{
                 "placement": {
                     "type": "integer"
                 },
+                "total_time_ticks": {
+                    "type": "integer"
+                },
                 "total_score": {
                     "type": "integer"
                 },
