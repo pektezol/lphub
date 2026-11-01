@@ -80,6 +80,10 @@
     padding: 6px 0px;
 }
 
+.leaderboard-entry.has-time {
+    grid-template-columns: 14% 36% 25% 25%;
+}
+
 .leaderboard-entry div:nth-child(2) {
     text-align: left;
 }
@@ -149,6 +153,10 @@
         font-size: 16px;
     }
 
+    .leaderboard-entry.has-time {
+        grid-template-columns: 14% 36% 25% 25%;
+    }
+
     .leaderboard-entry img {
         height: 30px;
     }
@@ -177,6 +185,10 @@
     .leaderboard-entry {
         grid-template-columns: 15% 50% 35%;
         font-size: 14px;
+    }
+
+    .leaderboard-entry.has-time {
+        grid-template-columns: 12% 38% 25% 25%;
     }
 
     .leaderboard-entry img {

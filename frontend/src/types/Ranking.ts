@@ -4,6 +4,7 @@ export interface RankingType {
     placement: number;
     user: UserShort;
     total_score: number;
+    total_time_ticks: number;
 }
 
 export interface SteamRankingType {

@@ -141,10 +141,11 @@ const Rankings: React.FC = () => {
 
       <section className="rankings-leaderboard">
         <div className="ranks-container" aria-busy={isLoading}>
-          <div className="leaderboard-entry header">
+          <div className={`leaderboard-entry header ${currentRankingType === LeaderboardTypes.official ? "has-time" : ""}`}>
             <span>Rank</span>
             <span>Player</span>
             <span>Portals</span>
+            {currentRankingType === LeaderboardTypes.official && <span>Time</span>}
           </div>
 
           <div className="splitter"></div>
