@@ -53,7 +53,7 @@ RETURNS TABLE (
         JOIN games g ON m.game_id = g.id
         WHERE g.id = 1 AND m.is_disabled = false
     )
-    ORDER BY SUM(b.score_count) ASC;
+    ORDER BY SUM(b.score_count) ASC, SUM(b.score_time) ASC, u.steam_id ASC;
 $$ LANGUAGE sql STABLE;
 
 
@@ -107,7 +107,7 @@ RETURNS TABLE (
         JOIN games g ON m.game_id = g.id
         WHERE g.id = 2 AND m.is_disabled = false
     )
-    ORDER BY SUM(b.score_count) ASC;
+    ORDER BY SUM(b.score_count) ASC, SUM(b.score_time) ASC, u.steam_id ASC;
 $$ LANGUAGE sql STABLE;
 
 
@@ -151,7 +151,7 @@ RETURNS TABLE (
     JOIN users u ON u.steam_id = b.user_id
     GROUP BY u.steam_id, u.user_name, u.avatar_link
     HAVING COUNT(*) = (SELECT COUNT(*) FROM enabled_maps)
-    ORDER BY SUM(b.score_count), u.steam_id;
+    ORDER BY SUM(b.score_count), SUM(b.score_time), u.steam_id;
 $$ LANGUAGE sql STABLE;
 
 

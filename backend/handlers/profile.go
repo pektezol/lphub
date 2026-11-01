@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"fmt"
-	"sort"
 
 	"lphub/database"
 	"lphub/models"
@@ -105,24 +104,7 @@ func fetchProfileRankings(ctx context.Context, userID string) (ProfileRankings, 
 	if err != nil {
 		return ProfileRankings{}, err
 	}
-	overall := []models.UserRanking{}
-	for _, sp := range singleplayer {
-		for _, mp := range multiplayer {
-			if sp.User.SteamID == mp.User.SteamID {
-				overall = append(overall, models.UserRanking{
-					User:       sp.User,
-					TotalScore: sp.TotalScore + mp.TotalScore,
-				})
-				break
-			}
-		}
-	}
-	sort.Slice(overall, func(i, j int) bool {
-		if overall[i].TotalScore == overall[j].TotalScore {
-			return overall[i].User.SteamID < overall[j].User.SteamID
-		}
-		return overall[i].TotalScore < overall[j].TotalScore
-	})
+	overall := combineOverallRankings(singleplayer, multiplayer)
 	rankings.Singleplayer.Rank = profileRank(singleplayer, userID)
 	rankings.Cooperative.Rank = profileRank(multiplayer, userID)
 	rankings.Overall.Rank = profileRank(overall, userID)

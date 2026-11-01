@@ -374,25 +374,7 @@ func RankingsLPHUB(c *gin.Context) {
 		return
 	}
 
-	for _, spRanking := range response.Singleplayer {
-		for _, mpRanking := range response.Multiplayer {
-			if spRanking.User.SteamID == mpRanking.User.SteamID {
-				response.Overall = append(response.Overall, models.UserRanking{
-					User:           spRanking.User,
-					TotalScore:     spRanking.TotalScore + mpRanking.TotalScore,
-					TotalTimeTicks: spRanking.TotalTimeTicks + mpRanking.TotalTimeTicks,
-				})
-				break
-			}
-		}
-	}
-	sort.Slice(response.Overall, func(i, j int) bool {
-		a, b := response.Overall[i], response.Overall[j]
-		if a.TotalScore == b.TotalScore {
-			return a.User.SteamID < b.User.SteamID
-		}
-		return a.TotalScore < b.TotalScore
-	})
+	response.Overall = combineOverallRankings(response.Singleplayer, response.Multiplayer)
 	assignPlacements(response.Singleplayer)
 	assignPlacements(response.Multiplayer)
 	assignPlacements(response.Overall)
@@ -433,10 +415,42 @@ func RankingsLPHUB(c *gin.Context) {
 	})
 }
 
+func combineOverallRankings(singleplayer, multiplayer []models.UserRanking) []models.UserRanking {
+	multiplayerBySteamID := make(map[string]models.UserRanking, len(multiplayer))
+	for _, ranking := range multiplayer {
+		multiplayerBySteamID[ranking.User.SteamID] = ranking
+	}
+
+	overall := make([]models.UserRanking, 0, len(singleplayer))
+	for _, singleplayerRanking := range singleplayer {
+		multiplayerRanking, ok := multiplayerBySteamID[singleplayerRanking.User.SteamID]
+		if !ok {
+			continue
+		}
+		overall = append(overall, models.UserRanking{
+			User:           singleplayerRanking.User,
+			TotalScore:     singleplayerRanking.TotalScore + multiplayerRanking.TotalScore,
+			TotalTimeTicks: singleplayerRanking.TotalTimeTicks + multiplayerRanking.TotalTimeTicks,
+		})
+	}
+	return overall
+}
+
 func assignPlacements(rankings []models.UserRanking) {
+	sort.Slice(rankings, func(i, j int) bool {
+		a, b := rankings[i], rankings[j]
+		if a.TotalScore != b.TotalScore {
+			return a.TotalScore < b.TotalScore
+		}
+		if a.TotalTimeTicks != b.TotalTimeTicks {
+			return a.TotalTimeTicks < b.TotalTimeTicks
+		}
+		return a.User.SteamID < b.User.SteamID
+	})
+
 	placement, ties := 1, 0
 	for index := range rankings {
-		if index > 0 && rankings[index-1].TotalScore == rankings[index].TotalScore {
+		if index > 0 && rankings[index-1].TotalScore == rankings[index].TotalScore && rankings[index-1].TotalTimeTicks == rankings[index].TotalTimeTicks {
 			ties++
 			rankings[index].Placement = placement - ties
 		} else {
