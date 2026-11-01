@@ -734,7 +734,7 @@ func convertSteamID(steamID64 int64) int64 {
 func convertSteamID64(steamID string) int64 {
 	const baseSteam64ID = 76561197960265728 // Origin of this value remains unclear
 	parts := strings.Split(steamID, ":")
-	if len(parts) != 3 || parts[0] != "STEAM_0" || (parts[1] != "0" && parts[1] != "1") {
+	if len(parts) != 3 || !strings.HasPrefix(parts[0], "STEAM_") {
 		return 0
 	}
 	userID, err := strconv.ParseUint(parts[2], 10, 32)
