@@ -319,15 +319,23 @@ func CreateRecordWithDemo(c *gin.Context) {
 		}
 		hostPlayerIDs := [2]int64{convertSteamID64(hostResult.HostSteamID), convertSteamID64(hostResult.PartnerSteamID)}
 		partnerPlayerIDs := [2]int64{convertSteamID64(partnerResult.HostSteamID), convertSteamID64(partnerResult.PartnerSteamID)}
-		if hostPlayerIDs[0] == 0 || hostPlayerIDs[1] == 0 || partnerPlayerIDs[0] == 0 || partnerPlayerIDs[1] == 0 {
+		partnerHasTwoPlayers := partnerResult.PartnerSteamID != ""
+		if hostPlayerIDs[0] == 0 || hostPlayerIDs[1] == 0 || partnerPlayerIDs[0] == 0 || (partnerHasTwoPlayers && partnerPlayerIDs[1] == 0) {
 			c.JSON(http.StatusOK, models.ErrorResponse("Coop demos contain an invalid SteamID."))
 			return
 		}
-		if hostPlayerIDs[0] == hostPlayerIDs[1] || partnerPlayerIDs[0] == partnerPlayerIDs[1] {
+		if hostPlayerIDs[0] == hostPlayerIDs[1] || (partnerHasTwoPlayers && partnerPlayerIDs[0] == partnerPlayerIDs[1]) {
 			c.JSON(http.StatusOK, models.ErrorResponse("Coop demos must contain two distinct players."))
 			return
 		}
-		if !sameSteamIDPair(hostPlayerIDs, partnerPlayerIDs) {
+		partnerMatchesHostPlayers := false
+		if partnerHasTwoPlayers {
+			partnerMatchesHostPlayers = sameSteamIDPair(hostPlayerIDs, partnerPlayerIDs)
+		} else {
+			// Some partner demos only include their local player in the userinfo table.
+			partnerMatchesHostPlayers = partnerPlayerIDs[0] == hostPlayerIDs[0] || partnerPlayerIDs[0] == hostPlayerIDs[1]
+		}
+		if !partnerMatchesHostPlayers {
 			c.JSON(http.StatusOK, models.ErrorResponse("Host and partner demos must contain the same two players."))
 			return
 		}
