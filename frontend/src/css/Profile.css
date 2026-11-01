@@ -199,6 +199,9 @@ span.titles {
     background-color: #2b2e46;
 }
 
+#profileboard-nav>select:hover {
+    cursor: pointer;
+}
 
 #profileboard-top>span>img,
 .profileboard-sort-button>img {
