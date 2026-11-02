@@ -132,6 +132,10 @@
     place-items: center;
 }
 
+#section2 > .nav-button[aria-pressed="true"] {
+    background-color: #202232;
+}
+
 #section2 > .nav-button > img {
     scale: 1.2;
 }

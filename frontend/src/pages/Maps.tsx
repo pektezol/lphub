@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
 import { PortalIcon, FlagIcon, ChatIcon } from "@images/Images";
@@ -94,10 +94,12 @@ const isValidMapLeaderboard = (
 
 const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
   const { id: mapID = "" } = useParams<{ id: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get("tab");
+  const navState = tabParam === "leaderboards" ? 1 : tabParam === "discussions" ? 2 : 0;
   const [selectedRun, setSelectedRun] = React.useState<number | undefined>(
     undefined,
   );
-  const [navState, setNavState] = React.useState<number>(0);
   const [leaderboardPage, setLeaderboardPage] = React.useState<number>(1);
   const [mapSummaryResource, setMapSummaryResource] = React.useState<
     ScopedResource<MapSummary>
@@ -340,7 +342,6 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
     const lifecycle = cache.lifecycle;
     activeLeaderboardPageRef.current = 1;
     setSelectedRun(undefined);
-    setNavState(0);
     setLeaderboardPage(1);
     setMapSummaryResource({ mapID, status: "loading" });
     setMapDiscussionsResource({ mapID, status: "loading" });
@@ -382,7 +383,13 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
 
   const selectMapTab = React.useCallback(
     (tab: number) => {
-      setNavState(tab);
+      const params = new URLSearchParams(searchParams);
+      if (tab === 0) {
+        params.delete("tab");
+      } else {
+        params.set("tab", tab === 1 ? "leaderboards" : "discussions");
+      }
+      setSearchParams(params);
       if (tab !== 1) {
         return;
       }
@@ -394,7 +401,7 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
       }
       void loadLeaderboardPage(cache, page);
     },
-    [loadLeaderboardPage, mapID],
+    [loadLeaderboardPage, mapID, searchParams, setSearchParams],
   );
 
   const activeSummaryResource =
@@ -518,15 +525,15 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
           </section>
 
           <section id="section2" className="summary1">
-            <button className="nav-button">
+            <button className="nav-button" aria-pressed={navState === 0}>
               <img src={PortalIcon} alt="" />
               <span>Summary</span>
             </button>
-            <button className="nav-button">
+            <button className="nav-button" aria-pressed={navState === 1}>
               <img src={FlagIcon} alt="" />
               <span>Leaderboards</span>
             </button>
-            <button className="nav-button">
+            <button className="nav-button" aria-pressed={navState === 2}>
               <img src={ChatIcon} alt="" />
               <span>Discussions</span>
             </button>
@@ -607,7 +614,7 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
               {hasMapNavigation && previousMap ? (
                 <Link
                   className="nav-button"
-                  to={`/maps/${previousMap.id}`}
+                  to={{ pathname: `/maps/${previousMap.id}`, search: searchParams.toString() }}
                   aria-label={`Previous map: ${previousMap.name}`}
                 >
                   <span>← Previous: {previousMap.name}</span>
@@ -638,7 +645,7 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
               {hasMapNavigation && nextMap ? (
                 <Link
                   className="nav-button"
-                  to={`/maps/${nextMap.id}`}
+                  to={{ pathname: `/maps/${nextMap.id}`, search: searchParams.toString() }}
                   aria-label={`Next map: ${nextMap.name}`}
                 >
                   <span>Next: {nextMap.name} →</span>
@@ -663,15 +670,15 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
         </section>
 
         <section id="section2" className="summary1">
-          <button className="nav-button" onClick={() => selectMapTab(0)}>
+          <button className="nav-button" aria-pressed={navState === 0} onClick={() => selectMapTab(0)}>
             <img src={PortalIcon} alt="" />
             <span>Summary</span>
           </button>
-          <button className="nav-button" onClick={() => selectMapTab(1)}>
+          <button className="nav-button" aria-pressed={navState === 1} onClick={() => selectMapTab(1)}>
             <img src={FlagIcon} alt="" />
             <span>Leaderboards</span>
           </button>
-          <button className="nav-button" onClick={() => selectMapTab(2)}>
+          <button className="nav-button" aria-pressed={navState === 2} onClick={() => selectMapTab(2)}>
             <img src={ChatIcon} alt="" />
             <span>Discussions</span>
           </button>
