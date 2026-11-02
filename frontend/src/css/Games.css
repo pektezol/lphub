@@ -215,9 +215,16 @@ span>b {
         height: 120px;
     }
 
+    .games-page-item-header>span>b {
+        font-size: 32px;
+    }
+
     .games-page-item-body {
         height: auto;
         padding: 10px 0;
+        display: grid;
+        grid-template-columns: 50% 50%;
+        grid-template-rows: auto auto;
     }
 
     .games-page-item-body-item {

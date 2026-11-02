@@ -1103,7 +1103,7 @@ p > span.portal-count {
         width: 100%;
         max-width: 100%;
         overflow: hidden;
-        margin: 40px 0 0 0;
+        margin: 20px 0 0 0;
         box-sizing: border-box;
     }
 
@@ -1147,6 +1147,7 @@ p > span.portal-count {
         grid-template-columns: 1fr;
         gap: 20px;
         width: 100%;
+        margin: 20px 0 0 0;
     }
 
     #history {
@@ -1161,12 +1162,22 @@ p > span.portal-count {
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
+        height: 250px;
+    }
+
+    #category>span {
+        margin-top: 0;
+    }
+
+    #category>span>button {
+        height: 50px;
     }
 
     #section4 {
         grid-template-columns: 1fr;
         width: 100%;
         gap: 20px;
+        margin: 20px 0 0 0;
     }
 
     #difficulty,
@@ -1209,6 +1220,7 @@ p > span.portal-count {
         max-width: 100%;
         box-sizing: border-box;
         overflow-x: auto;
+        margin: 20px 0 0 0;
     }
 
     #leaderboard-top {
@@ -1286,6 +1298,7 @@ p > span.portal-count {
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
+        margin: 20px 0 0 0;
     }
 
     #discussion-search {
@@ -1337,5 +1350,21 @@ p > span.portal-count {
 
     .nav-button {
         font-size: 16px;
+    }
+
+    .triangle {
+        width: 16px;
+    }
+
+    .map-page-neighbor-navigation {
+        grid-template-columns: 50% 50%;
+    }
+
+    .map-page-title {
+        grid-column: 1 / 3;
+    }
+
+    .map-page-neighbor-navigation>.nav-button {
+        grid-row: 2;
     }
 }

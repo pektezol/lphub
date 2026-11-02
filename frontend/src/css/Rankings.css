@@ -166,7 +166,17 @@
 
     .nav-1 div,
     .nav-2 div {
-        width: 95%;
+        width: 100%;
+    }
+
+    .nav-1 div {
+        margin-top: 0;
+    }
+
+    .nav-2 div {
+        display: grid;
+        grid-template-columns: 33% 33% 33%;
+        border-radius: 24px;
     }
 
     .nav-container button {
@@ -175,7 +185,7 @@
     }
 
     .ranks-container {
-        width: calc(95% - 20px);
+        width: 100%;
     }
 
     .rankings-leaderboard {
