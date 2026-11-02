@@ -128,20 +128,12 @@ func Scores(c *gin.Context) {
 		FROM records_sp
 		WHERE is_deleted = false
 	ORDER BY map_id, user_id, score_count, score_time
-	), sp_ranked AS (
-		SELECT map_id, user_id,
-			RANK() OVER (PARTITION BY map_id ORDER BY score_count, score_time) AS score_rank
-		FROM sp_best
 	), mp_best AS (
 		SELECT DISTINCT ON (map_id, host_id, partner_id)
 			map_id, host_id, partner_id, score_count, score_time
 		FROM records_mp
 		WHERE is_deleted = false
 		ORDER BY map_id, host_id, partner_id, score_count, score_time
-	), mp_ranked AS (
-		SELECT map_id, host_id, partner_id,
-			RANK() OVER (PARTITION BY map_id ORDER BY score_count, score_time) AS score_rank
-		FROM mp_best
 	), user_runs AS (
 		SELECT map_id, user_id, score_count, score_time
 		FROM records_sp WHERE is_deleted = false
@@ -151,12 +143,6 @@ func Scores(c *gin.Context) {
 		UNION ALL
 		SELECT map_id, partner_id AS user_id, score_count, score_time
 		FROM records_mp WHERE is_deleted = false
-	), sp_placements AS (
-		SELECT map_id, user_id, score_rank
-		FROM sp_ranked
-	), mp_placements AS (
-		SELECT map_id, host_id, partner_id, score_rank
-		FROM mp_ranked
 	), leaderboard_wrs AS (
 		SELECT map_id, MIN(score_count) AS score_count
 		FROM (
@@ -175,7 +161,13 @@ func Scores(c *gin.Context) {
 		u.user_name,
 		rs.score_count,
 		rs.score_time,
-		COALESCE(mp_placements.score_rank, sp_placements.score_rank, 0) AS score_rank,
+		1 + CASE WHEN rs.host_id IS NULL THEN (
+			SELECT COUNT(*) FROM sp_best b WHERE b.map_id = rs.map_id
+				AND (b.score_count, b.score_time) < (rs.score_count, rs.score_time)
+		) ELSE (
+			SELECT COUNT(*) FROM mp_best b WHERE b.map_id = rs.map_id
+				AND (b.score_count, b.score_time) < (rs.score_count, rs.score_time)
+		) END AS score_rank,
 		GREATEST(rs.score_count - COALESCE(wr.score_count, rs.score_count), 0) AS score_wr_delta,
 		rs.demo_id,
 		rs.record_date
@@ -199,11 +191,6 @@ func Scores(c *gin.Context) {
 	JOIN users u ON rs.user_id = u.steam_id
 	JOIN maps m ON rs.map_id = m.id
 	JOIN games g ON m.game_id = g.id 
-	LEFT JOIN sp_placements ON sp_placements.map_id = rs.map_id
-		AND sp_placements.user_id = rs.user_id
-	LEFT JOIN mp_placements ON mp_placements.map_id = rs.map_id
-		AND mp_placements.host_id = rs.host_id
-		AND mp_placements.partner_id = rs.partner_id
 	LEFT JOIN leaderboard_wrs wr ON wr.map_id = rs.map_id
 	), regular_scores AS (
 		SELECT * FROM score_rows
