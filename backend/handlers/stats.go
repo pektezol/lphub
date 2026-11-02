@@ -134,6 +134,25 @@ func Scores(c *gin.Context) {
 		FROM records_mp
 		WHERE is_deleted = false
 		ORDER BY map_id, host_id, partner_id, score_count, score_time
+	), rank_values AS (
+		SELECT map_id, false AS is_coop, score_count, score_time, 1 AS best_count FROM sp_best
+		UNION ALL
+		SELECT map_id, true, score_count, score_time, 1 FROM mp_best
+		UNION ALL
+		SELECT map_id, false, score_count, score_time, 0 FROM records_sp WHERE is_deleted = false
+		UNION ALL
+		SELECT map_id, true, score_count, score_time, 0 FROM records_mp WHERE is_deleted = false
+	), rank_counts AS (
+		SELECT map_id, is_coop, score_count, score_time, SUM(best_count) AS best_count
+		FROM rank_values
+		GROUP BY map_id, is_coop, score_count, score_time
+	), score_ranks AS (
+		SELECT map_id, is_coop, score_count, score_time,
+			1 + COALESCE(SUM(best_count) OVER (
+				PARTITION BY map_id, is_coop ORDER BY score_count, score_time
+				ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING
+			), 0) AS score_rank
+		FROM rank_counts
 	), user_runs AS (
 		SELECT map_id, user_id, score_count, score_time
 		FROM records_sp WHERE is_deleted = false
@@ -161,13 +180,7 @@ func Scores(c *gin.Context) {
 		u.user_name,
 		rs.score_count,
 		rs.score_time,
-		1 + CASE WHEN rs.host_id IS NULL THEN (
-			SELECT COUNT(*) FROM sp_best b WHERE b.map_id = rs.map_id
-				AND (b.score_count, b.score_time) < (rs.score_count, rs.score_time)
-		) ELSE (
-			SELECT COUNT(*) FROM mp_best b WHERE b.map_id = rs.map_id
-				AND (b.score_count, b.score_time) < (rs.score_count, rs.score_time)
-		) END AS score_rank,
+		ranks.score_rank,
 		GREATEST(rs.score_count - COALESCE(wr.score_count, rs.score_count), 0) AS score_wr_delta,
 		rs.demo_id,
 		rs.record_date
@@ -191,6 +204,9 @@ func Scores(c *gin.Context) {
 	JOIN users u ON rs.user_id = u.steam_id
 	JOIN maps m ON rs.map_id = m.id
 	JOIN games g ON m.game_id = g.id 
+	JOIN score_ranks ranks ON ranks.map_id = rs.map_id
+		AND ranks.is_coop = (rs.host_id IS NOT NULL)
+		AND ranks.score_count = rs.score_count AND ranks.score_time = rs.score_time
 	LEFT JOIN leaderboard_wrs wr ON wr.map_id = rs.map_id
 	), regular_scores AS (
 		SELECT * FROM score_rows
