@@ -227,7 +227,7 @@ func CreateRecordWithDemo(c *gin.Context) {
 	}
 	var hostDemoUUID, partnerDemoUUID string
 	var hostDemoScoreCount, hostDemoScoreTime int
-	var hostSteamID, partnerSteamID string
+	var hostSteamID string
 	var hostDemoServerNumber, partnerDemoServerNumber int
 	parserResults := make([]parser.Result, len(demoFileHeaders))
 	// Create database transaction for inserts
@@ -266,7 +266,6 @@ func CreateRecordWithDemo(c *gin.Context) {
 			hostDemoScoreCount = parserResult.PortalCount
 			hostDemoScoreTime = parserResult.TickCount
 			hostSteamID = parserResult.HostSteamID
-			partnerSteamID = parserResult.PartnerSteamID
 		}
 		if hostDemoScoreCount == 0 && hostDemoScoreTime == 0 {
 			c.JSON(http.StatusOK, models.ErrorResponse("Processing demo went wrong. Please contact a web admin and provide the demo in question."))
@@ -317,42 +316,13 @@ func CreateRecordWithDemo(c *gin.Context) {
 			c.JSON(http.StatusOK, models.ErrorResponse("Host and partner demos must have identical portal counts and times."))
 			return
 		}
-		hostPlayerIDs := [2]int64{convertSteamID64(hostResult.HostSteamID), convertSteamID64(hostResult.PartnerSteamID)}
-		partnerPlayerIDs := [2]int64{convertSteamID64(partnerResult.HostSteamID), convertSteamID64(partnerResult.PartnerSteamID)}
-		partnerHasTwoPlayers := partnerResult.PartnerSteamID != ""
-		if hostPlayerIDs[0] == 0 || hostPlayerIDs[1] == 0 || partnerPlayerIDs[0] == 0 || (partnerHasTwoPlayers && partnerPlayerIDs[1] == 0) {
-			c.JSON(http.StatusOK, models.ErrorResponse("Coop demos contain an invalid SteamID."))
+		hostID, partnerID, validationError := coopPlayerIDs(hostResult, partnerResult)
+		if validationError != "" {
+			c.JSON(http.StatusOK, models.ErrorResponse(validationError))
 			return
 		}
-		if hostPlayerIDs[0] == hostPlayerIDs[1] || (partnerHasTwoPlayers && partnerPlayerIDs[0] == partnerPlayerIDs[1]) {
-			c.JSON(http.StatusOK, models.ErrorResponse("Coop demos must contain two distinct players."))
-			return
-		}
-		partnerMatchesHostPlayers := false
-		if partnerHasTwoPlayers {
-			partnerMatchesHostPlayers = sameSteamIDPair(hostPlayerIDs, partnerPlayerIDs)
-		} else {
-			// Some partner demos only include their local player in the userinfo table.
-			partnerMatchesHostPlayers = partnerPlayerIDs[0] == hostPlayerIDs[0] || partnerPlayerIDs[0] == hostPlayerIDs[1]
-		}
-		if !partnerMatchesHostPlayers {
-			c.JSON(http.StatusOK, models.ErrorResponse("Host and partner demos must contain the same two players."))
-			return
-		}
-		convertedHostSteamID := strconv.FormatInt(convertSteamID64(hostSteamID), 10)
-		// if convertedHostSteamID != user.(models.User).SteamID && convertedHostSteamID != record.PartnerID {
-		// 	deleteFile(srv, hostDemoFileID)
-		// 	deleteFile(srv, partnerDemoFileID)
-		// 	c.JSON(http.StatusOK, models.ErrorResponse(fmt.Sprintf("Host SteamID from demo and request does not match! Check your submission and try again.\nDemo Host SteamID: %s\nRequest Host SteamID: %s", convertedHostSteamID, user.(models.User).SteamID)))
-		// 	return
-		// }
-		convertedPartnerSteamID := strconv.FormatInt(convertSteamID64(partnerSteamID), 10)
-		// if convertedPartnerSteamID != record.PartnerID && convertedPartnerSteamID != user.(models.User).SteamID {
-		// 	deleteFile(srv, hostDemoFileID)
-		// 	deleteFile(srv, partnerDemoFileID)
-		// 	c.JSON(http.StatusOK, models.ErrorResponse(fmt.Sprintf("Partner SteamID from demo and request does not match! Check your submission and try again.\nDemo Partner SteamID: %s\nRequest Partner SteamID: %s", convertedPartnerSteamID, record.PartnerID)))
-		// 	return
-		// }
+		convertedHostSteamID := strconv.FormatInt(hostID, 10)
+		convertedPartnerSteamID := strconv.FormatInt(partnerID, 10)
 		if convertedHostSteamID != user.(models.User).SteamID && convertedPartnerSteamID != user.(models.User).SteamID {
 			c.JSON(http.StatusOK, models.ErrorResponse("You are permitted to only upload your own runs!"))
 			return
@@ -756,7 +726,38 @@ func convertSteamID64(steamID string) int64 {
 	return steam64ID
 }
 
-func sameSteamIDPair(first, second [2]int64) bool {
-	return (first[0] == second[0] && first[1] == second[1]) ||
-		(first[0] == second[1] && first[1] == second[0])
+// coopPlayerIDs reconciles userinfo entries from both recordings. At least one
+// recording must contain both players, and the other must share a player.
+func coopPlayerIDs(host, partner parser.Result) (int64, int64, string) {
+	ids := [2][2]int64{}
+	for i, result := range [2]parser.Result{host, partner} {
+		ids[i][0] = convertSteamID64(result.HostSteamID)
+		if result.PartnerSteamID != "" {
+			ids[i][1] = convertSteamID64(result.PartnerSteamID)
+		}
+		if ids[i][0] == 0 || (result.PartnerSteamID != "" && ids[i][1] == 0) {
+			return 0, 0, "Coop demos contain an invalid SteamID."
+		}
+		if ids[i][0] == ids[i][1] {
+			return 0, 0, "Coop demos must contain two distinct players."
+		}
+	}
+	if ids[0][1] == 0 && ids[1][1] == 0 {
+		return 0, 0, "Could not verify both players across the demos."
+	}
+	pair := ids[0]
+	other := ids[1]
+	if pair[1] == 0 {
+		pair, other = other, pair
+	}
+	for _, id := range other {
+		if id != 0 && id != pair[0] && id != pair[1] {
+			return 0, 0, "Host and partner demos must contain the same two players."
+		}
+	}
+	hostID := ids[0][0]
+	if pair[0] == hostID {
+		return hostID, pair[1], ""
+	}
+	return hostID, pair[0], ""
 }
