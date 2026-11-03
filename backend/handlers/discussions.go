@@ -25,9 +25,11 @@ type MapDiscussion struct {
 	Title   string                     `json:"title"`
 	Content string                     `json:"content"`
 	// Upvotes   int                        `json:"upvotes"`
-	CreatedAt time.Time              `json:"created_at"`
-	UpdatedAt time.Time              `json:"updated_at"`
-	Comments  []MapDiscussionComment `json:"comments"`
+	CreatedAt  time.Time              `json:"created_at"`
+	UpdatedAt  time.Time              `json:"updated_at"`
+	Comments   []MapDiscussionComment `json:"comments"`
+	ReplyCount int                    `json:"reply_count"`
+	ActivityAt time.Time              `json:"activity_at"`
 }
 
 type MapDiscussionComment struct {
@@ -60,24 +62,28 @@ type EditMapDiscussionRequest struct {
 //	@Router			/maps/{mapid}/discussions [get]
 func FetchMapDiscussions(c *gin.Context) {
 	// TODO: get upvotes
-	response := MapDiscussionsResponse{}
+	response := MapDiscussionsResponse{Discussions: []MapDiscussion{}}
 	mapID, err := strconv.Atoi(c.Param("mapid"))
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	sql := `SELECT md.id, u.steam_id, u.user_name, u.avatar_link, md.title, md.content, md.created_at, md.updated_at FROM map_discussions md
-	INNER JOIN users u ON md.user_id = u.steam_id WHERE md.map_id = $1 AND is_deleted = false
-	ORDER BY md.updated_at DESC`
+	sql := `SELECT md.id, u.steam_id, u.user_name, u.avatar_link, md.title, md.content, md.created_at, md.updated_at,
+	COUNT(mc.id), GREATEST(COALESCE(MAX(mc.created_at), md.created_at), md.created_at) AS activity
+	FROM map_discussions md INNER JOIN users u ON md.user_id = u.steam_id
+	LEFT JOIN map_discussions_comments mc ON mc.discussion_id = md.id
+	WHERE md.map_id = $1 AND md.is_deleted = false
+	GROUP BY md.id, u.steam_id ORDER BY activity DESC, md.id DESC`
 	rows, err := database.DB.Query(sql, mapID)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
+	defer rows.Close()
 	// Get discussion data
 	for rows.Next() {
 		discussion := MapDiscussion{}
-		err := rows.Scan(&discussion.ID, &discussion.Creator.SteamID, &discussion.Creator.UserName, &discussion.Creator.AvatarLink, &discussion.Title, &discussion.Content, &discussion.CreatedAt, &discussion.UpdatedAt)
+		err := rows.Scan(&discussion.ID, &discussion.Creator.SteamID, &discussion.Creator.UserName, &discussion.Creator.AvatarLink, &discussion.Title, &discussion.Content, &discussion.CreatedAt, &discussion.UpdatedAt, &discussion.ReplyCount, &discussion.ActivityAt)
 		if err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
@@ -360,4 +366,63 @@ func DeleteMapDiscussion(c *gin.Context) {
 		Message: "Successfully deleted map discussion.",
 		Data:    nil,
 	})
+}
+
+// FetchDiscussions returns recent map discussions across all games.
+func FetchDiscussions(c *gin.Context) {
+	query := c.Query("q")
+	var cursorTime interface{}
+	cursorID := 0
+	if c.Query("before") != "" || c.Query("before_id") != "" {
+		t, err := time.Parse(time.RFC3339Nano, c.Query("before"))
+		id, idErr := strconv.Atoi(c.Query("before_id"))
+		if err != nil || idErr != nil || id <= 0 {
+			c.JSON(http.StatusBadRequest, models.ErrorResponse("Invalid cursor"))
+			return
+		}
+		cursorTime, cursorID = t, id
+	}
+	rows, err := database.DB.Query(`SELECT id, map_id, map_name, game_name, title, content, user_name, activity, replies FROM (
+ SELECT md.id, md.map_id, m.name AS map_name, g.name AS game_name, md.title, md.content, u.user_name,
+ GREATEST(COALESCE(MAX(mc.created_at), md.created_at), md.created_at) AS activity, COUNT(mc.id) AS replies
+ FROM map_discussions md JOIN maps m ON m.id = md.map_id JOIN games g ON g.id = m.game_id
+ JOIN users u ON u.steam_id = md.user_id LEFT JOIN map_discussions_comments mc ON mc.discussion_id = md.id
+ WHERE NOT md.is_deleted AND position(lower($1) in lower(md.title)) > 0
+ GROUP BY md.id, m.name, g.name, u.user_name) feed
+ WHERE $2::timestamp IS NULL OR (activity, id) < ($2::timestamp, $3)
+ ORDER BY activity DESC, id DESC LIMIT 21`, query, cursorTime, cursorID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse(err.Error()))
+		return
+	}
+	defer rows.Close()
+	type entry struct {
+		ID       int       `json:"id"`
+		MapID    int       `json:"map_id"`
+		Map      string    `json:"map"`
+		Game     string    `json:"game"`
+		Title    string    `json:"title"`
+		Content  string    `json:"content"`
+		Author   string    `json:"author"`
+		Activity time.Time `json:"activity"`
+		Replies  int       `json:"replies"`
+	}
+	entries := []entry{}
+	for rows.Next() {
+		var e entry
+		if err := rows.Scan(&e.ID, &e.MapID, &e.Map, &e.Game, &e.Title, &e.Content, &e.Author, &e.Activity, &e.Replies); err != nil {
+			c.JSON(http.StatusInternalServerError, models.ErrorResponse(err.Error()))
+			return
+		}
+		entries = append(entries, e)
+	}
+	if err := rows.Err(); err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse(err.Error()))
+		return
+	}
+	more := len(entries) > 20
+	if more {
+		entries = entries[:20]
+	}
+	c.JSON(http.StatusOK, gin.H{"discussions": entries, "more": more})
 }

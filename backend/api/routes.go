@@ -42,6 +42,7 @@ func InitRoutes(router *gin.Engine) {
 		v1.PUT("/demos/autorender", IsDemoAuthenticated, handlers.SetAutorenderID)
 		v1.GET("/demos", RateLimit, IsDemoAuthenticated, handlers.DownloadDemoWithID)
 		// - Discussions
+		v1.GET("/discussions", RateLimit, handlers.FetchDiscussions)
 		v1.GET("/maps/:mapid/discussions", RateLimit, handlers.FetchMapDiscussions)
 		v1.GET("/maps/:mapid/discussions/:discussionid", RateLimit, handlers.FetchMapDiscussion)
 		v1.POST("/maps/:mapid/discussions", IsAuthenticated, handlers.CreateMapDiscussion)
