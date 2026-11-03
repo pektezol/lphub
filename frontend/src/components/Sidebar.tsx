@@ -160,14 +160,16 @@ const Sidebar: React.FC<SidebarProps> = ({
   React.useEffect(() => {
     if (path === "/") {
       handle_sidebar_click(1);
-    } else if (path.includes("games")) {
+    } else if (path === "/games" || path.startsWith("/games/") || path.startsWith("/maps/")) {
       handle_sidebar_click(2);
     } else if (path.includes("rankings")) {
       handle_sidebar_click(3);
     }
     // else if (path.includes("news")) { handle_sidebar_click(4) }
     // else if (path.includes("scorelog")) { handle_sidebar_click(5) }
-    else if (path.includes("profile")) {
+    else if (path === "/discussions") {
+      handle_sidebar_click(7);
+    } else if (path.includes("profile")) {
       handle_sidebar_click(4);
     } else if (path.includes("rules")) {
       handle_sidebar_click(5);
@@ -254,6 +256,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <img src={FlagIcon} alt="rankings" />
                 <span>Rankings</span>
               </button>
+            </Link>
+            <Link to="/discussions" tabIndex={-1} onClick={_close_mobile_menu}>
+              <button className={sidebarButtonClass(7)}><img src={BookIcon} alt="" /><span>Discussions</span></button>
             </Link>
             {/* <Link to="/news" tabIndex={-1}>
             <button className={sidebarStyles.sidebarButton}><img src={NewsIcon} alt="news" /><span>News</span></button>

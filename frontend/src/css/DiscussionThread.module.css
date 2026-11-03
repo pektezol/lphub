@@ -1,0 +1,29 @@
+@layer components {
+.thread { min-width: 0; padding: 4px 10px 10px; }
+.heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 4px 0 16px; border-bottom: 1px solid #393c53; }
+.heading h2 { min-width: 0; margin: 0; color: #fff; font-family: BarlowCondensed-Bold; font-size: 36px; line-height: 1.15; overflow-wrap: anywhere; }
+.heading button { flex: 0 0 40px; height: 40px; color: #cdcfdf; background: transparent; border: 0; font-size: 38px; line-height: 1; cursor: pointer; }
+.messages { display: flex; flex-direction: column; gap: 0; padding: 4px 0; max-height: 522px; overflow-y: auto; font-size: 20px; }
+.message { display: grid; grid-template-columns: 60px minmax(0, 1fr); gap: 14px; min-width: 0; padding: 16px 0; }
+.message + .message { border-top: 1px solid #393c53; }
+.avatar { display: block; width: 60px; height: 60px; }
+.avatar img { display: block; width: 60px; height: 60px; border-radius: 50%; }
+.body { min-width: 0; }
+.meta { display: flex; align-items: baseline; flex-wrap: wrap; column-gap: 10px; }
+.username { display: block; width: auto; height: auto; max-width: 100%; min-width: 0; color: inherit; font-weight: bold; overflow-wrap: anywhere; }
+.time { opacity: .6; font-size: 80%; }
+.content { margin-top: 4px; overflow-wrap: anywhere; white-space: pre-wrap; }
+.send { display: flex; align-items: center; background: #2b2e46; border-radius: 16px; margin-top: 12px; padding-right: 8px; }
+.send input { flex: 1; min-width: 0; height: 48px; box-sizing: border-box; padding: 0 10px; background: transparent; color: white; font: inherit; font-size: 20px; cursor: text; }
+.send input::placeholder { color: #aaa; }
+.send button { padding: 7px 16px; border: 0; border-radius: 24px; background: #3c91e6; color: white; font: bold 16px BarlowSemiCondensed-Regular; cursor: pointer; }
+.send button:disabled { display: block; opacity: .5; cursor: default; }
+.notice { font-size: 16px; margin: 10px; }
+@media (max-width: 768px) {
+.thread { padding: 2px 4px 6px; }
+.heading h2 { font-size: 30px; }
+.message { grid-template-columns: 45px minmax(0, 1fr); }
+.avatar, .avatar img { width: 45px; height: 45px; }
+.messages { font-size: 18px; }
+}
+}

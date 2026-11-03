@@ -33,6 +33,8 @@ export interface MapDiscussionsDetail {
   comments: MapDiscussionDetailComment[];
   created_at: string;
   updated_at: string;
+  reply_count: number;
+  activity_at: string;
 };
 
 interface MapDiscussionDetailComment {

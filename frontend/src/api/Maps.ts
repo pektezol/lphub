@@ -45,10 +45,10 @@ export const get_map_leaderboard = async (map_id: string, page: string): Promise
 
 export const get_map_discussions = async (map_id: string): Promise<MapDiscussions | undefined> => {
   const response = await axios.get(url(`maps/${map_id}/discussions`));
-  if (!response.data.data.discussions) {
+  if (!response.data.success || !response.data.data) {
     return undefined;
   }
-  return response.data.data;
+  return { ...response.data.data, discussions: response.data.data.discussions ?? [] };
 };
 
 export const get_map_discussion = async (map_id: string, discussion_id: number): Promise<MapDiscussion | undefined> => {

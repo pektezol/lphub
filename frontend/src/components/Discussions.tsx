@@ -1,11 +1,13 @@
 import React from "react";
+import DiscussionThread from "@components/DiscussionThread";
+import DiscussionComposer from "@components/DiscussionComposer";
+import DiscussionCard from "@components/DiscussionCard";
+import feedStyles from "@css/DiscussionFeed.module.css";
 
 import { MapDiscussion, MapDiscussions, MapDiscussionsDetail } from "@customTypes/Map";
-import { MapDiscussionContent } from "@customTypes/Content";
-import { time_ago } from "@utils/Time";
 import { API } from "@api/Api";
 
-import { Link } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import useConfirm from "@hooks/UseConfirm";
 import mapsStyles from "@css/Maps.module.css";
 
@@ -20,42 +22,41 @@ interface DiscussionsProps {
 const Discussions: React.FC<DiscussionsProps> = ({ token, data, isModerator, mapID, onRefresh }) => {
 
   const { confirm, ConfirmDialogComponent } = useConfirm();
+  const [params, setParams] = useSearchParams();
+  const [threadError, setThreadError] = React.useState(false);
+  const [deleteError, setDeleteError] = React.useState(false);
+  React.useEffect(() => {
+    let active = true;
+    const id = Number(params.get("discussion"));
+    setThreadError(false);
+    if (id > 0) void API.get_map_discussion(mapID, id).then(thread => { if (active) { setDiscussionThread(thread); setThreadError(!thread); } }).catch(() => { if (active) setThreadError(true); });
+    else setDiscussionThread(undefined);
+    setCreateDiscussion(params.get("create") === "1");
+    return () => { active = false; };
+  }, [mapID, params]);
 
   const [discussionThread, setDiscussionThread] = React.useState<MapDiscussion | undefined>(undefined);
   const [discussionSearch, setDiscussionSearch] = React.useState<string>("");
 
   const [createDiscussion, setCreateDiscussion] = React.useState<boolean>(false);
-  const [createDiscussionContent, setCreateDiscussionContent] = React.useState<MapDiscussionContent>({
-    title: "",
-    content: "",
-  });
-  const [createDiscussionCommentContent, setCreateDiscussionCommentContent] = React.useState<string>("");
-
-  const _open_map_discussion = async (discussion_id: number) => {
-    const mapDiscussion = await API.get_map_discussion(mapID, discussion_id);
-    setDiscussionThread(mapDiscussion);
-  };
-
-  const _create_map_discussion = async () => {
-    if (token) {
-      await API.post_map_discussion(token, mapID, createDiscussionContent);
-      setCreateDiscussion(false);
-      onRefresh();
-    }
-  };
-
-  const _create_map_discussion_comment = async (discussion_id: number) => {
-    if (token) {
-      await API.post_map_discussion_comment(token, mapID, discussion_id, createDiscussionCommentContent);
-      await _open_map_discussion(discussion_id);
-    }
+  const closeComposer = () => {
+    setCreateDiscussion(false);
+    const next = new URLSearchParams(params);
+    next.delete("create");
+    setParams(next);
   };
 
   const _delete_map_discussion = async (discussion: MapDiscussionsDetail) => {
     if (await confirm("Delete Map Discussion", `Are you sure you want to remove post: ${discussion.title}?`)) {
       if (token) {
-        await API.delete_map_discussion(token, mapID, discussion.id);
-        onRefresh();
+        setDeleteError(false);
+        try {
+          const success = await API.delete_map_discussion(token, mapID, discussion.id);
+          if (!success) throw new Error("Delete failed");
+          onRefresh();
+        } catch {
+          setDeleteError(true);
+        }
       }
     }
   };
@@ -63,104 +64,40 @@ const Discussions: React.FC<DiscussionsProps> = ({ token, data, isModerator, map
   return (
     <section id='section7' className={mapsStyles.idSection7}>
       {ConfirmDialogComponent}
-      <div id='discussion-search' className={mapsStyles.idDiscussionSearch}>
+      {threadError && <p>Discussion unavailable or could not be loaded.</p>}
+      {deleteError && <p role="alert">Could not delete the post. Please try again.</p>}
+      {!discussionThread && <div id='discussion-search' className={token ? mapsStyles.idDiscussionSearch : `${mapsStyles.idDiscussionSearch} ${mapsStyles.discussionSearchGuest}`}>
         <input type="text" value={discussionSearch} placeholder={"Search for posts..."} onChange={(e) => setDiscussionSearch(e.target.value)} />
-        <div><button onClick={() => setCreateDiscussion(true)}>New Post</button></div>
-      </div>
+        {token && <div><button onClick={() => setCreateDiscussion(true)}>New Post</button></div>}
+      </div>}
 
       { // janky ternary operators here, could divide them to more components?
         createDiscussion ?
           (
-            <div id='discussion-create' className={mapsStyles.idDiscussionCreate}>
-              <span>Create Post</span>
-              <button onClick={() => setCreateDiscussion(false)}>X</button>
-              <div  className={mapsStyles.fullFormRow}>
-                <input id='discussion-create-title' placeholder='Title...' onChange={(e) => setCreateDiscussionContent({
-                  ...createDiscussionContent,
-                  title: e.target.value,
-                })} />
-                <input id='discussion-create-content' placeholder='Enter the content...' onChange={(e) => setCreateDiscussionContent({
-                  ...createDiscussionContent,
-                  content: e.target.value,
-                })} />
-              </div>
-              <div  className={mapsStyles.postActions}>
-                <button id='discussion-create-button' onClick={() => _create_map_discussion()} className={mapsStyles.idDiscussionCreateButton}>Post</button>
-              </div>
-            </div>
+            <DiscussionComposer mapID={mapID} token={token} onClose={closeComposer} onCreated={() => { closeComposer(); onRefresh(); }} />
           )
           :
           discussionThread ?
             (
-              <div id='discussion-thread' className={mapsStyles.idDiscussionThread}>
-                <div>
-                  <span>{discussionThread.discussion.title}</span>
-                  <button onClick={() => setDiscussionThread(undefined)}>X</button>
-                </div>
-
-                <div>
-                  <Link to={`/users/${discussionThread.discussion.creator.steam_id}`}>
-                    <img src={discussionThread.discussion.creator.avatar_link} alt="" />
-                  </Link>
-                  <div>
-                    <span>{discussionThread.discussion.creator.user_name}</span>
-                    <span>{time_ago(new Date(discussionThread.discussion.created_at.replace("T", " ").replace("Z", "")))}</span>
-                    <span>{discussionThread.discussion.content}</span>
-                  </div>
-                  {discussionThread.discussion.comments ?
-                    discussionThread.discussion.comments.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-                      .map(e => (
-                        <>
-                          <Link to={`/users/${e.user.steam_id}`}>
-                            <img src={e.user.avatar_link} alt="" />
-                          </Link>
-                          <div>
-                            <span>{e.user.user_name}</span>
-                            <span>{time_ago(new Date(e.date.replace("T", " ").replace("Z", "")))}</span>
-                            <span>{e.comment}</span>
-                          </div>
-                        </>
-                      )) : ""
-                  }
-                </div>
-                <div id='discussion-send' className={mapsStyles.idDiscussionSend}>
-                  <input type="text" value={createDiscussionCommentContent} placeholder={"Message"}
-                    onKeyDown={(e) => e.key === "Enter" && _create_map_discussion_comment(discussionThread.discussion.id)}
-                    onChange={(e) => setCreateDiscussionCommentContent(e.target.value)} />
-                  <div><button onClick={() => {
-                    if (createDiscussionCommentContent !== "") {
-                      _create_map_discussion_comment(discussionThread.discussion.id);
-                      setCreateDiscussionCommentContent("");
-                    }
-                  }}>Send</button></div>
-                </div>
-
-              </div>
+              <DiscussionThread
+                key={discussionThread.discussion.id}
+                thread={discussionThread}
+                mapID={mapID}
+                token={token}
+                onUpdate={setDiscussionThread}
+                onRefresh={onRefresh}
+                onClose={() => { setDiscussionThread(undefined); const next = new URLSearchParams(params); next.delete("discussion"); setParams(next); }}
+              />
             )
             :
             (
-              data ?
-                (<>
-                  {data.discussions.filter(f => f.title.includes(discussionSearch)).sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
-                    .map((e) => (
-                      <div id='discussion-post' className={mapsStyles.idDiscussionPost}>
-                        <button key={e.id} onClick={() => _open_map_discussion(e.id)}>
-                          <span>{e.title}</span>
-                          {isModerator ?
-                            <button onClick={(m) => {
-                              m.stopPropagation();
-                              _delete_map_discussion(e);
-                            }}>Delete Post</button>
-                            : <span></span>
-                          }
-                          <span><b>{e.creator.user_name}:</b> {e.content}</span>
-                          <span>Last Updated: {time_ago(new Date(e.updated_at.replace("T", " ").replace("Z", "")))}</span>
-                        </button>
-                      </div>
-                    ))}
-                </>)
-                :
-                (<span  className={mapsStyles.emptyDiscussions}>No Discussions...</span>)
+              data && data.discussions.length ?
+                <div className={feedStyles.list}>
+                  {data.discussions.filter(d => d.title.toLowerCase().includes(discussionSearch.toLowerCase())).map(d => (
+                    <DiscussionCard key={d.id} to={`/maps/${mapID}?tab=discussions&discussion=${d.id}`} title={d.title} author={d.creator.user_name} content={d.content} replies={d.reply_count} activity={d.activity_at} onDelete={isModerator ? () => void _delete_map_discussion(d) : undefined} />
+                  ))}
+                </div>
+                : <span className={mapsStyles.emptyDiscussions}>No Discussions...</span>
             )
       }
     </section>

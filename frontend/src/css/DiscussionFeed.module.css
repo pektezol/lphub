@@ -1,0 +1,36 @@
+@layer components {
+.page { box-sizing: border-box; width: 100%; max-width: 1100px; margin: 25px auto; color: #cdcfdf; font-size: 18px; }
+.feed { background: #202232; border-radius: 24px; padding: 10px; }
+.search { display: flex; background: #2b2e46; border-radius: 16px; align-items: center; padding-right: 8px; margin-bottom: 20px; }
+.search input, .picker input { background: #2b2e46; color: white; border: 0; font: inherit; font-size: 20px; min-width: 0; }
+.search input { flex: 1; height: 46px; padding: 0 12px; border-radius: 16px; }
+.search input::placeholder, .picker input::placeholder { color: #aaa; }
+.search button, .more button { background: #3c91e6; color: white; border: 0; border-radius: 24px; padding: 7px 16px; font-size: 16px; font-family: inherit; font-weight: bold; cursor: pointer; transition: filter .2s; }
+.search button:hover, .more button:hover { filter: brightness(75%); }
+.list { display: flex; flex-direction: column; gap: 8px; }
+.card { box-sizing: border-box; width: 100%; height: auto; display: flex; justify-content: space-between; gap: 20px; padding: 16px 12px; background: #2b2e46; border-radius: 16px; color: #cdcfdf; text-decoration: none; transition: filter .2s; }
+.cardContainer { position: relative; min-width: 0; }
+.deleteButton { position: absolute; top: 8px; right: 8px; padding: 5px 10px; border: 0; border-radius: 16px; font-size: 14px; cursor: pointer; }
+.cardContainer:has(.deleteButton) .card { padding-right: 110px; }
+.card:hover { background-color: #222538; }
+.cardMain { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.title { color: #fff; font-size: 28px; line-height: 1.1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.map { color: #cdcfdf; font-size: 17px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.preview { color: #aaa; font-size: 18px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.preview b { color: #cdcfdf; font-family: inherit; font-size: inherit; font-weight: bold; }
+.activity { flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-end; gap: 4px; font-size: 14px; opacity: .7; }
+.picker { background: #2b2e46; padding: 16px; border-radius: 16px; margin-bottom: 12px; }
+.picker h2 { font-size: 24px; margin: 0 0 10px; color: #fff; }
+.picker input { background: #202232; border-radius: 12px; padding: 10px; width: 100%; box-sizing: border-box; }
+.mapResults { display: flex; flex-direction: column; gap: 5px; margin-top: 10px; }
+.mapResults a { box-sizing: border-box; width: 100%; height: auto; display: flex; flex-direction: column; color: #cdcfdf; text-decoration: none; border-radius: 12px; background: #202232; padding: 8px 12px; font-size: 20px; }
+.mapResults a:hover { background-color: #171925; }
+.mapResults small { color: #aaa; font-size: 16px; }
+.state, .more { text-align: center; padding: 12px; }
+@media (max-width: 768px) {
+.page { margin: 0 auto; }
+.card { flex-direction: column; gap: 8px; }
+.title { font-size: 24px; }
+.activity { flex-direction: row; justify-content: space-between; gap: 8px; white-space: nowrap; font-size: 13px; }
+}
+}

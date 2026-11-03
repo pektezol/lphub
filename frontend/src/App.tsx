@@ -16,6 +16,7 @@ import About from "@pages/About";
 import { Game } from "@customTypes/Game";
 import { API } from "./api/Api";
 import Maplist from "@pages/Maplist";
+import DiscussionFeed from "@pages/DiscussionFeed";
 import Rankings from "@pages/Rankings";
 import { get_user_mod_from_token } from "./utils/Jwt";
 import { AuthenticationState } from "@customTypes/Auth";
@@ -134,6 +135,7 @@ const App: React.FC = () => {
         <Route path="/games" element={<Games games={games} />} />
         <Route path='/games/:id' element={<Maplist />}></Route>
         <Route path="/maps/:id" element={<Maps token={token} isModerator={isModerator} />} />
+        <Route path="/discussions" element={<DiscussionFeed token={token} />} />
         <Route path="/rules" element={<Rules />} />
         <Route path="/about" element={<About />} />
         <Route path='/rankings' element={<Rankings />}></Route>
