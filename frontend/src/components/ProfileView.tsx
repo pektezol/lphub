@@ -25,8 +25,9 @@ import {
   TwitchIcon,
   YouTubeIcon,
 } from "@images/Images";
-import { ticks_to_time } from "@utils/Time";
+import { ticks_to_time, time_ago } from "@utils/Time";
 import profileStyles from "@css/Profile.module.css";
+import mapsStyles from "@css/Maps.module.css";
 import navigationStyles from "@css/Navigation.module.css";
 import sectionsStyles from "@css/Sections.module.css";
 import { classNames, cssVariables } from "@css/utils";
@@ -583,12 +584,12 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                 ? `+${score.score_count - record.map_wr_count}`
                 : "-"}
             </span>
-            <span  className={profileStyles.gridValue}>
+            <span className={classNames(profileStyles.gridValue, mapsStyles.hoverPopup)} popup-text={score.score_time + " ticks"}>
               {ticks_to_time(score.score_time)}
             </span>
             <span> </span>
             {index === 0 ? <span>#{record.placement}</span> : <span> </span>}
-            <span>{score.date.split("T")[0]}</span>
+            <span className={mapsStyles.hoverPopup} popup-text={score.date.replace("T", " ").split(".")[0]}>{time_ago(new Date(score.date.replace("T", " ").replace("Z", "")))}</span>
             <span  className={profileStyles.recordActions}>
               <button
                 type="button"
