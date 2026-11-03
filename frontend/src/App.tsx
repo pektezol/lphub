@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
 import Sidebar from "./components/Sidebar";
-import "./App.css";
+
 
 import Profile from "@pages/Profile";
 import Games from "@pages/Games";
@@ -19,6 +19,8 @@ import Maplist from "@pages/Maplist";
 import Rankings from "@pages/Rankings";
 import { get_user_mod_from_token } from "./utils/Jwt";
 import { AuthenticationState } from "@customTypes/Auth";
+
+
 
 const App: React.FC = () => {
   const [authentication, setAuthentication] = React.useState<AuthenticationState>({ status: "loading" });

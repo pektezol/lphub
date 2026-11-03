@@ -4,9 +4,10 @@ import { MapDiscussion, MapDiscussions, MapDiscussionsDetail } from "@customType
 import { MapDiscussionContent } from "@customTypes/Content";
 import { time_ago } from "@utils/Time";
 import { API } from "@api/Api";
-import "@css/Maps.css";
+
 import { Link } from "react-router-dom";
 import useConfirm from "@hooks/UseConfirm";
+import mapsStyles from "@css/Maps.module.css";
 
 interface DiscussionsProps {
   token?: string
@@ -60,9 +61,9 @@ const Discussions: React.FC<DiscussionsProps> = ({ token, data, isModerator, map
   };
 
   return (
-    <section id='section7' className='summary3'>
+    <section id='section7' className={mapsStyles.idSection7}>
       {ConfirmDialogComponent}
-      <div id='discussion-search'>
+      <div id='discussion-search' className={mapsStyles.idDiscussionSearch}>
         <input type="text" value={discussionSearch} placeholder={"Search for posts..."} onChange={(e) => setDiscussionSearch(e.target.value)} />
         <div><button onClick={() => setCreateDiscussion(true)}>New Post</button></div>
       </div>
@@ -70,10 +71,10 @@ const Discussions: React.FC<DiscussionsProps> = ({ token, data, isModerator, map
       { // janky ternary operators here, could divide them to more components?
         createDiscussion ?
           (
-            <div id='discussion-create'>
+            <div id='discussion-create' className={mapsStyles.idDiscussionCreate}>
               <span>Create Post</span>
               <button onClick={() => setCreateDiscussion(false)}>X</button>
-              <div style={{ gridColumn: "1 / span 2" }}>
+              <div  className={mapsStyles.fullFormRow}>
                 <input id='discussion-create-title' placeholder='Title...' onChange={(e) => setCreateDiscussionContent({
                   ...createDiscussionContent,
                   title: e.target.value,
@@ -83,15 +84,15 @@ const Discussions: React.FC<DiscussionsProps> = ({ token, data, isModerator, map
                   content: e.target.value,
                 })} />
               </div>
-              <div style={{ placeItems: "end", gridColumn: "1 / span 2" }}>
-                <button id='discussion-create-button' onClick={() => _create_map_discussion()}>Post</button>
+              <div  className={mapsStyles.postActions}>
+                <button id='discussion-create-button' onClick={() => _create_map_discussion()} className={mapsStyles.idDiscussionCreateButton}>Post</button>
               </div>
             </div>
           )
           :
           discussionThread ?
             (
-              <div id='discussion-thread'>
+              <div id='discussion-thread' className={mapsStyles.idDiscussionThread}>
                 <div>
                   <span>{discussionThread.discussion.title}</span>
                   <button onClick={() => setDiscussionThread(undefined)}>X</button>
@@ -122,7 +123,7 @@ const Discussions: React.FC<DiscussionsProps> = ({ token, data, isModerator, map
                       )) : ""
                   }
                 </div>
-                <div id='discussion-send'>
+                <div id='discussion-send' className={mapsStyles.idDiscussionSend}>
                   <input type="text" value={createDiscussionCommentContent} placeholder={"Message"}
                     onKeyDown={(e) => e.key === "Enter" && _create_map_discussion_comment(discussionThread.discussion.id)}
                     onChange={(e) => setCreateDiscussionCommentContent(e.target.value)} />
@@ -142,7 +143,7 @@ const Discussions: React.FC<DiscussionsProps> = ({ token, data, isModerator, map
                 (<>
                   {data.discussions.filter(f => f.title.includes(discussionSearch)).sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
                     .map((e) => (
-                      <div id='discussion-post'>
+                      <div id='discussion-post' className={mapsStyles.idDiscussionPost}>
                         <button key={e.id} onClick={() => _open_map_discussion(e.id)}>
                           <span>{e.title}</span>
                           {isModerator ?
@@ -159,7 +160,7 @@ const Discussions: React.FC<DiscussionsProps> = ({ token, data, isModerator, map
                     ))}
                 </>)
                 :
-                (<span style={{ textAlign: "center", display: "block" }}>No Discussions...</span>)
+                (<span  className={mapsStyles.emptyDiscussions}>No Discussions...</span>)
             )
       }
     </section>

@@ -4,14 +4,18 @@ import { Link, useNavigate } from "react-router-dom";
 import { ExitIcon, UserIcon, LoginIcon } from "@images/Images";
 import { UserProfile } from "@customTypes/Profile";
 import { API } from "@api/Api";
-import "@css/Login.css";
+
+import loginStyles from "@css/Login.module.css";
+import sidebarStyles from "@css/Sidebar.module.css";
+import { classNames } from "@css/utils";
 
 interface LoginProps {
   profile?: UserProfile;
   onLogout: () => void;
+  selection?: "selected" | "deselected";
 };
 
-const Login: React.FC<LoginProps> = ({ profile, onLogout }) => {
+const Login: React.FC<LoginProps> = ({ profile, onLogout, selection }) => {
 
   const navigate = useNavigate();
 
@@ -34,12 +38,12 @@ const Login: React.FC<LoginProps> = ({ profile, onLogout }) => {
             {profile.profile ?
               (
                 <>
-                  <Link to="/profile" tabIndex={-1} className='login'>
-                    <button className='sidebar-button'>
-                      <img className="avatar-img" src={profile.avatar_link} alt="" />
+                  <Link to="/profile" tabIndex={-1} className={classNames(loginStyles.login, sidebarStyles.login)}>
+                    <button className={classNames(sidebarStyles.sidebarButton, (selection === undefined ? "" : (selection === "selected" ? sidebarStyles.sidebarButtonSelected : sidebarStyles.sidebarButtonDeselected)))}>
+                      <img className={sidebarStyles.avatarImg} src={profile.avatar_link} alt="" />
                       <span>{profile.user_name}</span>
                     </button>
-                    <button className='logout-button' onClick={_logout}>
+                    <button className={sidebarStyles.logoutButton} onClick={_logout}>
                       <img src={ExitIcon} alt="" /><span />
                     </button>
                   </Link>
@@ -48,12 +52,12 @@ const Login: React.FC<LoginProps> = ({ profile, onLogout }) => {
               :
               (
                 <>
-                  <Link to="/" tabIndex={-1} className='login'>
-                    <button className='sidebar-button'>
-                      <img className="avatar-img" src={profile.avatar_link} alt="" />
+                  <Link to="/" tabIndex={-1} className={classNames(loginStyles.login, sidebarStyles.login)}>
+                    <button className={classNames(sidebarStyles.sidebarButton, (selection === undefined ? "" : (selection === "selected" ? sidebarStyles.sidebarButtonSelected : sidebarStyles.sidebarButtonDeselected)))}>
+                      <img className={sidebarStyles.avatarImg} src={profile.avatar_link} alt="" />
                       <span>Loading Profile...</span>
                     </button>
-                    <button disabled className='logout-button' onClick={_logout}>
+                    <button disabled className={sidebarStyles.logoutButton} onClick={_logout}>
                       <img src={ExitIcon} alt="" /><span />
                     </button>
                   </Link>
@@ -64,9 +68,9 @@ const Login: React.FC<LoginProps> = ({ profile, onLogout }) => {
         )
         :
         (
-          <Link to="/api/v1/login" tabIndex={-1} className='login' >
-            <button className='sidebar-button' onClick={_login}>
-              <img className="avatar-img" src={UserIcon} alt="" />
+          <Link to="/api/v1/login" tabIndex={-1} className={classNames(loginStyles.login, sidebarStyles.login)} >
+            <button className={classNames(sidebarStyles.sidebarButton, (selection === undefined ? "" : (selection === "selected" ? sidebarStyles.sidebarButtonSelected : sidebarStyles.sidebarButtonDeselected)))} onClick={_login}>
+              <img className={sidebarStyles.avatarImg} src={UserIcon} alt="" />
               <span>
                 <img src={LoginIcon} alt="Sign in through Steam" />
               </span>

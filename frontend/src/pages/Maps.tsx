@@ -16,8 +16,13 @@ import {
   MapSummary,
 } from "@customTypes/Map";
 import { API } from "@api/Api";
-import "@css/Maps.css";
-import "@css/ResourceState.css";
+
+import resourceStateStyles from "@css/ResourceState.module.css";
+import navigationStyles from "@css/Navigation.module.css";
+import sectionsStyles from "@css/Sections.module.css";
+import mapsStyles from "@css/Maps.module.css";
+import profileStyles from "@css/Profile.module.css";
+import { classNames } from "@css/utils";
 
 interface MapProps {
   token?: string;
@@ -495,7 +500,7 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
     ) {
       const failed = activeSummaryResource.status === "error";
       return (
-        <main className="resource-not-found">
+        <main className={resourceStateStyles.resourceNotFound}>
           <h1>{failed ? "Map Unavailable" : "Map Not Found"}</h1>
           <p>
             {failed
@@ -510,36 +515,36 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
     return (
       <>
         <main>
-          <section id="section1" className="summary1">
+          <section id="section1" className={classNames(profileStyles.idSection1, sectionsStyles.idSection1)}>
             <div>
               <Link to="/games">
                 <button
-                  className="nav-button"
-                  style={{ borderRadius: "20px 20px 20px 20px" }}
+                  className={classNames(navigationStyles.navButton, mapsStyles.singleMapNavigation)}
+
                 >
-                  <i className="triangle"></i>
+                  <i className={navigationStyles.triangle}></i>
                   <span>Games List</span>
                 </button>
               </Link>
             </div>
           </section>
 
-          <section id="section2" className="summary1">
-            <button className="nav-button" aria-pressed={navState === 0}>
+          <section id="section2" className={classNames(profileStyles.idSection2, navigationStyles.idSection2, sectionsStyles.idSection2)}>
+            <button className={navigationStyles.navButton} aria-pressed={navState === 0}>
               <img src={PortalIcon} alt="" />
               <span>Summary</span>
             </button>
-            <button className="nav-button" aria-pressed={navState === 1}>
+            <button className={navigationStyles.navButton} aria-pressed={navState === 1}>
               <img src={FlagIcon} alt="" />
               <span>Leaderboards</span>
             </button>
-            <button className="nav-button" aria-pressed={navState === 2}>
+            <button className={navigationStyles.navButton} aria-pressed={navState === 2}>
               <img src={ChatIcon} alt="" />
               <span>Discussions</span>
             </button>
           </section>
 
-          <section id="section6" className="summary2" />
+          <section id="section6" className={mapsStyles.idSection6} />
         </main>
       </>
     );
@@ -561,19 +566,19 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
         />
       )}
 
-      <div id="background-image">
+      <div id="background-image" className={mapsStyles.idBackgroundImage}>
         <img src={mapSummaryData.map.image} alt="" />
       </div>
       <main>
-        <section id="section1" className="summary1">
-          <div className="map-page-header">
-            <div className="map-page-breadcrumbs">
+        <section id="section1" className={classNames(profileStyles.idSection1, sectionsStyles.idSection1)}>
+          <div className={mapsStyles.mapPageHeader}>
+            <div className={mapsStyles.mapPageBreadcrumbs}>
               <Link to="/games">
                 <button
-                  className="nav-button"
-                  style={{ borderRadius: "20px 0px 0px 20px" }}
+                  className={classNames(navigationStyles.navButton, mapsStyles.previousMapNavigation)}
+
                 >
-                  <i className="triangle"></i>
+                  <i className={navigationStyles.triangle}></i>
                   <span>Games List</span>
                 </button>
               </Link>
@@ -586,21 +591,18 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
                 }
               >
                 <button
-                  className="nav-button"
-                  style={{
-                    borderRadius: "0px 20px 20px 0px",
-                    marginLeft: "2px",
-                  }}
+                  className={classNames(navigationStyles.navButton, mapsStyles.nextMapNavigation)}
+
                 >
-                  <i className="triangle"></i>
+                  <i className={navigationStyles.triangle}></i>
                   <span>{mapSummaryData.map.chapter_name}</span>
                 </button>
               </Link>
               {mapSummaryData.map.counterpart && (
                 <Link to={"/maps/" + mapSummaryData.map.counterpart.id}>
                   <button
-                    className="nav-button"
-                    style={{ borderRadius: "20px", marginLeft: "8px" }}
+                    className={classNames(navigationStyles.navButton, mapsStyles.counterpartNavigation)}
+
                   >
                     <span>
                       View {mapSummaryData.map.counterpart.section_name}
@@ -610,10 +612,10 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
               )}
             </div>
 
-            <div className="map-page-neighbor-navigation">
+            <div className={classNames(mapsStyles.mapPageNeighborNavigation, navigationStyles.mapPageNeighborNavigation)}>
               {hasMapNavigation && previousMap ? (
                 <Link
-                  className="nav-button"
+                  className={navigationStyles.navButton}
                   to={{ pathname: `/maps/${previousMap.id}`, search: searchParams.toString() }}
                   aria-label={`Previous map: ${previousMap.name}`}
                 >
@@ -621,7 +623,7 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
                 </Link>
               ) : hasMapNavigation ? (
                 <button
-                  className="nav-button"
+                  className={navigationStyles.navButton}
                   type="button"
                   disabled
                   aria-label="No previous map"
@@ -630,12 +632,11 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
                 </button>
               ) : (
                 <span
-                  className="map-page-navigation-placeholder"
                   aria-hidden="true"
                 />
               )}
 
-              <span className="map-page-title">
+              <span className={mapsStyles.mapPageTitle}>
                 <b>{mapSummaryData.map.map_name}</b>
                 {mapSummaryData.map.section_kind === "mode"
                   ? " — " + mapSummaryData.map.chapter_name
@@ -644,7 +645,7 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
 
               {hasMapNavigation && nextMap ? (
                 <Link
-                  className="nav-button"
+                  className={navigationStyles.navButton}
                   to={{ pathname: `/maps/${nextMap.id}`, search: searchParams.toString() }}
                   aria-label={`Next map: ${nextMap.name}`}
                 >
@@ -652,7 +653,7 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
                 </Link>
               ) : hasMapNavigation ? (
                 <button
-                  className="nav-button"
+                  className={navigationStyles.navButton}
                   type="button"
                   disabled
                   aria-label="No next map"
@@ -661,7 +662,6 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
                 </button>
               ) : (
                 <span
-                  className="map-page-navigation-placeholder"
                   aria-hidden="true"
                 />
               )}
@@ -669,16 +669,16 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
           </div>
         </section>
 
-        <section id="section2" className="summary1">
-          <button className="nav-button" aria-pressed={navState === 0} onClick={() => selectMapTab(0)}>
+        <section id="section2" className={classNames(profileStyles.idSection2, navigationStyles.idSection2, sectionsStyles.idSection2)}>
+          <button className={navigationStyles.navButton} aria-pressed={navState === 0} onClick={() => selectMapTab(0)}>
             <img src={PortalIcon} alt="" />
             <span>Summary</span>
           </button>
-          <button className="nav-button" aria-pressed={navState === 1} onClick={() => selectMapTab(1)}>
+          <button className={navigationStyles.navButton} aria-pressed={navState === 1} onClick={() => selectMapTab(1)}>
             <img src={FlagIcon} alt="" />
             <span>Leaderboards</span>
           </button>
-          <button className="nav-button" aria-pressed={navState === 2} onClick={() => selectMapTab(2)}>
+          <button className={navigationStyles.navButton} aria-pressed={navState === 2} onClick={() => selectMapTab(2)}>
             <img src={ChatIcon} alt="" />
             <span>Discussions</span>
           </button>

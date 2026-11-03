@@ -1,0 +1,175 @@
+@layer components {
+.navButton {
+    height: 40px;
+    background-color: #2b2e46;
+
+    color: #cdcfdf;
+    font-size: 18px;
+    font-family: inherit;
+    border: none;
+    transition: background-color 0.1s;
+}
+.navButton > span {
+    padding: 0 8px 0 8px;
+}
+
+.navButton:hover {
+    background-color: #202232;
+    cursor: pointer;
+}
+
+.mapPageNeighborNavigation .navButton {
+    display: flex;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    border-radius: 20px;
+    text-decoration: none;
+}
+
+.mapPageNeighborNavigation .navButton:first-child {
+    justify-self: start;
+}
+
+.mapPageNeighborNavigation .navButton:last-child {
+    justify-self: end;
+}
+
+.mapPageNeighborNavigation .navButton > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.mapPageNeighborNavigation .navButton:disabled,
+.mapPageNeighborNavigation .navButton:disabled:hover {
+    background-color: #2b2e46;
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.idSection2 > .navButton {
+    height: 50px;
+    font-size: 22px;
+    display: flex;
+    justify-content: center;
+    place-items: center;
+}
+
+.idSection2 > .navButton[aria-pressed="true"] {
+    background-color: #202232;
+}
+
+.idSection2 > .navButton > img {
+    scale: 1.2;
+}
+
+.idSection2 > .navButton:nth-child(1) {
+    border-radius: 30px 0 0 30px;
+}
+
+.idSection2 > .navButton:nth-child(3) {
+    border-radius: 0 30px 30px 0;
+}
+
+.triangle {
+    display: inline-block;
+    width: 8px;
+    height: 0;
+    border-top: 7px solid transparent;
+    border-right: 8px solid #cdcfdf;
+    border-bottom: 7px solid transparent;
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+
+    .navButton {
+        height: 38px;
+        font-size: 17px;
+    }
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+
+    .idSection2 > .navButton {
+        height: 45px;
+        font-size: 20px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+    .idSection2 > .navButton {
+        border-radius: 0;
+        font-size: 18px;
+        height: 45px;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+        min-width: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+    .idSection2 > .navButton:nth-child(1) {
+        border-radius: 20px 20px 0 0;
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+    .idSection2 > .navButton:nth-child(3) {
+        border-radius: 0 0 20px 20px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+    .idSection2 > .navButton > span {
+        padding: 0 8px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        min-width: 0;
+        flex: 0 1 auto;
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+    .idSection2 > .navButton > img {
+        scale: 1;
+        flex-shrink: 0;
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+    .navButton {
+        font-size: 16px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+    .triangle {
+        width: 16px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+    .mapPageNeighborNavigation>.navButton {
+        grid-row: 2;
+    }
+}
+}

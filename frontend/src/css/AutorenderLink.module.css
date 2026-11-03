@@ -1,0 +1,18 @@
+@layer overrides {
+.bluePlayer {
+    color: #39a9ff
+}
+.orangePlayer {
+    color: #ff9b42
+}
+.inheritColor {
+    color: inherit
+}
+.videoLink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px
+}
+}

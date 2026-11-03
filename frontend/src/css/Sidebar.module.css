@@ -1,0 +1,567 @@
+@layer components {
+.idSidebar {
+    overflow: hidden;
+    position: absolute;
+    background-color: #2b2e46;
+    width: 320px;
+    height: 100vh;
+    min-height: 670px;
+    transition: transform 0.3s ease;
+}
+
+/* logo */
+.idLogo {
+    display: grid;
+    grid-template-columns: 60px 220px;
+
+    height: 80px;
+    padding: 20px 0 20px 20px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.idLogoText {
+    font-family: BarlowCondensed-Regular;
+    font-size: 36px;
+    color: #FFF;
+    line-height: 38px;
+}
+
+.idLogoText>span>b {
+    font-family: BarlowCondensed-Bold;
+    font-size: 56px;
+}
+
+/* Sidelist */
+.idSidebarList {
+    z-index: 2;
+    background-color: #2b2e46;
+    position: relative;
+    height: calc(100vh - 120px);
+    width: 320px;
+    /* min-height: 670px; */
+    transition: width .3s;
+}
+
+.idSidebarToplist>button:nth-child(1) {
+    margin-top: 5px;
+}
+
+.idSidebarToplist {
+    display: grid;
+
+    margin: 0 5px 0 5px;
+    justify-items: left;
+    height: 400px;
+    grid-template-rows: 45px 50px 50px 50px 50px 50px 50px 50px auto;
+}
+
+.idSidebarBottomlist {
+    display: grid;
+
+    margin: 0 5px 0 5px;
+    justify-items: left;
+    grid-template-rows: calc(100vh - 720px) 50px 50px 50px;
+}
+
+.sidebarButton>span {
+    font-family: BarlowSemiCondensed-Regular;
+    font-size: 18px;
+    color: #CDCFDF;
+    height: 32px;
+    line-height: 28px;
+    transition: opacity .1s;
+}
+
+.sidebarButton {
+    display: grid;
+    grid-template-columns: 50px auto;
+    align-items: center;
+    text-align: left;
+
+    background-color: inherit;
+    cursor: pointer;
+    border: none;
+    width: 310px;
+    height: 40px;
+    border-radius: 20px;
+    padding: 0 0 0 11px;
+
+    transition:
+        width .3s,
+        background-color .15s,
+        padding .3s;
+}
+
+.sidebarButton .avatarImg {
+    border-radius: 50px;
+}
+
+.logoutButton {
+    display: grid;
+    grid-template-columns: 50px auto;
+    align-items: center;
+    text-align: left;
+
+    background-color: inherit;
+    cursor: pointer;
+    border: none;
+    width: 310px;
+    height: 40px;
+    border-radius: 20px;
+    padding: 0 0 0 11px;
+
+    transition:
+        width .3s,
+        background-color .15s,
+        padding .3s;
+}
+
+.submitRunButton {
+    display: grid;
+    grid-template-columns: 50px auto;
+    align-items: center;
+    text-align: left;
+
+    background-color: inherit;
+    cursor: pointer;
+    border: none;
+    width: 310px;
+    height: 40px;
+    border-radius: 20px;
+    padding: 0 0 0 11px;
+
+    transition:
+        width .3s,
+        background-color .15s,
+        padding .3s;
+    background-color: #202232aa;
+}
+
+.submitRunButton:hover {
+    background-color: #202232;
+}
+
+.submitRunButton>span {
+    font-family: BarlowSemiCondensed-Regular;
+    font-size: 18px;
+    color: #CDCFDF;
+    height: 32px;
+    line-height: 28px;
+    transition: opacity .1s;
+}
+
+.sidebarButtonSelected {
+    background-color: #202232;
+}
+
+.sidebarButtonDeselected {
+    background-color: #20223200;
+}
+
+.sidebarButtonDeselected:hover {
+    background-color: #202232aa;
+}
+
+/* Search Panel */
+.idSearchPanel {
+    position: relative;
+    background-color: #202232;
+    color: #424562;
+    z-index: 1;
+
+    left: 52px;
+    top: calc(-100vh + 120px);
+    width: 268px;
+    height: calc(100vh - 120px);
+    min-height: 550px;
+}
+
+input.idSearchbar[type=text] {
+    margin: 10px 0 0 6px;
+    padding: 1px 0px 1px 16px;
+    width: 240px;
+    height: 30px;
+
+    font-family: BarlowSemiCondensed-Regular;
+    font-size: 20px;
+
+    background-color: #161723;
+    color: #CDCFDF;
+
+    border: 0;
+    border-radius: 20px;
+
+}
+
+.idSearchData {
+    margin: 8px 0 8px 0;
+    overflow-y: auto;
+    max-height: calc(100vh - 172px);
+    scrollbar-width: thin;
+}
+
+.idSearchData::-webkit-scrollbar {
+    display: none;
+}
+
+.searchMap {
+    margin: 10px 6px 0 6px;
+    height: 80px;
+
+    border-radius: 20px;
+    text-align: center;
+
+    display: grid;
+
+    border: 0;
+    transition: background-color .1s;
+    background-color: #2b2e46;
+    grid-template-rows: 20% 20% 60%;
+    width: calc(100% - 15px);
+}
+
+.searchMap>span {
+    color: #888;
+    font-size: 16px;
+    font-family: BarlowSemiCondensed-Regular;
+}
+
+.searchMap>span:nth-child(3) {
+    font-size: 30px;
+    color: #CDCFDF;
+}
+
+.searchPlayer {
+    overflow: hidden;
+    margin: 10px 6px 0 6px;
+    height: 80px;
+
+    border-radius: 20px;
+    text-align: center;
+    color: #CDCFDF;
+    font-family: BarlowSemiCondensed-Regular;
+
+    display: grid;
+    place-items: center;
+    grid-template-columns: 20% 80%;
+    padding: 0 16px 0 16px;
+
+    border: 0;
+    transition: background-color .1s;
+    background-color: #2b2e46;
+    width: calc(100% - 15px);
+    box-sizing: border-box;
+}
+
+.searchPlayer>img {
+    height: 60px;
+    border-radius: 20px;
+}
+
+.searchPlayer>span {
+    width: 100%;
+    font-size: 26px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.idMobileTopbar {
+    display: none;
+}
+
+.idMobileLogo {
+    display: none;
+}
+
+.idHamburgerMenu {
+    display: none;
+}
+
+.mobileSearchHeader {
+    display: none;
+}
+
+.mobileSearchClose {
+    display: none;
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    .idSidebar {
+        width: 280px;
+    }
+
+    .idLogoText {
+        font-size: 30px;
+        line-height: 32px;
+    }
+
+    .idLogoText>span>b {
+        font-size: 50px;
+    }
+
+    .sidebarButton,
+    .logoutButton,
+    .submitRunButton {
+        width: 265px;
+        height: 40px;
+    }
+
+    input.idSearchbar[type=text] {
+        width: 200px;
+        height: 28px;
+        font-size: 18px;
+    }
+
+    .idSearchData {
+        max-height: calc(100vh - 172px);
+    }
+
+    .searchMap,
+    .searchPlayer {
+        width: calc(100% - 50px);
+        height: 75px;
+        margin: 9px 6px 0 6px;
+    }
+
+    .searchMap>span {
+        font-size: 15px;
+    }
+
+    .searchMap>span:nth-child(3) {
+        font-size: 26px;
+    }
+
+    .searchPlayer {
+        padding: 0 14px;
+    }
+
+    .searchPlayer>img {
+        height: 55px;
+    }
+
+    .searchPlayer>span {
+        font-size: 23px;
+    }
+
+    .login>button:nth-child(2) {
+        left: 170px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+    .idSidebar {
+        position: fixed;
+        left: 0;
+        top: 60px;
+        width: 100%;
+        height: calc(100vh - 60px);
+        transform: translateX(-100%);
+        z-index: 1000;
+        transition: transform 0.3s ease;
+    }
+
+    .idSidebar.mobileOpen {
+        transform: translateX(0);
+    }
+
+    .idLogo {
+        display: none !important;
+    }
+
+    .idMobileTopbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background-color: #2b2e46;
+        padding: 0 18px;
+        z-index: 999;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .idMobileLogo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .idMobileLogo img {
+        height: 40px !important;
+    }
+
+    .idMobileLogoText {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-family: BarlowCondensed-Regular;
+        color: #FFF;
+        line-height: 1.1;
+    }
+
+    .idMobileLogoText span:first-child {
+        font-family: BarlowCondensed-Bold;
+        font-size: 24px;
+    }
+
+    .idMobileLogoText span:last-child {
+        font-size: 14px;
+    }
+
+    .idHamburgerMenu {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        width: 30px;
+        height: 25px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        z-index: 1001;
+    }
+
+    .idHamburgerMenu span {
+        width: 30px;
+        height: 3px;
+        background: #CDCFDF;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        transform-origin: center;
+    }
+
+    .idHamburgerMenu.open span:nth-child(1) {
+        transform: translateY(8.5px) rotate(45deg);
+    }
+
+    .idHamburgerMenu.open span:nth-child(2) {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    .idHamburgerMenu.open span:nth-child(3) {
+        transform: translateY(-8.5px) rotate(-45deg);
+    }
+
+    .idSidebarList {
+        height: calc(100vh - 60px);
+        width: 280px;
+        padding-top: 20px;
+    }
+
+    .idSidebarToplist {
+        height: auto;
+        grid-template-rows: 45px 20px 50px 50px 50px 50px auto;
+    }
+
+    .idSidebarBottomlist {
+        grid-template-rows: 50px 50px 50px 50px 50px;
+        margin-top: 20px;
+    }
+
+    .sidebarButton,
+    .logoutButton,
+    .submitRunButton {
+        width: 270px !important;
+    }
+
+    .sidebarButton span,
+    .submitRunButton span {
+        opacity: 1 !important;
+    }
+
+    .idSearchPanel {
+        position: fixed;
+        left: 0;
+        top: 60px;
+        width: 100%;
+        height: calc(100vh - 60px);
+        z-index: 998;
+        background-color: #202232;
+        transform: translateY(100%);
+        opacity: 0;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        pointer-events: none;
+    }
+
+    .idSearchPanel.mobileSearchOpen {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .mobileSearchHeader {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding: 10px 20px 0 20px;
+        gap: 10px;
+    }
+
+    .idSearchPanel input.idSearchbar[type=text] {
+        width: calc(100% - 40px);
+        margin: 10px 20px;
+    }
+
+    .mobileSearchClose {
+        display: block;
+        background-color: #2b2e46;
+        border: none;
+        color: #CDCFDF;
+        font-size: 28px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        line-height: 1;
+        padding: 0;
+        transition: background-color 0.2s;
+    }
+
+    .mobileSearchClose:hover {
+        background-color: #202232;
+    }
+
+    .idSearchPanel .idSearchData {
+        max-height: calc(100vh - 140px);
+        padding: 0 10px;
+    }
+
+    .login {
+        grid-template-columns: 50px auto 50px;
+    }
+
+    .login>button:nth-child(2) {
+        left: 170px;
+    }
+}
+/* Search widths and opacity keep the original 100ms/300ms state changes. */
+.idSidebar.searchCollapsed .idSidebarList { width: 40px; }
+.idSidebar.searchExpanded .idSidebarList { width: 320px; z-index: 2; }
+.idSidebar.searchCollapsed .sidebarButton,
+.idSidebar.searchCollapsed .idUploadRun { width: 40px; padding: 0 0 0 5px; }
+.idSidebar.searchExpanded .sidebarButton { width: 265px; padding: 0 0 0 11px; }
+.idSidebar.searchExpanded.wideSearchButtons .sidebarButton { width: 310px; }
+.idSidebar.searchExpanded .idUploadRun { width: 310px; padding: 0 0 0 11px; }
+.idSidebar.searchCollapsed .sidebarButton>span,
+.idSidebar.searchCollapsed .idUploadRun>span,
+.idSidebar.searchExpanded .sidebarButton>span,
+.idSidebar.searchExpanded .idUploadRun>span { opacity: 0; }
+.idSidebar.searchExpanded.labelsVisible .sidebarButton>span,
+.idSidebar.searchExpanded.labelsVisible .idUploadRun>span { opacity: 1; }
+.idSidebar.searchCollapsed .login>button:nth-child(2) { opacity: 0; }
+.idSidebar.searchExpanded .login>button:nth-child(2) { opacity: 1; }
+.idSidebar.searchBehind .idSidebarList { z-index: 0; }
+}
+
+@layer overrides {
+.searchResultName {
+    font-size: var(--font-size);
+}
+}

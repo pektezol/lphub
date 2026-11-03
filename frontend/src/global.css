@@ -1,0 +1,34 @@
+/* Explicit component states override defaults without increasing specificity. */
+@layer components, overrides;
+
+@font-face {
+    font-family: 'BarlowCondensed-Bold';
+    src: local('BarlowCondensed-Bold'), url(./fonts/BarlowCondensed-Bold.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'BarlowCondensed-Regular';
+    src: local('BarlowCondensed-Regular'), url(./fonts/BarlowCondensed-Regular.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'BarlowSemiCondensed-Regular';
+    src: local('BarlowSemiCondensed-Regular'), url(./fonts/BarlowSemiCondensed-Regular.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'BarlowSemiCondensed-SemiBold';
+    src: local('BarlowSemiCondensed-Regular'), url(./fonts/BarlowSemiCondensed-SemiBold.ttf) format('truetype');
+}
+
+body {
+    overflow-x: hidden;
+    background-color: #141520;
+    margin: 0;
+}
+
+@media screen and (max-width: 768px) {
+    * {
+        box-sizing: border-box;
+    }
+}

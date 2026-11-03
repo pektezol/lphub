@@ -6,9 +6,11 @@ import { MapSummary } from "@customTypes/Map";
 import { ModMenuContent } from "@customTypes/Content";
 import { Category } from "@customTypes/Game";
 import { API } from "@api/Api";
-import "@css/ModMenu.css";
+
 import useConfirm from "@hooks/UseConfirm";
 import { portalLabel } from "@utils/Portal";
+import modMenuStyles from "@css/ModMenu.module.css";
+import { classNames } from "@css/utils";
 
 interface ModMenuProps {
   token?: string;
@@ -192,18 +194,11 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
     }
   }, [menu, selectedRoute]);
 
-  React.useEffect(() => {
-    const modview_block = document.querySelector("#modview_block") as HTMLElement;
-    if (modview_block) {
-      modview_block.style.display = showButton ? "none" : "block";
-    }
-  }, [showButton]);
-
   return (
     <>
       {ConfirmDialogComponent}
-      <div id="modview_block" />
-      <div id='modview' className={showButton ? "is-collapsed" : ""}>
+      <div id="modview_block" className={classNames((showButton ? modMenuStyles.backdropHidden : modMenuStyles.backdropVisible), modMenuStyles.idModviewBlock)} />
+      <div id='modview' className={classNames((showButton ? modMenuStyles.isCollapsed : ""), modMenuStyles.idModview)}>
         <div>
           <button onClick={() => setMenu(1)}>Edit Image</button>
           <button onClick={() => setMenu(4)}>Edit Difficulty</button>
@@ -218,10 +213,10 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
             <button onClick={() => { setShowButton(true); setMenu(0); }}>Hide</button>
           )}
         </div>
-      </div><div id='modview-menu'>
+      </div><div id='modview-menu' className={modMenuStyles.idModviewMenu}>
         {// Edit Image
           menu === 1 && (
-            <div id='modview-menu-image'>
+            <div id='modview-menu-image' className={modMenuStyles.idModviewMenuImage}>
               <div>
                 <span>Current Image:</span>
                 <img src={data.map.image} alt="missing" />
@@ -244,7 +239,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
 
         {// Edit Difficulty
           menu === 4 && (
-            <div id='modview-menu-difficulty'>
+            <div id='modview-menu-difficulty' className={modMenuStyles.idModviewMenuDifficulty}>
               <label htmlFor='modview-map-difficulty'>Difficulty (1-10):</label>
               <input
                 id='modview-map-difficulty'
@@ -261,7 +256,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
 
         {// Edit Route
           menu === 2 && (
-            <div id='modview-menu-edit'>
+            <div id='modview-menu-edit' className={modMenuStyles.idModviewMenuEdit}>
               <div id='modview-route-id'>
                 <span>Route ID:</span>
                 <input type="number" value={routeContent.id} disabled />
@@ -293,7 +288,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
                   });
                 }} />
               </div>
-              <div id='modview-route-showcase'>
+              <div id='modview-route-showcase' className={modMenuStyles.idModviewRouteShowcase}>
                 <span>Showcase Video:</span>
                 <input type="text" value={routeContent.showcase} onChange={(e) => {
                   setRouteContent({
@@ -302,7 +297,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
                   });
                 }} />
               </div>
-              <div id='modview-route-description' style={{ height: "180px", gridColumn: "1 / span 5" }}>
+              <div id='modview-route-description'  className={classNames(modMenuStyles.idModviewRouteDescription, modMenuStyles.routeDescription)}>
                 <span>Description:</span>
                 <textarea value={routeContent.description} onChange={(e) => {
                   setRouteContent({
@@ -312,9 +307,9 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
                   setMd(e.target.value);
                 }} />
               </div>
-              <button style={{ gridColumn: "2 / span 3", height: "40px" }} onClick={_edit_map_summary_route}>Apply</button>
+              <button  onClick={_edit_map_summary_route} className={modMenuStyles.routeApply}>Apply</button>
 
-              <div id='modview-md'>
+              <div id='modview-md' className={modMenuStyles.idModviewMd}>
                 <span>Markdown Preview</span>
                 <span><a href="https://commonmark.org/help/" rel="noreferrer" target='_blank'>Documentation</a></span>
                 <span><a href="https://remarkjs.github.io/react-markdown/" rel="noreferrer" target='_blank'>Demo</a></span>
@@ -328,7 +323,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
 
         {// Add Route
           menu === 3 && (
-            <div id='modview-menu-add'>
+            <div id='modview-menu-add' className={modMenuStyles.idModviewMenuAdd}>
               <div id='modview-route-category'>
                 <span>Category:</span>
                 <select value={routeContent.category_id} onChange={(e) => {
@@ -369,7 +364,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
                   });
                 }} />
               </div>
-              <div id='modview-route-showcase'>
+              <div id='modview-route-showcase' className={modMenuStyles.idModviewRouteShowcase}>
                 <span>Showcase Video:</span>
                 <input type="text" value={routeContent.showcase} onChange={(e) => {
                   setRouteContent({
@@ -378,7 +373,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
                   });
                 }} />
               </div>
-              <div id='modview-route-description' style={{ height: "180px", gridColumn: "1 / span 5" }}>
+              <div id='modview-route-description'  className={classNames(modMenuStyles.idModviewRouteDescription, modMenuStyles.routeDescription)}>
                 <span>Description:</span>
                 <textarea value={routeContent.description} onChange={(e) => {
                   setRouteContent({
@@ -388,9 +383,9 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
                   setMd(e.target.value);
                 }} />
               </div>
-              <button style={{ gridColumn: "2 / span 3", height: "40px" }} onClick={_create_map_summary_route}>Apply</button>
+              <button  onClick={_create_map_summary_route} className={modMenuStyles.routeApply}>Apply</button>
 
-              <div id='modview-md'>
+              <div id='modview-md' className={modMenuStyles.idModviewMd}>
                 <span>Markdown preview</span>
                 <span><a href="https://commonmark.org/help/" rel="noreferrer" target='_blank'>documentation</a></span>
                 <span><a href="https://remarkjs.github.io/react-markdown/" rel="noreferrer" target='_blank'>demo</a></span>

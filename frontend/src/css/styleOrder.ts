@@ -1,0 +1,19 @@
+// Preserve the pre-migration cascade while modules are shared by several consumers.
+import "./Foundations.module.css";
+import "./Login.module.css";
+import "./Sidebar.module.css";
+import "../App.module.css";
+import "./Profile.module.css";
+import "./Dialog.module.css";
+import "./Games.module.css";
+import "./Maps.module.css";
+import "./ModMenu.module.css";
+import "./ResourceState.module.css";
+import "./Homepage.module.css";
+import "./UploadRunDialog.module.css";
+import "./About.module.css";
+import "./Maplist.module.css";
+import "./Rankings.module.css";
+import "./Navigation.module.css";
+import "./Sections.module.css";
+import "./PortalCount.module.css";

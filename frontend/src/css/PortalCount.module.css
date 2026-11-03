@@ -1,0 +1,32 @@
+@layer components {
+p > span.portalCount {
+    font-weight: bold;
+    font-size: 100px;
+    vertical-align: -15%;
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+
+    p > span.portalCount {
+        font-size: 88px;
+    }
+}.portalCount {
+    margin: 20px 0px;
+    font-family: "BarlowSemiCondensed-SemiBold";
+    font-size: 96px;
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+
+    .portalCount {
+        font-size: 80px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+    .portalCount {
+        font-size: 60px;
+    }
+}
+}

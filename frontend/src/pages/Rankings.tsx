@@ -5,7 +5,9 @@ import RankingEntry from "@components/RankingEntry";
 import { Ranking, SteamRanking, RankingType, SteamRankingType } from "@customTypes/Ranking";
 import { API } from "@api/Api";
 
-import "@css/Rankings.css";
+import rankingsStyles from "@css/Rankings.module.css";
+import appStyles from "../App.module.css";
+import { classNames } from "@css/utils";
 
 enum LeaderboardTypes {
   official,
@@ -107,55 +109,55 @@ const Rankings: React.FC = () => {
       <Helmet>
         <title>LPHUB | Rankings</title>
       </Helmet>
-      <section className="nav-container nav-1">
+      <section className={classNames(rankingsStyles.navContainer, rankingsStyles.nav1)}>
         <div>
-          <button type="button" onClick={() => void fetchRankings(LeaderboardTypes.official)} className={`nav-1-btn ${currentRankingType === LeaderboardTypes.official ? "selected" : ""}`}>
+          <button type="button" onClick={() => void fetchRankings(LeaderboardTypes.official)} className={(currentRankingType === LeaderboardTypes.official ? rankingsStyles.selected : "")}>
             <span>Official (LPHUB)</span>
           </button>
-          <button type="button" onClick={() => void fetchRankings(LeaderboardTypes.unofficial)} className={`nav-1-btn ${currentRankingType === LeaderboardTypes.unofficial ? "selected" : ""}`}>
+          <button type="button" onClick={() => void fetchRankings(LeaderboardTypes.unofficial)} className={(currentRankingType === LeaderboardTypes.unofficial ? rankingsStyles.selected : "")}>
             <span>Unofficial (Steam)</span>
           </button>
         </div>
       </section>
-      <section className="nav-container nav-2">
+      <section className={classNames(rankingsStyles.navContainer, rankingsStyles.nav2)}>
         <div>
-          <button type="button" disabled={categoryControlsDisabled} onClick={() => setCurrentLeaderboardType(RankingCategories.rankings_singleplayer)} className={`nav-2-btn ${currentLeaderboardType === RankingCategories.rankings_singleplayer ? "selected" : ""}`}>
+          <button type="button" disabled={categoryControlsDisabled} onClick={() => setCurrentLeaderboardType(RankingCategories.rankings_singleplayer)} className={(currentLeaderboardType === RankingCategories.rankings_singleplayer ? rankingsStyles.selected : "")}>
             <span>Singleplayer</span>
           </button>
-          <button type="button" disabled={categoryControlsDisabled} onClick={() => setCurrentLeaderboardType(RankingCategories.rankings_multiplayer)} className={`nav-2-btn ${currentLeaderboardType === RankingCategories.rankings_multiplayer ? "selected" : ""}`}>
+          <button type="button" disabled={categoryControlsDisabled} onClick={() => setCurrentLeaderboardType(RankingCategories.rankings_multiplayer)} className={(currentLeaderboardType === RankingCategories.rankings_multiplayer ? rankingsStyles.selected : "")}>
             <span>Cooperative</span>
           </button>
-          <button type="button" disabled={categoryControlsDisabled} onClick={() => setCurrentLeaderboardType(RankingCategories.rankings_overall)} className={`nav-2-btn ${currentLeaderboardType === RankingCategories.rankings_overall ? "selected" : ""}`}>
+          <button type="button" disabled={categoryControlsDisabled} onClick={() => setCurrentLeaderboardType(RankingCategories.rankings_overall)} className={(currentLeaderboardType === RankingCategories.rankings_overall ? rankingsStyles.selected : "")}>
             <span>Overall</span>
           </button>
           {currentRankingType === LeaderboardTypes.official && <>
-            <button type="button" disabled={categoryControlsDisabled} onClick={() => setCurrentLeaderboardType(RankingCategories.rankings_mel_story)} className={`nav-2-btn ${currentLeaderboardType === RankingCategories.rankings_mel_story ? "selected" : ""}`}>
+            <button type="button" disabled={categoryControlsDisabled} onClick={() => setCurrentLeaderboardType(RankingCategories.rankings_mel_story)} className={(currentLeaderboardType === RankingCategories.rankings_mel_story ? rankingsStyles.selected : "")}>
               <span>Mel (Story)</span>
             </button>
-            <button type="button" disabled={categoryControlsDisabled} onClick={() => setCurrentLeaderboardType(RankingCategories.rankings_mel_advanced)} className={`nav-2-btn ${currentLeaderboardType === RankingCategories.rankings_mel_advanced ? "selected" : ""}`}>
+            <button type="button" disabled={categoryControlsDisabled} onClick={() => setCurrentLeaderboardType(RankingCategories.rankings_mel_advanced)} className={(currentLeaderboardType === RankingCategories.rankings_mel_advanced ? rankingsStyles.selected : "")}>
               <span>Mel (Advanced)</span>
             </button>
           </>}
         </div>
       </section>
 
-      <section className="rankings-leaderboard">
-        <div className="ranks-container" aria-busy={isLoading}>
-          <div className={`leaderboard-entry header ${currentRankingType === LeaderboardTypes.official ? "has-time" : ""}`}>
+      <section className={rankingsStyles.rankingsLeaderboard}>
+        <div className={rankingsStyles.ranksContainer} aria-busy={isLoading}>
+          <div className={classNames(rankingsStyles.leaderboardEntry, rankingsStyles.header, (currentRankingType === LeaderboardTypes.official ? rankingsStyles.hasTime : ""))}>
             <span>Rank</span>
             <span>Player</span>
             <span>Portals</span>
             {currentRankingType === LeaderboardTypes.official && <span>Time</span>}
           </div>
 
-          <div className="splitter"></div>
+          <div className={rankingsStyles.splitter}></div>
 
           {isLoading ?
-            <div style={{ display: "flex", justifyContent: "center", margin: "30px 0px" }}>
-              <span className="loader"></span>
+            <div  className={rankingsStyles.centeredLoader}>
+              <span className={appStyles.loader}></span>
             </div>
             : hasLoadError ?
-              <div className="rankings-load-error" role="alert">
+              <div className={rankingsStyles.rankingsLoadError} role="alert">
                 Unable to load rankings. Please try again.
               </div>
               : currentLeaderboard?.map((curRankingData, i) => {

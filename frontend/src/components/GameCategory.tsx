@@ -1,8 +1,10 @@
+import { classNames } from "@css/utils";
 import React from "react";
 import { Link } from "react-router-dom";
 
 import { Game, GameCategoryPortals } from "@customTypes/Game";
-import "@css/Games.css";
+
+import gamesStyles from "@css/Games.module.css";
 
 interface GameCategoryProps {
     game: Game;
@@ -14,13 +16,13 @@ const GameCategory: React.FC<GameCategoryProps> = ({cat, game}) => {
 
   if (game.section_kind === "mode") {
     return (
-      <Link className="games-page-item-body-item games-page-item-body-item-mode" to={"/games/" + game.id + "?cat=" + cat.category.id}>
-        <span className='games-page-item-body-item-title'>{cat.category.name}</span>
-        <div className="games-page-item-body-item-mode-counts">
+      <Link className={classNames(gamesStyles.gamesPageItemBodyItem, gamesStyles.gamesPageItemBodyItemMode)} to={"/games/" + game.id + "?cat=" + cat.category.id}>
+        <span className={gamesStyles.gamesPageItemBodyItemTitle}>{cat.category.name}</span>
+        <div className={gamesStyles.gamesPageItemBodyItemModeCounts}>
           {sectionPortals.map((section) => (
-            <span className="games-page-item-body-item-mode-count" key={section.section_id}>
-              <span className="games-page-item-body-item-mode-label">{section.section_name.replace(/\s+Mode$/, "")}</span>
-              <span className="games-page-item-body-item-mode-num">{section.portal_count}</span>
+            <span className={gamesStyles.gamesPageItemBodyItemModeCount} key={section.section_id}>
+              <span className={gamesStyles.gamesPageItemBodyItemModeLabel}>{section.section_name.replace(/\s+Mode$/, "")}</span>
+              <span className={gamesStyles.gamesPageItemBodyItemModeNum}>{section.portal_count}</span>
             </span>
           ))}
         </div>
@@ -29,11 +31,11 @@ const GameCategory: React.FC<GameCategoryProps> = ({cat, game}) => {
   }
 
   return (
-    <Link className="games-page-item-body-item" to={"/games/" + game.id + "?cat=" + cat.category.id}>
+    <Link className={gamesStyles.gamesPageItemBodyItem} to={"/games/" + game.id + "?cat=" + cat.category.id}>
       <div>
-        <span className='games-page-item-body-item-title'>{cat.category.name}</span>
+        <span className={gamesStyles.gamesPageItemBodyItemTitle}>{cat.category.name}</span>
         <br />
-        <span className='games-page-item-body-item-num'>{cat.portal_count}</span>
+        <span className={gamesStyles.gamesPageItemBodyItemNum}>{cat.portal_count}</span>
       </div>
     </Link>
   );

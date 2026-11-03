@@ -1,4 +1,5 @@
-div#modview {
+@layer components {
+div.idModview {
     position: absolute;
     left: 50%;
     z-index: 20;
@@ -8,31 +9,31 @@ div#modview {
 
 }
 
-div#modview>div>button {
+div.idModview>div>button {
     height: 30px;
 }
 
-div#modview>div>button:disabled {
+div.idModview>div>button:disabled {
     display: inline-block;
     cursor: not-allowed;
     opacity: .5;
 }
 
-div#modview>div:nth-child(1) {
+div.idModview>div:nth-child(1) {
     display: grid;
     grid-template-columns: 50% 50%;
 }
 
-div#modview.is-collapsed>div:nth-child(1) {
+div.idModview.isCollapsed>div:nth-child(1) {
     display: none;
 }
 
-div#modview>div:nth-child(2) {
+div.idModview>div:nth-child(2) {
     display: grid;
     place-items: center;
 }
 
-#modview-menu {
+.idModviewMenu {
     position: absolute;
     left: calc(50% + 160px);
     top: 130px;
@@ -42,7 +43,7 @@ div#modview>div:nth-child(2) {
     color: white;
 }
 
-#modview-menu-image {
+.idModviewMenuImage {
     box-shadow: 0 0 40px 16px black;
     outline: 8px solid #2b2e46;
     border-radius: 20px;
@@ -53,38 +54,38 @@ div#modview>div:nth-child(2) {
 
 }
 
-#modview-menu-image>div:nth-child(1) {
+.idModviewMenuImage>div:nth-child(1) {
     height: 400px;
     width: 500px;
     display: grid;
     grid-template-rows: 30% 70%;
 }
 
-#modview-menu-image>div:nth-child(2) {
+.idModviewMenuImage>div:nth-child(2) {
     height: 400px;
     width: 500px;
     display: grid;
     grid-template-rows: 20% 10%;
 }
 
-#modview-menu-image>div>button {
+.idModviewMenuImage>div>button {
     width: 300px;
     margin-left: 100px;
 }
 
-#modview-menu-image>div>img {
+.idModviewMenuImage>div>img {
     width: 500px;
 }
 
-#modview-menu-image>div>button {
+.idModviewMenuImage>div>button {
     font-size: 20px;
 }
 
-#modview-menu-image>div>span>input[type="file"] {
+.idModviewMenuImage>div>span>input[type="file"] {
     font-size: 15px;
 }
 
-#modview-menu-difficulty {
+.idModviewMenuDifficulty {
     box-shadow: 0 0 40px 16px black;
     outline: 8px solid #2b2e46;
     border-radius: 20px;
@@ -95,14 +96,13 @@ div#modview>div:nth-child(2) {
     font-size: 20px;
 }
 
-#modview-menu-difficulty input,
-#modview-menu-difficulty button {
+.idModviewMenuDifficulty input,
+.idModviewMenuDifficulty button {
     font-size: 20px;
 }
 
-
-#modview-menu-add,
-#modview-menu-edit {
+.idModviewMenuAdd,
+.idModviewMenuEdit {
     box-shadow: 0 0 40px 16px black;
     outline: 8px solid #2b2e46;
     border-radius: 20px;
@@ -112,25 +112,25 @@ div#modview>div:nth-child(2) {
     position: relative;
 }
 
-#modview-menu-add>div:not(#modview-md),
-#modview-menu-edit>div:not(#modview-md) {
+.idModviewMenuAdd>div:not(.idModviewMd),
+.idModviewMenuEdit>div:not(.idModviewMd) {
     display: grid;
     margin: 20px;
     width: 200px;
     font-size: 20px;
 }
 
-#modview-route-description>textarea {
+.idModviewRouteDescription>textarea {
     resize: none;
     height: 160px;
     width: 1160px;
 }
 
-#modview-route-showcase>input::placeholder {
+.idModviewRouteShowcase>input::placeholder {
     opacity: .5;
 }
 
-#modview_block {
+.idModviewBlock {
     position: absolute;
     background-color: black;
     opacity: .3;
@@ -141,7 +141,7 @@ div#modview>div:nth-child(2) {
     cursor: no-drop;
 }
 
-#modview-md {
+.idModviewMd {
     box-shadow: 0 0 40px 16px black;
     background-color: #2b2e46;
     outline: 8px solid #2b2e46;
@@ -160,136 +160,153 @@ div#modview>div:nth-child(2) {
     word-wrap: break-word;
 }
 
-#modview-md>span>a {
+.idModviewMd>span>a {
     padding-left: 20px;
     color: aqua;
 }
 
-#modview-md>p {
+.idModviewMd>p {
     font-family: BarlowSemiCondensed-Regular;
     color: #cdcfdf;
     font-size: 21px;
 }
 
 @media screen and (min-width: 769px) and (max-width: 1024px) {
-    #modview_block {
+    .idModviewBlock {
         left: 280px;
         width: calc(100% - 280px);
     }
 
-    #modview-menu {
+    .idModviewMenu {
         left: calc(50% + 140px);
         top: 100px;
     }
 
-    #modview-menu-image {
+    .idModviewMenuImage {
         grid-template-columns: 1fr;
     }
 
-    #modview-menu-image>div:nth-child(1),
-    #modview-menu-image>div:nth-child(2) {
+    .idModviewMenuImage>div:nth-child(1),
+    .idModviewMenuImage>div:nth-child(2) {
         width: 450px;
         height: auto;
     }
 
-    #modview-menu-image>div>img {
+    .idModviewMenuImage>div>img {
         width: 450px;
     }
 
-    #modview-menu-image>div>button {
+    .idModviewMenuImage>div>button {
         width: 280px;
         margin-left: 85px;
         font-size: 18px;
     }
 
-    #modview-menu-add,
-    #modview-menu-edit {
+    .idModviewMenuAdd,
+    .idModviewMenuEdit {
         grid-template-columns: 1fr 1fr 1fr;
         font-size: 36px;
     }
 
-    #modview-menu-add>div:not(#modview-md),
-    #modview-menu-edit>div:not(#modview-md) {
+    .idModviewMenuAdd>div:not(.idModviewMd),
+    .idModviewMenuEdit>div:not(.idModviewMd) {
         width: 180px;
         font-size: 18px;
     }
 
-    #modview-route-description>textarea {
+    .idModviewRouteDescription>textarea {
         width: 680px;
         height: 140px;
     }
 
-    #modview-md {
+    .idModviewMd {
         width: calc(100vw - 300px);
         height: 260px;
         top: 380px;
         font-size: 18px;
     }
 
-    #modview-md>p {
+    .idModviewMd>p {
         font-size: 19px;
     }
 
-    div#modview {
+    div.idModview {
         width: 280px;
     }
 }
 
 @media screen and (max-width: 768px) {
-    #modview_block {
+    .idModviewBlock {
         left: 0;
         width: 100%;
     }
 
-    #modview-menu {
+    .idModviewMenu {
         left: 50%;
         top: 80px;
         width: 90vw;
     }
 
-    #modview-menu-image {
+    .idModviewMenuImage {
         grid-template-columns: 1fr;
         width: 100%;
     }
 
-    #modview-menu-image>div:nth-child(1),
-    #modview-menu-image>div:nth-child(2) {
+    .idModviewMenuImage>div:nth-child(1),
+    .idModviewMenuImage>div:nth-child(2) {
         width: 100%;
         height: auto;
     }
 
-    #modview-menu-image>div>img {
+    .idModviewMenuImage>div>img {
         width: 100%;
         max-width: 400px;
     }
 
-    #modview-menu-image>div>button {
+    .idModviewMenuImage>div>button {
         width: 80%;
         margin-left: 10%;
     }
 
-    #modview-menu-add,
-    #modview-menu-edit {
+    .idModviewMenuAdd,
+    .idModviewMenuEdit {
         grid-template-columns: 1fr;
         width: 90vw;
     }
 
-    #modview-menu-add>div:not(#modview-md),
-    #modview-menu-edit>div:not(#modview-md) {
+    .idModviewMenuAdd>div:not(.idModviewMd),
+    .idModviewMenuEdit>div:not(.idModviewMd) {
         width: 90%;
     }
 
-    #modview-route-description>textarea {
+    .idModviewRouteDescription>textarea {
         width: 100%;
         max-width: 90vw;
     }
 
-    #modview-md {
+    .idModviewMd {
         width: calc(100vw - 2rem);
         top: 300px;
     }
 
-    div#modview {
+    div.idModview {
         width: 90vw;
     }
+}
+
+.backdropHidden { display: none; }
+.backdropVisible { display: block; }
+}
+
+@layer overrides {
+.routeDescription {
+    height: 180px;
+    grid-column: 1 / span 5;
+
+}
+.routeApply {
+    grid-column: 2 / span 3;
+    height: 40px;
+
+}
 }

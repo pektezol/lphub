@@ -1,8 +1,4 @@
-span>img {
-    scale: 1.1;
-    padding: 4px 0 0 8px;
-}
-
+@layer components {
 .login>button>span {
     max-width: 22ch;
     overflow: hidden;
@@ -22,7 +18,4 @@ span>img {
     display: grid;
     grid-template-columns: 50px auto 200px;
 }
-
-button:disabled {
-    display: none;
 }

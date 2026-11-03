@@ -1,4 +1,6 @@
 import React from "react";
+import autorenderLinkStyles from "@css/AutorenderLink.module.css";
+import { classNames } from "@css/utils";
 
 interface AutorenderLinkProps {
   autorenderID: string;
@@ -17,14 +19,7 @@ const AutorenderLink: React.FC<AutorenderLinkProps> = ({ autorenderID, playerLab
       title={label}
       target="_blank"
       rel="noopener noreferrer"
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        width: "30px",
-        height: "30px",
-        color: playerLabel === "Blue" ? "#39a9ff" : playerLabel === "Orange" ? "#ff9b42" : "inherit",
-      }}
+      className={classNames(autorenderLinkStyles.videoLink, (playerLabel === "Blue" ? autorenderLinkStyles.bluePlayer : (playerLabel === "Orange" ? autorenderLinkStyles.orangePlayer : autorenderLinkStyles.inheritColor)))}
     >
       <svg
         aria-hidden="true"

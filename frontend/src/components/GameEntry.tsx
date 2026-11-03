@@ -2,8 +2,10 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { Game, GameCategoryPortals } from "@customTypes/Game";
-import "@css/Games.css";
+
 import GameCategory from "@components/GameCategory";
+import gamesStyles from "@css/Games.module.css";
+import { classNames, cssVariables } from "@css/utils";
 
 interface GameEntryProps {
   game: Game;
@@ -15,18 +17,18 @@ const GameEntry: React.FC<GameEntryProps> = ({ game }) => {
     : [];
 
   return (
-    <div className='games-page-item'>
-      <Link to={"/games/" + game.id} className='games-page-item-header'>
-        <div style={{ backgroundImage: "url(" + game.image + ")" }} className='games-page-item-header-img'></div>
+    <div className={gamesStyles.gamesPageItem}>
+      <Link to={"/games/" + game.id} className={gamesStyles.gamesPageItemHeader}>
+        <div style={cssVariables({ "--background-image": "url(" + game.image + ")" })} className={classNames(gamesStyles.gamesPageItemHeaderImg, gamesStyles.gameImage)}></div>
         <span><b>{game.name}</b></span>
       </Link>
-      <div id={String(game.id)} className='games-page-item-body'>
+      <div id={String(game.id)} className={gamesStyles.gamesPageItemBody}>
         {categories.length > 0 ? (
           categories.map((category) => (
             <GameCategory cat={category} game={game} key={category.category.id} />
           ))
         ) : (
-          <span className='games-page-item-empty'>No categories available yet.</span>
+          <span className={gamesStyles.gamesPageItemEmpty}>No categories available yet.</span>
         )}
       </div>
     </div>

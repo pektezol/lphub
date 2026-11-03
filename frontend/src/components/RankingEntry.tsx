@@ -1,7 +1,9 @@
+import { classNames } from "@css/utils";
 import React from "react";
 import { Link } from "react-router-dom";
 import { RankingType, SteamRankingType } from "@customTypes/Ranking";
 import { ticks_to_time } from "@utils/Time";
+import rankingsStyles from "@css/Rankings.module.css";
 
 enum RankingCategories {
     rankings_overall,
@@ -19,7 +21,7 @@ interface RankingEntryProps {
 const RankingEntry: React.FC<RankingEntryProps> = (prop) => {
   if ("placement" in prop.curRankingData) {
     return (
-      <div className='leaderboard-entry has-time'>
+      <div className={classNames(rankingsStyles.leaderboardEntry, rankingsStyles.hasTime)}>
         <span>{prop.curRankingData.placement}</span>
         <div>
           <Link to={`/users/${prop.curRankingData.user.steam_id}`}>
@@ -33,7 +35,7 @@ const RankingEntry: React.FC<RankingEntryProps> = (prop) => {
     );
   } else {
     return (
-      <div className='leaderboard-entry'>
+      <div className={rankingsStyles.leaderboardEntry}>
         <span>{prop.currentLeaderboardType == RankingCategories.rankings_singleplayer ? prop.curRankingData.sp_rank : prop.currentLeaderboardType == RankingCategories.rankings_multiplayer ? prop.curRankingData.mp_rank : prop.curRankingData.overall_rank}</span>
         <div>
           <Link to={`/users/${prop.curRankingData.steam_id}`}>

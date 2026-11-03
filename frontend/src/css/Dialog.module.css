@@ -1,3 +1,4 @@
+@layer components {
 .dimmer {
     position: fixed;
     /* WHAT A SCHTUPID ACTION */
@@ -7,7 +8,7 @@
     z-index: 4;
 }
 
-.dialog-container {
+.dialogContainer {
     position: absolute;
     top: 0px;
     left: -350px;
@@ -32,50 +33,50 @@
     font-family: BarlowSemiCondensed-Regular;
 }
 
-.dialog-header {
+.dialogHeader {
     font-size: 24px;
 }
 
-.dialog-element {
+.dialogElement {
     padding: 8px;
 }
 
-.dialog-header,
-.dialog-btns-container {
+.dialogHeader,
+.dialogBtnsContainer {
     background-color: #202232;
 }
 
-.dialog-btns-container {
+.dialogBtnsContainer {
     display: flex;
     justify-content: right;
     border-top: 2px solid #3f4151;
     gap: 8px;
 }
 
-.dialog-header {
+.dialogHeader {
     border-bottom: 2px solid #3f4151;
 }
 
-.dialog-description {
+.dialogDescription {
     font-size: 18px;
     padding: 14px 10px;
     white-space: pre-wrap;
 }
 
-.dialog-btns-container button {
+.dialogBtnsContainer button {
     border-radius: 24px;
     padding: 5px 10px;
 }
 
-.dialog-btns-container button:nth-child(2):hover {
+.dialogBtnsContainer button:nth-child(2):hover {
     background-color: rgb(105, 36, 36);
 }
 
-.dialog-btns-container button:nth-child(2) {
+.dialogBtnsContainer button:nth-child(2) {
     background-color: rgb(147, 45, 45);
 }
 
-.dialog-btns-container button:nth-child(1):hover {
+.dialogBtnsContainer button:nth-child(1):hover {
     background-color: rgb(38, 42, 62);
 }
 
@@ -96,7 +97,7 @@
 }
 
 @media screen and (min-width: 769px) and (max-width: 1024px) {
-    .dialog-container {
+    .dialogContainer {
         left: -280px;
     }
 
@@ -105,23 +106,23 @@
         max-width: 500px;
     }
 
-    .dialog-header {
+    .dialogHeader {
         font-size: 22px;
     }
 
-    .dialog-description {
+    .dialogDescription {
         font-size: 17px;
         padding: 13px 9px;
     }
 
-    .dialog-btns-container button {
+    .dialogBtnsContainer button {
         padding: 6px 12px;
         font-size: 17px;
     }
 }
 
 @media screen and (max-width: 768px) {
-    .dialog-container {
+    .dialogContainer {
         left: 0;
     }
 
@@ -130,12 +131,20 @@
         max-width: 90vw;
     }
 
-    .dialog-header {
+    .dialogHeader {
         font-size: 20px;
     }
 
-    .dialog-description {
+    .dialogDescription {
         font-size: 16px;
         padding: 12px 8px;
     }
+}
+}
+
+@layer overrides {
+.centeredContent {
+    display: flex;
+    justify-content: center;
+}
 }

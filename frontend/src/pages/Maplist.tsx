@@ -2,12 +2,15 @@ import React from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
-import "@css/Maplist.css";
-import "@css/ResourceState.css";
 import { API } from "@api/Api";
 import { Game } from "@customTypes/Game";
 import { GameChapter, GamesChapters } from "@customTypes/Chapters";
 import { portalLabel } from "@utils/Portal";
+import resourceStateStyles from "@css/ResourceState.module.css";
+import portalCountStyles from "@css/PortalCount.module.css";
+import navigationStyles from "@css/Navigation.module.css";
+import maplistStyles from "@css/Maplist.module.css";
+import { classNames, cssVariables } from "@css/utils";
 
 const parseId = (value: string | null | undefined): number | undefined => {
   if (!value) {
@@ -53,12 +56,12 @@ const getSelectedSectionId = (
 };
 
 const getDifficultyClass = (difficulty: number) => {
-  if (difficulty <= 2) return "one";
-  if (difficulty <= 4) return "two";
-  if (difficulty <= 6) return "three";
-  if (difficulty <= 8) return "four";
-  if (difficulty <= 10) return "five";
-  return "one";
+  if (difficulty <= 2) return maplistStyles.one;
+  if (difficulty <= 4) return maplistStyles.two;
+  if (difficulty <= 6) return maplistStyles.three;
+  if (difficulty <= 8) return maplistStyles.four;
+  if (difficulty <= 10) return maplistStyles.five;
+  return maplistStyles.one;
 };
 
 const isValidGameChapter = (
@@ -282,7 +285,7 @@ const Maplist: React.FC = () => {
   }
   if (!game) {
     return (
-      <main className="resource-not-found">
+      <main className={resourceStateStyles.resourceNotFound}>
         <h1>{loadError ? "Game Unavailable" : "Game Not Found"}</h1>
         <p>
           {loadError
@@ -342,10 +345,10 @@ const Maplist: React.FC = () => {
       <Helmet>
         <title>LPHUB | {game.name}</title>
       </Helmet>
-      <section style={{ marginTop: "20px" }}>
+      <section  className={maplistStyles.backNavigation}>
         <Link to="/games">
-          <button className="nav-button" style={{ borderRadius: "20px" }}>
-            <i className="triangle"></i>
+          <button className={classNames(navigationStyles.navButton, maplistStyles.roundedNavigation)} >
+            <i className={navigationStyles.triangle}></i>
             <span>Games List</span>
           </button>
         </Link>
@@ -353,40 +356,36 @@ const Maplist: React.FC = () => {
       <section>
         <h1>{game.name}</h1>
         {sections.length === 0 ? (
-          <p className="game-empty-state">
+          <p className={maplistStyles.gameEmptyState}>
             No sections or maps are available yet.
           </p>
         ) : (
           <>
             <div
-              style={{ backgroundImage: "url(" + game.image + ")" }}
-              className="game-header"
+              style={cssVariables({ "--background-image": "url(" + game.image + ")" })}
+              className={classNames(maplistStyles.gameHeader, maplistStyles.mapImage)}
             >
-              <div className="blur">
-                <div className="game-header-portal-count">
+              <div className={maplistStyles.blur}>
+                <div className={maplistStyles.gameHeaderPortalCount}>
                   {selectedCategory ? (
                     <>
-                      <h2 className="portal-count">
+                      <h2 className={portalCountStyles.portalCount}>
                         {selectedCategory.portal_count}
                       </h2>
                       <h3>{portalLabel(selectedCategory.portal_count)}</h3>
                     </>
                   ) : (
-                    <span className="game-empty-state game-header-empty-state">
+                    <span className={classNames(maplistStyles.gameEmptyState, maplistStyles.gameHeaderEmptyState)}>
                       No categories are available yet.
                     </span>
                   )}
                 </div>
                 {categories.length > 0 && (
-                  <div className="game-header-categories">
+                  <div className={maplistStyles.gameHeaderCategories}>
                     {categories.map((category) => (
                       <button
                         key={category.category.id}
-                        className={
-                          selectedCategoryId === category.category.id
-                            ? "game-cat-button selected"
-                            : "game-cat-button"
-                        }
+                        className={(selectedCategoryId === category.category.id ? classNames(maplistStyles.gameCatButton, maplistStyles.selected) : maplistStyles.gameCatButton)}
                         onClick={() =>
                           updateSearchParam("cat", category.category.id)
                         }
@@ -399,34 +398,29 @@ const Maplist: React.FC = () => {
               </div>
             </div>
 
-            <section className="chapter-select-container">
+            <section>
               <div>
                 <span
-                  style={{
-                    fontSize: "18px",
-                    transform: "translateY(5px)",
-                    display: "block",
-                    marginTop: "10px",
-                  }}
+                  className={maplistStyles.sectionPrompt}
                 >
                   Select {game.section_label}:
                 </span>
               </div>
               <div
                 onClick={() => setDropdownActive((active) => !active)}
-                className="dropdown"
+                className={maplistStyles.dropdown}
               >
                 <span>{displayedSection?.chapter.name}</span>
-                <i className="triangle"></i>
+                <i className={navigationStyles.triangle}></i>
               </div>
               {dropdownActive && (
-                <div className="dropdown-elements">
+                <div className={maplistStyles.dropdownElements}>
                   {sections
                     .filter((section) => !section.is_disabled)
                     .map((section) => (
                       <div
                         key={section.id}
-                        className="dropdown-element"
+                        className={maplistStyles.dropdownElement}
                         onClick={() => updateSearchParam("chapter", section.id)}
                       >
                         {section.name}
@@ -436,9 +430,9 @@ const Maplist: React.FC = () => {
               )}
             </section>
 
-            <section className="maplist">
+            <section className={maplistStyles.maplist}>
               {displayedSection && maps.length === 0 && (
-                <p className="game-empty-state">
+                <p className={maplistStyles.gameEmptyState}>
                   No maps are available in this section yet.
                 </p>
               )}
@@ -454,25 +448,25 @@ const Maplist: React.FC = () => {
                         category.category.id === selectedCategoryId,
                     )?.portal_count) ?? 0;
                 return (
-                  <div key={map.id} className="maplist-entry">
+                  <div key={map.id} className={maplistStyles.maplistEntry}>
                     <Link to={"/maps/" + map.id}>
                       <span>{map.name}</span>
                       <div
-                        className="map-entry-image"
-                        style={{ backgroundImage: "url(" + map.image + ")" }}
+                        className={classNames(maplistStyles.mapEntryImage, maplistStyles.mapImage)}
+                        style={cssVariables({ "--background-image": "url(" + map.image + ")" })}
                       >
-                        <div className="blur map">
+                        <div className={classNames(maplistStyles.blur, maplistStyles.map)}>
                           <span>{mapPortalCount}</span>
                           <span>{portalLabel(mapPortalCount)}</span>
                         </div>
                       </div>
-                      <div className="difficulty-bar">
+                      <div className={maplistStyles.difficultyBar}>
                         <div className={getDifficultyClass(map.difficulty)}>
-                          <div className="difficulty-point"></div>
-                          <div className="difficulty-point"></div>
-                          <div className="difficulty-point"></div>
-                          <div className="difficulty-point"></div>
-                          <div className="difficulty-point"></div>
+                          <div className={maplistStyles.difficultyPoint}></div>
+                          <div className={maplistStyles.difficultyPoint}></div>
+                          <div className={maplistStyles.difficultyPoint}></div>
+                          <div className={maplistStyles.difficultyPoint}></div>
+                          <div className={maplistStyles.difficultyPoint}></div>
                         </div>
                       </div>
                     </Link>

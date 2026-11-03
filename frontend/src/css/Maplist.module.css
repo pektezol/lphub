@@ -1,21 +1,5 @@
-h1 {
-    font-family: "BarlowCondensed-Bold";
-    margin: 0px 0px;
-}
-
-.portal-count {
-    margin: 20px 0px;
-    font-family: "BarlowSemiCondensed-SemiBold";
-    font-size: 96px;
-}
-
-h3 {
-    font-family: "BarlowSemiCondensed-Regular";
-    margin: 0px 10px;
-    font-size: 42px;
-}
-
-.game-header {
+@layer components {
+.gameHeader {
     text-align: center;
     border-radius: 24px;
     overflow: hidden;
@@ -47,21 +31,21 @@ h3 {
     margin-right: 6px;
 }
 
-.game-header-portal-count {
+.gameHeaderPortalCount {
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.game-header-categories {
+.gameHeaderCategories {
     display: flex;
     height: 50px;
     background-color: #202232;
     gap: 2px;
 }
 
-.game-cat-button {
+.gameCatButton {
     background-color: #2b2e46;
     border: 0;
     color: #cdcfdf;
@@ -72,8 +56,8 @@ h3 {
     width: 100%;
 }
 
-.game-cat-button:hover,
-.game-cat-button.selected {
+.gameCatButton:hover,
+.gameCatButton.selected {
     background-color: #202232;
 }
 
@@ -85,23 +69,23 @@ h3 {
     margin: 20px 0px;
 }
 
-.game-empty-state {
+.gameEmptyState {
     color: #cdcfdf;
     font-size: 20px;
     margin: 24px 0px;
 }
 
-.game-header-empty-state {
+.gameHeaderEmptyState {
     margin: 0px;
 }
 
-.maplist-entry {
+.maplistEntry {
     background-color: #202232;
     border-radius: 24px;
     overflow: hidden;
 }
 
-.maplist-entry span {
+.maplistEntry span {
     text-align: center;
     font-size: 20px;
     width: 100%;
@@ -110,24 +94,24 @@ h3 {
     color: #cdcfdf;
 }
 
-.map-entry-image {
+.mapEntryImage {
     display: flex;
     height: 200px;
     background-size: cover;
 }
 
-.difficulty-bar {
+.difficultyBar {
     display: flex;
     margin: 15px 10px;
 }
 
-.difficulty-bar span {
+.difficultyBar span {
     text-align: left;
     margin-left: 0px;
     width: fit-content;
 }
 
-.difficulty-bar div {
+.difficultyBar div {
     display: flex;
     width: 100%;
     align-items: center;
@@ -138,30 +122,30 @@ h3 {
     transform: translateY(1px);
 }
 
-.difficulty-bar div div {
+.difficultyBar div div {
     display: flex;
     height: 3px;
     width: 100%;
     background-color: #2B2E46;
 }
 
-.difficulty-bar div.one .difficulty-point:nth-child(1) {
+.difficultyBar div.one .difficultyPoint:nth-child(1) {
     background-color: #51C355;
 }
 
-.difficulty-bar div.two .difficulty-point:nth-child(-n+2) {
+.difficultyBar div.two .difficultyPoint:nth-child(-n+2) {
     background-color: #8AC93A;
 }
 
-.difficulty-bar div.three .difficulty-point:nth-child(-n+3) {
+.difficultyBar div.three .difficultyPoint:nth-child(-n+3) {
     background-color: #8AC93A;
 }
 
-.difficulty-bar div.four .difficulty-point:nth-child(-n+4) {
+.difficultyBar div.four .difficultyPoint:nth-child(-n+4) {
     background-color: #C35F51;
 }
 
-.difficulty-bar div.five .difficulty-point:nth-child(-n+5) {
+.difficultyBar div.five .difficultyPoint:nth-child(-n+5) {
     background-color: #dd422e;
 }
 
@@ -177,7 +161,7 @@ h3 {
     transform: translate(5px, 8px) rotate(-90deg);
 }
 
-.dropdown-elements {
+.dropdownElements {
     position: absolute;
     z-index: 1000;
     background-color: #2B2E46;
@@ -187,14 +171,14 @@ h3 {
     animation: dropdown-in 0.1s ease;
 }
 
-.dropdown-element {
+.dropdownElement {
     cursor: pointer;
     font-size: 20px;
     border-radius: 2000px;
     padding: 1px 4px;
 }
 
-.dropdown-element:hover {
+.dropdownElement:hover {
     background-color: #202232;
 }
 
@@ -209,24 +193,12 @@ h3 {
 }
 
 @media screen and (min-width: 769px) and (max-width: 1024px) {
-    h1 {
-        font-size: 48px;
-    }
-
-    h3 {
-        font-size: 36px;
-        margin: 0px 8px;
-    }
-
-    .portal-count {
-        font-size: 80px;
-    }
 
     .blur.map span:nth-child(1) {
         font-size: 50px;
     }
 
-    .game-cat-button {
+    .gameCatButton {
         font-size: 20px;
     }
 
@@ -236,40 +208,27 @@ h3 {
         margin: 18px 0px;
     }
 
-    .maplist-entry span {
+    .maplistEntry span {
         font-size: 18px;
     }
 
-    .map-entry-image {
+    .mapEntryImage {
         height: 180px;
     }
 }
 
 @media screen and (max-width: 768px) {
-    h1 {
-        font-size: 36px;
-        text-align: center;
-    }
-
-    h3 {
-        font-size: 28px;
-        margin: 0px 5px;
-    }
-
-    .portal-count {
-        font-size: 60px;
-    }
 
     .blur.map span:nth-child(1) {
         font-size: 40px;
     }
 
-    .game-header-categories {
+    .gameHeaderCategories {
         flex-direction: column;
         height: auto;
     }
 
-    .game-cat-button {
+    .gameCatButton {
         font-size: 18px;
         padding: 10px 0;
     }
@@ -280,11 +239,33 @@ h3 {
         margin: 20px 0px;
     }
 
-    .maplist-entry span {
+    .maplistEntry span {
         font-size: 16px;
     }
 
-    .map-entry-image {
+    .mapEntryImage {
         height: 150px;
     }
+}
+}
+
+@layer overrides {
+.backNavigation {
+    margin-top: 20px;
+}
+
+.roundedNavigation {
+    border-radius: 20px;
+}
+
+.mapImage {
+    background-image: var(--background-image);
+}
+
+.sectionPrompt {
+    font-size: 18px;
+    transform: translateY(5px);
+    display: block;
+    margin-top: 10px;
+}
 }

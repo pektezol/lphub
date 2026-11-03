@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import { API } from "@api/Api";
 import AutorenderLink from "@components/AutorenderLink";
-import "@css/Profile.css";
+
 import type { Game, GameChapters } from "@customTypes/Game";
 import type { GameChapter } from "@customTypes/Chapters";
 import type { Map as GameMap } from "@customTypes/Map";
@@ -26,6 +26,10 @@ import {
   YouTubeIcon,
 } from "@images/Images";
 import { ticks_to_time } from "@utils/Time";
+import profileStyles from "@css/Profile.module.css";
+import navigationStyles from "@css/Navigation.module.css";
+import sectionsStyles from "@css/Sections.module.css";
+import { classNames, cssVariables } from "@css/utils";
 
 const profilePageSize = 20;
 const mapNameCollator = new Intl.Collator(undefined, {
@@ -526,7 +530,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
     return (
       <button
         type="button"
-        className={`profileboard-sort-button${isActive ? ` is-${direction}` : ""}`}
+        className={classNames(profileStyles.profileboardSortButton, (isActive ? (direction === "ascending" ? profileStyles.isAscending : profileStyles.isDescending) : ""))}
         onClick={() => sortRecords(key)}
         aria-pressed={isActive}
         aria-label={`Sort by ${label} ${nextDirection}`}
@@ -542,20 +546,20 @@ const ProfileView: React.FC<ProfileViewProps> = ({
     if (!row.record) {
       return (
         <div
-          className="profileboard-record"
+          className={classNames(profileStyles.profileboardRecord, profileStyles.missingRecord)}
           key={row.mapID}
-          style={{ backgroundColor: "#1b1b20" }}
+
         >
           <Link to={`/maps/${row.mapID}`}>
             <span>{row.mapName}</span>
           </Link>
-          <span style={{ display: "grid" }}>N/A</span>
-          <span style={{ display: "grid" }}>N/A</span>
+          <span  className={profileStyles.gridValue}>N/A</span>
+          <span  className={profileStyles.gridValue}>N/A</span>
           <span>N/A</span>
           <span> </span>
           <span>N/A</span>
           <span>N/A</span>
-          <span style={{ flexDirection: "row-reverse" }} />
+          <span  className={profileStyles.recordActions} />
         </div>
       );
     }
@@ -563,40 +567,36 @@ const ProfileView: React.FC<ProfileViewProps> = ({
     const record = row.record;
     return (
       <div
-        className="profileboard-record"
+        className={classNames(profileStyles.profileboardRecord, (expandedRecordIDs.has(row.mapID) ? profileStyles.expandedRecordHeight : ""))}
         key={row.mapID}
-        style={
-          expandedRecordIDs.has(row.mapID)
-            ? { height: `${record.scores.length * 46}px` }
-            : undefined
-        }
+        style={cssVariables(expandedRecordIDs.has(row.mapID) ? { "--height": `${record.scores.length * 46}px` } : undefined)}
       >
         {record.scores.map((score, index) => (
           <React.Fragment key={score.record_id}>
-            {index !== 0 && <hr style={{ gridColumn: "1 / span 8" }} />}
+            {index !== 0 && <hr  className={profileStyles.recordDivider} />}
             <Link to={`/maps/${row.mapID}`}>
               <span>{row.mapName}</span>
             </Link>
-            <span style={{ display: "grid" }}>{score.score_count}</span>
-            <span style={{ display: "grid" }}>
+            <span  className={profileStyles.gridValue}>{score.score_count}</span>
+            <span  className={profileStyles.gridValue}>
               {score.score_count - record.map_wr_count > 0
                 ? `+${score.score_count - record.map_wr_count}`
                 : "-"}
             </span>
-            <span style={{ display: "grid" }}>
+            <span  className={profileStyles.gridValue}>
               {ticks_to_time(score.score_time)}
             </span>
             <span> </span>
             {index === 0 ? <span>#{record.placement}</span> : <span> </span>}
             <span>{score.date.split("T")[0]}</span>
-            <span style={{ flexDirection: "row-reverse" }}>
+            <span  className={profileStyles.recordActions}>
               <button
                 type="button"
-                style={{ marginRight: "10px" }}
+
                 onClick={() => {
                   void message("Demo Information", `Demo ID: ${score.demo_id}`);
                 }}
-                aria-label="Demo information"
+                aria-label="Demo information" className={profileStyles.recordInfo}
               >
                 <img src={ThreedotIcon} alt="demo_id" />
               </button>
@@ -758,7 +758,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
       {ConfirmDialogComponent}
 
       <main>
-        <section id="section1" className="profile">
+        <section id="section1" className={classNames(profileStyles.profile, profileStyles.idSection1, sectionsStyles.idSection1)}>
           {canEdit ? (
             <div
               id="profile-image"
@@ -772,7 +772,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                   event.preventDefault();
                   void updateProfile();
                 }
-              }}
+              }} className={profileStyles.idProfileImage}
             >
               <img src={profile.avatar_link} alt="profile-image" />
               <span>Refresh</span>
@@ -783,7 +783,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
             </div>
           )}
 
-          <div id="profile-top">
+          <div id="profile-top" className={profileStyles.idProfileTop}>
             <div>
               <div>{profile.user_name}</div>
               <div>
@@ -799,8 +799,8 @@ const ProfileView: React.FC<ProfileViewProps> = ({
               <div>
                 {profile.titles.map((title, index) => (
                   <span
-                    className="titles"
-                    style={{ backgroundColor: `#${title.color}` }}
+                    className={classNames(profileStyles.titles, profileStyles.titleColor)}
+                    style={cssVariables({ "--background-color": `#${title.color}` })}
                     key={`${title.name}-${index}`}
                   >
                     {title.name}
@@ -834,12 +834,12 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                 ""
               ) : (
                 <a href={profile.links.p2sr}>
-                  <img src={PortalIcon} alt="P2SR" style={{ padding: "0" }} />
+                  <img src={PortalIcon} alt="P2SR"  className={profileStyles.unpaddedIcon} />
                 </a>
               )}
             </div>
           </div>
-          <div id="profile-bottom">
+          <div id="profile-bottom" className={profileStyles.idProfileBottom}>
             <div>
               <span>Overall</span>
               <span>
@@ -891,7 +891,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
           </div>
         </section>
 
-        <section id="section2" className="profile">
+        <section id="section2" className={classNames(profileStyles.profile, profileStyles.idSection2, navigationStyles.idSection2, sectionsStyles.idSection2)}>
           <button type="button">
             <img src={FlagIcon} alt="" />
             &nbsp;Player Records
@@ -902,8 +902,8 @@ const ProfileView: React.FC<ProfileViewProps> = ({
           </button>
         </section>
 
-        <section id="section3" className="profile1">
-          <div id="profileboard-nav">
+        <section id="section3" className={classNames(profileStyles.profile1, profileStyles.idSection3, sectionsStyles.idSection3)}>
+          <div id="profileboard-nav" className={profileStyles.idProfileboardNav}>
             <select
               id="select-game"
               value={game}
@@ -955,21 +955,21 @@ const ProfileView: React.FC<ProfileViewProps> = ({
               </select>
             )}
           </div>
-          <div id="profileboard-top">
+          <div id="profileboard-top" className={profileStyles.idProfileboardTop}>
             <span>{renderSortHeader("mapName", "Map Name")}</span>
-            <span style={{ justifyContent: "center" }}>
+            <span  className={profileStyles.centeredCell}>
               {renderSortHeader("portals", "Portals")}
             </span>
-            <span style={{ justifyContent: "center" }}>
+            <span  className={profileStyles.centeredCell}>
               {renderSortHeader("wrDelta", "WRΔ")}
             </span>
-            <span style={{ justifyContent: "center" }}>
+            <span  className={profileStyles.centeredCell}>
               {renderSortHeader("time", "Time")}
             </span>
             <span> </span>
             <span>{renderSortHeader("rank", "Rank")}</span>
             <span>{renderSortHeader("date", "Date")}</span>
-            <div id="page-number">
+            <div id="page-number" className={classNames(profileStyles.idPageNumber, sectionsStyles.idPageNumber)}>
               <div>
                 <button
                   type="button"
@@ -981,8 +981,8 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                   }}
                 >
                   <i
-                    className="triangle"
-                    style={{ position: "relative", left: "-5px" }}
+                    className={classNames(navigationStyles.triangle, profileStyles.previousPageArrow)}
+
                   />
                 </button>
                 <span>
@@ -998,19 +998,15 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                   }}
                 >
                   <i
-                    className="triangle"
-                    style={{
-                      position: "relative",
-                      left: "5px",
-                      transform: "rotate(180deg)",
-                    }}
+                    className={classNames(navigationStyles.triangle, profileStyles.nextPageArrow)}
+
                   />
                 </button>
               </div>
             </div>
           </div>
           <hr />
-          <div id="profileboard-records">
+          <div id="profileboard-records" className={profileStyles.idProfileboardRecords}>
             {pageRows.map(renderProfileBoardRow)}
           </div>
         </section>

@@ -11,9 +11,11 @@ import {
 } from "recharts";
 import { API } from "../api/Api";
 import { PortalCountData, RecordImprovement, ScoreLog } from "../api/Stats";
-import "../css/Homepage.css";
+
 import { Link } from "react-router-dom";
 import { portalLabel } from "@utils/Portal";
+import homepageStyles from "@css/Homepage.module.css";
+import { classNames } from "@css/utils";
 
 interface PortalCountTooltipProps {
   active?: boolean;
@@ -257,15 +259,15 @@ const Homepage: React.FC = () => {
 
     if (active && dataPoint?.payload) {
       return (
-        <div className="custom-tooltip">
-          <p className="tooltip-date">
+        <div className={homepageStyles.customTooltip}>
+          <p className={homepageStyles.tooltipDate}>
             {new Date(dataPoint.payload.date).toLocaleDateString("en-US", {
               year: "numeric",
               month: "long",
               day: "numeric",
             })}
           </p>
-          <p className="tooltip-count">{`Portal Count: ${dataPoint.value}`}</p>
+          <p className={homepageStyles.tooltipCount}>{`Portal Count: ${dataPoint.value}`}</p>
         </div>
       );
     }
@@ -273,37 +275,37 @@ const Homepage: React.FC = () => {
   };
 
   return (
-    <main className="homepage">
+    <main>
       <Helmet>
         <title>LPHUB | Homepage</title>
       </Helmet>
 
-      <section className="hero-section">
-        <div className="hero-content">
-          <h1 className="hero-title">Welcome to Least Portals Hub!</h1>
-          <p className="hero-subtitle">
+      <section className={homepageStyles.heroSection}>
+        <div className={homepageStyles.heroContent}>
+          <h1 className={homepageStyles.heroTitle}>Welcome to Least Portals Hub!</h1>
+          <p className={homepageStyles.heroSubtitle}>
             Your ultimate destination for Portal 2 Least Portals speedrunning.
           </p>
         </div>
       </section>
 
-      <section className="stats-section">
-        <div className="stats-grid">
-          <div className="stats-container">
-            <div className="stats-header">
+      <section className={homepageStyles.statsSection}>
+        <div className={homepageStyles.statsGrid}>
+          <div className={homepageStyles.statsContainer}>
+            <div className={homepageStyles.statsHeader}>
               <h3>Least Portals World Record Timeline</h3>
             </div>
 
             {isLoading ? (
-              <div className="chart-loading">
-                <div className="loading-spinner"></div>
+              <div className={homepageStyles.chartLoading}>
+                <div className={homepageStyles.loadingSpinner}></div>
               </div>
             ) : (selectedMode === "singleplayer"
               ? processedDataSingleplayer
               : processedDataMultiplayer
             ).length > 0 ? (
                 <>
-                  <div className="chart-wrapper">
+                  <div className={homepageStyles.chartWrapper}>
                     <ResponsiveContainer width="100%" height={400}>
                       <AreaChart
                         data={
@@ -374,30 +376,30 @@ const Homepage: React.FC = () => {
                       </AreaChart>
                     </ResponsiveContainer>
                   </div>
-                  <div className="mode-toggle-container">
+                  <div className={homepageStyles.modeToggleContainer}>
                     <button
                       onClick={() => setSelectedMode("singleplayer")}
-                      className={`mode-toggle-button ${selectedMode === "singleplayer" ? "selected" : ""}`}
+                      className={classNames(homepageStyles.modeToggleButton, (selectedMode === "singleplayer" ? homepageStyles.selected : ""))}
                     >
                     Singleplayer
                     </button>
                     <button
                       onClick={() => setSelectedMode("multiplayer")}
-                      className={`mode-toggle-button ${selectedMode === "multiplayer" ? "selected" : ""}`}
+                      className={classNames(homepageStyles.modeToggleButton, (selectedMode === "multiplayer" ? homepageStyles.selected : ""))}
                     >
                     Cooperative
                     </button>
                   </div>
                 </>
               ) : (
-                <div className="chart-empty">
+                <div className={homepageStyles.chartEmpty}>
                   <p>No data available yet.</p>
                 </div>
               )}
           </div>
 
-          <div className="recent-scores-container personal-bests-container">
-            <div className="recent-scores-header">
+          <div className={classNames(homepageStyles.recentScoresContainer, homepageStyles.personalBestsContainer)}>
+            <div className={homepageStyles.recentScoresHeader}>
               <h3>
                 Recent <br />
                 Personal Bests
@@ -405,27 +407,27 @@ const Homepage: React.FC = () => {
             </div>
 
             {isLoadingScores ? (
-              <div className="scores-loading">
-                <div className="loading-spinner"></div>
+              <div className={homepageStyles.scoresLoading}>
+                <div className={homepageStyles.loadingSpinner}></div>
               </div>
             ) : recentScores.length > 0 ? (
-              <div className="recent-scores-list">
+              <div className={homepageStyles.recentScoresList}>
                 {recentScores.map((score, index) => (
-                  <div key={index} className="score-item">
-                    <div className="score-user">
+                  <div key={index} className={homepageStyles.scoreItem}>
+                    <div className={homepageStyles.scoreUser}>
                       <Link to={`/users/${score.user.steam_id}`}>
                         {score.user.user_name}
                       </Link>
                     </div>
-                    <div className="score-map">
+                    <div className={homepageStyles.scoreMap}>
                       <Link to={`/maps/${score.map.id}`}>
                         {score.map.name}
                       </Link>
                       {` | #${score.score_rank}`}
                     </div>
-                    <div className="score-portals">
+                    <div className={homepageStyles.scorePortals}>
                       {score.score_count} {portalLabel(score.score_count)}
-                      <span className="score-date">
+                      <span className={homepageStyles.scoreDate}>
                         {" "}
                         · {new Date(score.date).toISOString().split("T")[0]}
                       </span>
@@ -434,14 +436,14 @@ const Homepage: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <div className="scores-empty">
+              <div className={homepageStyles.scoresEmpty}>
                 <p>No Recent Scores.</p>
               </div>
             )}
           </div>
 
-          <div className="recent-scores-container world-records-container">
-            <div className="recent-scores-header">
+          <div className={classNames(homepageStyles.recentScoresContainer, homepageStyles.worldRecordsContainer)}>
+            <div className={homepageStyles.recentScoresHeader}>
               <h3>
                 Latest <br />
                 World Records
@@ -449,30 +451,30 @@ const Homepage: React.FC = () => {
             </div>
 
             {isLoading ? (
-              <div className="scores-loading">
-                <div className="loading-spinner"></div>
+              <div className={homepageStyles.scoresLoading}>
+                <div className={homepageStyles.loadingSpinner}></div>
               </div>
             ) : recentWorldRecords.length > 0 ? (
-              <div className="recent-scores-list">
+              <div className={homepageStyles.recentScoresList}>
                 {recentWorldRecords.map((record, index) => (
                   <div
                     key={`${record.date}-${record.mode}-${record.map.name}-${index}`}
-                    className="score-item"
+                    className={homepageStyles.scoreItem}
                   >
-                    <div className="score-user">
+                    <div className={homepageStyles.scoreUser}>
                       {record.user.steam_id ? (
                         <Link to={`/users/${record.user.steam_id}`}>
                           {record.user.user_name}
                         </Link>
                       ) : record.user.user_name}
                     </div>
-                    <div className="score-map">
+                    <div className={homepageStyles.scoreMap}>
                       <Link to={`/maps/${record.map.id}`}>{record.map.name}</Link>
                     </div>
-                    <div className="score-portals">
+                    <div className={homepageStyles.scorePortals}>
                       Saved {record.score_delta}{" "}
                       {portalLabel(record.score_delta)}
-                      <span className="score-date">
+                      <span className={homepageStyles.scoreDate}>
                         {" "}
                         · {new Date(record.date).toISOString().split("T")[0]}
                       </span>
@@ -481,7 +483,7 @@ const Homepage: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <div className="scores-empty">
+              <div className={homepageStyles.scoresEmpty}>
                 <p>No world records yet.</p>
               </div>
             )}

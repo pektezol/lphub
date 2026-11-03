@@ -2,7 +2,7 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import { Helmet } from "react-helmet";
 
-import "@css/About.css";
+import aboutStyles from "@css/About.module.css";
 
 const About: React.FC = () => {
 
@@ -26,9 +26,8 @@ const About: React.FC = () => {
     fetchReadme();
   }, []);
 
-
   return (
-    <div id="about">
+    <div id="about" className={aboutStyles.idAbout}>
       <Helmet>
         <title>LPHUB | About</title>
       </Helmet>

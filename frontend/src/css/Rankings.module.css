@@ -1,9 +1,10 @@
-.nav-container {
+@layer components {
+.navContainer {
     justify-content: center;
     display: flex;
 }
 
-.nav-container div {
+.navContainer div {
     display: flex;
     width: 100%;
     background-color: #202232;
@@ -13,7 +14,7 @@
     gap: 3px;
 }
 
-.nav-container button {
+.navContainer button {
     background-color: #2B2E46;
     color: inherit;
     border: none;
@@ -27,30 +28,30 @@
     transition: all 0.1s;
 }
 
-.nav-container button:hover,
-.nav-container button.selected {
+.navContainer button:hover,
+.navContainer button.selected {
     background-color: #202232;
 }
 
-.nav-container button:disabled {
+.navContainer button:disabled {
     cursor: not-allowed;
     opacity: 0.6;
 }
 
-.nav-container button:disabled:hover {
+.navContainer button:disabled:hover {
     background-color: #2B2E46;
 }
 
-.nav-1 div {
+.nav1 div {
     width: 65%;
 }
 
-.nav-2 div {
+.nav2 div {
     width: 100%;
     max-width: 1500px;
 }
 
-.rankings-leaderboard {
+.rankingsLeaderboard {
     width: 100%;
     display: flex;
     justify-content: center;
@@ -59,7 +60,7 @@
     margin-top: 20px;
 }
 
-.ranks-container {
+.ranksContainer {
     display: flex;
     width: 65%;
     padding: 8px 8px;
@@ -69,7 +70,7 @@
     gap: 7px;
 }
 
-.leaderboard-entry {
+.leaderboardEntry {
     display: grid;
     grid-template-columns: 20% 40% 40%;
     text-align: center;
@@ -80,39 +81,39 @@
     padding: 6px 0px;
 }
 
-.leaderboard-entry.has-time {
+.leaderboardEntry.hasTime {
     grid-template-columns: 14% 36% 25% 25%;
 }
 
-.leaderboard-entry div:nth-child(2) {
+.leaderboardEntry div:nth-child(2) {
     text-align: left;
 }
 
-.leaderboard-entry div a {
+.leaderboardEntry div a {
     display: flex;
     align-items: center;
 }
 
-.leaderboard-entry div a span {
+.leaderboardEntry div a span {
     margin-left: 5px;
 }
 
-.leaderboard-entry img {
+.leaderboardEntry img {
     height: 34px;
     border-radius: 2000px;
 }
 
-.leaderboard-entry.header {
+.leaderboardEntry.header {
     background-color: rgba(0, 0, 0, 0);
     font-family: "BarlowSemiCondensed-SemiBold";
     padding: 2px 0px;
 }
 
-.leaderboard-entry.header span:nth-child(2) {
+.leaderboardEntry.header span:nth-child(2) {
     text-align: left;
 }
 
-.ranks-container .splitter {
+.ranksContainer .splitter {
     width: calc(100% - 20px);
     display: flex;
     height: 0.13em;
@@ -121,87 +122,96 @@
     transform: translateX(10px);
 }
 
-.rankings-load-error {
+.rankingsLoadError {
     margin: 30px 0px;
     text-align: center;
 }
 
 @media screen and (min-width: 769px) and (max-width: 1024px) {
-    .nav-container button {
+    .navContainer button {
         font-size: 20px;
         padding: 9px 0px;
     }
 
-    .nav-1 div {
+    .nav1 div {
         width: 100%;
     }
 
-    .nav-2 div {
+    .nav2 div {
         width: 100%;
     }
 
-    .rankings-leaderboard {
+    .rankingsLeaderboard {
         font-size: 18px;
     }
 
-    .ranks-container {
+    .ranksContainer {
         width: 100%;
     }
 
-    .leaderboard-entry {
+    .leaderboardEntry {
         grid-template-columns: 18% 42% 40%;
         font-size: 16px;
     }
 
-    .leaderboard-entry.has-time {
+    .leaderboardEntry.hasTime {
         grid-template-columns: 14% 36% 25% 25%;
     }
 
-    .leaderboard-entry img {
+    .leaderboardEntry img {
         height: 30px;
     }
 }
 
 @media screen and (max-width: 768px) {
 
-    .nav-1 div,
-    .nav-2 div {
+    .nav1 div,
+    .nav2 div {
         width: 100%;
     }
 
-    .nav-1 div {
+    .nav1 div {
         margin-top: 0;
     }
 
-    .nav-2 div {
+    .nav2 div {
         display: grid;
         grid-template-columns: 33% 33% 33%;
         border-radius: 24px;
     }
 
-    .nav-container button {
+    .navContainer button {
         font-size: 18px;
         padding: 8px 0px;
     }
 
-    .ranks-container {
+    .ranksContainer {
         width: 100%;
     }
 
-    .rankings-leaderboard {
+    .rankingsLeaderboard {
         font-size: 16px;
     }
 
-    .leaderboard-entry {
+    .leaderboardEntry {
         grid-template-columns: 15% 50% 35%;
         font-size: 14px;
     }
 
-    .leaderboard-entry.has-time {
+    .leaderboardEntry.hasTime {
         grid-template-columns: 12% 38% 25% 25%;
     }
 
-    .leaderboard-entry img {
+    .leaderboardEntry img {
         height: 28px;
     }
+}
+}
+
+@layer overrides {
+.centeredLoader {
+    display: flex;
+    justify-content: center;
+    margin: 30px 0px;
+}
 }

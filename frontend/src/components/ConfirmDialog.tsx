@@ -1,6 +1,7 @@
+import { classNames } from "@css/utils";
 import React from "react";
 
-import "@css/Dialog.css";
+import dialogStyles from "@css/Dialog.module.css";
 
 interface ConfirmDialogProps {
     title: string;
@@ -11,15 +12,15 @@ interface ConfirmDialogProps {
 
 const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ title, subtitle, onConfirm, onCancel }) => {
   return (
-    <div className='dimmer'>
-      <div className='dialog'>
-        <div className='dialog-element dialog-header'>
+    <div className={dialogStyles.dimmer}>
+      <div className={dialogStyles.dialog}>
+        <div className={classNames(dialogStyles.dialogElement, dialogStyles.dialogHeader)}>
           <span>{title}</span>
         </div>
-        <div className='dialog-element dialog-description'>
+        <div className={classNames(dialogStyles.dialogElement, dialogStyles.dialogDescription)}>
           <span>{subtitle}</span>
         </div>
-        <div className='dialog-element dialog-btns-container'>
+        <div className={classNames(dialogStyles.dialogElement, dialogStyles.dialogBtnsContainer)}>
           <button onClick={onCancel}>Cancel</button>
           <button onClick={onConfirm}>Confirm</button>
         </div>

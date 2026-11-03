@@ -1,5 +1,6 @@
 import React from "react";
 import MessageDialogLoad from "@components/MessageDialogLoad";
+import dialogStyles from "@css/Dialog.module.css";
 
 const useMessageLoad = () => {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -27,7 +28,7 @@ const useMessageLoad = () => {
   };
 
   const MessageDialogLoadComponent = isOpen && (
-    <div className="dialog-container">
+    <div className={dialogStyles.dialogContainer}>
       <MessageDialogLoad title={title}></MessageDialogLoad>
     </div>
   );

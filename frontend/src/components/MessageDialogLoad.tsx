@@ -1,6 +1,8 @@
+import { classNames } from "@css/utils";
 import React from "react";
 
-import "@css/Dialog.css";
+import dialogStyles from "@css/Dialog.module.css";
+import appStyles from "../App.module.css";
 
 interface MessageDialogLoadProps {
   title: string;
@@ -8,17 +10,17 @@ interface MessageDialogLoadProps {
 
 const MessageDialogLoad: React.FC<MessageDialogLoadProps> = ({ title }) => {
   return (
-    <div className='dimmer'>
-      <div className='dialog'>
-        <div className='dialog-element dialog-header'>
+    <div className={dialogStyles.dimmer}>
+      <div className={dialogStyles.dialog}>
+        <div className={classNames(dialogStyles.dialogElement, dialogStyles.dialogHeader)}>
           <span>{title}</span>
         </div>
-        <div className='dialog-element dialog-description'>
-          <div style={{display: "flex", justifyContent: "center"}}>
-                    	<span className="loader"></span>
+        <div className={classNames(dialogStyles.dialogElement, dialogStyles.dialogDescription)}>
+          <div  className={dialogStyles.centeredContent}>
+            <span className={appStyles.loader}></span>
           </div>
         </div>
-        <div className='dialog-element dialog-btns-container'>
+        <div className={classNames(dialogStyles.dialogElement, dialogStyles.dialogBtnsContainer)}>
         </div>
       </div>
     </div>

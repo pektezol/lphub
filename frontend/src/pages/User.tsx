@@ -3,9 +3,10 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { API } from "@api/Api";
 import ProfileView from "@components/ProfileView";
-import "@css/ResourceState.css";
+
 import type { Game } from "@customTypes/Game";
 import type { UserProfile } from "@customTypes/Profile";
+import resourceStateStyles from "@css/ResourceState.module.css";
 
 interface UserProps {
   profile?: UserProfile;
@@ -71,7 +72,7 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
   if (status === "not-found" || status === "error") {
     const failed = status === "error";
     return (
-      <main className="resource-not-found">
+      <main className={resourceStateStyles.resourceNotFound}>
         <h1>{failed ? "Profile Unavailable" : "Profile Not Found"}</h1>
         <p>{failed ? "We couldn’t load this profile. Please try again later." : "We couldn’t find a user with that profile."}</p>
         <Link to="/">Return to Home</Link>

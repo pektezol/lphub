@@ -1,0 +1,214 @@
+@layer components {
+/* Shared typography, controls, and page geometry in the original cascade order. */
+:where(.application) :global(span>img) {
+    scale: 1.1;
+    padding: 4px 0 0 8px;
+}
+
+:where(.application) :global(button:disabled) {
+    display: none;
+}
+
+:where(.application) :global(button>img) {
+    scale: 1.1;
+    width: 20px;
+    padding: 5px;
+}
+
+:where(.application) :global(input[type=text]::placeholder) {
+    color: #2b2e46
+}
+
+:where(.application) :global(input[type=text]:focus) {
+    outline: inherit;
+}
+
+:where(.application :global(a)) {
+    text-decoration: none;
+    height: 40px;
+}
+
+@media screen and (max-width: 768px) {
+
+    :where(.application) :global(button>img) {
+        scale: 2;
+        width: 20px;
+        padding: 5px;
+    }
+}
+
+:where(.application) :global(main) {
+    overflow: auto;
+    overflow-x: hidden;
+    position: relative;
+    width: calc(100% - 320px - 2rem);
+    height: 100vh;
+    left: 320px;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    font-size: 2.5rem;
+    font-family: BarlowSemiCondensed-Regular;
+    color: #cdcfdf;
+    transition: all 0.3s ease;
+}
+
+:where(.application :global(a)) {
+    color: inherit;
+    width: fit-content;
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    :where(.application) :global(main) {
+        width: calc(100% - 280px - 2rem);
+        left: 280px;
+        font-size: 2rem;
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+    :where(.application) :global(main) {
+        width: 100%;
+        left: 0;
+        padding: 5rem 20px 1rem 20px;
+        height: auto;
+        min-height: 100vh;
+        font-size: 1.5rem;
+    }
+}
+
+:where(.application) :global(span>b) {
+    font-size: 56px;
+    font-family: BarlowCondensed-Bold;
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+
+    :where(.application) :global(span>b) {
+        font-size: 48px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+    :where(.application) :global(span>b) {
+        font-size: 40px;
+    }
+}
+
+:where(.application) :global(button),
+:where(.application) :global(input) {
+    background-color: #2b2e46;
+    border: none;
+    font-family: BarlowSemiCondensed-Regular;
+    color: #CDCFDF;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 5px 0px;
+    transition: all 0.2s ease;
+}
+
+:where(.application) :global(button:hover) {
+    background-color: #222538;
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+
+    :where(.application) :global(button),
+:where(.application) :global(input) {
+        font-size: 17px;
+    }
+}
+
+:where(.application) :global(main) {
+    font-size: 24px;
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    :where(.application) :global(main) {
+        font-size: 22px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    :where(.application) :global(main) {
+        font-size: 18px;
+    }
+}
+
+:where(.application) :global(h1) {
+    font-size: 80px;
+}
+
+:where(.application) :global(h2) {
+    font-size: 60px;
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+
+    :where(.application) :global(h1) {
+        font-size: 68px;
+    }
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+
+    :where(.application) :global(h2) {
+        font-size: 52px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+    :where(.application) :global(h1) {
+        font-size: 48px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+    :where(.application) :global(h2) {
+        font-size: 36px;
+    }
+}
+
+:where(.application) :global(h1) {
+    font-family: "BarlowCondensed-Bold";
+    margin: 0px 0px;
+}
+
+:where(.application) :global(h3) {
+    font-family: "BarlowSemiCondensed-Regular";
+    margin: 0px 10px;
+    font-size: 42px;
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    :where(.application) :global(h1) {
+        font-size: 48px;
+    }
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+
+    :where(.application) :global(h3) {
+        font-size: 36px;
+        margin: 0px 8px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    :where(.application) :global(h1) {
+        font-size: 36px;
+        text-align: center;
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+    :where(.application) :global(h3) {
+        font-size: 28px;
+        margin: 0px 5px;
+    }
+}
+}

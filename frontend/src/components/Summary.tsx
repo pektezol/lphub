@@ -12,7 +12,12 @@ import {
 
 import { MapSummary } from "@customTypes/Map";
 import { portalLabel } from "@utils/Portal";
-import "@css/Maps.css";
+
+import mapsStyles from "@css/Maps.module.css";
+import portalCountStyles from "@css/PortalCount.module.css";
+import sectionsStyles from "@css/Sections.module.css";
+import profileStyles from "@css/Profile.module.css";
+import { classNames, cssVariables } from "@css/utils";
 
 interface SummaryProps {
   selectedRun?: number;
@@ -129,7 +134,7 @@ const Summary: React.FC<SummaryProps> = ({
     }
 
     return (
-      <div className="map-history-tooltip">
+      <div className={mapsStyles.mapHistoryTooltip}>
         <p>
           {new Date(point.date).toLocaleDateString("en-US", {
             month: "long",
@@ -161,7 +166,7 @@ const Summary: React.FC<SummaryProps> = ({
 
     return (
       <g
-        className="map-history-point"
+        className={mapsStyles.mapHistoryPoint}
         role="button"
         tabIndex={0}
         aria-label={`${point.scoreCount} ${portalLabel(point.scoreCount)} by ${point.runnerName} on ${new Date(point.date).toLocaleDateString()}`}
@@ -214,32 +219,26 @@ const Summary: React.FC<SummaryProps> = ({
 
   return (
     <>
-      <section id="section3" className="summary1">
+      <section id="section3" className={classNames(profileStyles.idSection3, sectionsStyles.idSection3)}>
         <div
           id="category"
-          style={data.map.image === "" ? { backgroundColor: "#202232" } : {}}
+          className={classNames(mapsStyles.idCategory, (data.map.image === "" ? mapsStyles.darkSurface : ""))}
         >
-          <img src={data.map.image} alt="" id="category-image"></img>
+          <img src={data.map.image} alt="" id="category-image" className={mapsStyles.idCategoryImage}></img>
           <p>
-            <span className="portal-count">
+            <span className={portalCountStyles.portalCount}>
               {selectedRoute?.history.score_count ?? 0}
             </span>{" "}
             {portalLabel(selectedRoute?.history.score_count ?? 0)}
           </p>
           <span
-            style={{
-              gridTemplateColumns:
-                "repeat(" + Math.max(categories.length, 1) + ", 1fr)",
-            }}
+            style={cssVariables({ "--grid-template-columns": "repeat(" + Math.max(categories.length, 1) + ", 1fr)" })} className={mapsStyles.categoryColumns}
           >
             {categories.map((category) => (
               <button
                 key={category.id}
-                style={{
-                  backgroundColor:
-                    selectedCategory === category.id ? "#202232" : "#2b2e46",
-                }}
-                onClick={() => _select_category(category.id)}
+
+                onClick={() => _select_category(category.id)} className={(selectedCategory === category.id ? mapsStyles.darkSurface : mapsStyles.raisedSurface)}
               >
                 {category.name}
               </button>
@@ -247,19 +246,19 @@ const Summary: React.FC<SummaryProps> = ({
           </span>
         </div>
 
-        <div id="history">
-          <div style={{ display: historySelected ? "none" : "block" }}>
+        <div id="history" className={mapsStyles.idHistory}>
+          <div  className={(historySelected ? mapsStyles.hiddenContent : mapsStyles.visibleContent)}>
             {categoryRoutes.length === 0 ? (
               <h5>There are no records for this category.</h5>
             ) : (
               <>
-                <div className="record-top">
+                <div className={mapsStyles.recordTop}>
                   <span>Record</span>
                   <span>First Completion</span>
                   <span>Date</span>
                 </div>
                 <hr />
-                <div id="records">
+                <div id="records" className={mapsStyles.idRecords}>
                   {categoryRoutes.map((r, index) => {
                     const routeIsTheoretical = isTheoreticalRoute(
                       r.history.runner_name,
@@ -267,12 +266,9 @@ const Summary: React.FC<SummaryProps> = ({
 
                     return (
                       <button
-                        className="record"
+                        className={classNames(mapsStyles.record, (selectedRoute === r ? mapsStyles.selectedRecord : mapsStyles.raisedSurface))}
                         key={r.route_id}
-                        style={{
-                          backgroundColor:
-                            selectedRoute === r ? "#161723" : "#2b2e46",
-                        }}
+
                         onClick={() => {
                           _select_run(index);
                         }}
@@ -305,15 +301,15 @@ const Summary: React.FC<SummaryProps> = ({
             )}
           </div>
 
-          <div style={{ display: historySelected ? "block" : "none" }}>
+          <div  className={(historySelected ? mapsStyles.visibleContent : mapsStyles.hiddenContent)}>
             {categoryRoutes.length === 0 ? (
               <h5>There are no records for this category.</h5>
             ) : mapHistoryPoints.length === 0 ? (
-              <p className="map-history-empty">
+              <p className={mapsStyles.mapHistoryEmpty}>
                 There is no completed record history to graph.
               </p>
             ) : (
-              <div className="map-history-chart">
+              <div className={mapsStyles.mapHistoryChart}>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart
                     data={mapHistoryPoints}
@@ -380,18 +376,14 @@ const Summary: React.FC<SummaryProps> = ({
           </div>
           <span>
             <button
-              style={{
-                backgroundColor: historySelected ? "#2b2e46" : "#202232",
-              }}
-              onClick={() => setHistorySelected(false)}
+
+              onClick={() => setHistorySelected(false)} className={(historySelected ? mapsStyles.raisedSurface : mapsStyles.darkSurface)}
             >
               List
             </button>
             <button
-              style={{
-                backgroundColor: historySelected ? "#202232" : "#2b2e46",
-              }}
-              onClick={() => setHistorySelected(true)}
+
+              onClick={() => setHistorySelected(true)} className={(historySelected ? mapsStyles.darkSurface : mapsStyles.raisedSurface)}
             >
               Graph
             </button>
@@ -400,75 +392,75 @@ const Summary: React.FC<SummaryProps> = ({
       </section>
       {selectedRoute && (
         <>
-          <section id="section4" className="summary1">
-            <div id="difficulty">
+          <section id="section4" className={mapsStyles.idSection4}>
+            <div id="difficulty" className={mapsStyles.idDifficulty}>
               <span>Difficulty</span>
               {data.map.difficulty <= 2 && (
-                <span style={{ color: "lime" }}>Very Easy</span>
+                <span  className={mapsStyles.veryEasyText}>Very Easy</span>
               )}
               {data.map.difficulty > 2 && data.map.difficulty <= 4 && (
-                <span style={{ color: "green" }}>Easy</span>
+                <span  className={mapsStyles.easyText}>Easy</span>
               )}
               {data.map.difficulty > 4 && data.map.difficulty <= 6 && (
-                <span style={{ color: "yellow" }}>Medium</span>
+                <span  className={mapsStyles.mediumText}>Medium</span>
               )}
               {data.map.difficulty > 6 && data.map.difficulty <= 8 && (
-                <span style={{ color: "orange" }}>Hard</span>
+                <span  className={mapsStyles.hardText}>Hard</span>
               )}
               {data.map.difficulty > 8 && data.map.difficulty <= 10 && (
-                <span style={{ color: "red" }}>Very Hard</span>
+                <span  className={mapsStyles.veryHardText}>Very Hard</span>
               )}
               <div>
                 {data.map.difficulty <= 2 ? (
                   <div
-                    className="difficulty-rating"
-                    style={{ backgroundColor: "lime" }}
+                    className={classNames(mapsStyles.difficultyRating, mapsStyles.veryEasyRating)}
+
                   ></div>
                 ) : (
-                  <div className="difficulty-rating"></div>
+                  <div className={mapsStyles.difficultyRating}></div>
                 )}
                 {data.map.difficulty > 2 && data.map.difficulty <= 4 ? (
                   <div
-                    className="difficulty-rating"
-                    style={{ backgroundColor: "green" }}
+                    className={classNames(mapsStyles.difficultyRating, mapsStyles.easyRating)}
+
                   ></div>
                 ) : (
-                  <div className="difficulty-rating"></div>
+                  <div className={mapsStyles.difficultyRating}></div>
                 )}
                 {data.map.difficulty > 4 && data.map.difficulty <= 6 ? (
                   <div
-                    className="difficulty-rating"
-                    style={{ backgroundColor: "yellow" }}
+                    className={classNames(mapsStyles.difficultyRating, mapsStyles.mediumRating)}
+
                   ></div>
                 ) : (
-                  <div className="difficulty-rating"></div>
+                  <div className={mapsStyles.difficultyRating}></div>
                 )}
                 {data.map.difficulty > 6 && data.map.difficulty <= 8 ? (
                   <div
-                    className="difficulty-rating"
-                    style={{ backgroundColor: "orange" }}
+                    className={classNames(mapsStyles.difficultyRating, mapsStyles.hardRating)}
+
                   ></div>
                 ) : (
-                  <div className="difficulty-rating"></div>
+                  <div className={mapsStyles.difficultyRating}></div>
                 )}
                 {data.map.difficulty > 8 && data.map.difficulty <= 10 ? (
                   <div
-                    className="difficulty-rating"
-                    style={{ backgroundColor: "red" }}
+                    className={classNames(mapsStyles.difficultyRating, mapsStyles.veryHardRating)}
+
                   ></div>
                 ) : (
-                  <div className="difficulty-rating"></div>
+                  <div className={mapsStyles.difficultyRating}></div>
                 )}
               </div>
             </div>
-            <div id="count">
+            <div id="count" className={mapsStyles.idCount}>
               <span>Completion Count</span>
               <div>{selectedRoute.completion_count}</div>
             </div>
           </section>
 
-          <section id="section5" className="summary1">
-            <div id="description">
+          <section id="section5" className={mapsStyles.idSection5}>
+            <div id="description" className={mapsStyles.idDescription}>
               {selectedRoute.showcase !== "" ? (
                 <iframe
                   title="Showcase video"
@@ -485,14 +477,14 @@ const Summary: React.FC<SummaryProps> = ({
               <h3>
                 Route Description
                 {selectedRouteIsTheoretical && (
-                  <span className="theoretical-route-note">
+                  <span className={mapsStyles.theoreticalRouteNote}>
                     {
                       " *: This is a theoretical route that hasn't been completed yet."
                     }
                   </span>
                 )}
               </h3>
-              <span id="description-text">
+              <span id="description-text" className={mapsStyles.idDescriptionText}>
                 <ReactMarkdown>{selectedRoute.description}</ReactMarkdown>
               </span>
             </div>

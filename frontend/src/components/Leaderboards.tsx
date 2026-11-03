@@ -7,7 +7,12 @@ import { MapLeaderboard } from "@customTypes/Map";
 import { ticks_to_time, time_ago } from "@utils/Time";
 import { API } from "@api/Api";
 import useMessage from "@hooks/UseMessage";
-import "@css/Maps.css";
+
+import mapsStyles from "@css/Maps.module.css";
+import navigationStyles from "@css/Navigation.module.css";
+import sectionsStyles from "@css/Sections.module.css";
+import profileStyles from "@css/Profile.module.css";
+import { classNames } from "@css/utils";
 
 export type LeaderboardStatus =
   | "loading"
@@ -51,31 +56,31 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({
 
   if (status === "loading") {
     return (
-      <section id='section6' className='summary2'>
+      <section id='section6' className={mapsStyles.idSection6}>
       </section>
     );
   }
 
   if (status === "error") {
     return (
-      <section id='section6' className='summary2'>
-        <h1 style={{ textAlign: "center" }}>Could not load competitive boards.</h1>
+      <section id='section6' className={mapsStyles.idSection6}>
+        <h1  className={mapsStyles.centeredText}>Could not load competitive boards.</h1>
       </section>
     );
   }
 
   if (status === "unavailable" || !data) {
     return (
-      <section id='section6' className='summary2'>
-        <h1 style={{ textAlign: "center" }}>Map is not available for competitive boards.</h1>
+      <section id='section6' className={mapsStyles.idSection6}>
+        <h1  className={mapsStyles.centeredText}>Map is not available for competitive boards.</h1>
       </section>
     );
   };
 
   if (status === "empty") {
     return (
-      <section id='section6' className='summary2'>
-        <h1 style={{ textAlign: "center" }}>No records found.</h1>
+      <section id='section6' className={mapsStyles.idSection6}>
+        <h1  className={mapsStyles.centeredText}>No records found.</h1>
       </section>
     );
   };
@@ -83,15 +88,15 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({
   return (
     <div>
       {MessageDialogComponent}
-      <section id='section6' className='summary2'>
+      <section id='section6' className={mapsStyles.idSection6}>
 
         <div id='leaderboard-top'
-          style={data.map.is_coop ? { gridTemplateColumns: "7.5% 40% 7.5% 15% 15% 15%" } : { gridTemplateColumns: "7.5% 30% 10% 20% 17.5% 15%" }}
+          className={classNames(mapsStyles.idLeaderboardTop, sectionsStyles.idLeaderboardTop, (data.map.is_coop ? mapsStyles.coopLeaderboardHeader : mapsStyles.soloLeaderboardHeader))}
         >
           <span>Place</span>
 
           {data.map.is_coop ? (
-            <div id='runner'>
+            <div id='runner' className={mapsStyles.idRunner}>
               <span>Blue</span>
               <span>Orange</span>
             </div>
@@ -102,22 +107,22 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({
           <span>Portals</span>
           <span>Time</span>
           <span>Date</span>
-          <div id='page-number'>
+          <div id='page-number' className={classNames(profileStyles.idPageNumber, sectionsStyles.idPageNumber)}>
             <div>
 
               <button onClick={() => activePage === 1 ? null : onPageChange(activePage - 1)}
-              ><i className='triangle' style={{ position: "relative", left: "-5px", }}></i> </button>
+              ><i className={classNames(navigationStyles.triangle, mapsStyles.previousPageArrow)} ></i> </button>
               <span>{data.pagination.current_page}/{data.pagination.total_pages}</span>
               <button onClick={() => activePage === data.pagination.total_pages ? null : onPageChange(activePage + 1)}
-              ><i className='triangle' style={{ position: "relative", left: "5px", transform: "rotate(180deg)" }}></i> </button>
+              ><i className={classNames(navigationStyles.triangle, mapsStyles.nextPageArrow)} ></i> </button>
             </div>
           </div>
         </div>
         <hr />
         <div id='leaderboard-records'>
           {data.records.map((r, index) => (
-            <span className='leaderboard-record' key={index}
-              style={data.map.is_coop ? { gridTemplateColumns: "3% 4.5% 40% 4% 3.5% 15% 15% 14.5%" } : { gridTemplateColumns: "3% 4.5% 30% 4% 6% 20% 17% 15%" }}
+            <span className={classNames(mapsStyles.leaderboardRecord, (data.map.is_coop ? mapsStyles.coopLeaderboardRecords : mapsStyles.soloLeaderboardRecords))} key={index}
+
             >
               <span>{r.placement}</span>
               <span> </span>
@@ -134,16 +139,16 @@ const Leaderboards: React.FC<LeaderboardsProps> = ({
 
               <span>{r.score_count}</span>
               <span> </span>
-              <span className='hover-popup' popup-text={(r.score_time) + " ticks"}>{ticks_to_time(r.score_time)}</span>
-              <span className='hover-popup' popup-text={r.record_date.replace("T", " ").split(".")[0]}>{time_ago(new Date(r.record_date.replace("T", " ").replace("Z", "")))}</span>
+              <span className={mapsStyles.hoverPopup} popup-text={(r.score_time) + " ticks"}>{ticks_to_time(r.score_time)}</span>
+              <span className={mapsStyles.hoverPopup} popup-text={r.record_date.replace("T", " ").split(".")[0]}>{time_ago(new Date(r.record_date.replace("T", " ").replace("Z", "")))}</span>
 
               {r.kind === "multiplayer" ? (
                 <span>
                   <button onClick={() => { message("Demo Information", `Host Demo ID: ${r.host_demo_id} \nParnter Demo ID: ${r.partner_demo_id}`); }}><img src={ThreedotIcon} alt="demo_id" /></button>
-                  <button title="Download Demo" onClick={() => _download_demo(r.partner_demo_id)}><img src={DownloadIcon} alt="download" style={{ filter: "hue-rotate(160deg) contrast(60%) saturate(1000%)" }} /></button>
-                  <button title="Download Demo" onClick={() => _download_demo(r.host_demo_id)}><img src={DownloadIcon} alt="download" style={{ filter: "hue-rotate(300deg) contrast(60%) saturate(1000%)" }} /></button>
+                  <button title="Download Demo" onClick={() => _download_demo(r.partner_demo_id)}><img src={DownloadIcon} alt="download"  className={mapsStyles.partnerDemoIcon} /></button>
+                  <button title="Download Demo" onClick={() => _download_demo(r.host_demo_id)}><img src={DownloadIcon} alt="download"  className={mapsStyles.hostDemoIcon} /></button>
                   {(r.host_autorender_id || r.partner_autorender_id) && (
-                    <span style={{ display: "inline-flex", flexDirection: "row" }}>
+                    <span  className={mapsStyles.videoLinks}>
                       {r.host_autorender_id && <AutorenderLink autorenderID={r.host_autorender_id} playerLabel="Blue" />}
                       {r.partner_autorender_id && <AutorenderLink autorenderID={r.partner_autorender_id} playerLabel="Orange" />}
                     </span>

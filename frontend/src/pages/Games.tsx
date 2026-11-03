@@ -3,7 +3,8 @@ import { Helmet } from "react-helmet";
 
 import GameEntry from "@components/GameEntry";
 import { Game } from "@customTypes/Game";
-import "@css/Maps.css";
+
+import gamesStyles from "@css/Games.module.css";
 
 interface GamesProps {
   games: Game[];
@@ -13,13 +14,13 @@ const Games: React.FC<GamesProps> = ({ games }) => {
   const gameList = Array.isArray(games) ? games : [];
 
   return (
-    <div className='games-page'>
+    <div className={gamesStyles.gamesPage}>
       <Helmet>
         <title>LPHUB | Games</title>
       </Helmet>
       <section>
-        <div className='games-page-content'>
-          <div className='games-page-item-content'>
+        <div>
+          <div className={gamesStyles.gamesPageItemContent}>
             {gameList.map((game) => (
               <GameEntry game={game} key={game.id} />
             ))}
