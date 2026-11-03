@@ -154,6 +154,10 @@ span.titles {
     transition: background-color .1s;
 }
 
+.idSection2.profile>button.activeSection {
+    background-color: #202232;
+}
+
 .idSection2.profile>button:nth-child(1) {
     border-radius: 24px 0 0 24px;
 }
@@ -607,3 +611,13 @@ span.titles {
 
 }
 }
+
+.filterDropdown { position: relative; margin: 10px 20px 20px; min-width: 0; }
+.filterDropdown > button { width: 100%; height: 50px; border: 0; border-radius: 24px; background: #2b2e46; color: inherit; font: inherit; font-size: 24px; cursor: pointer; }
+.filterDropdown > button:disabled { display: inline-block; opacity: .55; cursor: default; }
+.filterDropdown > button i { transform: rotate(-90deg); margin-left: 8px; }
+.filterOptions { position: absolute; z-index: 1000; top: 100%; width: 100%; max-height: 300px; overflow-y: auto; box-sizing: border-box; background: #222538; border-radius: 10px; animation: profileDropdownIn 0.2s ease; }
+.filterOptions button { display: block; width: 100%; border: 0; border-radius: 0; padding: 8px; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.filterOptions button:hover, .filterOptions button:focus-visible { background: #414669; }
+@keyframes profileDropdownIn { from { opacity: 0; } to { opacity: 1; } }
+@media screen and (max-width: 768px) { .filterDropdown > button { font-size: 16px; } }

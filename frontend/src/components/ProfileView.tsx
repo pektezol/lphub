@@ -32,6 +32,32 @@ import navigationStyles from "@css/Navigation.module.css";
 import sectionsStyles from "@css/Sections.module.css";
 import { classNames, cssVariables } from "@css/utils";
 
+function ProfileDropdown({ label, value, options, disabled = false, onChange }: {
+  label: string; value: string; options: { id: string; name: string }[];
+  disabled?: boolean; onChange: (value: string) => void;
+}) {
+  const [open, setOpen] = React.useState(false);
+  const ref = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    if (disabled) setOpen(false);
+  }, [disabled]);
+  React.useEffect(() => {
+    const close = (event: MouseEvent) => {
+      if (!ref.current?.contains(event.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, []);
+  return <div className={profileStyles.filterDropdown} ref={ref} onKeyDown={(event) => { if (event.key === "Escape") setOpen(false); }}>
+    <button type="button" aria-label={label} aria-expanded={open && !disabled} disabled={disabled} onClick={() => setOpen(!open)}>
+      {options.find((option) => option.id === value)?.name} <i className={navigationStyles.triangle} />
+    </button>
+    {open && !disabled && <div className={profileStyles.filterOptions}>
+      {options.map((option) => <button type="button" key={option.id} onClick={() => { onChange(option.id); setOpen(false); }}>{option.name}</button>)}
+    </div>}
+  </div>;
+}
+
 const profilePageSize = 20;
 const mapNameCollator = new Intl.Collator(undefined, {
   numeric: true,
@@ -210,6 +236,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
   const { message, MessageDialogComponent } = useMessage();
   const { messageLoad, messageLoadClose, MessageDialogLoadComponent } =
     useMessageLoad();
+  const [activeSection, setActiveSection] = React.useState<"records" | "statistics">("records");
   const [pageNumber, setPageNumber] = React.useState(1);
   const [sort, setSort] = React.useState<ProfileRecordSort | null>(null);
   const [expandedRecordIDs, setExpandedRecordIDs] = React.useState<Set<number>>(
@@ -375,7 +402,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
   const selectedGame = games.find((candidate) => candidate.id === Number(game));
   const sectionLabel = selectedGame?.section_label ?? "Chapter";
   const allSectionsLabel =
-    selectedGame?.section_kind === "mode"
+    game === "0" ? "All Courses" : selectedGame?.section_kind === "mode"
       ? "All Modes"
       : "All " + sectionLabel + "s";
 
@@ -893,68 +920,30 @@ const ProfileView: React.FC<ProfileViewProps> = ({
         </section>
 
         <section id="section2" className={classNames(profileStyles.profile, profileStyles.idSection2, navigationStyles.idSection2, sectionsStyles.idSection2)}>
-          <button type="button">
+          <button type="button" className={activeSection === "records" ? profileStyles.activeSection : undefined} aria-pressed={activeSection === "records"} onClick={() => setActiveSection("records")}>
             <img src={FlagIcon} alt="" />
             &nbsp;Player Records
           </button>
-          <button type="button">
+          <button type="button" className={activeSection === "statistics" ? profileStyles.activeSection : undefined} aria-pressed={activeSection === "statistics"} onClick={() => setActiveSection("statistics")}>
             <img src={StatisticsIcon} alt="" />
             &nbsp;Statistics
           </button>
         </section>
 
-        <section id="section3" className={classNames(profileStyles.profile1, profileStyles.idSection3, sectionsStyles.idSection3)}>
+        {activeSection === "records" && <section id="section3" className={classNames(profileStyles.profile1, profileStyles.idSection3, sectionsStyles.idSection3)}>
           <div id="profileboard-nav" className={profileStyles.idProfileboardNav}>
-            <select
-              id="select-game"
-              value={game}
-              onChange={(event) => {
-                setGame(event.currentTarget.value);
-                setChapter("0");
-                setChapterDataResource(undefined);
-                setMapsResource(undefined);
-                resetBoard();
-              }}
-            >
-              <option value="0">All Scores</option>
-              {games.map((availableGame) => (
-                <option value={availableGame.id} key={availableGame.id}>
-                  {availableGame.name}
-                </option>
-              ))}
-            </select>
-
-            {game === "0" ? (
-              <select disabled value="0">
-                <option value="0">{allSectionsLabel}</option>
-              </select>
-            ) : chapterData === null ? (
-              <select disabled aria-label="Loading chapters" value="0">
-                <option value="0" />
-              </select>
-            ) : (
-              <select
-                id="select-chapter"
-                value={chapter}
-                onChange={(event) => {
-                  setChapter(event.currentTarget.value);
-                  setMapsResource(undefined);
-                  resetBoard();
-                }}
-              >
-                <option value="0">{allSectionsLabel}</option>
-                {chapterData.chapters
-                  .filter((availableChapter) => !availableChapter.is_disabled)
-                  .map((availableChapter) => (
-                    <option
-                      value={availableChapter.id}
-                      key={availableChapter.id}
-                    >
-                      {availableChapter.name}
-                    </option>
-                  ))}
-              </select>
-            )}
+            <ProfileDropdown label="Scores" value={game} options={[{ id: "0", name: "All Scores" }, ...games.map((item) => ({ id: String(item.id), name: item.name }))]} onChange={(value) => {
+              setGame(value);
+              setChapter("0");
+              setChapterDataResource(undefined);
+              setMapsResource(undefined);
+              resetBoard();
+            }} />
+            <ProfileDropdown label="Chapters" value={chapter} disabled={game === "0" || chapterData === null} options={[{ id: "0", name: allSectionsLabel }, ...(chapterData?.chapters ?? []).filter((item) => !item.is_disabled).map((item) => ({ id: String(item.id), name: item.name }))]} onChange={(value) => {
+              setChapter(value);
+              setMapsResource(undefined);
+              resetBoard();
+            }} />
           </div>
           <div id="profileboard-top" className={profileStyles.idProfileboardTop}>
             <span>{renderSortHeader("mapName", "Map Name")}</span>
@@ -1010,7 +999,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
           <div id="profileboard-records" className={profileStyles.idProfileboardRecords}>
             {pageRows.map(renderProfileBoardRow)}
           </div>
-        </section>
+        </section>}
       </main>
     </>
   );
