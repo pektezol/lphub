@@ -1,43 +1,57 @@
 services:
   server:
-    image: lphub:latest
     build:
       context: .
       target: lphub
     container_name: lphub-server
     restart: unless-stopped
-    links:
-     - database:lphub.database
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_NAME: ${DB_NAME}
+    ports:
+      - "127.0.0.1:4000:4000"
     volumes:
-     - ./backend:/app
-     - ./rankings:/rankings:ro
+      - ./backend:/app
+      - ./rankings:/rankings:ro
   database:
     image: postgres:15.4
     container_name: lphub-db
     restart: unless-stopped
     ports:
-      - "127.0.0.1:${DB_PORT}:${DB_PORT}"
+      - "127.0.0.1:${DB_PORT}:5432"
     environment:
-      POSTGRES_USER: "${DB_USER}"
-      POSTGRES_PASSWORD: "${DB_PASS}"
-      POSTGRES_DB: "${DB_NAME}"
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
     volumes:
-      - ./docker/volumes/initdb:/docker-entrypoint-initdb.d
+      - ./docker/initdb.sh:/docker-entrypoint-initdb.d/initdb.sh:ro
+      - ./backend/database:/schema:ro
       - ./docker/volumes/postgresql-data:/var/lib/postgresql/data
   proxy:
     image: nginx:stable-alpine3.20
     container_name: lphub-proxy
-    links:
-      - server:lphub.server
+    depends_on:
+      - server
     ports:
-      - 80:80
-      - 443:443
+      - "80:80"
+      - "443:443"
     environment:
-    - NGINX_HOST=lp.hub.local
-    - NGINX_PORT=443
+      NGINX_HOST: lp.hub.local
+      NGINX_PORT: 443
     volumes:
-    - ./docker/volumes/ssl:/ssl:ro
-    - ./docker/volumes/nginx:/etc/nginx/templates
-    - ./docker/volumes/logs/nginx:/var/log/nginx:rw
-    - ./docker/volumes/build:/build:ro
-    - ./backend/docs/swagger.json:/docs/swagger.json:ro
+      - ./docker/volumes/ssl:/ssl:ro
+      - ./docker/volumes/nginx:/etc/nginx/templates:ro
+      - ./docker/volumes/logs/nginx:/var/log/nginx
+      - ./frontend/build:/build:ro
+      - ./backend/docs/swagger.json:/docs/swagger.json:ro

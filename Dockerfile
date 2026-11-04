@@ -1,10 +1,7 @@
-FROM golang:1.23.0-alpine3.20 AS lphub
+FROM golang:1.26-alpine AS lphub
 
 WORKDIR /app
-
+COPY backend/go.mod backend/go.sum ./
+RUN go mod download && go install github.com/air-verse/air@v1.63.0
 COPY backend .
-
-RUN go install github.com/air-verse/air@latest
-RUN go mod download
-
 CMD ["air"]
