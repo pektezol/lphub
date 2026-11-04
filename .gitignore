@@ -1,5 +1,13 @@
 .env
 .vscode
+.vim
 *.sh
 *.txt
 *.dem
+backend/lphub
+backend/tmp
+rankings/rankings
+rankings/tmp
+
+!docker/initdb.sh
+!docker/setup.sh
