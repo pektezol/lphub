@@ -62,7 +62,7 @@ func Statistics(c *gin.Context) {
 	switch kind {
 	case "history":
 		query = `WITH history AS (SELECT h.id,h.map_id,h.user_name,h.score_count,h.record_date, LAG(h.score_count) OVER (PARTITION BY h.map_id ORDER BY h.record_date,h.id) AS previous FROM map_history h JOIN maps m ON m.id=h.map_id WHERE ($1=0 OR m.game_id=$1) AND h.category_id=1 AND h.user_name <> 'Placeholder')
-   SELECT h.id,h.map_id,m.name,h.user_name,COALESCE(u.steam_id,''),h.score_count,h.previous,h.record_date FROM history h JOIN maps m ON m.id=h.map_id LEFT JOIN LATERAL (SELECT steam_id FROM users WHERE user_name=h.user_name ORDER BY updated_at DESC, steam_id LIMIT 1) u ON true ORDER BY h.record_date DESC,h.id DESC LIMIT 21 OFFSET $2`
+   SELECT h.id,h.map_id,m.name,h.user_name,''::text,h.score_count,h.previous,h.record_date FROM history h JOIN maps m ON m.id=h.map_id ORDER BY h.record_date DESC,h.id DESC LIMIT 21 OFFSET $2`
 	case "bests":
 		query = `WITH runs AS (SELECT id,map_id,user_id,score_count,score_time,record_date FROM records_sp WHERE NOT is_deleted UNION ALL SELECT id,map_id,host_id,score_count,score_time,record_date FROM records_mp WHERE NOT is_deleted UNION ALL SELECT id,map_id,partner_id,score_count,score_time,record_date FROM records_mp WHERE NOT is_deleted), best AS (SELECT r.*, ROW_NUMBER() OVER (PARTITION BY r.map_id,r.user_id ORDER BY r.score_count,r.score_time,r.record_date DESC,r.id DESC) AS n FROM runs r JOIN maps m ON m.id=r.map_id WHERE ($1=0 OR m.game_id=$1)) SELECT b.id,b.map_id,m.name,u.user_name,u.steam_id,b.score_count,NULL::integer,b.record_date FROM best b JOIN maps m ON m.id=b.map_id JOIN users u ON u.steam_id=b.user_id WHERE b.n=1 ORDER BY b.record_date DESC,b.id DESC,b.user_id LIMIT 21 OFFSET $2`
 	default:

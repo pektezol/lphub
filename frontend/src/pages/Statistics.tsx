@@ -36,7 +36,7 @@ function Activity({ game, kind, title }: { game: number; kind: "history" | "best
   return <section className={styles.panel}><div className={styles.panelHeader}><div><h2>{title}</h2></div></div>
     {feed.entries.map((entry, index) => <div className={styles.entry} key={`${entry.id}-${entry.user_id}-${index}`}>
       <div className={styles.entryMain}>
-        <div className={styles.entryUser}>{entry.user_id ? <Link to={`/users/${entry.user_id}`}>{entry.user_name}</Link> : entry.user_name}</div>
+        <div className={styles.entryUser}>{kind === "bests" && entry.user_id ? <Link to={`/users/${entry.user_id}`}>{entry.user_name}</Link> : entry.user_name}</div>
         <Link className={styles.entryMap} to={`/maps/${entry.map_id}`}>{entry.map_name}</Link>
       </div>
       <div className={styles.entryDetails}>
