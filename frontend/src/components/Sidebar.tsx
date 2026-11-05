@@ -162,6 +162,8 @@ const Sidebar: React.FC<SidebarProps> = ({
       handle_sidebar_click(1);
     } else if (path === "/games" || path.startsWith("/games/") || path.startsWith("/maps/")) {
       handle_sidebar_click(2);
+    } else if (path === "/statistics") {
+      handle_sidebar_click(8);
     } else if (path.includes("rankings")) {
       handle_sidebar_click(3);
     }
@@ -259,6 +261,9 @@ const Sidebar: React.FC<SidebarProps> = ({
             </Link>
             <Link to="/discussions" tabIndex={-1} onClick={_close_mobile_menu}>
               <button className={sidebarButtonClass(7)}><img src={BookIcon} alt="" /><span>Discussions</span></button>
+            </Link>
+            <Link to="/statistics" tabIndex={-1} onClick={_close_mobile_menu}>
+              <button className={sidebarButtonClass(8)}><img src={HelpIcon} alt="" /><span>Statistics</span></button>
             </Link>
             {/* <Link to="/news" tabIndex={-1}>
             <button className={sidebarStyles.sidebarButton}><img src={NewsIcon} alt="news" /><span>News</span></button>
