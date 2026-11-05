@@ -282,7 +282,7 @@ func formatRecordTime(ticks int) string {
 }
 
 func escapeDiscordMarkdown(value string) string {
-	for _, character := range []string{"\\", "`", "*", "_", "{", "}", "[", "]", "(", ")", "#", "+", "-", ".", "!", "|", ">"} {
+	for _, character := range []string{"\\", "`", "*", "{", "}", "[", "]", "(", ")", "#", "+", "-", ".", "!", "|", ">"} {
 		value = strings.ReplaceAll(value, character, "\\"+character)
 	}
 	return value
