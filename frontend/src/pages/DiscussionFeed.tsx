@@ -138,7 +138,7 @@ export default function DiscussionFeed({ token }: { token?: string }) {
                     .catch(() => E(true));
                 }}
               >
-                Load more
+                Load More
               </button>
             </div>
           )}

@@ -106,7 +106,7 @@ function Activity({ game, kind, title }: { game: number; kind: "history" | "best
         </p>
       )}
       {!loading && !error && feed.entries.length === 0 && <p>No entries yet.</p>}
-      {!loading && !error && feed.more && <button onClick={() => void load(feed.entries.length)}>Load more</button>}
+      {!loading && !error && feed.more && <button onClick={() => void load(feed.entries.length)}>Load More</button>}
     </section>
   );
 }
