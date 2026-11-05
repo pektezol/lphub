@@ -5,15 +5,12 @@ import { Helmet } from "react-helmet";
 import aboutStyles from "@css/About.module.css";
 
 const About: React.FC = () => {
-
   const [aboutText, setAboutText] = React.useState<string>("");
 
   React.useEffect(() => {
     const fetchReadme = async () => {
       try {
-        const response = await fetch(
-          "https://raw.githubusercontent.com/pektezol/lphub/main/README.md"
-        );
+        const response = await fetch("https://raw.githubusercontent.com/pektezol/lphub/main/README.md");
         if (!response.ok) {
           throw new Error("Failed to fetch README");
         }

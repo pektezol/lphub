@@ -10,16 +10,20 @@ export const get_user = async (user_id: string): Promise<UserProfile | undefined
 export const get_profile = async (token: string): Promise<UserProfile> => {
   const response = await axios.get(url("profile"), {
     headers: {
-      "Authorization": token,
-    }
+      Authorization: token,
+    },
   });
   return response.data.data;
 };
 
 export const post_profile = async (token: string) => {
-  await axios.post(url("profile"), {}, {
-    headers: {
-      "Authorization": token,
-    }
-  });
+  await axios.post(
+    url("profile"),
+    {},
+    {
+      headers: {
+        Authorization: token,
+      },
+    },
+  );
 };

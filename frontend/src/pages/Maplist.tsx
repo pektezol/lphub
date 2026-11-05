@@ -24,21 +24,15 @@ const getSelectedSectionId = (
   gameChapters: GamesChapters,
   requestedSectionId: number | undefined,
 ): number | undefined => {
-  const sections = Array.isArray(gameChapters.chapters)
-    ? gameChapters.chapters
-    : [];
+  const sections = Array.isArray(gameChapters.chapters) ? gameChapters.chapters : [];
   const isModeGame = gameChapters.game.section_kind === "mode";
-  const defaultSection = isModeGame
-    ? (sections.find((section) => !section.is_disabled) ?? sections[0])
-    : sections[0];
+  const defaultSection = isModeGame ? (sections.find((section) => !section.is_disabled) ?? sections[0]) : sections[0];
 
   if (requestedSectionId === undefined) {
     return defaultSection?.id;
   }
 
-  const sectionById = sections.find(
-    (section) => section.id === requestedSectionId,
-  );
+  const sectionById = sections.find((section) => section.id === requestedSectionId);
   if (sectionById) {
     return sectionById.id;
   }
@@ -92,9 +86,7 @@ const Maplist: React.FC = () => {
   const [gameChapters, setGameChapters] = React.useState<GamesChapters>();
   const [currentSection, setCurrentSection] = React.useState<GameChapter>();
   const [dropdownActive, setDropdownActive] = React.useState(false);
-  const chapterCacheScopeRef = React.useRef<ChapterCacheScope | undefined>(
-    undefined,
-  );
+  const chapterCacheScopeRef = React.useRef<ChapterCacheScope | undefined>(undefined);
 
   const { id: gameIdParam } = useParams<{ id: string }>();
   const location = useLocation();
@@ -155,10 +147,7 @@ const Maplist: React.FC = () => {
         isCurrent = false;
         cacheScope.isActive = false;
         void Promise.resolve().then(() => {
-          if (
-            chapterCacheScopeRef.current === cacheScope &&
-            cacheScope.lifecycle === lifecycle
-          ) {
+          if (chapterCacheScopeRef.current === cacheScope && cacheScope.lifecycle === lifecycle) {
             cacheScope.chapters.clear();
             cacheScope.requests.clear();
             chapterCacheScopeRef.current = undefined;
@@ -173,12 +162,7 @@ const Maplist: React.FC = () => {
         if (!isCurrent) {
           return;
         }
-        if (
-          !chapters ||
-          !chapters.game ||
-          typeof chapters.game !== "object" ||
-          chapters.game.id !== gameId
-        ) {
+        if (!chapters || !chapters.game || typeof chapters.game !== "object" || chapters.game.id !== gameId) {
           setGame(null);
           setGameChapters(undefined);
           return;
@@ -202,10 +186,7 @@ const Maplist: React.FC = () => {
       isCurrent = false;
       cacheScope.isActive = false;
       void Promise.resolve().then(() => {
-        if (
-          chapterCacheScopeRef.current === cacheScope &&
-          cacheScope.lifecycle === lifecycle
-        ) {
+        if (chapterCacheScopeRef.current === cacheScope && cacheScope.lifecycle === lifecycle) {
           cacheScope.chapters.clear();
           cacheScope.requests.clear();
           chapterCacheScopeRef.current = undefined;
@@ -246,10 +227,7 @@ const Maplist: React.FC = () => {
       const requestedGameId = gameId;
       const createdRequest = API.get_chapters(chapterId.toString())
         .then((section) => {
-          if (
-            requestedGameId === undefined ||
-            !isValidGameChapter(section, chapterId, requestedGameId)
-          ) {
+          if (requestedGameId === undefined || !isValidGameChapter(section, chapterId, requestedGameId)) {
             return undefined;
           }
 
@@ -288,40 +266,27 @@ const Maplist: React.FC = () => {
       <main className={resourceStateStyles.resourceNotFound}>
         <h1>{loadError ? "Game Unavailable" : "Game Not Found"}</h1>
         <p>
-          {loadError
-            ? "We couldn’t load this game. Please try again later."
-            : "We couldn’t find a game with that ID."}
+          {loadError ? "We couldn’t load this game. Please try again later." : "We couldn’t find a game with that ID."}
         </p>
         <Link to="/games">Return to Games</Link>
       </main>
     );
   }
 
-  const sections = Array.isArray(gameChapters?.chapters)
-    ? gameChapters.chapters
-    : [];
+  const sections = Array.isArray(gameChapters?.chapters) ? gameChapters.chapters : [];
   const chapterCacheScope = chapterCacheScopeRef.current;
   const cachedSection =
-    selectedSectionId === undefined ||
-    !chapterCacheScope ||
-    chapterCacheScope.gameId !== gameId
+    selectedSectionId === undefined || !chapterCacheScope || chapterCacheScope.gameId !== gameId
       ? undefined
       : chapterCacheScope.chapters.get(selectedSectionId);
   const displayedSection =
-    cachedSection ??
-    (currentSection?.chapter?.id === selectedSectionId
-      ? currentSection
-      : undefined);
-  const gameCategories = Array.isArray(game.category_portals)
-    ? game.category_portals
-    : [];
+    cachedSection ?? (currentSection?.chapter?.id === selectedSectionId ? currentSection : undefined);
+  const gameCategories = Array.isArray(game.category_portals) ? game.category_portals : [];
   const loadedModeCategories = displayedSection?.chapter.category_portals;
   const modeCategoryFallback = gameCategories.map((category) => ({
     category: category.category,
     portal_count:
-      category.section_portals?.find(
-        (section) => section.section_id === selectedSectionId,
-      )?.portal_count ?? 0,
+      category.section_portals?.find((section) => section.section_id === selectedSectionId)?.portal_count ?? 0,
   }));
   const categories =
     game.section_kind === "mode"
@@ -329,25 +294,19 @@ const Maplist: React.FC = () => {
         ? loadedModeCategories
         : modeCategoryFallback
       : gameCategories;
-  const selectedCategoryId = categories.some(
-    (category) => category.category.id === requestedCategoryId,
-  )
+  const selectedCategoryId = categories.some((category) => category.category.id === requestedCategoryId)
     ? requestedCategoryId
     : categories[0]?.category.id;
-  const selectedCategory = categories.find(
-    (category) => category.category.id === selectedCategoryId,
-  );
-  const maps = Array.isArray(displayedSection?.maps)
-    ? displayedSection.maps
-    : [];
+  const selectedCategory = categories.find((category) => category.category.id === selectedCategoryId);
+  const maps = Array.isArray(displayedSection?.maps) ? displayedSection.maps : [];
   return (
     <main>
       <Helmet>
         <title>LPHUB | {game.name}</title>
       </Helmet>
-      <section  className={maplistStyles.backNavigation}>
+      <section className={maplistStyles.backNavigation}>
         <Link to="/games">
-          <button className={classNames(navigationStyles.navButton, maplistStyles.roundedNavigation)} >
+          <button className={classNames(navigationStyles.navButton, maplistStyles.roundedNavigation)}>
             <i className={navigationStyles.triangle}></i>
             <span>Games List</span>
           </button>
@@ -356,9 +315,7 @@ const Maplist: React.FC = () => {
       <section>
         <h1>{game.name}</h1>
         {sections.length === 0 ? (
-          <p className={maplistStyles.gameEmptyState}>
-            No sections or maps are available yet.
-          </p>
+          <p className={maplistStyles.gameEmptyState}>No sections or maps are available yet.</p>
         ) : (
           <>
             <div
@@ -369,9 +326,7 @@ const Maplist: React.FC = () => {
                 <div className={maplistStyles.gameHeaderPortalCount}>
                   {selectedCategory ? (
                     <>
-                      <h2 className={portalCountStyles.portalCount}>
-                        {selectedCategory.portal_count}
-                      </h2>
+                      <h2 className={portalCountStyles.portalCount}>{selectedCategory.portal_count}</h2>
                       <h3>{portalLabel(selectedCategory.portal_count)}</h3>
                     </>
                   ) : (
@@ -385,10 +340,12 @@ const Maplist: React.FC = () => {
                     {categories.map((category) => (
                       <button
                         key={category.category.id}
-                        className={(selectedCategoryId === category.category.id ? classNames(maplistStyles.gameCatButton, maplistStyles.selected) : maplistStyles.gameCatButton)}
-                        onClick={() =>
-                          updateSearchParam("cat", category.category.id)
+                        className={
+                          selectedCategoryId === category.category.id
+                            ? classNames(maplistStyles.gameCatButton, maplistStyles.selected)
+                            : maplistStyles.gameCatButton
                         }
+                        onClick={() => updateSearchParam("cat", category.category.id)}
                       >
                         <span>{category.category.name}</span>
                       </button>
@@ -400,16 +357,9 @@ const Maplist: React.FC = () => {
 
             <section>
               <div>
-                <span
-                  className={maplistStyles.sectionPrompt}
-                >
-                  Select {game.section_label}:
-                </span>
+                <span className={maplistStyles.sectionPrompt}>Select {game.section_label}:</span>
               </div>
-              <div
-                onClick={() => setDropdownActive((active) => !active)}
-                className={maplistStyles.dropdown}
-              >
+              <div onClick={() => setDropdownActive((active) => !active)} className={maplistStyles.dropdown}>
                 <span>{displayedSection?.chapter.name}</span>
                 <i className={navigationStyles.triangle}></i>
               </div>
@@ -432,21 +382,14 @@ const Maplist: React.FC = () => {
 
             <section className={maplistStyles.maplist}>
               {displayedSection && maps.length === 0 && (
-                <p className={maplistStyles.gameEmptyState}>
-                  No maps are available in this section yet.
-                </p>
+                <p className={maplistStyles.gameEmptyState}>No maps are available in this section yet.</p>
               )}
               {maps.map((map) => {
-                const mapCategories = Array.isArray(map.category_portals)
-                  ? map.category_portals
-                  : [];
+                const mapCategories = Array.isArray(map.category_portals) ? map.category_portals : [];
                 const mapPortalCount =
                   (map.is_disabled
                     ? mapCategories[0]?.portal_count
-                    : mapCategories.find(
-                      (category) =>
-                        category.category.id === selectedCategoryId,
-                    )?.portal_count) ?? 0;
+                    : mapCategories.find((category) => category.category.id === selectedCategoryId)?.portal_count) ?? 0;
                 return (
                   <div key={map.id} className={maplistStyles.maplistEntry}>
                     <Link to={"/maps/" + map.id}>

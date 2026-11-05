@@ -4,7 +4,6 @@ import { Helmet } from "react-helmet";
 
 import Sidebar from "./components/Sidebar";
 
-
 import Profile from "@pages/Profile";
 import Games from "@pages/Games";
 import Maps from "@pages/Maps";
@@ -21,8 +20,6 @@ import Rankings from "@pages/Rankings";
 import Statistics from "@pages/Statistics";
 import { get_user_mod_from_token } from "./utils/Jwt";
 import { AuthenticationState } from "@customTypes/Auth";
-
-
 
 const App: React.FC = () => {
   const [authentication, setAuthentication] = React.useState<AuthenticationState>({ status: "loading" });
@@ -94,15 +91,17 @@ const App: React.FC = () => {
     try {
       const profile = await API.get_profile(authentication.token);
       if (!profile) {
-        setAuthentication((current) => current.status === "authenticated" && current.token === authentication.token
-          ? { status: "guest" }
-          : current);
+        setAuthentication((current) =>
+          current.status === "authenticated" && current.token === authentication.token ? { status: "guest" } : current,
+        );
         return;
       }
 
-      setAuthentication((current) => current.status === "authenticated" && current.token === authentication.token
-        ? { ...current, profile }
-        : current);
+      setAuthentication((current) =>
+        current.status === "authenticated" && current.token === authentication.token
+          ? { ...current, profile }
+          : current,
+      );
     } catch {
       // Keep the current session visible when refreshing its profile fails.
     }
@@ -118,12 +117,17 @@ const App: React.FC = () => {
         <title>LPHUB</title>
         <meta name="description" content="Least Portals Hub" />
       </Helmet>
-      <UploadRunDialog token={token} open={uploadRunDialog} onClose={(updateProfile) => {
-        setUploadRunDialog(false);
-        if (updateProfile) {
-          void _set_profile();
-        }
-      }} games={games} />
+      <UploadRunDialog
+        token={token}
+        open={uploadRunDialog}
+        onClose={(updateProfile) => {
+          setUploadRunDialog(false);
+          if (updateProfile) {
+            void _set_profile();
+          }
+        }}
+        games={games}
+      />
       <Sidebar
         profile={profile}
         onLogout={() => setAuthentication({ status: "guest" })}
@@ -131,16 +135,19 @@ const App: React.FC = () => {
       />
       <Routes>
         <Route path="/" element={<Homepage />} />
-        <Route path="/profile" element={<Profile authentication={authentication} gameData={games} onProfileRefresh={_set_profile} />} />
+        <Route
+          path="/profile"
+          element={<Profile authentication={authentication} gameData={games} onProfileRefresh={_set_profile} />}
+        />
         <Route path="/users/*" element={<User profile={profile} token={token} gameData={games} />} />
         <Route path="/games" element={<Games games={games} />} />
-        <Route path='/games/:id' element={<Maplist />}></Route>
+        <Route path="/games/:id" element={<Maplist />}></Route>
         <Route path="/maps/:id" element={<Maps token={token} isModerator={isModerator} />} />
         <Route path="/statistics" element={<Statistics games={games} />} />
         <Route path="/discussions" element={<DiscussionFeed token={token} />} />
         <Route path="/rules" element={<Rules />} />
         <Route path="/about" element={<About />} />
-        <Route path='/rankings' element={<Rankings />}></Route>
+        <Route path="/rankings" element={<Rankings />}></Route>
         <Route path="*" element={"404"} />
       </Routes>
     </>

@@ -8,9 +8,7 @@ interface AutorenderLinkProps {
 }
 
 const AutorenderLink: React.FC<AutorenderLinkProps> = ({ autorenderID, playerLabel }) => {
-  const label = playerLabel
-    ? `Watch ${playerLabel} Autorendered Video`
-    : "Watch Autorendered Video";
+  const label = playerLabel ? `Watch ${playerLabel} Autorendered Video` : "Watch Autorendered Video";
 
   return (
     <a
@@ -19,15 +17,16 @@ const AutorenderLink: React.FC<AutorenderLinkProps> = ({ autorenderID, playerLab
       title={label}
       target="_blank"
       rel="noopener noreferrer"
-      className={classNames(autorenderLinkStyles.videoLink, (playerLabel === "Blue" ? autorenderLinkStyles.bluePlayer : (playerLabel === "Orange" ? autorenderLinkStyles.orangePlayer : autorenderLinkStyles.inheritColor)))}
+      className={classNames(
+        autorenderLinkStyles.videoLink,
+        playerLabel === "Blue"
+          ? autorenderLinkStyles.bluePlayer
+          : playerLabel === "Orange"
+            ? autorenderLinkStyles.orangePlayer
+            : autorenderLinkStyles.inheritColor,
+      )}
     >
-      <svg
-        aria-hidden="true"
-        viewBox="0 0 24 24"
-        width="30"
-        height="30"
-        fill="currentColor"
-      >
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="30" height="30" fill="currentColor">
         <path d="M6 4v16l14-8z" />
       </svg>
     </a>

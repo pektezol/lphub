@@ -24,7 +24,6 @@ interface UploadRunDialogProps {
 const DEMO_HEADER_SIZE = 1072;
 
 const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose, games }) => {
-
   const { message, MessageDialogComponent } = useMessage();
   const { confirm, ConfirmDialogComponent } = useConfirm();
   const { messageLoad, messageLoadUpdate, messageLoadClose, MessageDialogLoadComponent } = useMessageLoad();
@@ -51,9 +50,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
   const fileInputRefPartner = React.useRef<HTMLInputElement>(null);
 
   const _clear_partner_demo = React.useCallback(() => {
-    setUploadRunContent((content) => content.partner_demo === null
-      ? content
-      : { ...content, partner_demo: null });
+    setUploadRunContent((content) => (content.partner_demo === null ? content : { ...content, partner_demo: null }));
     setDragHighlightPartner(false);
     if (fileInputRefPartner.current) {
       fileInputRefPartner.current.value = "";
@@ -147,7 +144,10 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
 
     const { host_demo, partner_demo } = uploadRunContent;
     if (host_demo === null) {
-      await message("Error", selectedGame.is_coop ? "You must select a host demo to upload." : "You must select a demo to upload.");
+      await message(
+        "Error",
+        selectedGame.is_coop ? "You must select a host demo to upload." : "You must select a demo to upload.",
+      );
       return;
     }
 
@@ -173,7 +173,10 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
     } catch {
       messageLoadClose();
       setIsUploading(false);
-      await message("Error", "Error while processing demo: Unable to read the demo header. Please select a valid .dem file.");
+      await message(
+        "Error",
+        "Error while processing demo: Unable to read the demo header. Please select a valid .dem file.",
+      );
       return;
     }
     messageLoadClose();
@@ -191,7 +194,10 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
       return;
     }
 
-    const userConfirmed = await confirm("Upload Record", `Map Name: ${mapName}\n\nThe score will be verified after upload.\n\nAre you sure you want to upload this demo?`);
+    const userConfirmed = await confirm(
+      "Upload Record",
+      `Map Name: ${mapName}\n\nThe score will be verified after upload.\n\nAre you sure you want to upload this demo?`,
+    );
 
     if (!userConfirmed) {
       setIsUploading(false);
@@ -204,19 +210,11 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
     let success = false;
     let response = "Could not upload the demo. Please try again.";
     try {
-      const result = await API.post_record(
-        token,
-        uploadRunContent,
-        map.id,
-        selectedGame.is_coop,
-        (percentage) => {
-          messageLoadUpdate(
-            percentage === 100
-              ? `Processing uploaded ${uploadTarget}...`
-              : `Uploading ${uploadTarget}... ${percentage}%`,
-          );
-        },
-      );
+      const result = await API.post_record(token, uploadRunContent, map.id, selectedGame.is_coop, (percentage) => {
+        messageLoadUpdate(
+          percentage === 100 ? `Processing uploaded ${uploadTarget}...` : `Uploading ${uploadTarget}... ${percentage}%`,
+        );
+      });
       success = result.success;
       response = result.message;
       if (success && result.data) {
@@ -253,9 +251,9 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
     setDragHighlight(false);
     setDropdown1Vis(false);
     setDropdown2Vis(false);
-    setSelectedGameID((currentGameID) => games.some((game) => game.id === currentGameID)
-      ? currentGameID
-      : games[0]?.id ?? null);
+    setSelectedGameID((currentGameID) =>
+      games.some((game) => game.id === currentGameID) ? currentGameID : (games[0]?.id ?? null),
+    );
   }, [open, games]);
 
   React.useEffect(() => {
@@ -274,84 +272,166 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
         {MessageDialogLoadComponent}
         {ConfirmDialogComponent}
 
-        <div id='upload-run-menu' className={uploadRunDialogStyles.idUploadRunMenu}>
-          <div id='upload-run-menu-add' className={uploadRunDialogStyles.idUploadRunMenuAdd}>
-            <div id='upload-run-route-category'>
-              <div  className={classNames(uploadRunDialogStyles.uploadRunDropdownContainer, uploadRunDialogStyles.uploadRunItem, uploadRunDialogStyles.gameField)}>
-                <h3  className={uploadRunDialogStyles.gameHeading}>Select Game</h3>
-                <div onClick={games.length > 0 ? () => _handle_dropdowns(1) : undefined}  className={classNames(uploadRunDialogStyles.gamePicker, (games.length > 0 ? uploadRunDialogStyles.gameSelectable : uploadRunDialogStyles.gameUnavailable))}>
+        <div id="upload-run-menu" className={uploadRunDialogStyles.idUploadRunMenu}>
+          <div id="upload-run-menu-add" className={uploadRunDialogStyles.idUploadRunMenuAdd}>
+            <div id="upload-run-route-category">
+              <div
+                className={classNames(
+                  uploadRunDialogStyles.uploadRunDropdownContainer,
+                  uploadRunDialogStyles.uploadRunItem,
+                  uploadRunDialogStyles.gameField,
+                )}
+              >
+                <h3 className={uploadRunDialogStyles.gameHeading}>Select Game</h3>
+                <div
+                  onClick={games.length > 0 ? () => _handle_dropdowns(1) : undefined}
+                  className={classNames(
+                    uploadRunDialogStyles.gamePicker,
+                    games.length > 0 ? uploadRunDialogStyles.gameSelectable : uploadRunDialogStyles.gameUnavailable,
+                  )}
+                >
                   <div className={uploadRunDialogStyles.dropdownCur}>{selectedGame?.name ?? "Loading games..."}</div>
-                  <i  className={classNames(navigationStyles.triangle, uploadRunDialogStyles.gamePickerArrow)}></i>
+                  <i className={classNames(navigationStyles.triangle, uploadRunDialogStyles.gamePickerArrow)}></i>
                 </div>
-                <div  className={classNames((dropdown1Vis ? uploadRunDialogStyles.uploadRunDropdown : classNames(uploadRunDialogStyles.uploadRunDropdown, uploadRunDialogStyles.hidden)), uploadRunDialogStyles.gameOptions)}>
+                <div
+                  className={classNames(
+                    dropdown1Vis
+                      ? uploadRunDialogStyles.uploadRunDropdown
+                      : classNames(uploadRunDialogStyles.uploadRunDropdown, uploadRunDialogStyles.hidden),
+                    uploadRunDialogStyles.gameOptions,
+                  )}
+                >
                   {games.map((game) => (
-                    <div onClick={() => { _handle_game_select(game.id); _handle_dropdowns(1); }} key={game.id}>{game.name}</div>
+                    <div
+                      onClick={() => {
+                        _handle_game_select(game.id);
+                        _handle_dropdowns(1);
+                      }}
+                      key={game.id}
+                    >
+                      {game.name}
+                    </div>
                   ))}
                 </div>
               </div>
 
-              {
-                selectedGame &&
-                (
-                  <>
-
-                    <div>
-                      <h3  className={uploadRunDialogStyles.demoHeading}>Host Demo</h3>
-                      <div onClick={() => { _handle_file_click(true); }} onDragOver={(e) => { _handle_drag_over(e, true); }} onDrop={(e) => { _handle_drop(e, true); }} onDragLeave={(e) => { _handle_drag_leave(e, true); }} className={classNames(uploadRunDialogStyles.uploadRunDragArea, (dragHightlight ? uploadRunDialogStyles.uploadRunDragAreaHighlight : ""), (uploadRunContent.host_demo ? uploadRunDialogStyles.uploadRunDragAreaHidden : ""))}>
-                        <input ref={fileInputRef} type="file" name="host_demo" id="host_demo" accept=".dem" onChange={(e) => _handle_file_change(e.target.files, true)} className={uploadRunDialogStyles.idHostDemo} />
-                        {!uploadRunContent.host_demo ?
+              {selectedGame && (
+                <>
+                  <div>
+                    <h3 className={uploadRunDialogStyles.demoHeading}>Host Demo</h3>
+                    <div
+                      onClick={() => {
+                        _handle_file_click(true);
+                      }}
+                      onDragOver={(e) => {
+                        _handle_drag_over(e, true);
+                      }}
+                      onDrop={(e) => {
+                        _handle_drop(e, true);
+                      }}
+                      onDragLeave={(e) => {
+                        _handle_drag_leave(e, true);
+                      }}
+                      className={classNames(
+                        uploadRunDialogStyles.uploadRunDragArea,
+                        dragHightlight ? uploadRunDialogStyles.uploadRunDragAreaHighlight : "",
+                        uploadRunContent.host_demo ? uploadRunDialogStyles.uploadRunDragAreaHidden : "",
+                      )}
+                    >
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        name="host_demo"
+                        id="host_demo"
+                        accept=".dem"
+                        onChange={(e) => _handle_file_change(e.target.files, true)}
+                        className={uploadRunDialogStyles.idHostDemo}
+                      />
+                      {!uploadRunContent.host_demo ? (
+                        <div>
+                          <span>Drag and drop</span>
                           <div>
-                            <span>Drag and drop</span>
-                            <div>
-                              <span  className={uploadRunDialogStyles.uploadHint}>Or click here</span><br />
-                              <button  className={uploadRunDialogStyles.fileUploadButton}>Upload</button>
-                            </div>
+                            <span className={uploadRunDialogStyles.uploadHint}>Or click here</span>
+                            <br />
+                            <button className={uploadRunDialogStyles.fileUploadButton}>Upload</button>
                           </div>
-                          : null}
+                        </div>
+                      ) : null}
 
-                        <span className={uploadRunDialogStyles.uploadRunDemoName}>{uploadRunContent.host_demo?.name}</span>
-                      </div>
-                      {
-                        selectedGame.is_coop &&
-                        (
-                          <>
-                            <div>
-                              <h3  className={uploadRunDialogStyles.demoHeading}>Partner Demo</h3>
-                              <div onClick={() => { _handle_file_click(false); }} onDragOver={(e) => { _handle_drag_over(e, false); }} onDrop={(e) => { _handle_drop(e, false); }} onDragLeave={(e) => { _handle_drag_leave(e, false); }} className={classNames(uploadRunDialogStyles.uploadRunDragArea, (dragHightlightPartner ? uploadRunDialogStyles.uploadRunDragAreaHighlightPartner : ""), (uploadRunContent.partner_demo ? uploadRunDialogStyles.uploadRunDragAreaHidden : ""))}>
-                                <input ref={fileInputRefPartner} type="file" name="partner_demo" id="partner_demo" accept=".dem" onChange={(e) => _handle_file_change(e.target.files, false)} className={uploadRunDialogStyles.idPartnerDemo} />						  {!uploadRunContent.partner_demo ?
-                                  <div>
-                                    <span>Drag and drop</span>
-                                    <div>
-                                      <span  className={uploadRunDialogStyles.uploadHint}>Or click here</span><br />
-                                      <button  className={uploadRunDialogStyles.fileUploadButton}>Upload</button>
-                                    </div>
-                                  </div>
-                                  : null}
-
-                                <span className={uploadRunDialogStyles.uploadRunDemoName}>{uploadRunContent.partner_demo?.name}</span>
+                      <span className={uploadRunDialogStyles.uploadRunDemoName}>
+                        {uploadRunContent.host_demo?.name}
+                      </span>
+                    </div>
+                    {selectedGame.is_coop && (
+                      <>
+                        <div>
+                          <h3 className={uploadRunDialogStyles.demoHeading}>Partner Demo</h3>
+                          <div
+                            onClick={() => {
+                              _handle_file_click(false);
+                            }}
+                            onDragOver={(e) => {
+                              _handle_drag_over(e, false);
+                            }}
+                            onDrop={(e) => {
+                              _handle_drop(e, false);
+                            }}
+                            onDragLeave={(e) => {
+                              _handle_drag_leave(e, false);
+                            }}
+                            className={classNames(
+                              uploadRunDialogStyles.uploadRunDragArea,
+                              dragHightlightPartner ? uploadRunDialogStyles.uploadRunDragAreaHighlightPartner : "",
+                              uploadRunContent.partner_demo ? uploadRunDialogStyles.uploadRunDragAreaHidden : "",
+                            )}
+                          >
+                            <input
+                              ref={fileInputRefPartner}
+                              type="file"
+                              name="partner_demo"
+                              id="partner_demo"
+                              accept=".dem"
+                              onChange={(e) => _handle_file_change(e.target.files, false)}
+                              className={uploadRunDialogStyles.idPartnerDemo}
+                            />{" "}
+                            {!uploadRunContent.partner_demo ? (
+                              <div>
+                                <span>Drag and drop</span>
+                                <div>
+                                  <span className={uploadRunDialogStyles.uploadHint}>Or click here</span>
+                                  <br />
+                                  <button className={uploadRunDialogStyles.fileUploadButton}>Upload</button>
+                                </div>
                               </div>
-                            </div>
-                          </>
-                        )
-                      }
-                    </div>
-                    <div>
-
-                    </div>
-
-                  </>
-                )
-              }
+                            ) : null}
+                            <span className={uploadRunDialogStyles.uploadRunDemoName}>
+                              {uploadRunContent.partner_demo?.name}
+                            </span>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                  <div></div>
+                </>
+              )}
             </div>
             <div className={uploadRunDialogStyles.uploadRunButtonsContainer}>
-              <button onClick={_upload_run} disabled={!selectedGame || isUploading}>Submit</button>
-              <button disabled={isUploading} onClick={() => {
-                onClose(false);
-                setUploadRunContent({
-                  host_demo: null,
-                  partner_demo: null,
-                });
-              }}>Cancel</button>
+              <button onClick={_upload_run} disabled={!selectedGame || isUploading}>
+                Submit
+              </button>
+              <button
+                disabled={isUploading}
+                onClick={() => {
+                  onClose(false);
+                  setUploadRunContent({
+                    host_demo: null,
+                    partner_demo: null,
+                  });
+                }}
+              >
+                Cancel
+              </button>
             </div>
           </div>
         </div>
@@ -359,10 +439,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
     );
   }
 
-  return (
-    <></>
-  );
-
+  return <></>;
 };
 
 export default UploadRunDialog;

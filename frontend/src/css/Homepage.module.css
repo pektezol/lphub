@@ -1,152 +1,152 @@
 @layer components {
-.heroSection {
+  .heroSection {
     text-align: center;
     padding: 20px 20px;
     margin: 25px 20px;
     background: #202232;
     border-radius: 24px;
-}
+  }
 
-.heroContent {
+  .heroContent {
     max-width: 800px;
     margin: 0 auto;
-}
+  }
 
-.heroTitle {
+  .heroTitle {
     font-size: 56px;
     font-family: BarlowCondensed-Bold;
-    color: #FFF;
+    color: #fff;
     margin-bottom: 20px;
     line-height: 1.2;
-}
+  }
 
-.heroSubtitle {
+  .heroSubtitle {
     font-size: 24px;
     font-family: BarlowSemiCondensed-Regular;
-    color: #CDCFDF;
+    color: #cdcfdf;
     margin: 0;
-}
+  }
 
-.statsSection {
+  .statsSection {
     margin: 25px 20px;
-}
+  }
 
-.statsGrid {
+  .statsGrid {
     display: grid;
     grid-template-columns: 240px minmax(0, 1fr) 240px;
     gap: 20px;
-}
+  }
 
-.statsContainer {
+  .statsContainer {
     grid-column: 2;
     grid-row: 1;
     background: #202232;
     border-radius: 24px;
     padding: 20px;
-}
+  }
 
-.statsHeader {
+  .statsHeader {
     text-align: center;
     margin-bottom: 30px;
-}
+  }
 
-.statsHeader h3 {
+  .statsHeader h3 {
     font-size: 32px;
     font-family: BarlowCondensed-Bold;
-    color: #FFF;
+    color: #fff;
     margin-top: 0px;
     margin-bottom: 10px;
-}
+  }
 
-.statsHeader p {
-    color: #CDCFDF;
+  .statsHeader p {
+    color: #cdcfdf;
     font-size: 20px;
     font-family: BarlowSemiCondensed-Regular;
     margin: 0;
-}
+  }
 
-/* Chart Wrapper */
-.chartWrapper {
+  /* Chart Wrapper */
+  .chartWrapper {
     background: #2b2e46;
     border-radius: 20px;
     padding: 20px 10px;
     margin-top: 20px;
-}
+  }
 
-.chartLoading {
+  .chartLoading {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 60px 20px;
-    color: #CDCFDF;
-}
+    color: #cdcfdf;
+  }
 
-.loadingSpinner {
+  .loadingSpinner {
     width: 48px;
     height: 48px;
-    border: 5px solid #FFF;
+    border: 5px solid #fff;
     border-bottom-color: transparent;
     border-radius: 50%;
     display: inline-block;
     box-sizing: border-box;
     animation: rotation 1s linear infinite;
     margin-bottom: 20px;
-}
+  }
 
-@keyframes rotation {
+  @keyframes rotation {
     0% {
-        transform: rotate(0deg);
+      transform: rotate(0deg);
     }
 
     100% {
-        transform: rotate(360deg);
+      transform: rotate(360deg);
     }
-}
+  }
 
-.chartLoading p {
+  .chartLoading p {
     font-size: 20px;
     font-family: BarlowSemiCondensed-Regular;
     margin: 0;
-}
+  }
 
-.chartEmpty {
+  .chartEmpty {
     text-align: center;
     padding: 60px 20px;
-    color: #CDCFDF;
+    color: #cdcfdf;
     font-size: 20px;
     font-family: BarlowSemiCondensed-Regular;
-}
+  }
 
-/* Custom Tooltip */
-.customTooltip {
+  /* Custom Tooltip */
+  .customTooltip {
     background: #2b2e46;
     border-radius: 12px;
     padding: 12px 16px;
-}
+  }
 
-.tooltipDate {
-    color: #CDCFDF;
+  .tooltipDate {
+    color: #cdcfdf;
     font-family: BarlowSemiCondensed-Regular;
     font-size: 16px;
     margin: 0 0 4px 0;
-}
+  }
 
-.tooltipCount {
-    color: #FFF;
+  .tooltipCount {
+    color: #fff;
     font-family: BarlowSemiCondensed-SemiBold;
     font-size: 22px;
     margin: 0;
-}
+  }
 
-/* Mode Toggle Buttons */
-.modeToggleContainer {
+  /* Mode Toggle Buttons */
+  .modeToggleContainer {
     display: flex;
     justify-content: center;
     margin-top: 20px;
-}
+  }
 
-.modeToggleButton {
+  .modeToggleButton {
     background-color: #2b2e46;
     padding: 10px 20px;
     border: 0;
@@ -157,23 +157,23 @@
     transition: all 0.1s;
     flex: 1;
     max-width: 150px;
-}
+  }
 
-.modeToggleButton:first-child {
+  .modeToggleButton:first-child {
     border-radius: 5px 0 0 5px;
-}
+  }
 
-.modeToggleButton:last-child {
+  .modeToggleButton:last-child {
     border-radius: 0 5px 5px 0;
-}
+  }
 
-.modeToggleButton:hover,
-.modeToggleButton.selected {
+  .modeToggleButton:hover,
+  .modeToggleButton.selected {
     background-color: #202232;
-}
+  }
 
-/* Recent Scores */
-.recentScoresContainer {
+  /* Recent Scores */
+  .recentScoresContainer {
     box-sizing: border-box;
     width: 100%;
     background: #202232;
@@ -181,430 +181,430 @@
     padding: 20px;
     display: flex;
     flex-direction: column;
-}
+  }
 
-.personalBestsContainer {
+  .personalBestsContainer {
     grid-column: 3;
     grid-row: 1;
-}
+  }
 
-.worldRecordsContainer {
+  .worldRecordsContainer {
     grid-column: 1;
     grid-row: 1;
-}
+  }
 
-.recentScoresHeader {
+  .recentScoresHeader {
     text-align: center;
     margin-bottom: 20px;
-}
+  }
 
-.recentScoresHeader h3 {
+  .recentScoresHeader h3 {
     font-size: 32px;
     font-family: BarlowCondensed-Bold;
-    color: #FFF;
+    color: #fff;
     margin: 0;
-}
+  }
 
-.scoresLoading {
+  .scoresLoading {
     display: flex;
     justify-content: center;
     align-items: center;
     flex: 1;
     padding: 40px 20px;
-}
+  }
 
-.recentScoresList {
+  .recentScoresList {
     display: flex;
     flex-direction: column;
     gap: 10px;
-}
+  }
 
-.scoreItem {
+  .scoreItem {
     background: #2b2e46;
     border-radius: 16px;
     padding: 12px 16px;
     transition: background-color 0.15s;
-}
+  }
 
-.scoreItem:hover {
+  .scoreItem:hover {
     background: #353854;
-}
+  }
 
-.scoreUser {
+  .scoreUser {
     font-family: BarlowSemiCondensed-SemiBold;
     font-size: 18px;
-    color: #FFF;
+    color: #fff;
     line-height: 1.2;
     margin-bottom: 4px;
-}
+  }
 
-.scoreMap {
+  .scoreMap {
     font-family: BarlowSemiCondensed-Regular;
     font-size: 16px;
-    color: #CDCFDF;
+    color: #cdcfdf;
     line-height: 1.2;
     margin-bottom: 2px;
-}
+  }
 
-.scoreUser a,
-.scoreMap a {
+  .scoreUser a,
+  .scoreMap a {
     color: inherit;
     font: inherit;
     text-decoration: none;
-}
+  }
 
-.scorePortals {
+  .scorePortals {
     font-family: BarlowSemiCondensed-Regular;
     font-size: 14px;
     color: #888;
     line-height: 1.2;
-}
+  }
 
-.scoreDate {
+  .scoreDate {
     font-size: 11px;
     color: #666;
-}
+  }
 
-.scoresEmpty {
+  .scoresEmpty {
     text-align: center;
     padding: 40px 20px;
-    color: #CDCFDF;
+    color: #cdcfdf;
     font-size: 16px;
     font-family: BarlowSemiCondensed-Regular;
-}
+  }
 
-/* Info Section */
-.infoSection {
+  /* Info Section */
+  .infoSection {
     margin: 20px;
-}
+  }
 
-.infoCards {
+  .infoCards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
-}
+  }
 
-.infoCard {
+  .infoCard {
     background: #202232;
     border-radius: 24px;
     padding: 30px;
     text-align: center;
     transition: background-color 0.15s;
-}
+  }
 
-.infoCard:hover {
+  .infoCard:hover {
     background: #2b2e46;
-}
+  }
 
-.infoIcon {
+  .infoIcon {
     font-size: 50px;
     margin-bottom: 20px;
-}
+  }
 
-.infoCard h3 {
+  .infoCard h3 {
     font-size: 32px;
     font-family: BarlowCondensed-Bold;
-    color: #FFF;
+    color: #fff;
     margin-bottom: 15px;
-}
+  }
 
-.infoCard p {
-    color: #CDCFDF;
+  .infoCard p {
+    color: #cdcfdf;
     font-size: 18px;
     font-family: BarlowSemiCondensed-Regular;
     line-height: 1.6;
     margin: 0;
-}
+  }
 
-/* Notice Section */
-.noticeSection {
+  /* Notice Section */
+  .noticeSection {
     background: #202232;
     border-radius: 24px;
     padding: 30px;
     margin: 20px;
-}
+  }
 
-.noticeContent h3 {
-    color: #FFF;
+  .noticeContent h3 {
+    color: #fff;
     font-size: 40px;
     font-family: BarlowCondensed-Bold;
     margin-top: 0;
     margin-bottom: 20px;
-}
+  }
 
-.noticeContent p {
-    color: #CDCFDF;
+  .noticeContent p {
+    color: #cdcfdf;
     font-size: 20px;
     font-family: BarlowSemiCondensed-Regular;
     line-height: 1.8;
     margin-bottom: 15px;
-}
+  }
 
-.noticeContent p:last-child {
+  .noticeContent p:last-child {
     margin-bottom: 0;
-}
+  }
 
-.noticeContent strong {
-    color: #FFF;
+  .noticeContent strong {
+    color: #fff;
     font-family: BarlowSemiCondensed-SemiBold;
-}
+  }
 
-@media screen and (max-width: 1300px) {
+  @media screen and (max-width: 1300px) {
     .statsGrid {
-        grid-template-columns: calc(50% - 10px) calc(50% - 10px);
-        grid-template-rows: auto auto;
+      grid-template-columns: calc(50% - 10px) calc(50% - 10px);
+      grid-template-rows: auto auto;
     }
 
     .statsContainer {
-        grid-column: 1 / 3;
+      grid-column: 1 / 3;
     }
 
     .personalBestsContainer {
-        grid-row: 2;
-        grid-column: 2;
+      grid-row: 2;
+      grid-column: 2;
     }
 
     .worldRecordsContainer {
-        grid-row: 2;
+      grid-row: 2;
     }
-}
+  }
 
-/* Responsive Design */
-@media screen and (min-width: 769px) and (max-width: 1024px) {
+  /* Responsive Design */
+  @media screen and (min-width: 769px) and (max-width: 1024px) {
     .heroSection {
-        padding: 40px 18px;
+      padding: 40px 18px;
     }
 
     .heroTitle {
-        font-size: 48px;
+      font-size: 48px;
     }
 
     .heroSubtitle {
-        font-size: 22px;
+      font-size: 22px;
     }
 
     .statsSection {
-        margin: 18px;
+      margin: 18px;
     }
 
     .statsGrid {
-        gap: 18px;
+      gap: 18px;
     }
 
     .statsContainer {
-        padding: 18px;
+      padding: 18px;
     }
 
     .statsHeader h3 {
-        font-size: 44px;
+      font-size: 44px;
     }
 
     .statsHeader p {
-        font-size: 18px;
+      font-size: 18px;
     }
 
     .chartWrapper {
-        padding: 18px 10px;
+      padding: 18px 10px;
     }
 
     .recentScoresContainer {
-        padding: 18px;
+      padding: 18px;
     }
 
     .recentScoresHeader h3 {
-        font-size: 28px;
+      font-size: 28px;
     }
 
     .scoreUser {
-        font-size: 16px;
+      font-size: 16px;
     }
 
     .scoreMap {
-        font-size: 14px;
+      font-size: 14px;
     }
 
     .scorePortals {
-        font-size: 12px;
+      font-size: 12px;
     }
 
     .scoreDate {
-        font-size: 10px;
+      font-size: 10px;
     }
 
     .infoSection {
-        margin: 18px;
+      margin: 18px;
     }
 
     .infoCards {
-        gap: 18px;
+      gap: 18px;
     }
 
     .infoCard {
-        padding: 25px;
+      padding: 25px;
     }
 
     .infoCard h3 {
-        font-size: 28px;
+      font-size: 28px;
     }
 
     .infoCard p {
-        font-size: 16px;
+      font-size: 16px;
     }
 
     .noticeSection {
-        margin: 18px;
-        padding: 25px;
+      margin: 18px;
+      padding: 25px;
     }
 
     .noticeContent h3 {
-        font-size: 36px;
+      font-size: 36px;
     }
 
     .noticeContent p {
-        font-size: 18px;
+      font-size: 18px;
     }
-}
+  }
 
-@media screen and (max-width: 768px) {
+  @media screen and (max-width: 768px) {
     .heroSection {
-        margin: 0 0 15px 0;
-        padding: 30px 20px;
+      margin: 0 0 15px 0;
+      padding: 30px 20px;
     }
 
     .heroTitle {
-        font-size: 40px;
+      font-size: 40px;
     }
 
     .heroSubtitle {
-        font-size: 18px;
+      font-size: 18px;
     }
 
     .statsSection {
-        margin: 0;
+      margin: 0;
     }
 
     .statsGrid {
-        grid-template-columns: 100%;
-        gap: 15px;
+      grid-template-columns: 100%;
+      gap: 15px;
     }
 
     .statsContainer,
     .personalBestsContainer,
     .worldRecordsContainer {
-        grid-column: auto;
-        grid-row: auto;
+      grid-column: auto;
+      grid-row: auto;
     }
 
     .statsContainer {
-        padding: 15px;
+      padding: 15px;
     }
 
     .statsHeader h3 {
-        font-size: 36px;
-        margin-bottom: 8px;
+      font-size: 36px;
+      margin-bottom: 8px;
     }
 
     .statsHeader p {
-        font-size: 16px;
+      font-size: 16px;
     }
 
     .chartWrapper {
-        padding: 15px 5px;
-        margin-top: 15px;
+      padding: 15px 5px;
+      margin-top: 15px;
     }
 
     .recentScoresContainer {
-        padding: 15px;
+      padding: 15px;
     }
 
     .recentScoresHeader h3 {
-        font-size: 28px;
+      font-size: 28px;
     }
 
     .scoreItem {
-        padding: 10px 12px;
+      padding: 10px 12px;
     }
 
     .scoreUser {
-        font-size: 16px;
+      font-size: 16px;
     }
 
     .scoreMap {
-        font-size: 14px;
+      font-size: 14px;
     }
 
     .scorePortals {
-        font-size: 12px;
+      font-size: 12px;
     }
 
     .scoreDate {
-        font-size: 10px;
+      font-size: 10px;
     }
 
     .chartLoading,
     .chartEmpty {
-        padding: 40px 15px;
+      padding: 40px 15px;
     }
 
     .chartLoading p,
     .chartEmpty p {
-        font-size: 16px;
+      font-size: 16px;
     }
 
     .loadingSpinner {
-        width: 40px;
-        height: 40px;
-        border-width: 4px;
+      width: 40px;
+      height: 40px;
+      border-width: 4px;
     }
 
     .infoSection {
-        margin: 20px;
+      margin: 20px;
     }
 
     .infoCards {
-        grid-template-columns: 1fr;
-        gap: 15px;
+      grid-template-columns: 1fr;
+      gap: 15px;
     }
 
     .infoCard {
-        padding: 20px;
+      padding: 20px;
     }
 
     .infoIcon {
-        font-size: 40px;
-        margin-bottom: 15px;
+      font-size: 40px;
+      margin-bottom: 15px;
     }
 
     .infoCard h3 {
-        font-size: 28px;
-        margin-bottom: 12px;
+      font-size: 28px;
+      margin-bottom: 12px;
     }
 
     .infoCard p {
-        font-size: 16px;
+      font-size: 16px;
     }
 
     .noticeSection {
-        margin: 20px;
-        padding: 20px;
+      margin: 20px;
+      padding: 20px;
     }
 
     .noticeContent h3 {
-        font-size: 32px;
-        margin-bottom: 15px;
+      font-size: 32px;
+      margin-bottom: 15px;
     }
 
     .noticeContent p {
-        font-size: 16px;
-        margin-bottom: 12px;
+      font-size: 16px;
+      margin-bottom: 12px;
     }
 
     .tooltipDate {
-        font-size: 14px;
+      font-size: 14px;
     }
 
     .tooltipCount {
-        font-size: 18px;
+      font-size: 18px;
     }
-}
+  }
 }

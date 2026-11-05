@@ -7,21 +7,26 @@ import { Game, GameCategoryPortals } from "@customTypes/Game";
 import gamesStyles from "@css/Games.module.css";
 
 interface GameCategoryProps {
-    game: Game;
-    cat: GameCategoryPortals;
+  game: Game;
+  cat: GameCategoryPortals;
 }
 
-const GameCategory: React.FC<GameCategoryProps> = ({cat, game}) => {
+const GameCategory: React.FC<GameCategoryProps> = ({ cat, game }) => {
   const sectionPortals = Array.isArray(cat.section_portals) ? cat.section_portals : [];
 
   if (game.section_kind === "mode") {
     return (
-      <Link className={classNames(gamesStyles.gamesPageItemBodyItem, gamesStyles.gamesPageItemBodyItemMode)} to={"/games/" + game.id + "?cat=" + cat.category.id}>
+      <Link
+        className={classNames(gamesStyles.gamesPageItemBodyItem, gamesStyles.gamesPageItemBodyItemMode)}
+        to={"/games/" + game.id + "?cat=" + cat.category.id}
+      >
         <span className={gamesStyles.gamesPageItemBodyItemTitle}>{cat.category.name}</span>
         <div className={gamesStyles.gamesPageItemBodyItemModeCounts}>
           {sectionPortals.map((section) => (
             <span className={gamesStyles.gamesPageItemBodyItemModeCount} key={section.section_id}>
-              <span className={gamesStyles.gamesPageItemBodyItemModeLabel}>{section.section_name.replace(/\s+Mode$/, "")}</span>
+              <span className={gamesStyles.gamesPageItemBodyItemModeLabel}>
+                {section.section_name.replace(/\s+Mode$/, "")}
+              </span>
               <span className={gamesStyles.gamesPageItemBodyItemModeNum}>{section.portal_count}</span>
             </span>
           ))}

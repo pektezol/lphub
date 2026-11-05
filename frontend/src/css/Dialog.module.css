@@ -1,23 +1,23 @@
 @layer components {
-.dimmer {
+  .dimmer {
     position: fixed;
     /* WHAT A SCHTUPID ACTION */
     width: 200%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 4;
-}
+  }
 
-.dialogContainer {
+  .dialogContainer {
     position: absolute;
     top: 0px;
     left: -350px;
     width: 100%;
     height: 100%;
     z-index: 10000;
-}
+  }
 
-.dialog {
+  .dialog {
     position: fixed;
     z-index: 4;
     top: 50%;
@@ -31,120 +31,120 @@
     animation: dialog_in 0.2s cubic-bezier(0.075, 0.82, 0.165, 1.1);
     color: white;
     font-family: BarlowSemiCondensed-Regular;
-}
+  }
 
-.dialogHeader {
+  .dialogHeader {
     font-size: 24px;
-}
+  }
 
-.dialogElement {
+  .dialogElement {
     padding: 8px;
-}
+  }
 
-.dialogHeader,
-.dialogBtnsContainer {
+  .dialogHeader,
+  .dialogBtnsContainer {
     background-color: #202232;
-}
+  }
 
-.dialogBtnsContainer {
+  .dialogBtnsContainer {
     display: flex;
     justify-content: right;
     border-top: 2px solid #3f4151;
     gap: 8px;
-}
+  }
 
-.dialogHeader {
+  .dialogHeader {
     border-bottom: 2px solid #3f4151;
-}
+  }
 
-.dialogDescription {
+  .dialogDescription {
     font-size: 18px;
     padding: 14px 10px;
     white-space: pre-wrap;
-}
+  }
 
-.dialogBtnsContainer button {
+  .dialogBtnsContainer button {
     border-radius: 24px;
     padding: 5px 10px;
-}
+  }
 
-.dialogBtnsContainer button:nth-child(2):hover {
+  .dialogBtnsContainer button:nth-child(2):hover {
     background-color: rgb(105, 36, 36);
-}
+  }
 
-.dialogBtnsContainer button:nth-child(2) {
+  .dialogBtnsContainer button:nth-child(2) {
     background-color: rgb(147, 45, 45);
-}
+  }
 
-.dialogBtnsContainer button:nth-child(1):hover {
+  .dialogBtnsContainer button:nth-child(1):hover {
     background-color: rgb(38, 42, 62);
-}
+  }
 
-@keyframes dialog_in {
+  @keyframes dialog_in {
     0% {
-        transform: translate(-50%, calc(-50% + 100px)) scaleX(0%);
-        opacity: 0;
+      transform: translate(-50%, calc(-50% + 100px)) scaleX(0%);
+      opacity: 0;
     }
 
     20% {
-        opacity: 0;
+      opacity: 0;
     }
 
     100% {
-        transform: translate(-50%, calc(-50%));
-        opacity: 1;
+      transform: translate(-50%, calc(-50%));
+      opacity: 1;
     }
-}
+  }
 
-@media screen and (min-width: 769px) and (max-width: 1024px) {
+  @media screen and (min-width: 769px) and (max-width: 1024px) {
     .dialogContainer {
-        left: -280px;
+      left: -280px;
     }
 
     .dialog {
-        min-width: 380px;
-        max-width: 500px;
+      min-width: 380px;
+      max-width: 500px;
     }
 
     .dialogHeader {
-        font-size: 22px;
+      font-size: 22px;
     }
 
     .dialogDescription {
-        font-size: 17px;
-        padding: 13px 9px;
+      font-size: 17px;
+      padding: 13px 9px;
     }
 
     .dialogBtnsContainer button {
-        padding: 6px 12px;
-        font-size: 17px;
+      padding: 6px 12px;
+      font-size: 17px;
     }
-}
+  }
 
-@media screen and (max-width: 768px) {
+  @media screen and (max-width: 768px) {
     .dialogContainer {
-        left: 0;
+      left: 0;
     }
 
     .dialog {
-        min-width: 300px;
-        max-width: 90vw;
+      min-width: 300px;
+      max-width: 90vw;
     }
 
     .dialogHeader {
-        font-size: 20px;
+      font-size: 20px;
     }
 
     .dialogDescription {
-        font-size: 16px;
-        padding: 12px 8px;
+      font-size: 16px;
+      padding: 12px 8px;
     }
-}
+  }
 }
 
 @layer overrides {
-.centeredContent {
+  .centeredContent {
     display: flex;
     justify-content: center;
-}
+  }
 }

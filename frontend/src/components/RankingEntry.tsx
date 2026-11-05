@@ -6,17 +6,17 @@ import { ticks_to_time } from "@utils/Time";
 import rankingsStyles from "@css/Rankings.module.css";
 
 enum RankingCategories {
-    rankings_overall,
-    rankings_multiplayer,
-    rankings_singleplayer,
-    rankings_mel_story,
-    rankings_mel_advanced
+  rankings_overall,
+  rankings_multiplayer,
+  rankings_singleplayer,
+  rankings_mel_story,
+  rankings_mel_advanced,
 }
 
 interface RankingEntryProps {
-    curRankingData: RankingType | SteamRankingType;
-    currentLeaderboardType: RankingCategories
-};
+  curRankingData: RankingType | SteamRankingType;
+  currentLeaderboardType: RankingCategories;
+}
 
 const RankingEntry: React.FC<RankingEntryProps> = (prop) => {
   if ("placement" in prop.curRankingData) {
@@ -36,14 +36,26 @@ const RankingEntry: React.FC<RankingEntryProps> = (prop) => {
   } else {
     return (
       <div className={rankingsStyles.leaderboardEntry}>
-        <span>{prop.currentLeaderboardType == RankingCategories.rankings_singleplayer ? prop.curRankingData.sp_rank : prop.currentLeaderboardType == RankingCategories.rankings_multiplayer ? prop.curRankingData.mp_rank : prop.curRankingData.overall_rank}</span>
+        <span>
+          {prop.currentLeaderboardType == RankingCategories.rankings_singleplayer
+            ? prop.curRankingData.sp_rank
+            : prop.currentLeaderboardType == RankingCategories.rankings_multiplayer
+              ? prop.curRankingData.mp_rank
+              : prop.curRankingData.overall_rank}
+        </span>
         <div>
           <Link to={`/users/${prop.curRankingData.steam_id}`}>
             <img src={prop.curRankingData.avatar_link}></img>
             <span>{prop.curRankingData.user_name}</span>
           </Link>
         </div>
-        <span>{prop.currentLeaderboardType == RankingCategories.rankings_singleplayer ? prop.curRankingData.sp_score : prop.currentLeaderboardType == RankingCategories.rankings_multiplayer ? prop.curRankingData.mp_score : prop.curRankingData.overall_score}</span>
+        <span>
+          {prop.currentLeaderboardType == RankingCategories.rankings_singleplayer
+            ? prop.curRankingData.sp_score
+            : prop.currentLeaderboardType == RankingCategories.rankings_multiplayer
+              ? prop.curRankingData.mp_score
+              : prop.curRankingData.overall_score}
+        </span>
       </div>
     );
   }

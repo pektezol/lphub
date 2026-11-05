@@ -15,15 +15,15 @@ export interface Map {
   difficulty: number;
   sort_order: number;
   category_portals: GameCategoryPortals[];
-};
+}
 
 export interface MapDiscussion {
   discussion: MapDiscussionsDetail;
-};
+}
 
 export interface MapDiscussions {
   discussions: MapDiscussionsDetail[];
-};
+}
 
 export interface MapDiscussionsDetail {
   id: number;
@@ -35,19 +35,19 @@ export interface MapDiscussionsDetail {
   updated_at: string;
   reply_count: number;
   activity_at: string;
-};
+}
 
 interface MapDiscussionDetailComment {
   comment: string;
   date: string;
   user: UserShort;
-};
+}
 
 export interface MapLeaderboard {
   map: MapSummaryMap;
   records: (MapLeaderboardRecordSingleplayer | MapLeaderboardRecordMultiplayer)[];
   pagination: Pagination;
-};
+}
 
 export interface MapLeaderboardRecordSingleplayer {
   kind: "singleplayer";
@@ -59,7 +59,7 @@ export interface MapLeaderboardRecordSingleplayer {
   demo_id: string;
   autorender_id?: string;
   record_date: string;
-};
+}
 
 export interface MapLeaderboardRecordMultiplayer {
   kind: "multiplayer";
@@ -74,13 +74,12 @@ export interface MapLeaderboardRecordMultiplayer {
   host_autorender_id?: string;
   partner_autorender_id?: string;
   record_date: string;
-};
-
+}
 
 export interface MapSummary {
   map: MapSummaryMap;
   summary: MapSummaryDetails;
-};
+}
 
 export interface MapSummaryMap {
   id: number;
@@ -100,7 +99,7 @@ export interface MapSummaryMap {
   sort_order: number;
   categories: Category[];
   counterpart?: MapCounterpart;
-};
+}
 
 export interface MapCounterpart {
   id: number;
@@ -114,7 +113,7 @@ export interface MapCounterpart {
 
 interface MapSummaryDetails {
   routes: MapSummaryDetailsRoute[];
-};
+}
 
 interface MapSummaryDetailsRoute {
   route_id: number;
@@ -124,13 +123,13 @@ interface MapSummaryDetailsRoute {
   completion_count: number;
   description: string;
   showcase: string;
-};
+}
 
 interface MapSummaryDetailsRouteHistory {
   runner_name: string;
   score_count: number;
   date: string;
-};
+}
 
 export interface MapDeleteEndpoint {
   map_id: number;

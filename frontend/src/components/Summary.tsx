@@ -1,14 +1,6 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
-import {
-  CartesianGrid,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 import { MapSummary } from "@customTypes/Map";
 import { portalLabel } from "@utils/Portal";
@@ -31,14 +23,9 @@ function isTheoreticalRoute(runnerName: string): boolean {
   return runnerName === placeholderRunnerName;
 }
 
-function findPreferredRouteIndex(
-  routes: MapSummary["summary"]["routes"],
-  categoryID: number | undefined,
-): number {
+function findPreferredRouteIndex(routes: MapSummary["summary"]["routes"], categoryID: number | undefined): number {
   const firstCompletedRouteIndex = routes.findIndex(
-    (route) =>
-      route.category.id === categoryID &&
-      !isTheoreticalRoute(route.history.runner_name),
+    (route) => route.category.id === categoryID && !isTheoreticalRoute(route.history.runner_name),
   );
   if (firstCompletedRouteIndex !== -1) {
     return firstCompletedRouteIndex;
@@ -60,14 +47,8 @@ interface MapHistoryTooltipProps {
   payload?: { payload?: MapHistoryPoint }[];
 }
 
-const Summary: React.FC<SummaryProps> = ({
-  selectedRun,
-  setSelectedRun,
-  data,
-}) => {
-  const [selectedCategory, setSelectedCategory] = React.useState<
-    number | undefined
-  >(undefined);
+const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) => {
+  const [selectedCategory, setSelectedCategory] = React.useState<number | undefined>(undefined);
   const [historySelected, setHistorySelected] = React.useState<boolean>(false);
   const categories = React.useMemo(() => {
     const declaredCategories = data.map.categories ?? [];
@@ -75,24 +56,14 @@ const Summary: React.FC<SummaryProps> = ({
       return declaredCategories;
     }
 
-    return Array.from(
-      new Map(
-        data.summary.routes.map((route) => [route.category.id, route.category]),
-      ).values(),
-    );
+    return Array.from(new Map(data.summary.routes.map((route) => [route.category.id, route.category])).values());
   }, [data.map.categories, data.summary.routes]);
-  const categoryRoutes = data.summary.routes.filter(
-    (route) => route.category.id === selectedCategory,
-  );
+  const categoryRoutes = data.summary.routes.filter((route) => route.category.id === selectedCategory);
   const mapHistoryPoints = React.useMemo<MapHistoryPoint[]>(
     () =>
       data.summary.routes
         .map((route, routeIndex) => ({ route, routeIndex }))
-        .filter(
-          ({ route }) =>
-            route.category.id === selectedCategory &&
-            !isTheoreticalRoute(route.history.runner_name),
-        )
+        .filter(({ route }) => route.category.id === selectedCategory && !isTheoreticalRoute(route.history.runner_name))
         .map(({ route, routeIndex }) => ({
           timestamp: new Date(route.history.date).getTime(),
           date: route.history.date,
@@ -100,12 +71,7 @@ const Summary: React.FC<SummaryProps> = ({
           runnerName: route.history.runner_name,
           routeIndex,
         }))
-        .sort(
-          (a, b) =>
-            a.timestamp - b.timestamp ||
-            b.scoreCount - a.scoreCount ||
-            a.routeIndex - b.routeIndex,
-        ),
+        .sort((a, b) => a.timestamp - b.timestamp || b.scoreCount - a.scoreCount || a.routeIndex - b.routeIndex),
     [data.summary.routes, selectedCategory],
   );
   const selectedRoute =
@@ -115,8 +81,7 @@ const Summary: React.FC<SummaryProps> = ({
         ? data.summary.routes[selectedRun]
         : undefined;
   const selectedRouteIsTheoretical =
-    selectedRoute !== undefined &&
-    isTheoreticalRoute(selectedRoute.history.runner_name);
+    selectedRoute !== undefined && isTheoreticalRoute(selectedRoute.history.runner_name);
 
   function _select_run(idx: number) {
     const route = categoryRoutes[idx];
@@ -150,11 +115,7 @@ const Summary: React.FC<SummaryProps> = ({
     );
   };
 
-  const renderHistoryPoint = (props: {
-    cx: number;
-    cy: number;
-    payload: MapHistoryPoint;
-  }) => {
+  const renderHistoryPoint = (props: { cx: number; cy: number; payload: MapHistoryPoint }) => {
     const point = props.payload;
     const selectPoint = () => _select_history_point(point);
     const handleKeyDown = (event: React.KeyboardEvent<SVGGElement>) => {
@@ -173,13 +134,7 @@ const Summary: React.FC<SummaryProps> = ({
         onClick={selectPoint}
         onKeyDown={handleKeyDown}
       >
-        <circle
-          cx={props.cx}
-          cy={props.cy}
-          r={18}
-          fill="transparent"
-          pointerEvents="all"
-        />
+        <circle cx={props.cx} cy={props.cy} r={18} fill="transparent" pointerEvents="all" />
         <circle
           cx={props.cx}
           cy={props.cy}
@@ -201,15 +156,11 @@ const Summary: React.FC<SummaryProps> = ({
 
   function _get_youtube_id(url: string): string {
     const urlArray = url.split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
-    return urlArray[2] !== undefined
-      ? urlArray[2].split(/[^0-9a-z_-]/i)[0]
-      : urlArray[0];
+    return urlArray[2] !== undefined ? urlArray[2].split(/[^0-9a-z_-]/i)[0] : urlArray[0];
   }
 
   React.useEffect(() => {
-    const categoryID = categories.some(
-      (category) => category.id === selectedCategory,
-    )
+    const categoryID = categories.some((category) => category.id === selectedCategory)
       ? selectedCategory
       : categories[0]?.id;
     setSelectedCategory(categoryID);
@@ -222,23 +173,23 @@ const Summary: React.FC<SummaryProps> = ({
       <section id="section3" className={classNames(profileStyles.idSection3, sectionsStyles.idSection3)}>
         <div
           id="category"
-          className={classNames(mapsStyles.idCategory, (data.map.image === "" ? mapsStyles.darkSurface : ""))}
+          className={classNames(mapsStyles.idCategory, data.map.image === "" ? mapsStyles.darkSurface : "")}
         >
           <img src={data.map.image} alt="" id="category-image" className={mapsStyles.idCategoryImage}></img>
           <p>
-            <span className={portalCountStyles.portalCount}>
-              {selectedRoute?.history.score_count ?? 0}
-            </span>{" "}
+            <span className={portalCountStyles.portalCount}>{selectedRoute?.history.score_count ?? 0}</span>{" "}
             {portalLabel(selectedRoute?.history.score_count ?? 0)}
           </p>
           <span
-            style={cssVariables({ "--grid-template-columns": "repeat(" + Math.max(categories.length, 1) + ", 1fr)" })} className={mapsStyles.categoryColumns}
+            style={cssVariables({ "--grid-template-columns": "repeat(" + Math.max(categories.length, 1) + ", 1fr)" })}
+            className={mapsStyles.categoryColumns}
           >
             {categories.map((category) => (
               <button
                 key={category.id}
 
-                onClick={() => _select_category(category.id)} className={(selectedCategory === category.id ? mapsStyles.darkSurface : mapsStyles.raisedSurface)}
+                onClick={() => _select_category(category.id)}
+                className={selectedCategory === category.id ? mapsStyles.darkSurface : mapsStyles.raisedSurface}
               >
                 {category.name}
               </button>
@@ -247,7 +198,7 @@ const Summary: React.FC<SummaryProps> = ({
         </div>
 
         <div id="history" className={mapsStyles.idHistory}>
-          <div  className={(historySelected ? mapsStyles.hiddenContent : mapsStyles.visibleContent)}>
+          <div className={historySelected ? mapsStyles.hiddenContent : mapsStyles.visibleContent}>
             {categoryRoutes.length === 0 ? (
               <h5>There are no records for this category.</h5>
             ) : (
@@ -260,38 +211,30 @@ const Summary: React.FC<SummaryProps> = ({
                 <hr />
                 <div id="records" className={mapsStyles.idRecords}>
                   {categoryRoutes.map((r, index) => {
-                    const routeIsTheoretical = isTheoreticalRoute(
-                      r.history.runner_name,
-                    );
+                    const routeIsTheoretical = isTheoreticalRoute(r.history.runner_name);
 
                     return (
                       <button
-                        className={classNames(mapsStyles.record, (selectedRoute === r ? mapsStyles.selectedRecord : mapsStyles.raisedSurface))}
+                        className={classNames(
+                          mapsStyles.record,
+                          selectedRoute === r ? mapsStyles.selectedRecord : mapsStyles.raisedSurface,
+                        )}
                         key={r.route_id}
 
                         onClick={() => {
                           _select_run(index);
                         }}
                       >
-                        <span>
-                          {routeIsTheoretical
-                            ? `${r.history.score_count}*`
-                            : r.history.score_count}
-                        </span>
-                        <span>
-                          {routeIsTheoretical ? "TBD" : r.history.runner_name}
-                        </span>
+                        <span>{routeIsTheoretical ? `${r.history.score_count}*` : r.history.score_count}</span>
+                        <span>{routeIsTheoretical ? "TBD" : r.history.runner_name}</span>
                         <span>
                           {routeIsTheoretical
                             ? "TBD"
-                            : new Date(r.history.date).toLocaleDateString(
-                              "en-US",
-                              {
+                            : new Date(r.history.date).toLocaleDateString("en-US", {
                                 month: "long",
                                 day: "numeric",
                                 year: "numeric",
-                              },
-                            )}
+                              })}
                         </span>
                       </button>
                     );
@@ -301,35 +244,23 @@ const Summary: React.FC<SummaryProps> = ({
             )}
           </div>
 
-          <div  className={(historySelected ? mapsStyles.visibleContent : mapsStyles.hiddenContent)}>
+          <div className={historySelected ? mapsStyles.visibleContent : mapsStyles.hiddenContent}>
             {categoryRoutes.length === 0 ? (
               <h5>There are no records for this category.</h5>
             ) : mapHistoryPoints.length === 0 ? (
-              <p className={mapsStyles.mapHistoryEmpty}>
-                There is no completed record history to graph.
-              </p>
+              <p className={mapsStyles.mapHistoryEmpty}>There is no completed record history to graph.</p>
             ) : (
               <div className={mapsStyles.mapHistoryChart}>
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart
-                    data={mapHistoryPoints}
-                    margin={{ top: 12, right: 18, left: 0, bottom: 4 }}
-                  >
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                      stroke="#2b2e46"
-                      opacity={0.8}
-                    />
+                  <LineChart data={mapHistoryPoints} margin={{ top: 12, right: 18, left: 0, bottom: 4 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#2b2e46" opacity={0.8} />
                     <XAxis
                       dataKey="timestamp"
                       type="number"
                       scale="time"
                       domain={
                         mapHistoryPoints.length === 1
-                          ? [
-                            mapHistoryPoints[0].timestamp - 86_400_000,
-                            mapHistoryPoints[0].timestamp + 86_400_000,
-                          ]
+                          ? [mapHistoryPoints[0].timestamp - 86_400_000, mapHistoryPoints[0].timestamp + 86_400_000]
                           : ["dataMin", "dataMax"]
                       }
                       stroke="#CDCFDF"
@@ -376,14 +307,14 @@ const Summary: React.FC<SummaryProps> = ({
           </div>
           <span>
             <button
-
-              onClick={() => setHistorySelected(false)} className={(historySelected ? mapsStyles.raisedSurface : mapsStyles.darkSurface)}
+              onClick={() => setHistorySelected(false)}
+              className={historySelected ? mapsStyles.raisedSurface : mapsStyles.darkSurface}
             >
               List
             </button>
             <button
-
-              onClick={() => setHistorySelected(true)} className={(historySelected ? mapsStyles.darkSurface : mapsStyles.raisedSurface)}
+              onClick={() => setHistorySelected(true)}
+              className={historySelected ? mapsStyles.darkSurface : mapsStyles.raisedSurface}
             >
               Graph
             </button>
@@ -395,59 +326,38 @@ const Summary: React.FC<SummaryProps> = ({
           <section id="section4" className={mapsStyles.idSection4}>
             <div id="difficulty" className={mapsStyles.idDifficulty}>
               <span>Difficulty</span>
-              {data.map.difficulty <= 2 && (
-                <span  className={mapsStyles.veryEasyText}>Very Easy</span>
-              )}
-              {data.map.difficulty > 2 && data.map.difficulty <= 4 && (
-                <span  className={mapsStyles.easyText}>Easy</span>
-              )}
+              {data.map.difficulty <= 2 && <span className={mapsStyles.veryEasyText}>Very Easy</span>}
+              {data.map.difficulty > 2 && data.map.difficulty <= 4 && <span className={mapsStyles.easyText}>Easy</span>}
               {data.map.difficulty > 4 && data.map.difficulty <= 6 && (
-                <span  className={mapsStyles.mediumText}>Medium</span>
+                <span className={mapsStyles.mediumText}>Medium</span>
               )}
-              {data.map.difficulty > 6 && data.map.difficulty <= 8 && (
-                <span  className={mapsStyles.hardText}>Hard</span>
-              )}
+              {data.map.difficulty > 6 && data.map.difficulty <= 8 && <span className={mapsStyles.hardText}>Hard</span>}
               {data.map.difficulty > 8 && data.map.difficulty <= 10 && (
-                <span  className={mapsStyles.veryHardText}>Very Hard</span>
+                <span className={mapsStyles.veryHardText}>Very Hard</span>
               )}
               <div>
                 {data.map.difficulty <= 2 ? (
-                  <div
-                    className={classNames(mapsStyles.difficultyRating, mapsStyles.veryEasyRating)}
-
-                  ></div>
+                  <div className={classNames(mapsStyles.difficultyRating, mapsStyles.veryEasyRating)}></div>
                 ) : (
                   <div className={mapsStyles.difficultyRating}></div>
                 )}
                 {data.map.difficulty > 2 && data.map.difficulty <= 4 ? (
-                  <div
-                    className={classNames(mapsStyles.difficultyRating, mapsStyles.easyRating)}
-
-                  ></div>
+                  <div className={classNames(mapsStyles.difficultyRating, mapsStyles.easyRating)}></div>
                 ) : (
                   <div className={mapsStyles.difficultyRating}></div>
                 )}
                 {data.map.difficulty > 4 && data.map.difficulty <= 6 ? (
-                  <div
-                    className={classNames(mapsStyles.difficultyRating, mapsStyles.mediumRating)}
-
-                  ></div>
+                  <div className={classNames(mapsStyles.difficultyRating, mapsStyles.mediumRating)}></div>
                 ) : (
                   <div className={mapsStyles.difficultyRating}></div>
                 )}
                 {data.map.difficulty > 6 && data.map.difficulty <= 8 ? (
-                  <div
-                    className={classNames(mapsStyles.difficultyRating, mapsStyles.hardRating)}
-
-                  ></div>
+                  <div className={classNames(mapsStyles.difficultyRating, mapsStyles.hardRating)}></div>
                 ) : (
                   <div className={mapsStyles.difficultyRating}></div>
                 )}
                 {data.map.difficulty > 8 && data.map.difficulty <= 10 ? (
-                  <div
-                    className={classNames(mapsStyles.difficultyRating, mapsStyles.veryHardRating)}
-
-                  ></div>
+                  <div className={classNames(mapsStyles.difficultyRating, mapsStyles.veryHardRating)}></div>
                 ) : (
                   <div className={mapsStyles.difficultyRating}></div>
                 )}
@@ -464,10 +374,7 @@ const Summary: React.FC<SummaryProps> = ({
               {selectedRoute.showcase !== "" ? (
                 <iframe
                   title="Showcase video"
-                  src={
-                    "https://www.youtube.com/embed/" +
-                    _get_youtube_id(selectedRoute.showcase)
-                  }
+                  src={"https://www.youtube.com/embed/" + _get_youtube_id(selectedRoute.showcase)}
                 >
                   {" "}
                 </iframe>
@@ -478,9 +385,7 @@ const Summary: React.FC<SummaryProps> = ({
                 Route Description
                 {selectedRouteIsTheoretical && (
                   <span className={mapsStyles.theoreticalRouteNote}>
-                    {
-                      " *: This is a theoretical route that hasn't been completed yet."
-                    }
+                    {" *: This is a theoretical route that hasn't been completed yet."}
                   </span>
                 )}
               </h3>

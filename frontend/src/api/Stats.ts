@@ -64,4 +64,3 @@ export async function get_recent_scores(): Promise<ScoreLog[]> {
   }
   return response.data.data.scores;
 }
-

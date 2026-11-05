@@ -16,10 +16,10 @@ export function get_user_id_from_token(token: string | undefined): string | unde
       .map(function (c) {
         return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
       })
-      .join("")
+      .join(""),
   );
   return JSON.parse(jsonPayload).sub;
-};
+}
 
 export function get_user_mod_from_token(token: string | undefined): boolean | undefined {
   if (!token) {
@@ -38,7 +38,7 @@ export function get_user_mod_from_token(token: string | undefined): boolean | un
       .map(function (c) {
         return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
       })
-      .join("")
+      .join(""),
   );
   return JSON.parse(jsonPayload).mod;
-};
+}

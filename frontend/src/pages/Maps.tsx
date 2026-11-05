@@ -4,17 +4,10 @@ import { Helmet } from "react-helmet";
 
 import { PortalIcon, FlagIcon, ChatIcon } from "@images/Images";
 import Summary from "@components/Summary";
-import Leaderboards, {
-  type LeaderboardResource,
-} from "@components/Leaderboards";
+import Leaderboards, { type LeaderboardResource } from "@components/Leaderboards";
 import Discussions from "@components/Discussions";
 import ModMenu from "@components/ModMenu";
-import {
-  Map as MapData,
-  MapDiscussions,
-  MapLeaderboard,
-  MapSummary,
-} from "@customTypes/Map";
+import { Map as MapData, MapDiscussions, MapLeaderboard, MapSummary } from "@customTypes/Map";
 import { API } from "@api/Api";
 
 import resourceStateStyles from "@css/ResourceState.module.css";
@@ -68,26 +61,13 @@ const clearMapCache = (cache: MapCache) => {
   cache.leaderboards.clear();
 };
 
-const isValidMapSummary = (
-  summary: MapSummary | undefined,
-  mapID: string,
-): summary is MapSummary =>
-  Boolean(
-    summary &&
-    summary.map?.id === Number(mapID) &&
-    summary.summary &&
-    Array.isArray(summary.summary.routes),
-  );
+const isValidMapSummary = (summary: MapSummary | undefined, mapID: string): summary is MapSummary =>
+  Boolean(summary && summary.map?.id === Number(mapID) && summary.summary && Array.isArray(summary.summary.routes));
 
-const isValidMapDiscussions = (
-  discussions: MapDiscussions | undefined,
-): discussions is MapDiscussions =>
+const isValidMapDiscussions = (discussions: MapDiscussions | undefined): discussions is MapDiscussions =>
   Boolean(discussions && Array.isArray(discussions.discussions));
 
-const isValidMapLeaderboard = (
-  leaderboard: MapLeaderboard | undefined,
-  mapID: string,
-): leaderboard is MapLeaderboard =>
+const isValidMapLeaderboard = (leaderboard: MapLeaderboard | undefined, mapID: string): leaderboard is MapLeaderboard =>
   Boolean(
     leaderboard &&
     leaderboard.map?.id === Number(mapID) &&
@@ -102,25 +82,22 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get("tab");
   const navState = tabParam === "leaderboards" ? 1 : tabParam === "discussions" ? 2 : 0;
-  const [selectedRun, setSelectedRun] = React.useState<number | undefined>(
-    undefined,
-  );
+  const [selectedRun, setSelectedRun] = React.useState<number | undefined>(undefined);
   const [leaderboardPage, setLeaderboardPage] = React.useState<number>(1);
-  const [mapSummaryResource, setMapSummaryResource] = React.useState<
-    ScopedResource<MapSummary>
-  >({ mapID: "", status: "loading" });
-  const [mapDiscussionsResource, setMapDiscussionsResource] = React.useState<
-    ScopedResource<MapDiscussions>
-  >({ mapID: "", status: "loading" });
-  const [leaderboardResource, setLeaderboardResource] =
-    React.useState<ScopedLeaderboardResource>({
-      mapID: "",
-      page: 1,
-      status: "loading",
-    });
-  const [gameMapListResource, setGameMapListResource] = React.useState<
-    GameMapListResource | undefined
-  >(undefined);
+  const [mapSummaryResource, setMapSummaryResource] = React.useState<ScopedResource<MapSummary>>({
+    mapID: "",
+    status: "loading",
+  });
+  const [mapDiscussionsResource, setMapDiscussionsResource] = React.useState<ScopedResource<MapDiscussions>>({
+    mapID: "",
+    status: "loading",
+  });
+  const [leaderboardResource, setLeaderboardResource] = React.useState<ScopedLeaderboardResource>({
+    mapID: "",
+    page: 1,
+    status: "loading",
+  });
+  const [gameMapListResource, setGameMapListResource] = React.useState<GameMapListResource | undefined>(undefined);
   const mapCacheRef = React.useRef<MapCache | undefined>(undefined);
   const gameMapListCacheRef = React.useRef<Map<number, MapData[]>>(new Map());
   const activeLeaderboardPageRef = React.useRef<number>(1);
@@ -181,151 +158,137 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
     return request;
   }, []);
 
-  const loadMapDiscussions = React.useCallback(
-    (cache: MapCache, refresh = false) => {
-      const previousEntry = refresh ? cache.discussions : undefined;
-      if (refresh) {
-        cache.discussions = undefined;
+  const loadMapDiscussions = React.useCallback((cache: MapCache, refresh = false) => {
+    const previousEntry = refresh ? cache.discussions : undefined;
+    if (refresh) {
+      cache.discussions = undefined;
+    }
+
+    const publish = (resource: CachedResource<MapDiscussions>) => {
+      if (cache.isActive && mapCacheRef.current === cache) {
+        setMapDiscussionsResource({
+          mapID: cache.mapID,
+          status: resource.status,
+          data: resource.data,
+        });
       }
+    };
+    const cached = cache.discussions;
+    if (cached) {
+      publish(cached);
+      return cached.inFlight ?? Promise.resolve(cached.data);
+    }
 
-      const publish = (resource: CachedResource<MapDiscussions>) => {
-        if (cache.isActive && mapCacheRef.current === cache) {
-          setMapDiscussionsResource({
-            mapID: cache.mapID,
-            status: resource.status,
-            data: resource.data,
-          });
-        }
-      };
-      const cached = cache.discussions;
-      if (cached) {
-        publish(cached);
-        return cached.inFlight ?? Promise.resolve(cached.data);
-      }
+    const entry: CachedResource<MapDiscussions> = previousEntry?.data
+      ? { status: "loading", data: previousEntry.data }
+      : { status: "loading" };
+    cache.discussions = entry;
+    publish(entry);
 
-      const entry: CachedResource<MapDiscussions> = previousEntry?.data
-        ? { status: "loading", data: previousEntry.data }
-        : { status: "loading" };
-      cache.discussions = entry;
-      publish(entry);
-
-      const request = API.get_map_discussions(cache.mapID)
-        .then((discussions) => {
-          if (discussions === undefined) {
-            entry.status = "unavailable";
-            delete entry.inFlight;
-            if (cache.discussions === entry) {
-              publish(entry);
-            }
-            return undefined;
-          }
-          if (!isValidMapDiscussions(discussions)) {
-            throw new Error("Invalid map discussions response.");
-          }
-
-          entry.status = "ready";
-          entry.data = discussions;
+    const request = API.get_map_discussions(cache.mapID)
+      .then((discussions) => {
+        if (discussions === undefined) {
+          entry.status = "unavailable";
           delete entry.inFlight;
           if (cache.discussions === entry) {
             publish(entry);
           }
-          return discussions;
-        })
-        .catch(() => {
-          if (cache.discussions === entry) {
-            cache.discussions = undefined;
-            if (cache.isActive && mapCacheRef.current === cache) {
-              setMapDiscussionsResource({
-                mapID: cache.mapID,
-                status: "error",
-                data: entry.data,
-              });
-            }
-          }
           return undefined;
-        });
-
-      entry.inFlight = request;
-      return request;
-    },
-    [],
-  );
-
-  const loadLeaderboardPage = React.useCallback(
-    (cache: MapCache, page: number) => {
-      if (!Number.isInteger(page) || page < 1) {
-        return Promise.resolve(undefined);
-      }
-
-      const publish = (resource: CachedResource<MapLeaderboard>) => {
-        if (
-          cache.isActive &&
-          mapCacheRef.current === cache &&
-          activeLeaderboardPageRef.current === page
-        ) {
-          setLeaderboardResource({
-            mapID: cache.mapID,
-            page,
-            status: resource.status,
-            data: resource.data,
-          });
         }
-      };
-      const cached = cache.leaderboards.get(page);
-      if (cached) {
-        publish(cached);
-        return cached.inFlight ?? Promise.resolve(cached.data);
+        if (!isValidMapDiscussions(discussions)) {
+          throw new Error("Invalid map discussions response.");
+        }
+
+        entry.status = "ready";
+        entry.data = discussions;
+        delete entry.inFlight;
+        if (cache.discussions === entry) {
+          publish(entry);
+        }
+        return discussions;
+      })
+      .catch(() => {
+        if (cache.discussions === entry) {
+          cache.discussions = undefined;
+          if (cache.isActive && mapCacheRef.current === cache) {
+            setMapDiscussionsResource({
+              mapID: cache.mapID,
+              status: "error",
+              data: entry.data,
+            });
+          }
+        }
+        return undefined;
+      });
+
+    entry.inFlight = request;
+    return request;
+  }, []);
+
+  const loadLeaderboardPage = React.useCallback((cache: MapCache, page: number) => {
+    if (!Number.isInteger(page) || page < 1) {
+      return Promise.resolve(undefined);
+    }
+
+    const publish = (resource: CachedResource<MapLeaderboard>) => {
+      if (cache.isActive && mapCacheRef.current === cache && activeLeaderboardPageRef.current === page) {
+        setLeaderboardResource({
+          mapID: cache.mapID,
+          page,
+          status: resource.status,
+          data: resource.data,
+        });
       }
+    };
+    const cached = cache.leaderboards.get(page);
+    if (cached) {
+      publish(cached);
+      return cached.inFlight ?? Promise.resolve(cached.data);
+    }
 
-      const entry: CachedResource<MapLeaderboard> = { status: "loading" };
-      cache.leaderboards.set(page, entry);
-      publish(entry);
+    const entry: CachedResource<MapLeaderboard> = { status: "loading" };
+    cache.leaderboards.set(page, entry);
+    publish(entry);
 
-      const request = API.get_map_leaderboard(cache.mapID, page.toString())
-        .then((leaderboard) => {
-          if (leaderboard === undefined) {
-            entry.status = "unavailable";
-            delete entry.inFlight;
-            if (cache.leaderboards.get(page) === entry) {
-              publish(entry);
-            }
-            return undefined;
-          }
-          if (!isValidMapLeaderboard(leaderboard, cache.mapID)) {
-            throw new Error("Invalid map leaderboard response.");
-          }
-
-          entry.status = leaderboard.records.length === 0 ? "empty" : "ready";
-          entry.data = leaderboard;
+    const request = API.get_map_leaderboard(cache.mapID, page.toString())
+      .then((leaderboard) => {
+        if (leaderboard === undefined) {
+          entry.status = "unavailable";
           delete entry.inFlight;
           if (cache.leaderboards.get(page) === entry) {
             publish(entry);
           }
-          return leaderboard;
-        })
-        .catch(() => {
-          if (cache.leaderboards.get(page) === entry) {
-            cache.leaderboards.delete(page);
-            if (
-              cache.isActive &&
-              mapCacheRef.current === cache &&
-              activeLeaderboardPageRef.current === page
-            ) {
-              setLeaderboardResource({
-                mapID: cache.mapID,
-                page,
-                status: "error",
-              });
-            }
-          }
           return undefined;
-        });
+        }
+        if (!isValidMapLeaderboard(leaderboard, cache.mapID)) {
+          throw new Error("Invalid map leaderboard response.");
+        }
 
-      entry.inFlight = request;
-      return request;
-    },
-    [],
-  );
+        entry.status = leaderboard.records.length === 0 ? "empty" : "ready";
+        entry.data = leaderboard;
+        delete entry.inFlight;
+        if (cache.leaderboards.get(page) === entry) {
+          publish(entry);
+        }
+        return leaderboard;
+      })
+      .catch(() => {
+        if (cache.leaderboards.get(page) === entry) {
+          cache.leaderboards.delete(page);
+          if (cache.isActive && mapCacheRef.current === cache && activeLeaderboardPageRef.current === page) {
+            setLeaderboardResource({
+              mapID: cache.mapID,
+              page,
+              status: "error",
+            });
+          }
+        }
+        return undefined;
+      });
+
+    entry.inFlight = request;
+    return request;
+  }, []);
 
   React.useEffect(() => {
     let cache = mapCacheRef.current;
@@ -410,18 +373,11 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
   );
 
   const activeSummaryResource =
-    mapSummaryResource.mapID === mapID
-      ? mapSummaryResource
-      : { mapID, status: "loading" as const };
+    mapSummaryResource.mapID === mapID ? mapSummaryResource : { mapID, status: "loading" as const };
   const activeDiscussionsResource =
-    mapDiscussionsResource.mapID === mapID
-      ? mapDiscussionsResource
-      : { mapID, status: "loading" as const };
+    mapDiscussionsResource.mapID === mapID ? mapDiscussionsResource : { mapID, status: "loading" as const };
   const activeLeaderboardResource = React.useMemo<LeaderboardResource>(() => {
-    if (
-      leaderboardResource.mapID === mapID &&
-      leaderboardResource.page === leaderboardPage
-    ) {
+    if (leaderboardResource.mapID === mapID && leaderboardResource.page === leaderboardPage) {
       return {
         status: leaderboardResource.status,
         data: leaderboardResource.data,
@@ -429,9 +385,7 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
     }
 
     const cachedPage =
-      mapCacheRef.current?.mapID === mapID
-        ? mapCacheRef.current.leaderboards.get(leaderboardPage)
-        : undefined;
+      mapCacheRef.current?.mapID === mapID ? mapCacheRef.current.leaderboards.get(leaderboardPage) : undefined;
     if (cachedPage) {
       return { status: cachedPage.status, data: cachedPage.data };
     }
@@ -439,10 +393,7 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
     return { status: "loading" };
   }, [leaderboardPage, leaderboardResource, mapID]);
 
-  const mapSummaryData =
-    activeSummaryResource.status === "ready"
-      ? activeSummaryResource.data
-      : undefined;
+  const mapSummaryData = activeSummaryResource.status === "ready" ? activeSummaryResource.data : undefined;
   const mapDiscussionsData = activeDiscussionsResource.data;
 
   React.useEffect(() => {
@@ -476,36 +427,23 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
   }, [mapSummaryData]);
 
   const activeGameMaps =
-    mapSummaryData && gameMapListResource?.gameID === mapSummaryData.map.game_id
-      ? gameMapListResource.maps
-      : undefined;
-  const currentMapIndex =
-    activeGameMaps?.findIndex((map) => map.id === mapSummaryData?.map.id) ?? -1;
-  const previousMap =
-    activeGameMaps && currentMapIndex > 0
-      ? activeGameMaps[currentMapIndex - 1]
-      : undefined;
+    mapSummaryData && gameMapListResource?.gameID === mapSummaryData.map.game_id ? gameMapListResource.maps : undefined;
+  const currentMapIndex = activeGameMaps?.findIndex((map) => map.id === mapSummaryData?.map.id) ?? -1;
+  const previousMap = activeGameMaps && currentMapIndex > 0 ? activeGameMaps[currentMapIndex - 1] : undefined;
   const nextMap =
-    activeGameMaps &&
-    currentMapIndex >= 0 &&
-    currentMapIndex < activeGameMaps.length - 1
+    activeGameMaps && currentMapIndex >= 0 && currentMapIndex < activeGameMaps.length - 1
       ? activeGameMaps[currentMapIndex + 1]
       : undefined;
   const hasMapNavigation = activeGameMaps !== undefined && currentMapIndex >= 0;
 
   if (!mapSummaryData) {
-    if (
-      activeSummaryResource.status === "unavailable" ||
-      activeSummaryResource.status === "error"
-    ) {
+    if (activeSummaryResource.status === "unavailable" || activeSummaryResource.status === "error") {
       const failed = activeSummaryResource.status === "error";
       return (
         <main className={resourceStateStyles.resourceNotFound}>
           <h1>{failed ? "Map Unavailable" : "Map Not Found"}</h1>
           <p>
-            {failed
-              ? "We couldn’t load this map. Please try again later."
-              : "We couldn’t find a map with that ID."}
+            {failed ? "We couldn’t load this map. Please try again later." : "We couldn’t find a map with that ID."}
           </p>
           <Link to="/games">Return to Games</Link>
         </main>
@@ -518,10 +456,7 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
           <section id="section1" className={classNames(profileStyles.idSection1, sectionsStyles.idSection1)}>
             <div>
               <Link to="/games">
-                <button
-                  className={classNames(navigationStyles.navButton, mapsStyles.singleMapNavigation)}
-
-                >
+                <button className={classNames(navigationStyles.navButton, mapsStyles.singleMapNavigation)}>
                   <i className={navigationStyles.triangle}></i>
                   <span>Games List</span>
                 </button>
@@ -529,7 +464,10 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
             </div>
           </section>
 
-          <section id="section2" className={classNames(profileStyles.idSection2, navigationStyles.idSection2, sectionsStyles.idSection2)}>
+          <section
+            id="section2"
+            className={classNames(profileStyles.idSection2, navigationStyles.idSection2, sectionsStyles.idSection2)}
+          >
             <button className={navigationStyles.navButton} aria-pressed={navState === 0}>
               <img src={PortalIcon} alt="" />
               <span>Summary</span>
@@ -574,45 +512,29 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
           <div className={mapsStyles.mapPageHeader}>
             <div className={mapsStyles.mapPageBreadcrumbs}>
               <Link to="/games">
-                <button
-                  className={classNames(navigationStyles.navButton, mapsStyles.previousMapNavigation)}
-
-                >
+                <button className={classNames(navigationStyles.navButton, mapsStyles.previousMapNavigation)}>
                   <i className={navigationStyles.triangle}></i>
                   <span>Games List</span>
                 </button>
               </Link>
-              <Link
-                to={
-                  "/games/" +
-                  mapSummaryData.map.game_id +
-                  "?chapter=" +
-                  mapSummaryData.map.chapter_id
-                }
-              >
-                <button
-                  className={classNames(navigationStyles.navButton, mapsStyles.nextMapNavigation)}
-
-                >
+              <Link to={"/games/" + mapSummaryData.map.game_id + "?chapter=" + mapSummaryData.map.chapter_id}>
+                <button className={classNames(navigationStyles.navButton, mapsStyles.nextMapNavigation)}>
                   <i className={navigationStyles.triangle}></i>
                   <span>{mapSummaryData.map.chapter_name}</span>
                 </button>
               </Link>
               {mapSummaryData.map.counterpart && (
                 <Link to={"/maps/" + mapSummaryData.map.counterpart.id}>
-                  <button
-                    className={classNames(navigationStyles.navButton, mapsStyles.counterpartNavigation)}
-
-                  >
-                    <span>
-                      View {mapSummaryData.map.counterpart.section_name}
-                    </span>
+                  <button className={classNames(navigationStyles.navButton, mapsStyles.counterpartNavigation)}>
+                    <span>View {mapSummaryData.map.counterpart.section_name}</span>
                   </button>
                 </Link>
               )}
             </div>
 
-            <div className={classNames(mapsStyles.mapPageNeighborNavigation, navigationStyles.mapPageNeighborNavigation)}>
+            <div
+              className={classNames(mapsStyles.mapPageNeighborNavigation, navigationStyles.mapPageNeighborNavigation)}
+            >
               {hasMapNavigation && previousMap ? (
                 <Link
                   className={navigationStyles.navButton}
@@ -622,25 +544,16 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
                   <span>← Previous: {previousMap.name}</span>
                 </Link>
               ) : hasMapNavigation ? (
-                <button
-                  className={navigationStyles.navButton}
-                  type="button"
-                  disabled
-                  aria-label="No previous map"
-                >
+                <button className={navigationStyles.navButton} type="button" disabled aria-label="No previous map">
                   <span>← Previous</span>
                 </button>
               ) : (
-                <span
-                  aria-hidden="true"
-                />
+                <span aria-hidden="true" />
               )}
 
               <span className={mapsStyles.mapPageTitle}>
                 <b>{mapSummaryData.map.map_name}</b>
-                {mapSummaryData.map.section_kind === "mode"
-                  ? " — " + mapSummaryData.map.chapter_name
-                  : ""}
+                {mapSummaryData.map.section_kind === "mode" ? " — " + mapSummaryData.map.chapter_name : ""}
               </span>
 
               {hasMapNavigation && nextMap ? (
@@ -652,24 +565,20 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
                   <span>Next: {nextMap.name} →</span>
                 </Link>
               ) : hasMapNavigation ? (
-                <button
-                  className={navigationStyles.navButton}
-                  type="button"
-                  disabled
-                  aria-label="No next map"
-                >
+                <button className={navigationStyles.navButton} type="button" disabled aria-label="No next map">
                   <span>Next →</span>
                 </button>
               ) : (
-                <span
-                  aria-hidden="true"
-                />
+                <span aria-hidden="true" />
               )}
             </div>
           </div>
         </section>
 
-        <section id="section2" className={classNames(profileStyles.idSection2, navigationStyles.idSection2, sectionsStyles.idSection2)}>
+        <section
+          id="section2"
+          className={classNames(profileStyles.idSection2, navigationStyles.idSection2, sectionsStyles.idSection2)}
+        >
           <button className={navigationStyles.navButton} aria-pressed={navState === 0} onClick={() => selectMapTab(0)}>
             <img src={PortalIcon} alt="" />
             <span>Summary</span>
@@ -684,13 +593,7 @@ const Maps: React.FC<MapProps> = ({ token, isModerator }) => {
           </button>
         </section>
 
-        {navState === 0 && (
-          <Summary
-            selectedRun={selectedRun}
-            setSelectedRun={setSelectedRun}
-            data={mapSummaryData}
-          />
-        )}
+        {navState === 0 && <Summary selectedRun={selectedRun} setSelectedRun={setSelectedRun} data={mapSummaryData} />}
         {navState === 1 && (
           <Leaderboards
             activePage={leaderboardPage}

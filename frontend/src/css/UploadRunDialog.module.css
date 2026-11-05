@@ -1,5 +1,5 @@
 @layer components {
-div.idUploadRun {
+  div.idUploadRun {
     position: absolute;
     left: 50%;
     z-index: 20;
@@ -8,9 +8,9 @@ div.idUploadRun {
     /* background-color: red; */
 
     transform: translateY(-68%);
-}
+  }
 
-.idUploadRunMenu {
+  .idUploadRunMenu {
     position: absolute;
     left: calc(50%);
     top: 130px;
@@ -19,46 +19,46 @@ div.idUploadRun {
     z-index: 3;
     color: white;
     font-family: BarlowSemicondensed-SemiBold;
-}
+  }
 
-.idUploadRunMenuAdd,
-.idUploadRunMenuEdit {
+  .idUploadRunMenuAdd,
+  .idUploadRunMenuEdit {
     box-shadow: 0 0 40px 16px black;
     outline: 8px solid #2b2e46;
     border-radius: 20px;
     font-size: 40px;
     text-wrap: nowrap;
-}
+  }
 
-.idUploadRunMenuAdd>div,
-.idUploadRunMenuEdit>div {
+  .idUploadRunMenuAdd > div,
+  .idUploadRunMenuEdit > div {
     display: flex;
     font-size: 20px;
     padding: 0px 15px;
     gap: 2px;
-}
+  }
 
-.idUploadRunMenuAdd>div .uploadRunItem {
+  .idUploadRunMenuAdd > div .uploadRunItem {
     margin: 0px 20px;
-}
+  }
 
-.idUploadRunBlock {
+  .idUploadRunBlock {
     position: absolute;
     background-color: black;
-    opacity: .3;
+    opacity: 0.3;
     width: 100%;
     height: 100%;
     z-index: 3;
     cursor: no-drop;
-}
+  }
 
-.uploadRunDropdownContainer .dropdownCur {
+  .uploadRunDropdownContainer .dropdownCur {
     user-select: none;
     cursor: pointer;
     width: 240px;
-}
+  }
 
-.uploadRunDropdown {
+  .uploadRunDropdown {
     position: absolute;
     user-select: none;
     cursor: pointer;
@@ -70,60 +70,60 @@ div.idUploadRun {
     max-height: 300px;
     overflow-y: scroll;
     width: 260px;
-}
+  }
 
-.uploadRunDropdown div {
+  .uploadRunDropdown div {
     padding: 8px;
-}
+  }
 
-.uploadRunDropdown div:hover {
+  .uploadRunDropdown div:hover {
     background-color: #414669;
-}
+  }
 
-.uploadRunDropdown.hidden {
+  .uploadRunDropdown.hidden {
     display: none;
-}
+  }
 
-.uploadRunDemoName {
+  .uploadRunDemoName {
     text-overflow: ellipsis;
     overflow: hidden;
     width: 380px;
-}
+  }
 
-@keyframes dropdown-in {
+  @keyframes dropdown-in {
     0% {
-        opacity: 0;
+      opacity: 0;
     }
 
     100% {
-        opacity: 1;
+      opacity: 1;
     }
-}
+  }
 
-.uploadRunButtonsContainer button {
+  .uploadRunButtonsContainer button {
     border-radius: 32px;
-}
+  }
 
-.uploadRunMapContainer {
+  .uploadRunMapContainer {
     display: flex;
-}
+  }
 
-.uploadRunButtonsContainer {
+  .uploadRunButtonsContainer {
     display: flex;
     margin-top: 10px;
-}
+  }
 
-.uploadRunButtonsContainer button {
+  .uploadRunButtonsContainer button {
     width: 100%;
-}
+  }
 
-.idHostDemo,
-.idPartnerDemo {
+  .idHostDemo,
+  .idPartnerDemo {
     background-color: rgba(0, 0, 0, 0);
     display: none;
-}
+  }
 
-.uploadRunDragArea {
+  .uploadRunDragArea {
     border: 2px dashed grey;
     border-radius: 10px;
     height: 150px;
@@ -136,149 +136,149 @@ div.idUploadRun {
     align-items: center;
     justify-content: center;
     margin: 20px 0px;
-}
+  }
 
-.uploadRunDragAreaHighlight,
-.uploadRunDragAreaHighlightPartner {
+  .uploadRunDragAreaHighlight,
+  .uploadRunDragAreaHighlightPartner {
     border: 2px dashed white;
-}
+  }
 
-.uploadRunDragAreaHidden {
+  .uploadRunDragAreaHidden {
     height: fit-content;
     text-align: left;
     border: none;
     align-items: flex-start;
-}
+  }
 
-@media screen and (min-width: 769px) and (max-width: 1024px) {
+  @media screen and (min-width: 769px) and (max-width: 1024px) {
     div.idUploadRun {
-        width: 280px;
+      width: 280px;
     }
 
     .idUploadRunMenu {
-        left: calc(50% + 140px);
-        top: 100px;
+      left: calc(50% + 140px);
+      top: 100px;
     }
 
     .idUploadRunMenuAdd,
     .idUploadRunMenuEdit {
-        font-size: 36px;
+      font-size: 36px;
     }
 
-    .idUploadRunMenuAdd>div,
-    .idUploadRunMenuEdit>div {
-        font-size: 19px;
-        padding: 0px 13px;
+    .idUploadRunMenuAdd > div,
+    .idUploadRunMenuEdit > div {
+      font-size: 19px;
+      padding: 0px 13px;
     }
 
     .uploadRunDropdownContainer .dropdownCur {
-        width: 220px;
+      width: 220px;
     }
 
     .uploadRunDropdown {
-        width: 240px;
-        max-height: 280px;
+      width: 240px;
+      max-height: 280px;
     }
 
     .uploadRunDemoName {
-        width: 350px;
+      width: 350px;
     }
 
     .uploadRunDragArea {
-        width: 340px;
-        height: 140px;
+      width: 340px;
+      height: 140px;
     }
-}
+  }
 
-@media screen and (max-width: 768px) {
+  @media screen and (max-width: 768px) {
     div.idUploadRun {
-        width: 90vw;
-        max-width: 400px;
+      width: 90vw;
+      max-width: 400px;
     }
 
     .idUploadRunMenu {
-        left: 50%;
-        top: 80px;
-        width: 90vw;
+      left: 50%;
+      top: 80px;
+      width: 90vw;
     }
 
     .idUploadRunMenuAdd,
     .idUploadRunMenuEdit {
-        font-size: 28px;
-        width: 90vw;
+      font-size: 28px;
+      width: 90vw;
     }
 
-    .idUploadRunMenuAdd>div,
-    .idUploadRunMenuEdit>div {
-        flex-direction: column;
-        font-size: 18px;
+    .idUploadRunMenuAdd > div,
+    .idUploadRunMenuEdit > div {
+      flex-direction: column;
+      font-size: 18px;
     }
 
     .uploadRunDropdownContainer .dropdownCur {
-        width: 80vw;
-        max-width: 300px;
+      width: 80vw;
+      max-width: 300px;
     }
 
     .uploadRunDropdown {
-        width: 80vw;
-        max-width: 320px;
+      width: 80vw;
+      max-width: 320px;
     }
 
     .uploadRunDemoName {
-        width: 90%;
+      width: 90%;
     }
 
     .uploadRunDragArea {
-        width: 80vw;
-        max-width: 360px;
+      width: 80vw;
+      max-width: 360px;
     }
-}
+  }
 }
 
 @layer overrides {
-.gameField {
+  .gameField {
     padding: 15px 0px;
-}
+  }
 
-.gameHeading {
+  .gameHeading {
     margin: 0px 0px;
-}
+  }
 
-.gameSelectable {
+  .gameSelectable {
     cursor: pointer;
-}
+  }
 
-.gameUnavailable {
+  .gameUnavailable {
     cursor: default;
-}
+  }
 
-.gamePicker {
+  .gamePicker {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin: 10px 0px;
-}
+  }
 
-.gamePickerArrow {
+  .gamePickerArrow {
     rotate: -90deg;
     transform: translate(-5px, 10px);
-}
+  }
 
-.gameOptions {
+  .gameOptions {
     top: 110px;
-}
+  }
 
-.demoHeading {
+  .demoHeading {
     margin: 10px 0px;
-}
+  }
 
-.uploadHint {
+  .uploadHint {
     font-family: BarlowSemiCondensed-Regular;
-}
+  }
 
-.fileUploadButton {
+  .fileUploadButton {
     border-radius: 24px;
     padding: 5px 8px;
     margin: 5px 0px;
-}
+  }
 }

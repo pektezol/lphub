@@ -19,14 +19,17 @@ const GameEntry: React.FC<GameEntryProps> = ({ game }) => {
   return (
     <div className={gamesStyles.gamesPageItem}>
       <Link to={"/games/" + game.id} className={gamesStyles.gamesPageItemHeader}>
-        <div style={cssVariables({ "--background-image": "url(" + game.image + ")" })} className={classNames(gamesStyles.gamesPageItemHeaderImg, gamesStyles.gameImage)}></div>
-        <span><b>{game.name}</b></span>
+        <div
+          style={cssVariables({ "--background-image": "url(" + game.image + ")" })}
+          className={classNames(gamesStyles.gamesPageItemHeaderImg, gamesStyles.gameImage)}
+        ></div>
+        <span>
+          <b>{game.name}</b>
+        </span>
       </Link>
       <div id={String(game.id)} className={gamesStyles.gamesPageItemBody}>
         {categories.length > 0 ? (
-          categories.map((category) => (
-            <GameCategory cat={category} game={game} key={category.category.id} />
-          ))
+          categories.map((category) => <GameCategory cat={category} game={game} key={category.category.id} />)
         ) : (
           <span className={gamesStyles.gamesPageItemEmpty}>No categories available yet.</span>
         )}

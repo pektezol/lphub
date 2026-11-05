@@ -16,15 +16,11 @@ interface UserProps {
 
 const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
   const [user, setUser] = React.useState<UserProfile | undefined>();
-  const [status, setStatus] = React.useState<
-    "loading" | "found" | "not-found" | "error"
-  >("loading");
+  const [status, setStatus] = React.useState<"loading" | "found" | "not-found" | "error">("loading");
   const location = useLocation();
   const navigate = useNavigate();
   const userID = location.pathname.split("/")[2];
-  const viewingOwnProfile = Boolean(
-    token && profile?.profile && profile.steam_id === userID,
-  );
+  const viewingOwnProfile = Boolean(token && profile?.profile && profile.steam_id === userID);
 
   React.useEffect(() => {
     if (viewingOwnProfile) {
@@ -74,15 +70,17 @@ const User: React.FC<UserProps> = ({ token, profile, gameData }) => {
     return (
       <main className={resourceStateStyles.resourceNotFound}>
         <h1>{failed ? "Profile Unavailable" : "Profile Not Found"}</h1>
-        <p>{failed ? "We couldn’t load this profile. Please try again later." : "We couldn’t find a user with that profile."}</p>
+        <p>
+          {failed
+            ? "We couldn’t load this profile. Please try again later."
+            : "We couldn’t find a user with that profile."}
+        </p>
         <Link to="/">Return to Home</Link>
       </main>
     );
   }
 
-  return user ? (
-    <ProfileView profile={user} games={gameData} viewerToken={token} />
-  ) : null;
+  return user ? <ProfileView profile={user} games={gameData} viewerToken={token} /> : null;
 };
 
 export default User;

@@ -1,5 +1,5 @@
 @layer components {
-.idAbout {
+  .idAbout {
     overflow: auto;
     overflow-x: hidden;
     position: relative;
@@ -13,25 +13,24 @@
     font-size: 24px;
     font-family: BarlowSemiCondensed-Regular;
     color: #cdcfdf;
+  }
 
-}
-
-@media screen and (min-width: 769px) and (max-width: 1024px) {
+  @media screen and (min-width: 769px) and (max-width: 1024px) {
     .idAbout {
-        width: calc(100% - 340px);
-        left: 310px;
-        padding-right: 25px;
-        font-size: 22px;
+      width: calc(100% - 340px);
+      left: 310px;
+      padding-right: 25px;
+      font-size: 22px;
     }
-}
+  }
 
-@media screen and (max-width: 768px) {
+  @media screen and (max-width: 768px) {
     .idAbout {
-        width: 100%;
-        left: 0;
-        padding: 70px 20px 20px 20px;
-        height: calc(100vh - 60px);
-        font-size: 18px;
+      width: 100%;
+      left: 0;
+      padding: 70px 20px 20px 20px;
+      height: calc(100vh - 60px);
+      font-size: 18px;
     }
-}
+  }
 }

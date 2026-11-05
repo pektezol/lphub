@@ -15,9 +15,7 @@ export const get_games = async (): Promise<Game[]> => {
 
   return games.map((game) => ({
     ...game,
-    category_portals: Array.isArray(game?.category_portals)
-      ? game.category_portals
-      : [],
+    category_portals: Array.isArray(game?.category_portals) ? game.category_portals : [],
   }));
 };
 

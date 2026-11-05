@@ -6,9 +6,7 @@ import type { CSSProperties } from "react";
  * @example
  * <button className={classNames(styles.button, isActive && styles.active)} />
  */
-export function classNames(
-  ...names: (string | undefined | null | false)[]
-): string {
+export function classNames(...names: (string | undefined | null | false)[]): string {
   return names.filter(Boolean).join(" ");
 }
 

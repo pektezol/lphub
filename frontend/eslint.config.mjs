@@ -2,6 +2,7 @@
 
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
+import prettier from 'eslint-config-prettier';
 
 export default [
     {
@@ -22,4 +23,5 @@ export default [
             '@typescript-eslint/no-unused-expressions': 'warn',
         },
     },
+    prettier,
 ];

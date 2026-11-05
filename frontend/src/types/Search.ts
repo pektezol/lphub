@@ -3,7 +3,7 @@ import type { UserShort } from "@customTypes/Profile";
 export interface Search {
   players: UserShort[];
   maps: SearchMap[];
-};
+}
 
 interface SearchMap {
   id: number;
@@ -14,4 +14,4 @@ interface SearchMap {
   section_label: string;
   section_name: string;
   map: string;
-};
+}

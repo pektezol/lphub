@@ -1,112 +1,105 @@
 @layer components {
-.idSection1 {
+  .idSection1 {
     margin: 20px 0 0 0;
     cursor: default;
-}
-.idSection2 {
+  }
+  .idSection2 {
     margin: 40px 0 0 0;
 
     display: grid;
     gap: 2px;
     grid-template-columns: 1fr 1fr 1fr;
-}
+  }
 
-.idSection3 {
+  .idSection3 {
     margin: 40px 0 0 0;
 
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
-}
+  }
 
-.idPageNumber {
+  .idPageNumber {
     display: flex;
     width: auto;
     flex-direction: row-reverse;
-}
+  }
 
-.idPageNumber > div {
+  .idPageNumber > div {
     width: 100px;
     place-items: center;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     text-align: center;
-}
+  }
 
-.idPageNumber > div > button {
+  .idPageNumber > div > button {
     width: 30px;
     height: 30px;
     background-color: #202232;
     border: 0;
     padding: 0;
     cursor: pointer;
-}
+  }
 
-@media screen and (min-width: 769px) and (max-width: 1024px) {
+  @media screen and (min-width: 769px) and (max-width: 1024px) {
     .idSection1 {
-        margin: 18px 0 0 0;
+      margin: 18px 0 0 0;
     }
-}
+  }
 
-@media screen and (min-width: 769px) and (max-width: 1024px) {
-
+  @media screen and (min-width: 769px) and (max-width: 1024px) {
     .idSection2 {
-        margin: 36px 0 0 0;
-        gap: 2px;
+      margin: 36px 0 0 0;
+      gap: 2px;
     }
-}
+  }
 
-@media screen and (min-width: 769px) and (max-width: 1024px) {
-
+  @media screen and (min-width: 769px) and (max-width: 1024px) {
     .idSection3 {
-        margin: 36px 0 0 0;
-        grid-template-columns: 1fr;
-        gap: 18px;
+      margin: 36px 0 0 0;
+      grid-template-columns: 1fr;
+      gap: 18px;
     }
-}
+  }
 
-@media screen and (max-width: 768px) {
-
+  @media screen and (max-width: 768px) {
     .idSection1 {
-        margin: 20px 0 0 0;
-        width: 100%;
+      margin: 20px 0 0 0;
+      width: 100%;
     }
-}
+  }
 
-@media screen and (max-width: 768px) {
-
+  @media screen and (max-width: 768px) {
     .idSection2 {
-        grid-template-columns: 1fr;
-        gap: 0;
-        width: 100%;
-        max-width: 100%;
-        overflow: hidden;
-        margin: 20px 0 0 0;
-        box-sizing: border-box;
+      grid-template-columns: 1fr;
+      gap: 0;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+      margin: 20px 0 0 0;
+      box-sizing: border-box;
     }
-}
+  }
 
-@media screen and (max-width: 768px) {
-
+  @media screen and (max-width: 768px) {
     .idSection3 {
-        grid-template-columns: 1fr;
-        gap: 20px;
-        width: 100%;
-        margin: 20px 0 0 0;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      width: 100%;
+      margin: 20px 0 0 0;
     }
-}
+  }
 
-@media screen and (max-width: 768px) {
-
+  @media screen and (max-width: 768px) {
     .idLeaderboardTop > div.idPageNumber {
-        display: flex;
+      display: flex;
     }
-}
+  }
 
-@media screen and (max-width: 768px) {
-
+  @media screen and (max-width: 768px) {
     .idPageNumber > div {
-        width: 80px;
+      width: 80px;
     }
-}
+  }
 }

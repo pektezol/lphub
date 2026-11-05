@@ -1,7 +1,14 @@
 import axios from "axios";
 import { recordUploadUrl, url } from "@api/Api";
 import { MapDiscussionContent, UploadRunContent } from "@customTypes/Content";
-import { MapSummary, MapLeaderboard, MapDiscussions, MapDiscussion, MapLeaderboardRecordMultiplayer, MapLeaderboardRecordSingleplayer } from "@customTypes/Map";
+import {
+  MapSummary,
+  MapLeaderboard,
+  MapDiscussions,
+  MapDiscussion,
+  MapLeaderboardRecordMultiplayer,
+  MapLeaderboardRecordSingleplayer,
+} from "@customTypes/Map";
 
 type MapLeaderboardResponse = Omit<MapLeaderboard, "records"> & {
   records: (Omit<MapLeaderboardRecordSingleplayer, "kind"> | Omit<MapLeaderboardRecordMultiplayer, "kind">)[];
@@ -27,7 +34,9 @@ export const get_map_summary = async (map_id: string): Promise<MapSummary | unde
 };
 
 export const get_map_leaderboard = async (map_id: string, page: string): Promise<MapLeaderboard | undefined> => {
-  const response = await axios.get<{ success: boolean; data: MapLeaderboardResponse }>(url(`maps/${map_id}/leaderboards?page=${page}`));
+  const response = await axios.get<{ success: boolean; data: MapLeaderboardResponse }>(
+    url(`maps/${map_id}/leaderboards?page=${page}`),
+  );
   if (!response.data.success) {
     return undefined;
   }
@@ -59,34 +68,51 @@ export const get_map_discussion = async (map_id: string, discussion_id: number):
   return response.data.data;
 };
 
-export const post_map_discussion = async (token: string, map_id: string, content: MapDiscussionContent): Promise<boolean> => {
-  const response = await axios.post(url(`maps/${map_id}/discussions`), {
-    "title": content.title,
-    "content": content.content,
-  }, {
-    headers: {
-      "Authorization": token,
-    }
-  });
+export const post_map_discussion = async (
+  token: string,
+  map_id: string,
+  content: MapDiscussionContent,
+): Promise<boolean> => {
+  const response = await axios.post(
+    url(`maps/${map_id}/discussions`),
+    {
+      title: content.title,
+      content: content.content,
+    },
+    {
+      headers: {
+        Authorization: token,
+      },
+    },
+  );
   return response.data.success;
 };
 
-export const post_map_discussion_comment = async (token: string, map_id: string, discussion_id: number, comment: string): Promise<boolean> => {
-  const response = await axios.post(url(`maps/${map_id}/discussions/${discussion_id}`), {
-    "comment": comment,
-  }, {
-    headers: {
-      "Authorization": token,
-    }
-  });
+export const post_map_discussion_comment = async (
+  token: string,
+  map_id: string,
+  discussion_id: number,
+  comment: string,
+): Promise<boolean> => {
+  const response = await axios.post(
+    url(`maps/${map_id}/discussions/${discussion_id}`),
+    {
+      comment: comment,
+    },
+    {
+      headers: {
+        Authorization: token,
+      },
+    },
+  );
   return response.data.success;
 };
 
 export const delete_map_discussion = async (token: string, map_id: string, discussion_id: number): Promise<boolean> => {
   const response = await axios.delete(url(`maps/${map_id}/discussions/${discussion_id}`), {
     headers: {
-      "Authorization": token,
-    }
+      Authorization: token,
+    },
   });
   return response.data.success;
 };
@@ -98,12 +124,13 @@ export const post_record = async (
   isCoop: boolean,
   onUploadProgress?: UploadProgressHandler,
 ): Promise<RecordUploadResult> => {
-  const formData = isCoop && run.partner_demo
-    ? { "host_demo": run.host_demo, "partner_demo": run.partner_demo }
-    : { "host_demo": run.host_demo };
+  const formData =
+    isCoop && run.partner_demo
+      ? { host_demo: run.host_demo, partner_demo: run.partner_demo }
+      : { host_demo: run.host_demo };
   const response = await axios.postForm<RecordUploadResult>(recordUploadUrl(`maps/${map_id}/record`), formData, {
     headers: {
-      "Authorization": token,
+      Authorization: token,
     },
     onUploadProgress: (event) => {
       if (!onUploadProgress || !event.total) {
@@ -119,8 +146,8 @@ export const post_record = async (
 export const delete_map_record = async (token: string, map_id: number, record_id: number): Promise<boolean> => {
   const response = await axios.delete(url(`maps/${map_id}/record/${record_id}`), {
     headers: {
-      "Authorization": token,
-    }
+      Authorization: token,
+    },
   });
   return response.data.success;
 };
@@ -128,7 +155,7 @@ export const delete_map_record = async (token: string, map_id: number, record_id
 export const download_demo = async (token: string, demo_id: string): Promise<[boolean, string]> => {
   const response = await axios.get(url(`demos?uuid=${demo_id}`), {
     headers: {
-      "Authorization": token,
+      Authorization: token,
     },
     responseType: "blob",
   });

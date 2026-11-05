@@ -21,7 +21,6 @@ interface ModMenuProps {
 }
 
 const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, categories }) => {
-
   const { confirm, ConfirmDialogComponent } = useConfirm();
 
   const [menu, setMenu] = React.useState<number>(0);
@@ -47,7 +46,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
   function compressImage(file: File): Promise<string> {
     const reader = new FileReader();
     reader.readAsDataURL(file);
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       reader.onload = () => {
         const img = new Image();
         if (typeof reader.result === "string") {
@@ -71,7 +70,7 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
         }
       };
     });
-  };
+  }
 
   const _edit_map_summary_image = async () => {
     if (await confirm("Edit Map Summary Image", "Are you sure you want to submit this to the database?")) {
@@ -140,8 +139,13 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
       return;
     }
 
-    if (await confirm("Delete Map Summary Route", `Are you sure you want to submit this to the database?\n
-      ${selectedRoute.category.name}\n${selectedRoute.history.score_count} ${portalLabel(selectedRoute.history.score_count)}\n${selectedRoute.history.runner_name}`)) {
+    if (
+      await confirm(
+        "Delete Map Summary Route",
+        `Are you sure you want to submit this to the database?\n
+      ${selectedRoute.category.name}\n${selectedRoute.history.score_count} ${portalLabel(selectedRoute.history.score_count)}\n${selectedRoute.history.runner_name}`,
+      )
+    ) {
       if (token) {
         const success = await API.delete_map_summary(token, mapID, selectedRoute.route_id);
         if (success) {
@@ -154,7 +158,8 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
   };
 
   React.useEffect(() => {
-    if (menu === 3) { // add route
+    if (menu === 3) {
+      // add route
       setRouteContent({
         id: 0,
         name: "",
@@ -180,7 +185,8 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
       return;
     }
 
-    if (menu === 2 && selectedRoute) { // edit route
+    if (menu === 2 && selectedRoute) {
+      // edit route
       setRouteContent({
         id: selectedRoute.route_id,
         name: selectedRoute.history.runner_name,
@@ -197,52 +203,79 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
   return (
     <>
       {ConfirmDialogComponent}
-      <div id="modview_block" className={classNames((showButton ? modMenuStyles.backdropHidden : modMenuStyles.backdropVisible), modMenuStyles.idModviewBlock)} />
-      <div id='modview' className={classNames((showButton ? modMenuStyles.isCollapsed : ""), modMenuStyles.idModview)}>
+      <div
+        id="modview_block"
+        className={classNames(
+          showButton ? modMenuStyles.backdropHidden : modMenuStyles.backdropVisible,
+          modMenuStyles.idModviewBlock,
+        )}
+      />
+      <div id="modview" className={classNames(showButton ? modMenuStyles.isCollapsed : "", modMenuStyles.idModview)}>
         <div>
           <button onClick={() => setMenu(1)}>Edit Image</button>
           <button onClick={() => setMenu(4)}>Edit Difficulty</button>
-          <button disabled={!selectedRoute} onClick={() => setMenu(2)}>Edit Selected Route</button>
-          <button disabled={categories.length === 0} onClick={() => setMenu(3)}>Add New Route</button>
-          <button disabled={!selectedRoute} onClick={() => _delete_map_summary_route()}>Delete Selected Route</button>
+          <button disabled={!selectedRoute} onClick={() => setMenu(2)}>
+            Edit Selected Route
+          </button>
+          <button disabled={categories.length === 0} onClick={() => setMenu(3)}>
+            Add New Route
+          </button>
+          <button disabled={!selectedRoute} onClick={() => _delete_map_summary_route()}>
+            Delete Selected Route
+          </button>
         </div>
         <div>
           {showButton ? (
             <button onClick={() => setShowButton(false)}>Show</button>
           ) : (
-            <button onClick={() => { setShowButton(true); setMenu(0); }}>Hide</button>
+            <button
+              onClick={() => {
+                setShowButton(true);
+                setMenu(0);
+              }}
+            >
+              Hide
+            </button>
           )}
         </div>
-      </div><div id='modview-menu' className={modMenuStyles.idModviewMenu}>
-        {// Edit Image
+      </div>
+      <div id="modview-menu" className={modMenuStyles.idModviewMenu}>
+        {
+          // Edit Image
           menu === 1 && (
-            <div id='modview-menu-image' className={modMenuStyles.idModviewMenuImage}>
+            <div id="modview-menu-image" className={modMenuStyles.idModviewMenuImage}>
               <div>
                 <span>Current Image:</span>
                 <img src={data.map.image} alt="missing" />
               </div>
 
               <div>
-                <span>New Image:
-                  <input type="file" accept='image/*' onChange={e => {
-                    if (e.target.files) {
-                      compressImage(e.target.files[0])
-                        .then(d => setImage(d));
-                    }
-                  }} /></span>
-                {image ? (<button onClick={() => _edit_map_summary_image()}>upload</button>) : <span></span>}
-                <img src={image} alt="" id='modview-menu-image-file' />
-
+                <span>
+                  New Image:
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      if (e.target.files) {
+                        compressImage(e.target.files[0]).then((d) => setImage(d));
+                      }
+                    }}
+                  />
+                </span>
+                {image ? <button onClick={() => _edit_map_summary_image()}>upload</button> : <span></span>}
+                <img src={image} alt="" id="modview-menu-image-file" />
               </div>
             </div>
-          )}
+          )
+        }
 
-        {// Edit Difficulty
+        {
+          // Edit Difficulty
           menu === 4 && (
-            <div id='modview-menu-difficulty' className={modMenuStyles.idModviewMenuDifficulty}>
-              <label htmlFor='modview-map-difficulty'>Difficulty (1-10):</label>
+            <div id="modview-menu-difficulty" className={modMenuStyles.idModviewMenuDifficulty}>
+              <label htmlFor="modview-map-difficulty">Difficulty (1-10):</label>
               <input
-                id='modview-map-difficulty'
+                id="modview-map-difficulty"
                 type="number"
                 min="1"
                 max="10"
@@ -252,150 +285,222 @@ const ModMenu: React.FC<ModMenuProps> = ({ token, data, selectedRun, mapID, cate
               />
               <button onClick={_edit_map_difficulty}>Apply</button>
             </div>
-          )}
+          )
+        }
 
-        {// Edit Route
+        {
+          // Edit Route
           menu === 2 && (
-            <div id='modview-menu-edit' className={modMenuStyles.idModviewMenuEdit}>
-              <div id='modview-route-id'>
+            <div id="modview-menu-edit" className={modMenuStyles.idModviewMenuEdit}>
+              <div id="modview-route-id">
                 <span>Route ID:</span>
                 <input type="number" value={routeContent.id} disabled />
               </div>
-              <div id='modview-route-name'>
+              <div id="modview-route-name">
                 <span>Runner Name:</span>
-                <input type="text" value={routeContent.name} onChange={(e) => {
-                  setRouteContent({
-                    ...routeContent,
-                    name: e.target.value,
-                  });
-                }} />
+                <input
+                  type="text"
+                  value={routeContent.name}
+                  onChange={(e) => {
+                    setRouteContent({
+                      ...routeContent,
+                      name: e.target.value,
+                    });
+                  }}
+                />
               </div>
-              <div id='modview-route-score'>
+              <div id="modview-route-score">
                 <span>Score:</span>
-                <input type="number" value={routeContent.score} onChange={(e) => {
-                  setRouteContent({
-                    ...routeContent,
-                    score: parseInt(e.target.value),
-                  });
-                }} />
+                <input
+                  type="number"
+                  value={routeContent.score}
+                  onChange={(e) => {
+                    setRouteContent({
+                      ...routeContent,
+                      score: parseInt(e.target.value),
+                    });
+                  }}
+                />
               </div>
-              <div id='modview-route-date'>
+              <div id="modview-route-date">
                 <span>Date:</span>
-                <input type="date" value={routeContent.date} onChange={(e) => {
-                  setRouteContent({
-                    ...routeContent,
-                    date: e.target.value,
-                  });
-                }} />
+                <input
+                  type="date"
+                  value={routeContent.date}
+                  onChange={(e) => {
+                    setRouteContent({
+                      ...routeContent,
+                      date: e.target.value,
+                    });
+                  }}
+                />
               </div>
-              <div id='modview-route-showcase' className={modMenuStyles.idModviewRouteShowcase}>
+              <div id="modview-route-showcase" className={modMenuStyles.idModviewRouteShowcase}>
                 <span>Showcase Video:</span>
-                <input type="text" value={routeContent.showcase} onChange={(e) => {
-                  setRouteContent({
-                    ...routeContent,
-                    showcase: e.target.value,
-                  });
-                }} />
+                <input
+                  type="text"
+                  value={routeContent.showcase}
+                  onChange={(e) => {
+                    setRouteContent({
+                      ...routeContent,
+                      showcase: e.target.value,
+                    });
+                  }}
+                />
               </div>
-              <div id='modview-route-description'  className={classNames(modMenuStyles.idModviewRouteDescription, modMenuStyles.routeDescription)}>
+              <div
+                id="modview-route-description"
+                className={classNames(modMenuStyles.idModviewRouteDescription, modMenuStyles.routeDescription)}
+              >
                 <span>Description:</span>
-                <textarea value={routeContent.description} onChange={(e) => {
-                  setRouteContent({
-                    ...routeContent,
-                    description: e.target.value,
-                  });
-                  setMd(e.target.value);
-                }} />
+                <textarea
+                  value={routeContent.description}
+                  onChange={(e) => {
+                    setRouteContent({
+                      ...routeContent,
+                      description: e.target.value,
+                    });
+                    setMd(e.target.value);
+                  }}
+                />
               </div>
-              <button  onClick={_edit_map_summary_route} className={modMenuStyles.routeApply}>Apply</button>
+              <button onClick={_edit_map_summary_route} className={modMenuStyles.routeApply}>
+                Apply
+              </button>
 
-              <div id='modview-md' className={modMenuStyles.idModviewMd}>
+              <div id="modview-md" className={modMenuStyles.idModviewMd}>
                 <span>Markdown Preview</span>
-                <span><a href="https://commonmark.org/help/" rel="noreferrer" target='_blank'>Documentation</a></span>
-                <span><a href="https://remarkjs.github.io/react-markdown/" rel="noreferrer" target='_blank'>Demo</a></span>
+                <span>
+                  <a href="https://commonmark.org/help/" rel="noreferrer" target="_blank">
+                    Documentation
+                  </a>
+                </span>
+                <span>
+                  <a href="https://remarkjs.github.io/react-markdown/" rel="noreferrer" target="_blank">
+                    Demo
+                  </a>
+                </span>
                 <p>
-                  <ReactMarkdown>{md}
-                  </ReactMarkdown>
+                  <ReactMarkdown>{md}</ReactMarkdown>
                 </p>
               </div>
             </div>
-          )}
+          )
+        }
 
-        {// Add Route
+        {
+          // Add Route
           menu === 3 && (
-            <div id='modview-menu-add' className={modMenuStyles.idModviewMenuAdd}>
-              <div id='modview-route-category'>
+            <div id="modview-menu-add" className={modMenuStyles.idModviewMenuAdd}>
+              <div id="modview-route-category">
                 <span>Category:</span>
-                <select value={routeContent.category_id} onChange={(e) => {
-                  setRouteContent({
-                    ...routeContent,
-                    category_id: parseInt(e.target.value),
-                  });
-                }}>
+                <select
+                  value={routeContent.category_id}
+                  onChange={(e) => {
+                    setRouteContent({
+                      ...routeContent,
+                      category_id: parseInt(e.target.value),
+                    });
+                  }}
+                >
                   {categories.map((category) => (
-                    <option value={category.id} key={category.id}>{category.name}</option>
+                    <option value={category.id} key={category.id}>
+                      {category.name}
+                    </option>
                   ))}
                 </select>
               </div>
-              <div id='modview-route-name'>
+              <div id="modview-route-name">
                 <span>Runner Name:</span>
-                <input type="text" value={routeContent.name} onChange={(e) => {
-                  setRouteContent({
-                    ...routeContent,
-                    name: e.target.value,
-                  });
-                }} />
+                <input
+                  type="text"
+                  value={routeContent.name}
+                  onChange={(e) => {
+                    setRouteContent({
+                      ...routeContent,
+                      name: e.target.value,
+                    });
+                  }}
+                />
               </div>
-              <div id='modview-route-score'>
+              <div id="modview-route-score">
                 <span>Score:</span>
-                <input type="number" value={routeContent.score} onChange={(e) => {
-                  setRouteContent({
-                    ...routeContent,
-                    score: parseInt(e.target.value),
-                  });
-                }} />
+                <input
+                  type="number"
+                  value={routeContent.score}
+                  onChange={(e) => {
+                    setRouteContent({
+                      ...routeContent,
+                      score: parseInt(e.target.value),
+                    });
+                  }}
+                />
               </div>
-              <div id='modview-route-date'>
+              <div id="modview-route-date">
                 <span>Date:</span>
-                <input type="date" value={routeContent.date} onChange={(e) => {
-                  setRouteContent({
-                    ...routeContent,
-                    date: e.target.value,
-                  });
-                }} />
+                <input
+                  type="date"
+                  value={routeContent.date}
+                  onChange={(e) => {
+                    setRouteContent({
+                      ...routeContent,
+                      date: e.target.value,
+                    });
+                  }}
+                />
               </div>
-              <div id='modview-route-showcase' className={modMenuStyles.idModviewRouteShowcase}>
+              <div id="modview-route-showcase" className={modMenuStyles.idModviewRouteShowcase}>
                 <span>Showcase Video:</span>
-                <input type="text" value={routeContent.showcase} onChange={(e) => {
-                  setRouteContent({
-                    ...routeContent,
-                    showcase: e.target.value,
-                  });
-                }} />
+                <input
+                  type="text"
+                  value={routeContent.showcase}
+                  onChange={(e) => {
+                    setRouteContent({
+                      ...routeContent,
+                      showcase: e.target.value,
+                    });
+                  }}
+                />
               </div>
-              <div id='modview-route-description'  className={classNames(modMenuStyles.idModviewRouteDescription, modMenuStyles.routeDescription)}>
+              <div
+                id="modview-route-description"
+                className={classNames(modMenuStyles.idModviewRouteDescription, modMenuStyles.routeDescription)}
+              >
                 <span>Description:</span>
-                <textarea value={routeContent.description} onChange={(e) => {
-                  setRouteContent({
-                    ...routeContent,
-                    description: e.target.value,
-                  });
-                  setMd(e.target.value);
-                }} />
+                <textarea
+                  value={routeContent.description}
+                  onChange={(e) => {
+                    setRouteContent({
+                      ...routeContent,
+                      description: e.target.value,
+                    });
+                    setMd(e.target.value);
+                  }}
+                />
               </div>
-              <button  onClick={_create_map_summary_route} className={modMenuStyles.routeApply}>Apply</button>
+              <button onClick={_create_map_summary_route} className={modMenuStyles.routeApply}>
+                Apply
+              </button>
 
-              <div id='modview-md' className={modMenuStyles.idModviewMd}>
+              <div id="modview-md" className={modMenuStyles.idModviewMd}>
                 <span>Markdown preview</span>
-                <span><a href="https://commonmark.org/help/" rel="noreferrer" target='_blank'>documentation</a></span>
-                <span><a href="https://remarkjs.github.io/react-markdown/" rel="noreferrer" target='_blank'>demo</a></span>
+                <span>
+                  <a href="https://commonmark.org/help/" rel="noreferrer" target="_blank">
+                    documentation
+                  </a>
+                </span>
+                <span>
+                  <a href="https://remarkjs.github.io/react-markdown/" rel="noreferrer" target="_blank">
+                    demo
+                  </a>
+                </span>
                 <p>
-                  <ReactMarkdown>{md}
-                  </ReactMarkdown>
+                  <ReactMarkdown>{md}</ReactMarkdown>
                 </p>
               </div>
             </div>
-          )}
+          )
+        }
       </div>
     </>
   );

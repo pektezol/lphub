@@ -1,10 +1,10 @@
 @layer components {
-.navContainer {
+  .navContainer {
     justify-content: center;
     display: flex;
-}
+  }
 
-.navContainer div {
+  .navContainer div {
     display: flex;
     width: 100%;
     background-color: #202232;
@@ -12,10 +12,10 @@
     border-radius: 2000px;
     overflow: hidden;
     gap: 3px;
-}
+  }
 
-.navContainer button {
-    background-color: #2B2E46;
+  .navContainer button {
+    background-color: #2b2e46;
     color: inherit;
     border: none;
     font-family: inherit;
@@ -26,41 +26,41 @@
     font-size: 26px;
     padding: 10px 0px;
     transition: all 0.1s;
-}
+  }
 
-.navContainer button:hover,
-.navContainer button.selected {
+  .navContainer button:hover,
+  .navContainer button.selected {
     background-color: #202232;
-}
+  }
 
-.navContainer button:disabled {
+  .navContainer button:disabled {
     cursor: not-allowed;
     opacity: 0.6;
-}
+  }
 
-.navContainer button:disabled:hover {
-    background-color: #2B2E46;
-}
+  .navContainer button:disabled:hover {
+    background-color: #2b2e46;
+  }
 
-.nav1 div {
+  .nav1 div {
     width: 65%;
-}
+  }
 
-.nav2 div {
+  .nav2 div {
     width: 100%;
     max-width: 1500px;
-}
+  }
 
-.rankingsLeaderboard {
+  .rankingsLeaderboard {
     width: 100%;
     display: flex;
     justify-content: center;
     font-size: 20px;
     align-items: center;
     margin-top: 20px;
-}
+  }
 
-.ranksContainer {
+  .ranksContainer {
     display: flex;
     width: 65%;
     padding: 8px 8px;
@@ -68,150 +68,149 @@
     border-radius: 32px;
     flex-direction: column;
     gap: 7px;
-}
+  }
 
-.leaderboardEntry {
+  .leaderboardEntry {
     display: grid;
     grid-template-columns: 20% 40% 40%;
     text-align: center;
     align-items: center;
     width: 100%;
-    background-color: #2B2E46;
+    background-color: #2b2e46;
     border-radius: 2000px;
     padding: 6px 0px;
-}
+  }
 
-.leaderboardEntry.hasTime {
+  .leaderboardEntry.hasTime {
     grid-template-columns: 14% 36% 25% 25%;
-}
+  }
 
-.leaderboardEntry div:nth-child(2) {
+  .leaderboardEntry div:nth-child(2) {
     text-align: left;
-}
+  }
 
-.leaderboardEntry div a {
+  .leaderboardEntry div a {
     display: flex;
     align-items: center;
-}
+  }
 
-.leaderboardEntry div a span {
+  .leaderboardEntry div a span {
     margin-left: 5px;
-}
+  }
 
-.leaderboardEntry img {
+  .leaderboardEntry img {
     height: 34px;
     border-radius: 2000px;
-}
+  }
 
-.leaderboardEntry.header {
+  .leaderboardEntry.header {
     background-color: rgba(0, 0, 0, 0);
     font-family: "BarlowSemiCondensed-SemiBold";
     padding: 2px 0px;
-}
+  }
 
-.leaderboardEntry.header span:nth-child(2) {
+  .leaderboardEntry.header span:nth-child(2) {
     text-align: left;
-}
+  }
 
-.ranksContainer .splitter {
+  .ranksContainer .splitter {
     width: calc(100% - 20px);
     display: flex;
     height: 0.13em;
     background-color: #b7b9c6;
     border-radius: 200px;
     transform: translateX(10px);
-}
+  }
 
-.rankingsLoadError {
+  .rankingsLoadError {
     margin: 30px 0px;
     text-align: center;
-}
+  }
 
-@media screen and (min-width: 769px) and (max-width: 1024px) {
+  @media screen and (min-width: 769px) and (max-width: 1024px) {
     .navContainer button {
-        font-size: 20px;
-        padding: 9px 0px;
+      font-size: 20px;
+      padding: 9px 0px;
     }
 
     .nav1 div {
-        width: 100%;
+      width: 100%;
     }
 
     .nav2 div {
-        width: 100%;
+      width: 100%;
     }
 
     .rankingsLeaderboard {
-        font-size: 18px;
+      font-size: 18px;
     }
 
     .ranksContainer {
-        width: 100%;
+      width: 100%;
     }
 
     .leaderboardEntry {
-        grid-template-columns: 18% 42% 40%;
-        font-size: 16px;
+      grid-template-columns: 18% 42% 40%;
+      font-size: 16px;
     }
 
     .leaderboardEntry.hasTime {
-        grid-template-columns: 14% 36% 25% 25%;
+      grid-template-columns: 14% 36% 25% 25%;
     }
 
     .leaderboardEntry img {
-        height: 30px;
+      height: 30px;
     }
-}
+  }
 
-@media screen and (max-width: 768px) {
-
+  @media screen and (max-width: 768px) {
     .nav1 div,
     .nav2 div {
-        width: 100%;
+      width: 100%;
     }
 
     .nav1 div {
-        margin-top: 0;
+      margin-top: 0;
     }
 
     .nav2 div {
-        display: grid;
-        grid-template-columns: 33% 33% 33%;
-        border-radius: 24px;
+      display: grid;
+      grid-template-columns: 33% 33% 33%;
+      border-radius: 24px;
     }
 
     .navContainer button {
-        font-size: 18px;
-        padding: 8px 0px;
+      font-size: 18px;
+      padding: 8px 0px;
     }
 
     .ranksContainer {
-        width: 100%;
+      width: 100%;
     }
 
     .rankingsLeaderboard {
-        font-size: 16px;
+      font-size: 16px;
     }
 
     .leaderboardEntry {
-        grid-template-columns: 15% 50% 35%;
-        font-size: 14px;
+      grid-template-columns: 15% 50% 35%;
+      font-size: 14px;
     }
 
     .leaderboardEntry.hasTime {
-        grid-template-columns: 12% 38% 25% 25%;
+      grid-template-columns: 12% 38% 25% 25%;
     }
 
     .leaderboardEntry img {
-        height: 28px;
+      height: 28px;
     }
-}
+  }
 }
 
 @layer overrides {
-.centeredLoader {
+  .centeredLoader {
     display: flex;
     justify-content: center;
     margin: 30px 0px;
-}
+  }
 }

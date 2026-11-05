@@ -1,5 +1,5 @@
 @layer components {
-.idSection1.profile {
+  .idSection1.profile {
     margin: 25px 20px;
     background: linear-gradient(#2b2e46 50%, #202232 50%);
     border-radius: 24px;
@@ -7,10 +7,9 @@
 
     display: grid;
     grid-template-columns: 250px 1fr;
+  }
 
-}
-
-.idSection1.profile>div:first-child {
+  .idSection1.profile > div:first-child {
     overflow: hidden;
     border-radius: 100%;
     display: grid;
@@ -20,58 +19,57 @@
     margin: 8px 33px 8px 33px;
     scale: 0.9;
     grid-row: 1 / 3;
+  }
 
-}
-
-.idProfileImage>img {
+  .idProfileImage > img {
     border-radius: 100%;
     transition: filter 0.3s;
     cursor: pointer;
-}
+  }
 
-.idProfileImage>span {
+  .idProfileImage > span {
     z-index: 1;
     position: absolute;
     opacity: 0;
     color: white;
     transition: opacity 0.3s;
     cursor: pointer;
-}
+  }
 
-.idProfileImage:hover>img {
+  .idProfileImage:hover > img {
     filter: blur(5px) brightness(60%);
     z-index: 1;
-}
+  }
 
-.idProfileImage:hover>span {
+  .idProfileImage:hover > span {
     opacity: 1;
-}
+  }
 
-.idProfileTop {
+  .idProfileTop {
     height: 100px;
     display: grid;
     grid-template-columns: 80% 20%;
-}
+  }
 
-.idProfileTop>div:nth-child(1)>div>img {
+  .idProfileTop > div:nth-child(1) > div > img {
     margin: 12px;
     border-radius: 10px;
-}
+  }
 
-.idProfileTop>div:nth-child(1) {
+  .idProfileTop > div:nth-child(1) {
     display: flex;
     place-items: center;
     font-size: 50px;
     font-weight: bold;
     color: white;
-}
+  }
 
-.idProfileTop>div:nth-child(1)>div {
+  .idProfileTop > div:nth-child(1) > div {
     display: flex;
     height: 60px;
-}
+  }
 
-span.titles {
+  span.titles {
     margin: 12px 12px 12px 0;
 
     font-size: 18px;
@@ -79,67 +77,66 @@ span.titles {
 
     padding: 6px 20px 0px 20px;
     border-radius: 10px;
-}
+  }
 
-.idProfileTop>div:nth-child(2) {
+  .idProfileTop > div:nth-child(2) {
     display: flex;
     flex-direction: row-reverse;
     align-items: center;
     padding-right: 10px;
-}
+  }
 
-.idProfileTop>div:nth-child(2)>a>img {
+  .idProfileTop > div:nth-child(2) > a > img {
     height: 50px;
     padding: 0 5px 0 5px;
     scale: 0.9;
     filter: brightness(200%);
+  }
 
-}
-
-.idProfileBottom {
+  .idProfileBottom {
     min-height: 100px;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-}
+  }
 
-.idProfileBottom>div {
+  .idProfileBottom > div {
     margin: 12px;
     background-color: #2b2e46;
     border-radius: 20px;
     display: grid;
     place-items: center;
     grid-template-rows: 40% 50%;
-}
+  }
 
-.idProfileBottom>div>span:nth-child(1) {
+  .idProfileBottom > div > span:nth-child(1) {
     color: inherit;
     font-size: 18px;
-}
+  }
 
-.idProfileBottom>div>span:nth-child(2) {
+  .idProfileBottom > div > span:nth-child(2) {
     color: white;
     font-size: 40px;
-}
+  }
 
-.idProfileBottom>div>span:nth-child(2)>span {
+  .idProfileBottom > div > span:nth-child(2) > span {
     color: white;
     font-size: 20px;
-}
+  }
 
-.idProfileBottom>div.modeCompletion>span:nth-child(2) {
+  .idProfileBottom > div.modeCompletion > span:nth-child(2) {
     font-size: 30px;
-}
+  }
 
-/* #section1.profile>div>div{outline: red 1px dashed;} */
+  /* #section1.profile>div>div{outline: red 1px dashed;} */
 
-.idSection2.profile {
+  .idSection2.profile {
     margin: 25px 20px;
     height: 60px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-}
+  }
 
-.idSection2.profile>button {
+  .idSection2.profile > button {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -151,41 +148,40 @@ span.titles {
     font-size: 24px;
     cursor: pointer;
 
-    transition: background-color .1s;
-}
+    transition: background-color 0.1s;
+  }
 
-.idSection2.profile>button.activeSection {
+  .idSection2.profile > button.activeSection {
     background-color: #202232;
-}
+  }
 
-.idSection2.profile>button:nth-child(1) {
+  .idSection2.profile > button:nth-child(1) {
     border-radius: 24px 0 0 24px;
-}
+  }
 
-.idSection2.profile>button:nth-child(2) {
+  .idSection2.profile > button:nth-child(2) {
     border-radius: 0 24px 24px 0;
-}
+  }
 
-.idSection3.profile1>hr {
+  .idSection3.profile1 > hr {
     border: 1px solid #2b2e46;
     margin: 8px 20px 0px 20px;
-}
+  }
 
-.idSection3.profile1 {
+  .idSection3.profile1 {
     margin: 25px 20px;
     display: block;
 
     background-color: #202232;
     border-radius: 24px;
-}
+  }
 
-.idProfileboardNav {
+  .idProfileboardNav {
     display: grid;
     grid-template-columns: 1fr 1fr;
-}
+  }
 
-.idProfileboardNav>select {
-
+  .idProfileboardNav > select {
     /* appearance: none; */
     margin: 10px 20px 20px 20px;
     height: 50px;
@@ -199,38 +195,38 @@ span.titles {
     border: 0;
 
     background-color: #2b2e46;
-}
+  }
 
-.idProfileboardNav>select:hover {
+  .idProfileboardNav > select:hover {
     cursor: pointer;
-}
+  }
 
-.idProfileboardTop>span>img,
-.profileboardSortButton>img {
+  .idProfileboardTop > span > img,
+  .profileboardSortButton > img {
     height: 20px;
-    scale: .8;
-}
+    scale: 0.8;
+  }
 
-.idProfileboardTop>span>img,
-.idProfileboardTop>span>span {
+  .idProfileboardTop > span > img,
+  .idProfileboardTop > span > span {
     cursor: pointer;
-}
+  }
 
-.idProfileboardTop {
+  .idProfileboardTop {
     height: 34px;
     display: grid;
     font-size: 20px;
     padding-left: 40px;
     margin: 0 20px;
     grid-template-columns: 15% 15% 5% 15% 5% 15% 15% 15%;
-}
+  }
 
-.idProfileboardTop>span {
+  .idProfileboardTop > span {
     display: flex;
     place-items: flex-end;
-}
+  }
 
-.profileboardSortButton {
+  .profileboardSortButton {
     display: flex;
     align-items: center;
     padding: 0;
@@ -240,31 +236,33 @@ span.titles {
     background: transparent;
     border: 0;
     cursor: pointer;
-}
+  }
 
-.profileboardSortButton>img {
-    transition: transform .15s, filter .15s;
-}
+  .profileboardSortButton > img {
+    transition:
+      transform 0.15s,
+      filter 0.15s;
+  }
 
-.profileboardSortButton.isAscending>img {
+  .profileboardSortButton.isAscending > img {
     transform: rotate(180deg);
-}
+  }
 
-.profileboardSortButton.isAscending>img,
-.profileboardSortButton.isDescending>img {
+  .profileboardSortButton.isAscending > img,
+  .profileboardSortButton.isDescending > img {
     filter: brightness(150%);
-}
+  }
 
-.profileboardSortButton:focus-visible {
+  .profileboardSortButton:focus-visible {
     outline: 2px solid white;
     outline-offset: 2px;
-}
+  }
 
-.idProfileboardRecords {
+  .idProfileboardRecords {
     padding-bottom: 10px;
-}
+  }
 
-.profileboardRecord {
+  .profileboardRecord {
     width: calc(100% - 40px);
     margin: 10px 20px 0px 20px;
     height: 44px;
@@ -277,347 +275,390 @@ span.titles {
     color: inherit;
     font-family: inherit;
     border: 0;
-    transition: background-color .1s;
+    transition: background-color 0.1s;
     background-color: #2b2e46;
     display: grid;
     grid-template-columns: 15% 15% 5% 15% 5% 15% 15% 15%;
     overflow: hidden;
     white-space: nowrap;
 
-    transition: height .2s
-}
+    transition: height 0.2s;
+  }
 
-/* this right here should be illegal */
-.profileboardRecord>span:nth-child(-n+8) {
+  /* this right here should be illegal */
+  .profileboardRecord > span:nth-child(-n + 8) {
     filter: brightness(100%);
-}
+  }
 
-.profileboardRecord>span {
+  .profileboardRecord > span {
     display: flex;
     place-items: flex-end;
     filter: brightness(65%);
-}
+  }
 
-.profileboardRecord>hr {
+  .profileboardRecord > hr {
     margin: 0 0 0 -60px;
     border: 0;
     height: 2px;
     background-color: #202232;
-}
+  }
 
-.profileboardRecord>span:nth-child(4) {
+  .profileboardRecord > span:nth-child(4) {
     display: grid;
-}
+  }
 
-.profileboardRecord>span {
-
+  .profileboardRecord > span {
     display: flex;
     place-items: center;
     height: 44px;
-}
+  }
 
-.profileboardRecord>a>span {
-
+  .profileboardRecord > a > span {
     display: flex;
     place-items: center;
     height: 44px;
-}
+  }
 
-.profileboardRecord>span>button {
+  .profileboardRecord > span > button {
     background-color: #0000;
     border: 0;
     cursor: pointer;
-}
+  }
 
-@media screen and (min-width: 769px) and (max-width: 1024px) {
+  @media screen and (min-width: 769px) and (max-width: 1024px) {
     .idSection1.profile {
-        grid-template-columns: 220px 1fr;
-        height: 180px;
+      grid-template-columns: 220px 1fr;
+      height: 180px;
     }
 
-    .idSection1.profile>div:first-child {
-        margin: 6px 28px 6px 28px;
-        scale: 0.85;
+    .idSection1.profile > div:first-child {
+      margin: 6px 28px 6px 28px;
+      scale: 0.85;
     }
 
     .idProfileTop {
-        height: 90px;
-        grid-template-columns: 75% 25%;
+      height: 90px;
+      grid-template-columns: 75% 25%;
     }
 
-    .idProfileTop>div:nth-child(1) {
-        font-size: 44px;
+    .idProfileTop > div:nth-child(1) {
+      font-size: 44px;
     }
 
-    .idProfileTop>div:nth-child(1)>div>img {
-        margin: 10px;
+    .idProfileTop > div:nth-child(1) > div > img {
+      margin: 10px;
     }
 
     span.titles {
-        margin: 10px 10px 10px 0;
-        font-size: 16px;
-        padding: 5px 16px 0px 16px;
+      margin: 10px 10px 10px 0;
+      font-size: 16px;
+      padding: 5px 16px 0px 16px;
     }
 
-    .idProfileTop>div:nth-child(2)>a>img {
-        height: 44px;
+    .idProfileTop > div:nth-child(2) > a > img {
+      height: 44px;
     }
 
     .idProfileBottom {
-        min-height: 90px;
-        height: auto;
+      min-height: 90px;
+      height: auto;
     }
 
-    .idProfileBottom>div>span:nth-child(1) {
-        font-size: 16px;
+    .idProfileBottom > div > span:nth-child(1) {
+      font-size: 16px;
     }
 
-    .idProfileBottom>div>span:nth-child(2) {
-        font-size: 24px;
+    .idProfileBottom > div > span:nth-child(2) {
+      font-size: 24px;
     }
 
-    .idProfileBottom>div>span:nth-child(2)>span {
-        font-size: 12px;
+    .idProfileBottom > div > span:nth-child(2) > span {
+      font-size: 12px;
     }
 
     .idSection2.profile {
-        margin: 18px;
-        height: 55px;
+      margin: 18px;
+      height: 55px;
     }
 
-    .idSection2.profile>button {
-        font-size: 22px;
+    .idSection2.profile > button {
+      font-size: 22px;
     }
 
     .idSection3.profile1 {
-        margin: 18px;
+      margin: 18px;
     }
 
-    .idProfileboardNav>select {
-        margin: 10px 18px 18px 18px;
-        height: 48px;
-        font-size: 22px;
+    .idProfileboardNav > select {
+      margin: 10px 18px 18px 18px;
+      height: 48px;
+      font-size: 22px;
     }
 
     .idProfileboardTop {
-        font-size: 18px;
-        padding-left: 35px;
-        margin: 0 18px;
-        grid-template-columns: 16% 16% 5% 16% 5% 14% 14% 14%;
+      font-size: 18px;
+      padding-left: 35px;
+      margin: 0 18px;
+      grid-template-columns: 16% 16% 5% 16% 5% 14% 14% 14%;
     }
 
     .profileboardRecord {
-        margin: 10px 18px 0px 18px;
-        width: calc(100% - 36px);
-        padding: 0 0 0 35px;
-        font-size: 18px;
-        grid-template-columns: 16% 16% 5% 16% 5% 14% 14% 14%;
+      margin: 10px 18px 0px 18px;
+      width: calc(100% - 36px);
+      padding: 0 0 0 35px;
+      font-size: 18px;
+      grid-template-columns: 16% 16% 5% 16% 5% 14% 14% 14%;
     }
-}
+  }
 
-@media screen and (max-width: 768px) {
-
+  @media screen and (max-width: 768px) {
     .idSection1.profile {
-        margin: 0;
-        grid-template-columns: 1fr;
-        height: auto;
-        min-height: 300px;
-        background: linear-gradient(#2b2e46 60%, #202232 40%);
-        width: 100%;
-        box-sizing: border-box;
+      margin: 0;
+      grid-template-columns: 1fr;
+      height: auto;
+      min-height: 300px;
+      background: linear-gradient(#2b2e46 60%, #202232 40%);
+      width: 100%;
+      box-sizing: border-box;
     }
 
-    .idSection1.profile>div:first-child {
-        margin: 15px auto;
-        grid-row: 1;
+    .idSection1.profile > div:first-child {
+      margin: 15px auto;
+      grid-row: 1;
     }
 
     .idProfileTop {
-        grid-template-columns: 1fr;
-        height: auto;
-        text-align: center;
-        width: 100%;
-        box-sizing: border-box;
+      grid-template-columns: 1fr;
+      height: auto;
+      text-align: center;
+      width: 100%;
+      box-sizing: border-box;
     }
 
-    .idProfileTop>div:nth-child(1) {
-        justify-content: center;
-        font-size: 32px;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-        flex-wrap: wrap;
+    .idProfileTop > div:nth-child(1) {
+      justify-content: center;
+      font-size: 32px;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      flex-wrap: wrap;
     }
 
-    .idProfileTop>div:nth-child(1)>div {
-        flex-direction: column;
-        height: auto;
-        max-width: 100%;
+    .idProfileTop > div:nth-child(1) > div {
+      flex-direction: column;
+      height: auto;
+      max-width: 100%;
     }
 
-    .idProfileTop>div:nth-child(2) {
-        justify-content: center;
-        padding: 10px 0;
+    .idProfileTop > div:nth-child(2) {
+      justify-content: center;
+      padding: 10px 0;
     }
 
     .idProfileBottom {
-        grid-template-columns: 1fr;
-        height: auto;
-        width: 100%;
+      grid-template-columns: 1fr;
+      height: auto;
+      width: 100%;
     }
 
-    .idProfileBottom>div {
-        margin: 8px 12px;
-        box-sizing: border-box;
+    .idProfileBottom > div {
+      margin: 8px 12px;
+      box-sizing: border-box;
     }
 
     .idSection2.profile {
-        margin: 20px 0 0 0;
-        height: 50px;
-        width: 100%;
-        box-sizing: border-box;
+      margin: 20px 0 0 0;
+      height: 50px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
-    .idSection2.profile>button {
-        font-size: 18px;
+    .idSection2.profile > button {
+      font-size: 18px;
     }
 
     .idSection3.profile1 {
-        margin: 20px 0 0 0;
-        width: 100%;
-        box-sizing: border-box;
-        overflow-x: auto;
+      margin: 20px 0 0 0;
+      width: 100%;
+      box-sizing: border-box;
+      overflow-x: auto;
     }
 
     .idProfileboardNav {
-        grid-template-columns: 1fr;
-        width: 100%;
+      grid-template-columns: 1fr;
+      width: 100%;
     }
 
-    .idProfileboardNav>select {
-        margin: 20px 20px 0px 20px;
-        height: 45px;
-        font-size: 18px;
-        width: calc(100% - 40px);
-        box-sizing: border-box;
+    .idProfileboardNav > select {
+      margin: 20px 20px 0px 20px;
+      height: 45px;
+      font-size: 18px;
+      width: calc(100% - 40px);
+      box-sizing: border-box;
     }
 
     .idProfileboardTop {
-        font-size: 12px;
-        padding-left: 10px;
-        padding-right: 10px;
-        margin: 10px 10px;
-        display: flex;
-        justify-content: flex-end;
+      font-size: 12px;
+      padding-left: 10px;
+      padding-right: 10px;
+      margin: 10px 10px;
+      display: flex;
+      justify-content: flex-end;
     }
 
-    .idProfileboardTop>span {
-        display: none;
+    .idProfileboardTop > span {
+      display: none;
     }
 
-    .idProfileboardTop>div.idPageNumber {
-        display: block;
+    .idProfileboardTop > div.idPageNumber {
+      display: block;
     }
 
-    .idSection3.profile1>hr {
-        display: none;
+    .idSection3.profile1 > hr {
+      display: none;
     }
 
     .profileboardRecord {
-        font-size: 12px;
-        padding-left: 10px;
-        padding-right: 10px;
-        margin: 10px;
-        width: calc(100% - 20px);
-        box-sizing: border-box;
-        grid-template-columns: 28% 14% 9% 24% 5% 18% 0%;
+      font-size: 12px;
+      padding-left: 10px;
+      padding-right: 10px;
+      margin: 10px;
+      width: calc(100% - 20px);
+      box-sizing: border-box;
+      grid-template-columns: 28% 14% 9% 24% 5% 18% 0%;
     }
 
-    .profileboardRecord>span:nth-child(7),
-    .profileboardRecord>span:nth-child(16),
-    .profileboardRecord>span:nth-child(25),
-    .profileboardRecord>span:nth-child(34),
-    .profileboardRecord>span:nth-child(43) {
-        display: none;
+    .profileboardRecord > span:nth-child(7),
+    .profileboardRecord > span:nth-child(16),
+    .profileboardRecord > span:nth-child(25),
+    .profileboardRecord > span:nth-child(34),
+    .profileboardRecord > span:nth-child(43) {
+      display: none;
     }
 
-    .profileboardRecord>span>button:has(img[alt="download"]),
-    .profileboardRecord>span>button:has(img[alt="demo_id"]) {
-        display: none;
+    .profileboardRecord > span > button:has(img[alt="download"]),
+    .profileboardRecord > span > button:has(img[alt="demo_id"]) {
+      display: none;
     }
 
     span.titles {
-        font-size: 14px;
-        padding: 4px 12px 0px 12px;
+      font-size: 14px;
+      padding: 4px 12px 0px 12px;
     }
-}
+  }
 }
 
 @layer overrides {
-.missingRecord {
+  .missingRecord {
     background-color: #1b1b20;
+  }
 
-}
-
-.gridValue {
+  .gridValue {
     display: grid;
+  }
 
-}
-
-.recordActions {
+  .recordActions {
     flex-direction: row-reverse;
+  }
 
-}
-
-.expandedRecordHeight {
+  .expandedRecordHeight {
     height: var(--height);
+  }
 
-}
-
-.recordDivider {
+  .recordDivider {
     grid-column: 1 / span 8;
+  }
 
-}
-
-.recordInfo {
+  .recordInfo {
     margin-right: 10px;
+  }
 
-}
-
-.titleColor {
+  .titleColor {
     background-color: var(--background-color);
+  }
 
-}
-
-.unpaddedIcon {
+  .unpaddedIcon {
     padding: 0;
+  }
 
-}
-
-.centeredCell {
+  .centeredCell {
     justify-content: center;
+  }
 
-}
-
-.previousPageArrow {
+  .previousPageArrow {
     position: relative;
     left: -5px;
+  }
 
-}
-
-.nextPageArrow {
+  .nextPageArrow {
     position: relative;
     left: 5px;
     transform: rotate(180deg);
-
+  }
 }
-}
 
-.filterDropdown { position: relative; margin: 10px 20px 20px; min-width: 0; }
-.filterDropdown > button { width: 100%; height: 50px; border: 0; border-radius: 24px; background: #2b2e46; color: inherit; font: inherit; font-size: 24px; cursor: pointer; }
-.filterDropdown > button:disabled { display: inline-block; opacity: .55; cursor: default; }
-.filterDropdown > button i { transform: rotate(-90deg); margin-left: 8px; }
-.filterOptions { position: absolute; z-index: 1000; top: 100%; width: 100%; max-height: 300px; overflow-y: auto; box-sizing: border-box; background: #222538; border-radius: 10px; animation: profileDropdownIn 0.2s ease; }
-.filterOptions button { display: block; width: 100%; border: 0; border-radius: 0; padding: 8px; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
-.filterOptions button:hover, .filterOptions button:focus-visible { background: #414669; }
-@keyframes profileDropdownIn { from { opacity: 0; } to { opacity: 1; } }
-@media screen and (max-width: 768px) { .filterDropdown > button { font-size: 16px; } }
+.filterDropdown {
+  position: relative;
+  margin: 10px 20px 20px;
+  min-width: 0;
+}
+.filterDropdown > button {
+  width: 100%;
+  height: 50px;
+  border: 0;
+  border-radius: 24px;
+  background: #2b2e46;
+  color: inherit;
+  font: inherit;
+  font-size: 24px;
+  cursor: pointer;
+}
+.filterDropdown > button:disabled {
+  display: inline-block;
+  opacity: 0.55;
+  cursor: default;
+}
+.filterDropdown > button i {
+  transform: rotate(-90deg);
+  margin-left: 8px;
+}
+.filterOptions {
+  position: absolute;
+  z-index: 1000;
+  top: 100%;
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  box-sizing: border-box;
+  background: #222538;
+  border-radius: 10px;
+  animation: profileDropdownIn 0.2s ease;
+}
+.filterOptions button {
+  display: block;
+  width: 100%;
+  border: 0;
+  border-radius: 0;
+  padding: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.filterOptions button:hover,
+.filterOptions button:focus-visible {
+  background: #414669;
+}
+@keyframes profileDropdownIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media screen and (max-width: 768px) {
+  .filterDropdown > button {
+    font-size: 16px;
+  }
+}

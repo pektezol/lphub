@@ -4,11 +4,11 @@ import React from "react";
 import dialogStyles from "@css/Dialog.module.css";
 
 interface ConfirmDialogProps {
-    title: string;
-    subtitle: string;
-    onConfirm: () => void;
-    onCancel: () => void;
-};
+  title: string;
+  subtitle: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+}
 
 const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ title, subtitle, onConfirm, onCancel }) => {
   return (

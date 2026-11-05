@@ -21,8 +21,8 @@
     "dev:local": "vite --mode backend-local",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint .",
-    "lint-fix": "eslint . --fix",
+    "lint": "eslint . && prettier --check src",
+    "lint-fix": "eslint . --fix && prettier --write src",
     "type-check": "tsc -b"
   },
   "devDependencies": {
@@ -30,6 +30,8 @@
     "@types/react-helmet": "^6.1.11",
     "@vitejs/plugin-react": "^6.1.2",
     "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.9.10",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.2",
     "vite": "^8.3.4"

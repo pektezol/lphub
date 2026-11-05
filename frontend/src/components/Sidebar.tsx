@@ -1,16 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 
-import {
-  BookIcon,
-  FlagIcon,
-  HelpIcon,
-  HomeIcon,
-  LogoIcon,
-  PortalIcon,
-  SearchIcon,
-  UploadIcon,
-} from "@images/Images";
+import { BookIcon, FlagIcon, HelpIcon, HomeIcon, LogoIcon, PortalIcon, SearchIcon, UploadIcon } from "@images/Images";
 import Login from "@components/Login";
 import { UserProfile } from "@customTypes/Profile";
 import { Search } from "@customTypes/Search";
@@ -28,23 +19,13 @@ interface SidebarProps {
 
 const SEARCH_DEBOUNCE_MS = 250;
 
-const Sidebar: React.FC<SidebarProps> = ({
-  profile,
-  onLogout,
-  onUploadRun,
-}) => {
-  const [searchData, setSearchData] = React.useState<Search | undefined>(
-    undefined,
-  );
+const Sidebar: React.FC<SidebarProps> = ({ profile, onLogout, onUploadRun }) => {
+  const [searchData, setSearchData] = React.useState<Search | undefined>(undefined);
   const [isSidebarLocked, setIsSidebarLocked] = React.useState<boolean>(false);
   const [isSidebarOpen, setSidebarOpen] = React.useState<boolean>(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] =
-    React.useState<boolean>(false);
-  const [isMobileSearchOpen, setIsMobileSearchOpen] =
-    React.useState<boolean>(false);
-  const searchDebounceRef = React.useRef<
-    ReturnType<typeof setTimeout> | undefined
-  >(undefined);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState<boolean>(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = React.useState<boolean>(false);
+  const searchDebounceRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const searchAbortControllerRef = React.useRef<AbortController | null>(null);
   const searchRequestIdRef = React.useRef(0);
 
@@ -58,7 +39,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [searchBehind, setSearchBehind] = React.useState(false);
   const [wideSearchButtons, setWideSearchButtons] = React.useState(false);
   const visualTimers = React.useRef<ReturnType<typeof setTimeout>[]>([]);
-  const loginBranch = profile ? profile.profile ? "ready" : "loading" : "guest";
+  const loginBranch = profile ? (profile.profile ? "ready" : "loading") : "guest";
 
   React.useEffect(() => {
     // The previous login branch mounted a fresh button before the next navigation.
@@ -66,7 +47,14 @@ const Sidebar: React.FC<SidebarProps> = ({
   }, [loginBranch]);
 
   const sidebarButtonClass = (index: number) =>
-    classNames(sidebarStyles.sidebarButton, (selectedSidebarIndex === undefined ? "" : (selectedSidebarIndex === index ? sidebarStyles.sidebarButtonSelected : sidebarStyles.sidebarButtonDeselected)));
+    classNames(
+      sidebarStyles.sidebarButton,
+      selectedSidebarIndex === undefined
+        ? ""
+        : selectedSidebarIndex === index
+          ? sidebarStyles.sidebarButtonSelected
+          : sidebarStyles.sidebarButtonDeselected,
+    );
 
   const handle_sidebar_click = (index: number) => {
     if (isSidebarOpen) {
@@ -132,17 +120,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       try {
         const searchResponse = await API.get_search(query, controller.signal);
-        if (
-          !controller.signal.aborted &&
-          requestId === searchRequestIdRef.current
-        ) {
+        if (!controller.signal.aborted && requestId === searchRequestIdRef.current) {
           setSearchData(searchResponse);
         }
       } catch {
-        if (
-          !controller.signal.aborted &&
-          requestId === searchRequestIdRef.current
-        ) {
+        if (!controller.signal.aborted && requestId === searchRequestIdRef.current) {
           setSearchData(undefined);
         }
       }
@@ -207,14 +189,24 @@ const Sidebar: React.FC<SidebarProps> = ({
         <button
           id="hamburger-menu"
           onClick={_toggle_mobile_menu}
-          className={classNames((isMobileMenuOpen ? sidebarStyles.open : ""), sidebarStyles.idHamburgerMenu)}
+          className={classNames(isMobileMenuOpen ? sidebarStyles.open : "", sidebarStyles.idHamburgerMenu)}
         >
           <span></span>
           <span></span>
           <span></span>
         </button>
       </div>
-      <div id="sidebar" className={classNames((isMobileMenuOpen ? sidebarStyles.mobileOpen : ""), (searchWasToggled ? (isSidebarOpen ? sidebarStyles.searchCollapsed : sidebarStyles.searchExpanded) : ""), (labelsVisible ? sidebarStyles.labelsVisible : ""), (searchBehind ? sidebarStyles.searchBehind : ""), (wideSearchButtons ? sidebarStyles.wideSearchButtons : ""), sidebarStyles.idSidebar)}>
+      <div
+        id="sidebar"
+        className={classNames(
+          isMobileMenuOpen ? sidebarStyles.mobileOpen : "",
+          searchWasToggled ? (isSidebarOpen ? sidebarStyles.searchCollapsed : sidebarStyles.searchExpanded) : "",
+          labelsVisible ? sidebarStyles.labelsVisible : "",
+          searchBehind ? sidebarStyles.searchBehind : "",
+          wideSearchButtons ? sidebarStyles.wideSearchButtons : "",
+          sidebarStyles.idSidebar,
+        )}
+      >
         <Link to="/" tabIndex={-1}>
           <div id="logo" className={sidebarStyles.idLogo}>
             {" "}
@@ -233,10 +225,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           {/* List */}
           <div id="sidebar-toplist" className={sidebarStyles.idSidebarToplist}>
             {/* Top */}
-            <button
-              className={sidebarButtonClass(0)}
-              onClick={() => _handle_sidebar_lock()}
-            >
+            <button className={sidebarButtonClass(0)} onClick={() => _handle_sidebar_lock()}>
               <img src={SearchIcon} alt="" />
               <span>Search</span>
             </button>
@@ -260,10 +249,16 @@ const Sidebar: React.FC<SidebarProps> = ({
               </button>
             </Link>
             <Link to="/discussions" tabIndex={-1} onClick={_close_mobile_menu}>
-              <button className={sidebarButtonClass(7)}><img src={BookIcon} alt="" /><span>Discussions</span></button>
+              <button className={sidebarButtonClass(7)}>
+                <img src={BookIcon} alt="" />
+                <span>Discussions</span>
+              </button>
             </Link>
             <Link to="/statistics" tabIndex={-1} onClick={_close_mobile_menu}>
-              <button className={sidebarButtonClass(8)}><img src={HelpIcon} alt="" /><span>Statistics</span></button>
+              <button className={sidebarButtonClass(8)}>
+                <img src={HelpIcon} alt="" />
+                <span>Statistics</span>
+              </button>
             </Link>
             {/* <Link to="/news" tabIndex={-1}>
             <button className={sidebarStyles.sidebarButton}><img src={NewsIcon} alt="news" /><span>News</span></button>
@@ -278,7 +273,11 @@ const Sidebar: React.FC<SidebarProps> = ({
             {profile && profile.profile ? (
               <button
                 id="upload-run"
-                className={classNames(sidebarStyles.submitRunButton, sidebarStyles.idUploadRun, uploadRunDialogStyles.idUploadRun)}
+                className={classNames(
+                  sidebarStyles.submitRunButton,
+                  sidebarStyles.idUploadRun,
+                  uploadRunDialogStyles.idUploadRun,
+                )}
                 onClick={() => onUploadRun()}
               >
                 <img src={UploadIcon} alt="upload" />
@@ -307,19 +306,17 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
         <div
           id="search-panel"
-          className={classNames((isMobileSearchOpen ? sidebarStyles.mobileSearchOpen : ""), sidebarStyles.idSearchPanel)}
+          className={classNames(isMobileSearchOpen ? sidebarStyles.mobileSearchOpen : "", sidebarStyles.idSearchPanel)}
         >
           <input
             type="text"
             id="searchbar"
             placeholder="Search for map or a player..."
-            onChange={(e) => _handle_search_change(e.target.value)} className={sidebarStyles.idSearchbar}
+            onChange={(e) => _handle_search_change(e.target.value)}
+            className={sidebarStyles.idSearchbar}
           />
           <div className={sidebarStyles.mobileSearchHeader}>
-            <button
-              className={sidebarStyles.mobileSearchClose}
-              onClick={_close_mobile_search}
-            >
+            <button className={sidebarStyles.mobileSearchClose} onClick={_close_mobile_search}>
               ✕
             </button>
           </div>
@@ -339,18 +336,15 @@ const Sidebar: React.FC<SidebarProps> = ({
             ))}
             {searchData?.players.map((q, index) => (
               <Link
-                to={
-                  profile && q.steam_id === profile.steam_id
-                    ? "/profile"
-                    : `/users/${q.steam_id}`
-                }
+                to={profile && q.steam_id === profile.steam_id ? "/profile" : `/users/${q.steam_id}`}
                 className={sidebarStyles.searchPlayer}
                 key={index}
                 onClick={_close_mobile_search_and_menu}
               >
                 <img src={q.avatar_link} alt="pfp"></img>
                 <span
-                  style={cssVariables({ "--font-size": `${36 - q.user_name.length * 0.8}px` })} className={sidebarStyles.searchResultName}
+                  style={cssVariables({ "--font-size": `${36 - q.user_name.length * 0.8}px` })}
+                  className={sidebarStyles.searchResultName}
                 >
                   {q.user_name}
                 </span>

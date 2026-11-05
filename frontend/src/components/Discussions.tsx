@@ -12,7 +12,7 @@ import useConfirm from "@hooks/UseConfirm";
 import mapsStyles from "@css/Maps.module.css";
 
 interface DiscussionsProps {
-  token?: string
+  token?: string;
   data?: MapDiscussions;
   isModerator: boolean;
   mapID: string;
@@ -20,7 +20,6 @@ interface DiscussionsProps {
 }
 
 const Discussions: React.FC<DiscussionsProps> = ({ token, data, isModerator, mapID, onRefresh }) => {
-
   const { confirm, ConfirmDialogComponent } = useConfirm();
   const [params, setParams] = useSearchParams();
   const [threadError, setThreadError] = React.useState(false);
@@ -29,10 +28,22 @@ const Discussions: React.FC<DiscussionsProps> = ({ token, data, isModerator, map
     let active = true;
     const id = Number(params.get("discussion"));
     setThreadError(false);
-    if (id > 0) void API.get_map_discussion(mapID, id).then(thread => { if (active) { setDiscussionThread(thread); setThreadError(!thread); } }).catch(() => { if (active) setThreadError(true); });
+    if (id > 0)
+      void API.get_map_discussion(mapID, id)
+        .then((thread) => {
+          if (active) {
+            setDiscussionThread(thread);
+            setThreadError(!thread);
+          }
+        })
+        .catch(() => {
+          if (active) setThreadError(true);
+        });
     else setDiscussionThread(undefined);
     setCreateDiscussion(params.get("create") === "1");
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [mapID, params]);
 
   const [discussionThread, setDiscussionThread] = React.useState<MapDiscussion | undefined>(undefined);
@@ -62,43 +73,80 @@ const Discussions: React.FC<DiscussionsProps> = ({ token, data, isModerator, map
   };
 
   return (
-    <section id='section7' className={mapsStyles.idSection7}>
+    <section id="section7" className={mapsStyles.idSection7}>
       {ConfirmDialogComponent}
       {threadError && <p>Discussion unavailable or could not be loaded.</p>}
       {deleteError && <p role="alert">Could not delete the post. Please try again.</p>}
-      {!discussionThread && <div id='discussion-search' className={token ? mapsStyles.idDiscussionSearch : `${mapsStyles.idDiscussionSearch} ${mapsStyles.discussionSearchGuest}`}>
-        <input type="text" value={discussionSearch} placeholder={"Search for posts..."} onChange={(e) => setDiscussionSearch(e.target.value)} />
-        {token && <div><button onClick={() => setCreateDiscussion(true)}>New Post</button></div>}
-      </div>}
+      {!discussionThread && (
+        <div
+          id="discussion-search"
+          className={
+            token
+              ? mapsStyles.idDiscussionSearch
+              : `${mapsStyles.idDiscussionSearch} ${mapsStyles.discussionSearchGuest}`
+          }
+        >
+          <input
+            type="text"
+            value={discussionSearch}
+            placeholder={"Search for posts..."}
+            onChange={(e) => setDiscussionSearch(e.target.value)}
+          />
+          {token && (
+            <div>
+              <button onClick={() => setCreateDiscussion(true)}>New Post</button>
+            </div>
+          )}
+        </div>
+      )}
 
-      { // janky ternary operators here, could divide them to more components?
-        createDiscussion ?
-          (
-            <DiscussionComposer mapID={mapID} token={token} onClose={closeComposer} onCreated={() => { closeComposer(); onRefresh(); }} />
-          )
-          :
-          discussionThread ?
-            (
-              <DiscussionThread
-                key={discussionThread.discussion.id}
-                thread={discussionThread}
-                mapID={mapID}
-                token={token}
-                onUpdate={setDiscussionThread}
-                onRefresh={onRefresh}
-                onClose={() => { setDiscussionThread(undefined); const next = new URLSearchParams(params); next.delete("discussion"); setParams(next); }}
-              />
-            )
-            :
-            (
-              data && data.discussions.length ?
-                <div className={feedStyles.list}>
-                  {data.discussions.filter(d => d.title.toLowerCase().includes(discussionSearch.toLowerCase())).map(d => (
-                    <DiscussionCard key={d.id} to={`/maps/${mapID}?tab=discussions&discussion=${d.id}`} title={d.title} author={d.creator.user_name} content={d.content} replies={d.reply_count} activity={d.activity_at} onDelete={isModerator ? () => void _delete_map_discussion(d) : undefined} />
-                  ))}
-                </div>
-                : <span className={mapsStyles.emptyDiscussions}>No Discussions...</span>
-            )
+      {
+        // janky ternary operators here, could divide them to more components?
+        createDiscussion ? (
+          <DiscussionComposer
+            mapID={mapID}
+            token={token}
+            onClose={closeComposer}
+            onCreated={() => {
+              closeComposer();
+              onRefresh();
+            }}
+          />
+        ) : discussionThread ? (
+          <DiscussionThread
+            key={discussionThread.discussion.id}
+            thread={discussionThread}
+            mapID={mapID}
+            token={token}
+            onUpdate={setDiscussionThread}
+            onRefresh={onRefresh}
+            onClose={() => {
+              setDiscussionThread(undefined);
+              const next = new URLSearchParams(params);
+              next.delete("discussion");
+              setParams(next);
+            }}
+          />
+        ) : data && data.discussions.length ? (
+          <div className={feedStyles.list}>
+            {data.discussions
+              .filter((d) => d.title.toLowerCase().includes(discussionSearch.toLowerCase()))
+              .map((d) => (
+                <DiscussionCard
+                  key={d.id}
+                  to={`/maps/${mapID}?tab=discussions&discussion=${d.id}`}
+                  title={d.title}
+                  author={d.creator.user_name}
+                  content={d.content}
+                  replies={d.reply_count}
+                  activity={d.activity_at}
+                  onDelete={isModerator ? () => void _delete_map_discussion(d) : undefined}
+                />
+              ))}
+          </div>
+        ) : (
+          <span className={mapsStyles.emptyDiscussions}>No Discussions...</span>
+        )
       }
     </section>
   );

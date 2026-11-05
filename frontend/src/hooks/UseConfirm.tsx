@@ -7,7 +7,7 @@ const useConfirm = () => {
   const [subtitle, setSubtitle] = React.useState<string>("");
   const [resolvePromise, setResolvePromise] = React.useState<((value: boolean) => void) | null>(null);
 
-  const confirm = ( titleN: string, subtitleN: string ) => {
+  const confirm = (titleN: string, subtitleN: string) => {
     setIsOpen(true);
     setTitle(titleN);
     setSubtitle(subtitleN);

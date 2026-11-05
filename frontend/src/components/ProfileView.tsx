@@ -32,9 +32,18 @@ import navigationStyles from "@css/Navigation.module.css";
 import sectionsStyles from "@css/Sections.module.css";
 import { classNames, cssVariables } from "@css/utils";
 
-function ProfileDropdown({ label, value, options, disabled = false, onChange }: {
-  label: string; value: string; options: { id: string; name: string }[];
-  disabled?: boolean; onChange: (value: string) => void;
+function ProfileDropdown({
+  label,
+  value,
+  options,
+  disabled = false,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: { id: string; name: string }[];
+  disabled?: boolean;
+  onChange: (value: string) => void;
 }) {
   const [open, setOpen] = React.useState(false);
   const ref = React.useRef<HTMLDivElement>(null);
@@ -48,14 +57,41 @@ function ProfileDropdown({ label, value, options, disabled = false, onChange }: 
     document.addEventListener("mousedown", close);
     return () => document.removeEventListener("mousedown", close);
   }, []);
-  return <div className={profileStyles.filterDropdown} ref={ref} onKeyDown={(event) => { if (event.key === "Escape") setOpen(false); }}>
-    <button type="button" aria-label={label} aria-expanded={open && !disabled} disabled={disabled} onClick={() => setOpen(!open)}>
-      {options.find((option) => option.id === value)?.name} <i className={navigationStyles.triangle} />
-    </button>
-    {open && !disabled && <div className={profileStyles.filterOptions}>
-      {options.map((option) => <button type="button" key={option.id} onClick={() => { onChange(option.id); setOpen(false); }}>{option.name}</button>)}
-    </div>}
-  </div>;
+  return (
+    <div
+      className={profileStyles.filterDropdown}
+      ref={ref}
+      onKeyDown={(event) => {
+        if (event.key === "Escape") setOpen(false);
+      }}
+    >
+      <button
+        type="button"
+        aria-label={label}
+        aria-expanded={open && !disabled}
+        disabled={disabled}
+        onClick={() => setOpen(!open)}
+      >
+        {options.find((option) => option.id === value)?.name} <i className={navigationStyles.triangle} />
+      </button>
+      {open && !disabled && (
+        <div className={profileStyles.filterOptions}>
+          {options.map((option) => (
+            <button
+              type="button"
+              key={option.id}
+              onClick={() => {
+                onChange(option.id);
+                setOpen(false);
+              }}
+            >
+              {option.name}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 const profilePageSize = 20;
@@ -64,8 +100,7 @@ const mapNameCollator = new Intl.Collator(undefined, {
   sensitivity: "base",
 });
 
-type ProfileRecordSortKey =
-  "mapName" | "portals" | "wrDelta" | "time" | "rank" | "date";
+type ProfileRecordSortKey = "mapName" | "portals" | "wrDelta" | "time" | "rank" | "date";
 type ProfileRecordSortDirection = "ascending" | "descending";
 
 interface ProfileRecordSort {
@@ -109,17 +144,10 @@ export interface ProfileViewProps {
   onProfileRefresh?: () => void | Promise<void>;
 }
 
-const isScoreBasedSort = (key: ProfileRecordSortKey): boolean =>
-  key !== "mapName";
+const isScoreBasedSort = (key: ProfileRecordSortKey): boolean => key !== "mapName";
 
-const formatProfileMapName = (
-  mapName: string,
-  sectionKind: string,
-  sectionName: string,
-): string =>
-  sectionKind === "mode"
-    ? "[" + sectionName.replace(/\s+Mode$/, "") + "] " + mapName
-    : mapName;
+const formatProfileMapName = (mapName: string, sectionKind: string, sectionName: string): string =>
+  sectionKind === "mode" ? "[" + sectionName.replace(/\s+Mode$/, "") + "] " + mapName : mapName;
 
 const getProfileMapsCacheKey = (gameID: string, chapterID: string): string =>
   chapterID === "0" ? `game:${gameID}` : `chapter:${chapterID}`;
@@ -131,56 +159,40 @@ const clearProfileCache = (cache: ProfileCacheScope) => {
   cache.mapRequests.clear();
 };
 
-const isValidGameChapters = (
-  data: GameChapters | undefined,
-  gameID: string,
-): data is GameChapters =>
+const isValidGameChapters = (data: GameChapters | undefined, gameID: string): data is GameChapters =>
+  Boolean(data && data.game?.id === Number(gameID) && Array.isArray(data.chapters));
+
+const isValidChapterMaps = (data: GameChapter | undefined, gameID: string, chapterID: string): data is GameChapter =>
   Boolean(
     data &&
-      data.game?.id === Number(gameID) &&
-      Array.isArray(data.chapters),
+    data.game?.id === Number(gameID) &&
+    data.chapter?.id === Number(chapterID) &&
+    data.chapter.game_id === Number(gameID) &&
+    Array.isArray(data.maps),
   );
 
-const isValidChapterMaps = (
-  data: GameChapter | undefined,
-  gameID: string,
-  chapterID: string,
-): data is GameChapter =>
-  Boolean(
-    data &&
-      data.game?.id === Number(gameID) &&
-      data.chapter?.id === Number(chapterID) &&
-      data.chapter.game_id === Number(gameID) &&
-      Array.isArray(data.maps),
-  );
-
-const getProfileRecordSortValue = (
-  row: ProfileBoardRow,
-  key: ProfileRecordSortKey,
-): string | number | undefined => {
+const getProfileRecordSortValue = (row: ProfileBoardRow, key: ProfileRecordSortKey): string | number | undefined => {
   const score = row.record?.scores[0];
 
   switch (key) {
-  case "mapName":
-    return row.mapName;
-  case "portals":
-    return score?.score_count;
-  case "wrDelta":
-    return score && row.record
-      ? score.score_count - row.record.map_wr_count
-      : undefined;
-  case "time":
-    return score?.score_time;
-  case "rank":
-    return row.record?.placement;
-  case "date": {
-    if (!score) {
-      return undefined;
-    }
+    case "mapName":
+      return row.mapName;
+    case "portals":
+      return score?.score_count;
+    case "wrDelta":
+      return score && row.record ? score.score_count - row.record.map_wr_count : undefined;
+    case "time":
+      return score?.score_time;
+    case "rank":
+      return row.record?.placement;
+    case "date": {
+      if (!score) {
+        return undefined;
+      }
 
-    const date = Date.parse(score.date);
-    return Number.isNaN(date) ? undefined : date;
-  }
+      const date = Date.parse(score.date);
+      return Number.isNaN(date) ? undefined : date;
+    }
   }
 };
 
@@ -193,10 +205,7 @@ const compareProfileBoardRows = (
     return first.mapID - second.mapID;
   }
 
-  if (
-    isScoreBasedSort(sort.key) &&
-    (first.record === undefined) !== (second.record === undefined)
-  ) {
+  if (isScoreBasedSort(sort.key) && (first.record === undefined) !== (second.record === undefined)) {
     return first.record === undefined ? 1 : -1;
   }
 
@@ -234,107 +243,89 @@ const ProfileView: React.FC<ProfileViewProps> = ({
 }) => {
   const { confirm, ConfirmDialogComponent } = useConfirm();
   const { message, MessageDialogComponent } = useMessage();
-  const { messageLoad, messageLoadClose, MessageDialogLoadComponent } =
-    useMessageLoad();
+  const { messageLoad, messageLoadClose, MessageDialogLoadComponent } = useMessageLoad();
   const [activeSection, setActiveSection] = React.useState<"records" | "statistics">("records");
   const [pageNumber, setPageNumber] = React.useState(1);
   const [sort, setSort] = React.useState<ProfileRecordSort | null>(null);
-  const [expandedRecordIDs, setExpandedRecordIDs] = React.useState<Set<number>>(
-    () => new Set(),
-  );
+  const [expandedRecordIDs, setExpandedRecordIDs] = React.useState<Set<number>>(() => new Set());
   const [game, setGame] = React.useState("0");
   const [chapter, setChapter] = React.useState("0");
-  const [chapterDataResource, setChapterDataResource] = React.useState<
-    ProfileChapterResource | undefined
-  >(undefined);
-  const [mapsResource, setMapsResource] = React.useState<
-    ProfileMapsResource | undefined
-  >(undefined);
-  const profileCacheScopeRef = React.useRef<ProfileCacheScope | undefined>(
-    undefined,
-  );
+  const [chapterDataResource, setChapterDataResource] = React.useState<ProfileChapterResource | undefined>(undefined);
+  const [mapsResource, setMapsResource] = React.useState<ProfileMapsResource | undefined>(undefined);
+  const profileCacheScopeRef = React.useRef<ProfileCacheScope | undefined>(undefined);
 
-  const loadGameChapters = React.useCallback(
-    (cache: ProfileCacheScope, gameID: string) => {
-      const cached = cache.gameChapters.get(gameID);
-      if (cached) {
-        return Promise.resolve(cached);
-      }
+  const loadGameChapters = React.useCallback((cache: ProfileCacheScope, gameID: string) => {
+    const cached = cache.gameChapters.get(gameID);
+    if (cached) {
+      return Promise.resolve(cached);
+    }
 
-      const inFlight = cache.gameChapterRequests.get(gameID);
-      if (inFlight) {
-        return inFlight;
-      }
+    const inFlight = cache.gameChapterRequests.get(gameID);
+    if (inFlight) {
+      return inFlight;
+    }
 
-      const request = API.get_games_chapters(gameID)
-        .then((data) => {
-          if (!isValidGameChapters(data, gameID)) {
-            return undefined;
-          }
-
-          if (cache.isActive) {
-            cache.gameChapters.set(gameID, data);
-          }
-          return data;
-        })
-        .catch(() => undefined);
-
-      cache.gameChapterRequests.set(gameID, request);
-      void request.then(() => {
-        if (cache.gameChapterRequests.get(gameID) === request) {
-          cache.gameChapterRequests.delete(gameID);
+    const request = API.get_games_chapters(gameID)
+      .then((data) => {
+        if (!isValidGameChapters(data, gameID)) {
+          return undefined;
         }
-      });
-      return request;
-    },
-    [],
-  );
 
-  const loadMaps = React.useCallback(
-    (cache: ProfileCacheScope, gameID: string, chapterID: string) => {
-      const cacheKey = getProfileMapsCacheKey(gameID, chapterID);
-      const cached = cache.maps.get(cacheKey);
-      if (cached) {
-        return Promise.resolve(cached);
+        if (cache.isActive) {
+          cache.gameChapters.set(gameID, data);
+        }
+        return data;
+      })
+      .catch(() => undefined);
+
+    cache.gameChapterRequests.set(gameID, request);
+    void request.then(() => {
+      if (cache.gameChapterRequests.get(gameID) === request) {
+        cache.gameChapterRequests.delete(gameID);
       }
+    });
+    return request;
+  }, []);
 
-      const inFlight = cache.mapRequests.get(cacheKey);
-      if (inFlight) {
-        return inFlight;
-      }
+  const loadMaps = React.useCallback((cache: ProfileCacheScope, gameID: string, chapterID: string) => {
+    const cacheKey = getProfileMapsCacheKey(gameID, chapterID);
+    const cached = cache.maps.get(cacheKey);
+    if (cached) {
+      return Promise.resolve(cached);
+    }
 
-      const request: Promise<GameMap[] | undefined> = (chapterID === "0"
-        ? API.get_game_maps(gameID).then((gameMaps) =>
-          Array.isArray(gameMaps) ? gameMaps : undefined,
-        )
+    const inFlight = cache.mapRequests.get(cacheKey);
+    if (inFlight) {
+      return inFlight;
+    }
+
+    const request: Promise<GameMap[] | undefined> = (
+      chapterID === "0"
+        ? API.get_game_maps(gameID).then((gameMaps) => (Array.isArray(gameMaps) ? gameMaps : undefined))
         : API.get_chapters(chapterID).then((chapterMaps) =>
-          isValidChapterMaps(chapterMaps, gameID, chapterID)
-            ? chapterMaps.maps
-            : undefined,
-        )
-      )
-        .then((data) => {
-          if (data === undefined) {
-            return undefined;
-          }
-
-          if (cache.isActive) {
-            cache.maps.set(cacheKey, data);
-          }
-          return data;
-        })
-        .catch(() => undefined);
-
-      cache.mapRequests.set(cacheKey, request);
-      void request.then(() => {
-        if (cache.mapRequests.get(cacheKey) === request) {
-          cache.mapRequests.delete(cacheKey);
+            isValidChapterMaps(chapterMaps, gameID, chapterID) ? chapterMaps.maps : undefined,
+          )
+    )
+      .then((data) => {
+        if (data === undefined) {
+          return undefined;
         }
-      });
-      return request;
-    },
-    [],
-  );
+
+        if (cache.isActive) {
+          cache.maps.set(cacheKey, data);
+        }
+        return data;
+      })
+      .catch(() => undefined);
+
+    cache.mapRequests.set(cacheKey, request);
+    void request.then(() => {
+      if (cache.mapRequests.get(cacheKey) === request) {
+        cache.mapRequests.delete(cacheKey);
+      }
+    });
+    return request;
+  }, []);
 
   React.useEffect(() => {
     let cache = profileCacheScopeRef.current;
@@ -361,10 +352,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
     return () => {
       cache.isActive = false;
       void Promise.resolve().then(() => {
-        if (
-          profileCacheScopeRef.current === cache &&
-          cache.lifecycle === lifecycle
-        ) {
+        if (profileCacheScopeRef.current === cache && cache.lifecycle === lifecycle) {
           clearProfileCache(cache);
           profileCacheScopeRef.current = undefined;
         }
@@ -374,83 +362,51 @@ const ProfileView: React.FC<ProfileViewProps> = ({
 
   const profileCache = profileCacheScopeRef.current;
   const activeProfileCache =
-    profileCache?.isActive && profileCache.profileID === profile.steam_id
-      ? profileCache
-      : undefined;
-  const mapsCacheKey =
-    game === "0" ? undefined : getProfileMapsCacheKey(game, chapter);
-  const cachedChapterData =
-    game === "0" ? undefined : activeProfileCache?.gameChapters.get(game);
-  const cachedMaps =
-    mapsCacheKey === undefined
-      ? undefined
-      : activeProfileCache?.maps.get(mapsCacheKey);
+    profileCache?.isActive && profileCache.profileID === profile.steam_id ? profileCache : undefined;
+  const mapsCacheKey = game === "0" ? undefined : getProfileMapsCacheKey(game, chapter);
+  const cachedChapterData = game === "0" ? undefined : activeProfileCache?.gameChapters.get(game);
+  const cachedMaps = mapsCacheKey === undefined ? undefined : activeProfileCache?.maps.get(mapsCacheKey);
   const chapterData =
     cachedChapterData ??
-    (chapterDataResource?.profileID === profile.steam_id &&
-    chapterDataResource.gameID === game
+    (chapterDataResource?.profileID === profile.steam_id && chapterDataResource.gameID === game
       ? chapterDataResource.data
       : null);
   const maps =
     cachedMaps ??
-    (mapsResource?.profileID === profile.steam_id &&
-    mapsResource.cacheKey === mapsCacheKey
-      ? mapsResource.data
-      : []);
+    (mapsResource?.profileID === profile.steam_id && mapsResource.cacheKey === mapsCacheKey ? mapsResource.data : []);
 
   const canEdit = editable && Boolean(viewerToken);
   const selectedGame = games.find((candidate) => candidate.id === Number(game));
   const sectionLabel = selectedGame?.section_label ?? "Chapter";
   const allSectionsLabel =
-    game === "0" ? "All Courses" : selectedGame?.section_kind === "mode"
-      ? "All Modes"
-      : "All " + sectionLabel + "s";
+    game === "0" ? "All Courses" : selectedGame?.section_kind === "mode" ? "All Modes" : "All " + sectionLabel + "s";
 
   const profileBoardRows = React.useMemo<ProfileBoardRow[]>(() => {
     if (game === "0") {
       return profile.records.map((record) => ({
         mapID: record.map_id,
-        mapName: formatProfileMapName(
-          record.map_name,
-          record.section_kind,
-          record.section_name,
-        ),
+        mapName: formatProfileMapName(record.map_name, record.section_kind, record.section_name),
         record,
       }));
     }
 
-    const recordsByMapID = new globalThis.Map(
-      profile.records.map((record) => [record.map_id, record]),
-    );
+    const recordsByMapID = new globalThis.Map(profile.records.map((record) => [record.map_id, record]));
     return maps
       .filter((map) => !map.is_disabled)
       .map((map) => ({
         mapID: map.id,
-        mapName: formatProfileMapName(
-          map.name,
-          map.section_kind,
-          map.section_name,
-        ),
+        mapName: formatProfileMapName(map.name, map.section_kind, map.section_name),
         record: recordsByMapID.get(map.id),
       }));
   }, [game, maps, profile.records]);
 
   const sortedProfileBoardRows = React.useMemo(
-    () =>
-      [...profileBoardRows].sort((first, second) =>
-        compareProfileBoardRows(first, second, sort),
-      ),
+    () => [...profileBoardRows].sort((first, second) => compareProfileBoardRows(first, second, sort)),
     [profileBoardRows, sort],
   );
-  const pageMax = Math.max(
-    1,
-    Math.ceil(sortedProfileBoardRows.length / profilePageSize),
-  );
+  const pageMax = Math.max(1, Math.ceil(sortedProfileBoardRows.length / profilePageSize));
   const currentPage = Math.min(pageNumber, pageMax);
-  const pageRows = sortedProfileBoardRows.slice(
-    (currentPage - 1) * profilePageSize,
-    currentPage * profilePageSize,
-  );
+  const pageRows = sortedProfileBoardRows.slice((currentPage - 1) * profilePageSize, currentPage * profilePageSize);
 
   const resetBoard = () => {
     setPageNumber(1);
@@ -475,21 +431,14 @@ const ProfileView: React.FC<ProfileViewProps> = ({
       return;
     }
 
-    const userConfirmed = await confirm(
-      "Delete Record",
-      "Are you sure you want to delete this record?",
-    );
+    const userConfirmed = await confirm("Delete Record", "Are you sure you want to delete this record?");
     if (!userConfirmed) {
       return;
     }
 
     messageLoad("Deleting...");
     try {
-      const apiSuccess = await API.delete_map_record(
-        viewerToken,
-        mapID,
-        recordID,
-      );
+      const apiSuccess = await API.delete_map_record(viewerToken, mapID, recordID);
       messageLoadClose();
       if (!apiSuccess) {
         await message("Delete Record", "Could not delete record.");
@@ -506,18 +455,12 @@ const ProfileView: React.FC<ProfileViewProps> = ({
 
   const downloadDemo = async (demoID: string) => {
     if (!viewerToken) {
-      await message(
-        "Download Demo",
-        "You must be logged in to download demos.",
-      );
+      await message("Download Demo", "You must be logged in to download demos.");
       return;
     }
 
     try {
-      const [success, errorMessage] = await API.download_demo(
-        viewerToken,
-        demoID,
-      );
+      const [success, errorMessage] = await API.download_demo(viewerToken, demoID);
       if (!success) {
         await message("Download Demo", errorMessage);
       }
@@ -541,10 +484,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
   const sortRecords = (key: ProfileRecordSortKey) => {
     setSort((currentSort) => ({
       key,
-      direction:
-        currentSort?.key === key && currentSort.direction === "ascending"
-          ? "descending"
-          : "ascending",
+      direction: currentSort?.key === key && currentSort.direction === "ascending" ? "descending" : "ascending",
     }));
     resetBoard();
   };
@@ -552,13 +492,15 @@ const ProfileView: React.FC<ProfileViewProps> = ({
   const renderSortHeader = (key: ProfileRecordSortKey, label: string) => {
     const isActive = sort?.key === key;
     const direction = isActive ? sort.direction : undefined;
-    const nextDirection =
-      direction === "ascending" ? "descending" : "ascending";
+    const nextDirection = direction === "ascending" ? "descending" : "ascending";
 
     return (
       <button
         type="button"
-        className={classNames(profileStyles.profileboardSortButton, (isActive ? (direction === "ascending" ? profileStyles.isAscending : profileStyles.isDescending) : ""))}
+        className={classNames(
+          profileStyles.profileboardSortButton,
+          isActive ? (direction === "ascending" ? profileStyles.isAscending : profileStyles.isDescending) : "",
+        )}
         onClick={() => sortRecords(key)}
         aria-pressed={isActive}
         aria-label={`Sort by ${label} ${nextDirection}`}
@@ -573,21 +515,17 @@ const ProfileView: React.FC<ProfileViewProps> = ({
   const renderProfileBoardRow = (row: ProfileBoardRow) => {
     if (!row.record) {
       return (
-        <div
-          className={classNames(profileStyles.profileboardRecord, profileStyles.missingRecord)}
-          key={row.mapID}
-
-        >
+        <div className={classNames(profileStyles.profileboardRecord, profileStyles.missingRecord)} key={row.mapID}>
           <Link to={`/maps/${row.mapID}`}>
             <span>{row.mapName}</span>
           </Link>
-          <span  className={profileStyles.gridValue}>N/A</span>
-          <span  className={profileStyles.gridValue}>N/A</span>
+          <span className={profileStyles.gridValue}>N/A</span>
+          <span className={profileStyles.gridValue}>N/A</span>
           <span>N/A</span>
           <span> </span>
           <span>N/A</span>
           <span>N/A</span>
-          <span  className={profileStyles.recordActions} />
+          <span className={profileStyles.recordActions} />
         </div>
       );
     }
@@ -595,36 +533,45 @@ const ProfileView: React.FC<ProfileViewProps> = ({
     const record = row.record;
     return (
       <div
-        className={classNames(profileStyles.profileboardRecord, (expandedRecordIDs.has(row.mapID) ? profileStyles.expandedRecordHeight : ""))}
+        className={classNames(
+          profileStyles.profileboardRecord,
+          expandedRecordIDs.has(row.mapID) ? profileStyles.expandedRecordHeight : "",
+        )}
         key={row.mapID}
-        style={cssVariables(expandedRecordIDs.has(row.mapID) ? { "--height": `${record.scores.length * 46}px` } : undefined)}
+        style={cssVariables(
+          expandedRecordIDs.has(row.mapID) ? { "--height": `${record.scores.length * 46}px` } : undefined,
+        )}
       >
         {record.scores.map((score, index) => (
           <React.Fragment key={score.record_id}>
-            {index !== 0 && <hr  className={profileStyles.recordDivider} />}
+            {index !== 0 && <hr className={profileStyles.recordDivider} />}
             <Link to={`/maps/${row.mapID}`}>
               <span>{row.mapName}</span>
             </Link>
-            <span  className={profileStyles.gridValue}>{score.score_count}</span>
-            <span  className={profileStyles.gridValue}>
-              {score.score_count - record.map_wr_count > 0
-                ? `+${score.score_count - record.map_wr_count}`
-                : "-"}
+            <span className={profileStyles.gridValue}>{score.score_count}</span>
+            <span className={profileStyles.gridValue}>
+              {score.score_count - record.map_wr_count > 0 ? `+${score.score_count - record.map_wr_count}` : "-"}
             </span>
-            <span className={classNames(profileStyles.gridValue, mapsStyles.hoverPopup)} popup-text={score.score_time + " ticks"}>
+            <span
+              className={classNames(profileStyles.gridValue, mapsStyles.hoverPopup)}
+              popup-text={score.score_time + " ticks"}
+            >
               {ticks_to_time(score.score_time)}
             </span>
             <span> </span>
             {index === 0 ? <span>#{record.placement}</span> : <span> </span>}
-            <span className={mapsStyles.hoverPopup} popup-text={score.date.replace("T", " ").split(".")[0]}>{time_ago(new Date(score.date.replace("T", " ").replace("Z", "")))}</span>
-            <span  className={profileStyles.recordActions}>
+            <span className={mapsStyles.hoverPopup} popup-text={score.date.replace("T", " ").split(".")[0]}>
+              {time_ago(new Date(score.date.replace("T", " ").replace("Z", "")))}
+            </span>
+            <span className={profileStyles.recordActions}>
               <button
                 type="button"
 
                 onClick={() => {
                   void message("Demo Information", `Demo ID: ${score.demo_id}`);
                 }}
-                aria-label="Demo information" className={profileStyles.recordInfo}
+                aria-label="Demo information"
+                className={profileStyles.recordInfo}
               >
                 <img src={ThreedotIcon} alt="demo_id" />
               </button>
@@ -649,15 +596,9 @@ const ProfileView: React.FC<ProfileViewProps> = ({
               >
                 <img src={DownloadIcon} alt="download" />
               </button>
-              {score.autorender_id && (
-                <AutorenderLink autorenderID={score.autorender_id} />
-              )}
+              {score.autorender_id && <AutorenderLink autorenderID={score.autorender_id} />}
               {index === 0 && record.scores.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => toggleRecordHistory(row.mapID)}
-                  aria-label="Toggle record history"
-                >
+                <button type="button" onClick={() => toggleRecordHistory(row.mapID)} aria-label="Toggle record history">
                   <img src={HistoryIcon} alt="history" />
                 </button>
               )}
@@ -676,11 +617,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
 
     let cancelled = false;
     const cache = profileCacheScopeRef.current;
-    if (
-      !cache ||
-      !cache.isActive ||
-      cache.profileID !== profile.steam_id
-    ) {
+    if (!cache || !cache.isActive || cache.profileID !== profile.steam_id) {
       setChapterDataResource(undefined);
       return () => {
         cancelled = true;
@@ -705,10 +642,10 @@ const ProfileView: React.FC<ProfileViewProps> = ({
         setChapterDataResource(
           data
             ? {
-              profileID: cache.profileID,
-              gameID: game,
-              data,
-            }
+                profileID: cache.profileID,
+                gameID: game,
+                data,
+              }
             : undefined,
         );
       }
@@ -728,11 +665,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
     let cancelled = false;
     const cacheKey = getProfileMapsCacheKey(game, chapter);
     const cache = profileCacheScopeRef.current;
-    if (
-      !cache ||
-      !cache.isActive ||
-      cache.profileID !== profile.steam_id
-    ) {
+    if (!cache || !cache.isActive || cache.profileID !== profile.steam_id) {
       setMapsResource(undefined);
       return () => {
         cancelled = true;
@@ -757,10 +690,10 @@ const ProfileView: React.FC<ProfileViewProps> = ({
         setMapsResource(
           data
             ? {
-              profileID: cache.profileID,
-              cacheKey,
-              data,
-            }
+                profileID: cache.profileID,
+                cacheKey,
+                data,
+              }
             : undefined,
         );
       }
@@ -786,7 +719,10 @@ const ProfileView: React.FC<ProfileViewProps> = ({
       {ConfirmDialogComponent}
 
       <main>
-        <section id="section1" className={classNames(profileStyles.profile, profileStyles.idSection1, sectionsStyles.idSection1)}>
+        <section
+          id="section1"
+          className={classNames(profileStyles.profile, profileStyles.idSection1, sectionsStyles.idSection1)}
+        >
           {canEdit ? (
             <div
               id="profile-image"
@@ -800,7 +736,8 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                   event.preventDefault();
                   void updateProfile();
                 }
-              }} className={profileStyles.idProfileImage}
+              }}
+              className={profileStyles.idProfileImage}
             >
               <img src={profile.avatar_link} alt="profile-image" />
               <span>Refresh</span>
@@ -862,7 +799,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                 ""
               ) : (
                 <a href={profile.links.p2sr}>
-                  <img src={PortalIcon} alt="P2SR"  className={profileStyles.unpaddedIcon} />
+                  <img src={PortalIcon} alt="P2SR" className={profileStyles.unpaddedIcon} />
                 </a>
               )}
             </div>
@@ -871,36 +808,27 @@ const ProfileView: React.FC<ProfileViewProps> = ({
             <div>
               <span>Overall</span>
               <span>
-                {profile.rankings.overall.rank === 0
-                  ? "N/A "
-                  : `#${profile.rankings.overall.rank} `}
+                {profile.rankings.overall.rank === 0 ? "N/A " : `#${profile.rankings.overall.rank} `}
                 <span>
-                  ({profile.rankings.overall.completion_count}/
-                  {profile.rankings.overall.completion_total})
+                  ({profile.rankings.overall.completion_count}/{profile.rankings.overall.completion_total})
                 </span>
               </span>
             </div>
             <div>
               <span>Singleplayer</span>
               <span>
-                {profile.rankings.singleplayer.rank === 0
-                  ? "N/A "
-                  : `#${profile.rankings.singleplayer.rank} `}
+                {profile.rankings.singleplayer.rank === 0 ? "N/A " : `#${profile.rankings.singleplayer.rank} `}
                 <span>
-                  ({profile.rankings.singleplayer.completion_count}/
-                  {profile.rankings.singleplayer.completion_total})
+                  ({profile.rankings.singleplayer.completion_count}/{profile.rankings.singleplayer.completion_total})
                 </span>
               </span>
             </div>
             <div>
               <span>Cooperative</span>
               <span>
-                {profile.rankings.cooperative.rank === 0
-                  ? "N/A "
-                  : `#${profile.rankings.cooperative.rank} `}
+                {profile.rankings.cooperative.rank === 0 ? "N/A " : `#${profile.rankings.cooperative.rank} `}
                 <span>
-                  ({profile.rankings.cooperative.completion_count}/
-                  {profile.rankings.cooperative.completion_total})
+                  ({profile.rankings.cooperative.completion_count}/{profile.rankings.cooperative.completion_total})
                 </span>
               </span>
             </div>
@@ -919,87 +847,117 @@ const ProfileView: React.FC<ProfileViewProps> = ({
           </div>
         </section>
 
-        <section id="section2" className={classNames(profileStyles.profile, profileStyles.idSection2, navigationStyles.idSection2, sectionsStyles.idSection2)}>
-          <button type="button" className={activeSection === "records" ? profileStyles.activeSection : undefined} aria-pressed={activeSection === "records"} onClick={() => setActiveSection("records")}>
+        <section
+          id="section2"
+          className={classNames(
+            profileStyles.profile,
+            profileStyles.idSection2,
+            navigationStyles.idSection2,
+            sectionsStyles.idSection2,
+          )}
+        >
+          <button
+            type="button"
+            className={activeSection === "records" ? profileStyles.activeSection : undefined}
+            aria-pressed={activeSection === "records"}
+            onClick={() => setActiveSection("records")}
+          >
             <img src={FlagIcon} alt="" />
             &nbsp;Player Records
           </button>
-          <button type="button" className={activeSection === "statistics" ? profileStyles.activeSection : undefined} aria-pressed={activeSection === "statistics"} onClick={() => setActiveSection("statistics")}>
+          <button
+            type="button"
+            className={activeSection === "statistics" ? profileStyles.activeSection : undefined}
+            aria-pressed={activeSection === "statistics"}
+            onClick={() => setActiveSection("statistics")}
+          >
             <img src={StatisticsIcon} alt="" />
             &nbsp;Statistics
           </button>
         </section>
 
-        {activeSection === "records" && <section id="section3" className={classNames(profileStyles.profile1, profileStyles.idSection3, sectionsStyles.idSection3)}>
-          <div id="profileboard-nav" className={profileStyles.idProfileboardNav}>
-            <ProfileDropdown label="Scores" value={game} options={[{ id: "0", name: "All Scores" }, ...games.map((item) => ({ id: String(item.id), name: item.name }))]} onChange={(value) => {
-              setGame(value);
-              setChapter("0");
-              setChapterDataResource(undefined);
-              setMapsResource(undefined);
-              resetBoard();
-            }} />
-            <ProfileDropdown label="Chapters" value={chapter} disabled={game === "0" || chapterData === null} options={[{ id: "0", name: allSectionsLabel }, ...(chapterData?.chapters ?? []).filter((item) => !item.is_disabled).map((item) => ({ id: String(item.id), name: item.name }))]} onChange={(value) => {
-              setChapter(value);
-              setMapsResource(undefined);
-              resetBoard();
-            }} />
-          </div>
-          <div id="profileboard-top" className={profileStyles.idProfileboardTop}>
-            <span>{renderSortHeader("mapName", "Map Name")}</span>
-            <span  className={profileStyles.centeredCell}>
-              {renderSortHeader("portals", "Portals")}
-            </span>
-            <span  className={profileStyles.centeredCell}>
-              {renderSortHeader("wrDelta", "WRΔ")}
-            </span>
-            <span  className={profileStyles.centeredCell}>
-              {renderSortHeader("time", "Time")}
-            </span>
-            <span> </span>
-            <span>{renderSortHeader("rank", "Rank")}</span>
-            <span>{renderSortHeader("date", "Date")}</span>
-            <div id="page-number" className={classNames(profileStyles.idPageNumber, sectionsStyles.idPageNumber)}>
-              <div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (currentPage > 1) {
-                      setPageNumber(currentPage - 1);
-                      setExpandedRecordIDs(new Set());
-                    }
-                  }}
-                >
-                  <i
-                    className={classNames(navigationStyles.triangle, profileStyles.previousPageArrow)}
-
-                  />
-                </button>
-                <span>
-                  {currentPage}/{pageMax}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (currentPage < pageMax) {
-                      setPageNumber(currentPage + 1);
-                      setExpandedRecordIDs(new Set());
-                    }
-                  }}
-                >
-                  <i
-                    className={classNames(navigationStyles.triangle, profileStyles.nextPageArrow)}
-
-                  />
-                </button>
+        {activeSection === "records" && (
+          <section
+            id="section3"
+            className={classNames(profileStyles.profile1, profileStyles.idSection3, sectionsStyles.idSection3)}
+          >
+            <div id="profileboard-nav" className={profileStyles.idProfileboardNav}>
+              <ProfileDropdown
+                label="Scores"
+                value={game}
+                options={[
+                  { id: "0", name: "All Scores" },
+                  ...games.map((item) => ({ id: String(item.id), name: item.name })),
+                ]}
+                onChange={(value) => {
+                  setGame(value);
+                  setChapter("0");
+                  setChapterDataResource(undefined);
+                  setMapsResource(undefined);
+                  resetBoard();
+                }}
+              />
+              <ProfileDropdown
+                label="Chapters"
+                value={chapter}
+                disabled={game === "0" || chapterData === null}
+                options={[
+                  { id: "0", name: allSectionsLabel },
+                  ...(chapterData?.chapters ?? [])
+                    .filter((item) => !item.is_disabled)
+                    .map((item) => ({ id: String(item.id), name: item.name })),
+                ]}
+                onChange={(value) => {
+                  setChapter(value);
+                  setMapsResource(undefined);
+                  resetBoard();
+                }}
+              />
+            </div>
+            <div id="profileboard-top" className={profileStyles.idProfileboardTop}>
+              <span>{renderSortHeader("mapName", "Map Name")}</span>
+              <span className={profileStyles.centeredCell}>{renderSortHeader("portals", "Portals")}</span>
+              <span className={profileStyles.centeredCell}>{renderSortHeader("wrDelta", "WRΔ")}</span>
+              <span className={profileStyles.centeredCell}>{renderSortHeader("time", "Time")}</span>
+              <span> </span>
+              <span>{renderSortHeader("rank", "Rank")}</span>
+              <span>{renderSortHeader("date", "Date")}</span>
+              <div id="page-number" className={classNames(profileStyles.idPageNumber, sectionsStyles.idPageNumber)}>
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (currentPage > 1) {
+                        setPageNumber(currentPage - 1);
+                        setExpandedRecordIDs(new Set());
+                      }
+                    }}
+                  >
+                    <i className={classNames(navigationStyles.triangle, profileStyles.previousPageArrow)} />
+                  </button>
+                  <span>
+                    {currentPage}/{pageMax}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (currentPage < pageMax) {
+                        setPageNumber(currentPage + 1);
+                        setExpandedRecordIDs(new Set());
+                      }
+                    }}
+                  >
+                    <i className={classNames(navigationStyles.triangle, profileStyles.nextPageArrow)} />
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-          <hr />
-          <div id="profileboard-records" className={profileStyles.idProfileboardRecords}>
-            {pageRows.map(renderProfileBoardRow)}
-          </div>
-        </section>}
+            <hr />
+            <div id="profileboard-records" className={profileStyles.idProfileboardRecords}>
+              {pageRows.map(renderProfileBoardRow)}
+            </div>
+          </section>
+        )}
       </main>
     </>
   );

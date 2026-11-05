@@ -1,39 +1,38 @@
 @layer components {
-div.idModview {
+  div.idModview {
     position: absolute;
     left: 50%;
     z-index: 20;
     width: 320px;
     height: auto;
     /* background-color: red; */
+  }
 
-}
-
-div.idModview>div>button {
+  div.idModview > div > button {
     height: 30px;
-}
+  }
 
-div.idModview>div>button:disabled {
+  div.idModview > div > button:disabled {
     display: inline-block;
     cursor: not-allowed;
-    opacity: .5;
-}
+    opacity: 0.5;
+  }
 
-div.idModview>div:nth-child(1) {
+  div.idModview > div:nth-child(1) {
     display: grid;
     grid-template-columns: 50% 50%;
-}
+  }
 
-div.idModview.isCollapsed>div:nth-child(1) {
+  div.idModview.isCollapsed > div:nth-child(1) {
     display: none;
-}
+  }
 
-div.idModview>div:nth-child(2) {
+  div.idModview > div:nth-child(2) {
     display: grid;
     place-items: center;
-}
+  }
 
-.idModviewMenu {
+  .idModviewMenu {
     position: absolute;
     left: calc(50% + 160px);
     top: 130px;
@@ -41,9 +40,9 @@ div.idModview>div:nth-child(2) {
     background-color: #2b2e46;
     z-index: 2;
     color: white;
-}
+  }
 
-.idModviewMenuImage {
+  .idModviewMenuImage {
     box-shadow: 0 0 40px 16px black;
     outline: 8px solid #2b2e46;
     border-radius: 20px;
@@ -51,41 +50,40 @@ div.idModview>div:nth-child(2) {
     display: grid;
     grid-template-columns: 50% 50%;
     /* place-items: center; */
+  }
 
-}
-
-.idModviewMenuImage>div:nth-child(1) {
+  .idModviewMenuImage > div:nth-child(1) {
     height: 400px;
     width: 500px;
     display: grid;
     grid-template-rows: 30% 70%;
-}
+  }
 
-.idModviewMenuImage>div:nth-child(2) {
+  .idModviewMenuImage > div:nth-child(2) {
     height: 400px;
     width: 500px;
     display: grid;
     grid-template-rows: 20% 10%;
-}
+  }
 
-.idModviewMenuImage>div>button {
+  .idModviewMenuImage > div > button {
     width: 300px;
     margin-left: 100px;
-}
+  }
 
-.idModviewMenuImage>div>img {
+  .idModviewMenuImage > div > img {
     width: 500px;
-}
+  }
 
-.idModviewMenuImage>div>button {
+  .idModviewMenuImage > div > button {
     font-size: 20px;
-}
+  }
 
-.idModviewMenuImage>div>span>input[type="file"] {
+  .idModviewMenuImage > div > span > input[type="file"] {
     font-size: 15px;
-}
+  }
 
-.idModviewMenuDifficulty {
+  .idModviewMenuDifficulty {
     box-shadow: 0 0 40px 16px black;
     outline: 8px solid #2b2e46;
     border-radius: 20px;
@@ -94,15 +92,15 @@ div.idModview>div:nth-child(2) {
     min-width: 280px;
     padding: 20px;
     font-size: 20px;
-}
+  }
 
-.idModviewMenuDifficulty input,
-.idModviewMenuDifficulty button {
+  .idModviewMenuDifficulty input,
+  .idModviewMenuDifficulty button {
     font-size: 20px;
-}
+  }
 
-.idModviewMenuAdd,
-.idModviewMenuEdit {
+  .idModviewMenuAdd,
+  .idModviewMenuEdit {
     box-shadow: 0 0 40px 16px black;
     outline: 8px solid #2b2e46;
     border-radius: 20px;
@@ -110,38 +108,38 @@ div.idModview>div:nth-child(2) {
     display: grid;
     grid-template-columns: 20% 20% 20% 20% 20%;
     position: relative;
-}
+  }
 
-.idModviewMenuAdd>div:not(.idModviewMd),
-.idModviewMenuEdit>div:not(.idModviewMd) {
+  .idModviewMenuAdd > div:not(.idModviewMd),
+  .idModviewMenuEdit > div:not(.idModviewMd) {
     display: grid;
     margin: 20px;
     width: 200px;
     font-size: 20px;
-}
+  }
 
-.idModviewRouteDescription>textarea {
+  .idModviewRouteDescription > textarea {
     resize: none;
     height: 160px;
     width: 1160px;
-}
+  }
 
-.idModviewRouteShowcase>input::placeholder {
-    opacity: .5;
-}
+  .idModviewRouteShowcase > input::placeholder {
+    opacity: 0.5;
+  }
 
-.idModviewBlock {
+  .idModviewBlock {
     position: absolute;
     background-color: black;
-    opacity: .3;
+    opacity: 0.3;
     left: 320px;
     width: calc(100% - 320px);
     height: 100%;
     z-index: 2;
     cursor: no-drop;
-}
+  }
 
-.idModviewMd {
+  .idModviewMd {
     box-shadow: 0 0 40px 16px black;
     background-color: #2b2e46;
     outline: 8px solid #2b2e46;
@@ -158,155 +156,157 @@ div.idModview>div:nth-child(2) {
     height: 300px;
     overflow-y: auto;
     word-wrap: break-word;
-}
+  }
 
-.idModviewMd>span>a {
+  .idModviewMd > span > a {
     padding-left: 20px;
     color: aqua;
-}
+  }
 
-.idModviewMd>p {
+  .idModviewMd > p {
     font-family: BarlowSemiCondensed-Regular;
     color: #cdcfdf;
     font-size: 21px;
-}
+  }
 
-@media screen and (min-width: 769px) and (max-width: 1024px) {
+  @media screen and (min-width: 769px) and (max-width: 1024px) {
     .idModviewBlock {
-        left: 280px;
-        width: calc(100% - 280px);
+      left: 280px;
+      width: calc(100% - 280px);
     }
 
     .idModviewMenu {
-        left: calc(50% + 140px);
-        top: 100px;
+      left: calc(50% + 140px);
+      top: 100px;
     }
 
     .idModviewMenuImage {
-        grid-template-columns: 1fr;
+      grid-template-columns: 1fr;
     }
 
-    .idModviewMenuImage>div:nth-child(1),
-    .idModviewMenuImage>div:nth-child(2) {
-        width: 450px;
-        height: auto;
+    .idModviewMenuImage > div:nth-child(1),
+    .idModviewMenuImage > div:nth-child(2) {
+      width: 450px;
+      height: auto;
     }
 
-    .idModviewMenuImage>div>img {
-        width: 450px;
+    .idModviewMenuImage > div > img {
+      width: 450px;
     }
 
-    .idModviewMenuImage>div>button {
-        width: 280px;
-        margin-left: 85px;
-        font-size: 18px;
+    .idModviewMenuImage > div > button {
+      width: 280px;
+      margin-left: 85px;
+      font-size: 18px;
     }
 
     .idModviewMenuAdd,
     .idModviewMenuEdit {
-        grid-template-columns: 1fr 1fr 1fr;
-        font-size: 36px;
+      grid-template-columns: 1fr 1fr 1fr;
+      font-size: 36px;
     }
 
-    .idModviewMenuAdd>div:not(.idModviewMd),
-    .idModviewMenuEdit>div:not(.idModviewMd) {
-        width: 180px;
-        font-size: 18px;
+    .idModviewMenuAdd > div:not(.idModviewMd),
+    .idModviewMenuEdit > div:not(.idModviewMd) {
+      width: 180px;
+      font-size: 18px;
     }
 
-    .idModviewRouteDescription>textarea {
-        width: 680px;
-        height: 140px;
+    .idModviewRouteDescription > textarea {
+      width: 680px;
+      height: 140px;
     }
 
     .idModviewMd {
-        width: calc(100vw - 300px);
-        height: 260px;
-        top: 380px;
-        font-size: 18px;
+      width: calc(100vw - 300px);
+      height: 260px;
+      top: 380px;
+      font-size: 18px;
     }
 
-    .idModviewMd>p {
-        font-size: 19px;
+    .idModviewMd > p {
+      font-size: 19px;
     }
 
     div.idModview {
-        width: 280px;
+      width: 280px;
     }
-}
+  }
 
-@media screen and (max-width: 768px) {
+  @media screen and (max-width: 768px) {
     .idModviewBlock {
-        left: 0;
-        width: 100%;
+      left: 0;
+      width: 100%;
     }
 
     .idModviewMenu {
-        left: 50%;
-        top: 80px;
-        width: 90vw;
+      left: 50%;
+      top: 80px;
+      width: 90vw;
     }
 
     .idModviewMenuImage {
-        grid-template-columns: 1fr;
-        width: 100%;
+      grid-template-columns: 1fr;
+      width: 100%;
     }
 
-    .idModviewMenuImage>div:nth-child(1),
-    .idModviewMenuImage>div:nth-child(2) {
-        width: 100%;
-        height: auto;
+    .idModviewMenuImage > div:nth-child(1),
+    .idModviewMenuImage > div:nth-child(2) {
+      width: 100%;
+      height: auto;
     }
 
-    .idModviewMenuImage>div>img {
-        width: 100%;
-        max-width: 400px;
+    .idModviewMenuImage > div > img {
+      width: 100%;
+      max-width: 400px;
     }
 
-    .idModviewMenuImage>div>button {
-        width: 80%;
-        margin-left: 10%;
+    .idModviewMenuImage > div > button {
+      width: 80%;
+      margin-left: 10%;
     }
 
     .idModviewMenuAdd,
     .idModviewMenuEdit {
-        grid-template-columns: 1fr;
-        width: 90vw;
+      grid-template-columns: 1fr;
+      width: 90vw;
     }
 
-    .idModviewMenuAdd>div:not(.idModviewMd),
-    .idModviewMenuEdit>div:not(.idModviewMd) {
-        width: 90%;
+    .idModviewMenuAdd > div:not(.idModviewMd),
+    .idModviewMenuEdit > div:not(.idModviewMd) {
+      width: 90%;
     }
 
-    .idModviewRouteDescription>textarea {
-        width: 100%;
-        max-width: 90vw;
+    .idModviewRouteDescription > textarea {
+      width: 100%;
+      max-width: 90vw;
     }
 
     .idModviewMd {
-        width: calc(100vw - 2rem);
-        top: 300px;
+      width: calc(100vw - 2rem);
+      top: 300px;
     }
 
     div.idModview {
-        width: 90vw;
+      width: 90vw;
     }
-}
+  }
 
-.backdropHidden { display: none; }
-.backdropVisible { display: block; }
+  .backdropHidden {
+    display: none;
+  }
+  .backdropVisible {
+    display: block;
+  }
 }
 
 @layer overrides {
-.routeDescription {
+  .routeDescription {
     height: 180px;
     grid-column: 1 / span 5;
-
-}
-.routeApply {
+  }
+  .routeApply {
     grid-column: 2 / span 3;
     height: 40px;
-
-}
+  }
 }

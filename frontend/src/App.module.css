@@ -1,61 +1,60 @@
 @layer components {
-.loader {
+  .loader {
     animation: loader 1.2s ease infinite;
     background-size: 400% 300%;
     background-image: linear-gradient(-90deg, #202232 0%, #202232 25%, #2a2c41 50%, #202232 75%, #202232 100%);
     user-select: none;
-}
+  }
 
-.loaderText {
+  .loaderText {
     animation: loader 1.2s ease infinite;
     background-size: 400% 300%;
     background-image: linear-gradient(-90deg, #202232 0%, #202232 25%, #2a2c41 50%, #202232 75%, #202232 100%);
     user-select: none;
     color: #00000000;
     border-radius: 62.5rem;
-}
+  }
 
-@keyframes loader {
+  @keyframes loader {
     0% {
-        background-position: 100% 20%;
+      background-position: 100% 20%;
     }
 
     50% {
-        background-position: 0% 50%;
+      background-position: 0% 50%;
     }
 
     100% {
-        background-position: 0% 50%;
+      background-position: 0% 50%;
     }
-}
+  }
 
-.loader {
+  .loader {
     width: 3rem;
     height: 3rem;
-    border: 0.3125rem solid #FFF;
+    border: 0.3125rem solid #fff;
     border-bottom-color: transparent;
     border-radius: 50%;
     display: inline-block;
     box-sizing: border-box;
     animation: rotation 1s linear infinite;
-}
+  }
 
-@keyframes rotation {
+  @keyframes rotation {
     0% {
-        transform: rotate(0deg);
+      transform: rotate(0deg);
     }
 
     100% {
-        transform: rotate(360deg);
+      transform: rotate(360deg);
     }
-}
+  }
 
-@media screen and (max-width: 768px) {
-
+  @media screen and (max-width: 768px) {
     .loader {
-        width: 2.5rem;
-        height: 2.5rem;
-        border: 0.25rem solid #FFF;
+      width: 2.5rem;
+      height: 2.5rem;
+      border: 0.25rem solid #fff;
     }
-}
+  }
 }

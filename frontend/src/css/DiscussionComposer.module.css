@@ -1,19 +1,96 @@
 @layer components {
-.composer { min-width: 0; padding: 4px 10px 10px; }
-.heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 4px 0 16px; border-bottom: 1px solid #393c53; margin-bottom: 18px; }
-.heading h2 { margin: 0; color: #fff; font-family: BarlowCondensed-Bold; font-size: 36px; line-height: 1.15; }
-.close { flex: 0 0 40px; height: 40px; color: #cdcfdf; background: transparent; border: 0; font-size: 38px; line-height: 1; cursor: pointer; }
-.field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; font-size: 18px; color: #cdcfdf; }
-.field input, .field textarea { box-sizing: border-box; width: 100%; min-width: 0; padding: 11px 12px; border: 1px solid transparent; border-radius: 12px; background: #2b2e46; color: white; font: 18px BarlowSemiCondensed-Regular; cursor: text; }
-.field textarea { resize: vertical; min-height: 120px; }
-.field input::placeholder, .field textarea::placeholder { color: #aaa; }
-.field input:focus, .field textarea:focus { outline: 2px solid #3c91e6; outline-offset: 1px; }
-.actions { display: flex; justify-content: flex-end; }
-.actions button { padding: 8px 24px; border: 0; border-radius: 24px; background: #3c91e6; color: white; font: bold 16px BarlowSemiCondensed-Regular; cursor: pointer; }
-.actions button:disabled { display: block; opacity: .5; cursor: default; }
-.notice { margin: 0 0 12px; font-size: 16px; }
-@media (max-width: 768px) {
-.composer { padding: 2px 4px 6px; }
-.heading h2 { font-size: 30px; }
-}
+  .composer {
+    min-width: 0;
+    padding: 4px 10px 10px;
+  }
+  .heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 4px 0 16px;
+    border-bottom: 1px solid #393c53;
+    margin-bottom: 18px;
+  }
+  .heading h2 {
+    margin: 0;
+    color: #fff;
+    font-family: BarlowCondensed-Bold;
+    font-size: 36px;
+    line-height: 1.15;
+  }
+  .close {
+    flex: 0 0 40px;
+    height: 40px;
+    color: #cdcfdf;
+    background: transparent;
+    border: 0;
+    font-size: 38px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 16px;
+    font-size: 18px;
+    color: #cdcfdf;
+  }
+  .field input,
+  .field textarea {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    padding: 11px 12px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: #2b2e46;
+    color: white;
+    font: 18px BarlowSemiCondensed-Regular;
+    cursor: text;
+  }
+  .field textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+  .field input::placeholder,
+  .field textarea::placeholder {
+    color: #aaa;
+  }
+  .field input:focus,
+  .field textarea:focus {
+    outline: 2px solid #3c91e6;
+    outline-offset: 1px;
+  }
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .actions button {
+    padding: 8px 24px;
+    border: 0;
+    border-radius: 24px;
+    background: #3c91e6;
+    color: white;
+    font: bold 16px BarlowSemiCondensed-Regular;
+    cursor: pointer;
+  }
+  .actions button:disabled {
+    display: block;
+    opacity: 0.5;
+    cursor: default;
+  }
+  .notice {
+    margin: 0 0 12px;
+    font-size: 16px;
+  }
+  @media (max-width: 768px) {
+    .composer {
+      padding: 2px 4px 6px;
+    }
+    .heading h2 {
+      font-size: 30px;
+    }
+  }
 }

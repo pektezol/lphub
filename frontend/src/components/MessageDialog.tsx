@@ -4,10 +4,10 @@ import React from "react";
 import dialogStyles from "@css/Dialog.module.css";
 
 interface MessageDialogProps {
-    title: string;
-    subtitle: string;
-    onClose: () => void;
-};
+  title: string;
+  subtitle: string;
+  onClose: () => void;
+}
 
 const MessageDialog: React.FC<MessageDialogProps> = ({ title, subtitle, onClose }) => {
   return (

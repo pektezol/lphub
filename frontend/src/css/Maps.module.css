@@ -1,56 +1,56 @@
 @layer components {
-.idBackgroundImage {
+  .idBackgroundImage {
     z-index: -1;
     position: absolute;
     opacity: 10%;
     height: 50%;
     width: 100%;
-}
+  }
 
-.idBackgroundImage > img {
+  .idBackgroundImage > img {
     object-fit: cover;
     width: 100%;
     height: 100%;
-}
+  }
 
-.idBackgroundImage::before {
+  .idBackgroundImage::before {
     content: "";
     position: absolute;
     width: 100%;
     height: 100%;
     background: linear-gradient(to top, #161723, #0000);
-}
+  }
 
-/* Section 1: map name*/
+  /* Section 1: map name*/
 
-/* #section1>div>.nav-button:nth-child(1){border-radius: 0px;}
+  /* #section1>div>.nav-button:nth-child(1){border-radius: 0px;}
 
 :nth-child(1){border-radius: 20px 0 0 20px;}
 #section1>div>.nav-button:nth-child(2){border-radius: 0 20px 20px 0;margin-left: 2px;} */
 
-.mapPageHeader {
+  .mapPageHeader {
     display: flex;
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
-}
+  }
 
-.mapPageBreadcrumbs {
+  .mapPageBreadcrumbs {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 2px;
-}
+  }
 
-.mapPageNeighborNavigation {
+  .mapPageNeighborNavigation {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, auto) minmax(0, 1fr);
     gap: 8px;
     width: 100%;
     align-items: center;
-}
+  }
 
-.mapPageTitle {
+  .mapPageTitle {
     justify-self: center;
     min-width: 0;
     max-width: min(50vw, 600px);
@@ -58,45 +58,45 @@
     text-align: center;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
+  }
 
-/* Section 2: navbar */
+  /* Section 2: navbar */
 
-/* Section 3: category + history */
+  /* Section 3: category + history */
 
-.idCategory {
+  .idCategory {
     display: grid;
     height: 350px;
     border-radius: 24px;
     overflow: hidden;
-}
+  }
 
-.idCategory > p {
+  .idCategory > p {
     margin-bottom: 20px;
     text-align: center;
     font-size: 50px;
     cursor: default;
     color: white;
-}
+  }
 
-.idCategoryImage {
+  .idCategoryImage {
     transform: translate(-20%, -15%);
     z-index: -1;
     overflow: hidden;
     width: 125%;
     margin: 22px;
     filter: blur(4px) contrast(80%) brightness(80%);
-}
+  }
 
-.idCategory > span {
+  .idCategory > span {
     margin-top: 70px;
     background-color: #202232;
 
     display: grid;
     gap: 2px;
-}
+  }
 
-.idCategory > span > button {
+  .idCategory > span > button {
     font-family: inherit;
     font-size: 18px;
     border: none;
@@ -105,44 +105,44 @@
 
     cursor: pointer;
     transition: background-color 0.1s;
-}
+  }
 
-.idHistory > div > hr {
+  .idHistory > div > hr {
     border: 1px solid #2b2e46;
     margin: 8px 20px 0px 20px;
-}
+  }
 
-.idHistory {
+  .idHistory {
     width: 100%;
     background-color: #202232;
     border-radius: 24px;
     box-sizing: border-box;
-}
+  }
 
-.idRecords {
+  .idRecords {
     overflow-y: auto;
     height: 256px;
-}
+  }
 
-.idRecords::-webkit-scrollbar {
+  .idRecords::-webkit-scrollbar {
     display: none;
-}
+  }
 
-.recordTop,
-.record {
+  .recordTop,
+  .record {
     font-size: 18px;
     display: grid;
     text-align: center;
     grid-template-columns: 1fr 1fr 1fr;
-}
+  }
 
-.recordTop {
+  .recordTop {
     font-weight: bold;
     margin: 20px 20px 0 20px;
     cursor: default;
-}
+  }
 
-.record {
+  .record {
     margin: 10px 20px 10px 20px;
     height: 44px;
     width: calc(100% - 40px);
@@ -154,15 +154,15 @@
     border: 0;
     cursor: pointer;
     transition: background-color 0.1s;
-}
+  }
 
-.idHistory > span {
+  .idHistory > span {
     border-top: #202232 solid 2px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-}
+  }
 
-.idHistory > span > button {
+  .idHistory > span > button {
     width: 100%;
     height: 40px;
     font-family: inherit;
@@ -172,37 +172,37 @@
 
     cursor: pointer;
     transition: background-color 0.1s;
-}
+  }
 
-.idHistory > span > button:nth-child(1) {
+  .idHistory > span > button:nth-child(1) {
     border-radius: 0 0 0 24px;
-}
+  }
 
-.idHistory > span > button:nth-child(2) {
+  .idHistory > span > button:nth-child(2) {
     border-radius: 0 0 24px 0;
-}
+  }
 
-.mapHistoryChart {
+  .mapHistoryChart {
     height: 293px;
     min-width: 0;
     margin: 10px 10px 5px;
-}
+  }
 
-.mapHistoryChart svg {
+  .mapHistoryChart svg {
     overflow: visible;
-}
+  }
 
-.mapHistoryPoint {
+  .mapHistoryPoint {
     cursor: pointer;
     outline: none;
-}
+  }
 
-.mapHistoryPoint:focus-visible circle:last-child {
+  .mapHistoryPoint:focus-visible circle:last-child {
     stroke: #fff;
     stroke-width: 3px;
-}
+  }
 
-.mapHistoryTooltip {
+  .mapHistoryTooltip {
     display: grid;
     gap: 3px;
     padding: 10px 14px;
@@ -210,21 +210,21 @@
     background: #2b2e46;
     color: #cdcfdf;
     font-family: BarlowSemiCondensed-Regular;
-}
+  }
 
-.mapHistoryTooltip p,
-.mapHistoryTooltip strong,
-.mapHistoryTooltip span {
+  .mapHistoryTooltip p,
+  .mapHistoryTooltip strong,
+  .mapHistoryTooltip span {
     margin: 0;
-}
+  }
 
-.mapHistoryTooltip strong {
+  .mapHistoryTooltip strong {
     color: #fff;
     font-family: BarlowSemiCondensed-SemiBold;
     font-size: 18px;
-}
+  }
 
-.mapHistoryEmpty {
+  .mapHistoryEmpty {
     display: grid;
     min-height: 293px;
     margin: 0;
@@ -232,24 +232,24 @@
     color: #cdcfdf;
     font-size: 18px;
     text-align: center;
-}
+  }
 
-.idHistory > div > h5 {
+  .idHistory > div > h5 {
     text-align: center;
     height: 197px;
-}
+  }
 
-/* Section 4: Difficulty + count */
+  /* Section 4: Difficulty + count */
 
-.idSection4 {
+  .idSection4 {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
     margin: 40px 0 0 0;
-}
+  }
 
-.idDifficulty,
-.idCount {
+  .idDifficulty,
+  .idCount {
     background-color: #202232;
     width: 100%;
     text-align: center;
@@ -259,122 +259,122 @@
     display: grid;
     grid-template-rows: 20px 40px 40px;
     box-sizing: border-box;
-}
+  }
 
-.idDifficulty > span:nth-child(1),
-.idCount > span:nth-child(1) {
+  .idDifficulty > span:nth-child(1),
+  .idCount > span:nth-child(1) {
     padding-top: 10px;
     font-size: 18px;
     color: #cdcfdf;
-}
+  }
 
-.idDifficulty > span:nth-child(2) {
+  .idDifficulty > span:nth-child(2) {
     font-size: 40px;
-}
+  }
 
-.idDifficulty > div {
+  .idDifficulty > div {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     padding: 0 calc(50% - 125px) 0 calc(50% - 125px);
     place-items: center;
-}
+  }
 
-.difficultyRating {
+  .difficultyRating {
     border-radius: 24px;
     width: 40px;
     height: 3px;
     background-color: #2b2e46;
-}
+  }
 
-.idCount > div {
+  .idCount > div {
     padding-top: 10px;
     font-size: 50px;
     color: white;
-}
+  }
 
-/* Section 5: route desc + video */
-.idSection5 {
+  /* Section 5: route desc + video */
+  .idSection5 {
     margin: 40px 0 20px 0;
     width: 100%;
-}
+  }
 
-.idDescription {
+  .idDescription {
     width: 100%;
     height: auto;
     min-height: 342px;
-}
+  }
 
-.idDescription > iframe {
+  .idDescription > iframe {
     margin: 20px;
     float: right;
     border: 0;
     border-radius: 24px;
     width: 608px;
     height: 342px;
-}
+  }
 
-.idDescription > h3 {
+  .idDescription > h3 {
     margin: 0 0 10px 0;
     color: white;
-}
+  }
 
-.theoreticalRouteNote {
+  .theoreticalRouteNote {
     color: #c9c9d5;
     font-size: 0.6em;
     font-weight: normal;
-}
+  }
 
-.idDescriptionText {
+  .idDescriptionText {
     display: block;
     font-size: 21px;
     word-wrap: break-word;
     text-align: justify;
-}
+  }
 
-.idDescriptionText > b {
+  .idDescriptionText > b {
     font-size: inherit;
-}
+  }
 
-.idDescriptionText > a {
+  .idDescriptionText > a {
     font-size: inherit;
     color: #3c91e6;
-}
+  }
 
-/* Section 6: leaderboards */
-.idSection6 {
+  /* Section 6: leaderboards */
+  .idSection6 {
     margin: 40px 0 20px 0;
     min-height: 600px;
     background-color: #202232;
 
     border-radius: 24px;
     padding: 10px 10px 0 10px;
-}
+  }
 
-.idSection6 > hr {
+  .idSection6 > hr {
     border: 1px solid #2b2e46;
     margin: 8px 20px 0px 20px;
-}
+  }
 
-.idLeaderboardTop {
+  .idLeaderboardTop {
     display: grid;
     font-size: 20px;
     height: 34px;
     padding-left: 60px;
     margin: 0 20px 0 20px;
-}
+  }
 
-.idLeaderboardTop > span {
+  .idLeaderboardTop > span {
     display: flex;
     place-items: flex-end;
-}
+  }
 
-.idRunner {
+  .idRunner {
     display: grid;
     grid-template-columns: 50% 50%;
     align-items: end;
-}
+  }
 
-.leaderboardRecord {
+  .leaderboardRecord {
     margin: 10px 20px 0px 20px;
     height: 44px;
     width: calc(100% - 40px);
@@ -394,43 +394,43 @@
     transition: background-color 0.1s;
     background-color: #2b2e46;
     box-sizing: border-box;
-}
+  }
 
-.leaderboardRecord > span:nth-child(1) {
+  .leaderboardRecord > span:nth-child(1) {
     display: grid;
-}
+  }
 
-.leaderboardRecord > span:nth-child(4) {
+  .leaderboardRecord > span:nth-child(4) {
     display: grid;
-}
+  }
 
-.leaderboardRecord > span:last-child {
+  .leaderboardRecord > span:last-child {
     flex-direction: row-reverse;
-}
+  }
 
-.leaderboardRecord > span {
+  .leaderboardRecord > span {
     display: flex;
     place-items: center;
     height: 44px;
-}
+  }
 
-.leaderboardRecord > div > a > span > img {
+  .leaderboardRecord > div > a > span > img {
     height: 36px;
     border-radius: 50px;
     padding: 0;
     scale: 0.95;
-}
+  }
 
-.leaderboardRecord > div {
+  .leaderboardRecord > div {
     display: grid;
     grid-template-columns: 50% 50%;
     place-items: left;
     box-sizing: border-box;
     min-width: 0;
     overflow: hidden;
-}
+  }
 
-.leaderboardRecord > div > a > span {
+  .leaderboardRecord > div > a > span {
     display: flex;
     place-items: center;
     height: 44px;
@@ -438,21 +438,21 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
+  }
 
-.leaderboardRecord > span > button {
+  .leaderboardRecord > span > button {
     background-color: #0000;
     border: 0;
     cursor: pointer;
     transition: opacity 0.1s;
-}
+  }
 
-.hoverPopup {
+  .hoverPopup {
     position: relative;
     display: inline-block;
-}
+  }
 
-.hoverPopup::after {
+  .hoverPopup::after {
     content: attr(popup-text);
     position: absolute;
     /* top: 0%; */
@@ -466,45 +466,49 @@
     opacity: 0;
     color: #cdcfdf;
     /* transition: visibility 0s, opacity 0.3s ease; */
-}
+  }
 
-.hoverPopup:hover {
+  .hoverPopup:hover {
     color: transparent;
-}
+  }
 
-.hoverPopup:hover::after {
+  .hoverPopup:hover::after {
     visibility: visible;
     opacity: 1;
-}
+  }
 
-.leaderboardRecord:last-child {
+  .leaderboardRecord:last-child {
     margin: 10px 20px 10px 20px;
-}
+  }
 
-.idSection7 {
+  .idSection7 {
     margin: 40px 0 20px 0;
     background-color: #202232;
     border-radius: 24px;
     padding: 10px;
-}
+  }
 
-.idDiscussionSearch {
+  .idDiscussionSearch {
     height: 46px;
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 100px;
     margin: 0 0 20px 0;
-}
+  }
 
-.discussionSearchGuest { grid-template-columns: minmax(0, 1fr); }
+  .discussionSearchGuest {
+    grid-template-columns: minmax(0, 1fr);
+  }
 
-.idDiscussionSearch.discussionSearchGuest > input { border-radius: 16px; }
+  .idDiscussionSearch.discussionSearchGuest > input {
+    border-radius: 16px;
+  }
 
-.idDiscussionSearch > input::placeholder {
+  .idDiscussionSearch > input::placeholder {
     color: #aaa;
-}
+  }
 
-.idDiscussionSearch > input {
+  .idDiscussionSearch > input {
     background-color: #2b2e46;
     font-size: 20px;
     padding-left: 10px;
@@ -512,13 +516,13 @@
     border: 0;
     border-radius: 16px 0 0 16px;
     font-family: inherit;
-}
+  }
 
-.idDiscussionSearch > div > button:hover {
+  .idDiscussionSearch > div > button:hover {
     filter: brightness(75%);
-}
+  }
 
-.idDiscussionSearch > div > button {
+  .idDiscussionSearch > div > button {
     padding: 7px 16px;
     margin: 8px 0;
     border: 0;
@@ -532,20 +536,20 @@
     color: white;
 
     transition: filter 0.2s;
-}
+  }
 
-.idDiscussionSearch > div {
+  .idDiscussionSearch > div {
     background-color: #2b2e46;
     border-radius: 0 16px 16px 0;
-}
+  }
 
-.idDiscussionPost > button:nth-child(1) > span > b {
+  .idDiscussionPost > button:nth-child(1) > span > b {
     font-size: 18px;
     color: #cdcfdf;
     font-weight: lighter;
-}
+  }
 
-.idDiscussionPost > button:nth-child(1) {
+  .idDiscussionPost > button:nth-child(1) {
     background-color: #2b2e46;
     display: grid;
     grid-template-columns: minmax(0, 1fr) 150px;
@@ -561,34 +565,34 @@
     color: #cdcfdf;
     cursor: pointer;
     overflow: hidden;
-}
+  }
 
-.idDiscussionPost > button:nth-child(1) > span:nth-child(1) {
+  .idDiscussionPost > button:nth-child(1) > span:nth-child(1) {
     font-size: 32px;
-}
+  }
 
-.idDiscussionPost > button:nth-child(1) > span:nth-child(3) {
+  .idDiscussionPost > button:nth-child(1) > span:nth-child(3) {
     color: #aaa;
     font-size: 18px;
-}
+  }
 
-.idDiscussionPost > button:nth-child(1) > span:nth-child(4) {
+  .idDiscussionPost > button:nth-child(1) > span:nth-child(4) {
     opacity: 0.7;
     height: 40px;
     display: flex;
     place-items: end;
     justify-content: end;
-}
+  }
 
-.idDiscussionPost {
+  .idDiscussionPost {
     height: 100px;
-}
+  }
 
-.idDiscussionPost > button > button:hover {
+  .idDiscussionPost > button > button:hover {
     filter: brightness(75%);
-}
+  }
 
-.idDiscussionPost > button > button {
+  .idDiscussionPost > button > button {
     padding: 7px 16px;
 
     border: 0;
@@ -601,29 +605,29 @@
     color: white;
 
     transition: filter 0.2s;
-}
+  }
 
-.idDiscussionCreate > div {
+  .idDiscussionCreate > div {
     display: grid;
     text-align: start;
-}
+  }
 
-.idDiscussionCreate {
+  .idDiscussionCreate {
     display: grid;
     grid-template-columns: 1fr 40px;
     height: auto;
     word-wrap: break-word;
-}
+  }
 
-.idDiscussionCreate > span {
+  .idDiscussionCreate > span {
     padding-left: 20px;
-}
+  }
 
-.idDiscussionCreate > div > input::placeholder {
+  .idDiscussionCreate > div > input::placeholder {
     color: #aaa;
-}
+  }
 
-.idDiscussionCreate > div > input {
+  .idDiscussionCreate > div > input {
     background-color: #2b2e46;
     font-size: 20px;
     padding-left: 10px;
@@ -632,17 +636,17 @@
     color: white;
     border: 0;
     font-family: inherit;
-}
+  }
 
-.idDiscussionCreate > div > input:nth-child(2) {
+  .idDiscussionCreate > div > input:nth-child(2) {
     font-size: 16px;
-}
+  }
 
-.idDiscussionCreateButton:hover {
+  .idDiscussionCreateButton:hover {
     filter: brightness(75%);
-}
+  }
 
-.idDiscussionCreateButton {
+  .idDiscussionCreateButton {
     padding: 7px 16px;
     margin: 8px 0 0 0;
     border: 0;
@@ -658,18 +662,18 @@
     grid-column: 1 / span 2;
 
     transition: filter 0.2s;
-}
+  }
 
-.idDiscussionThread > div:nth-child(1) {
+  .idDiscussionThread > div:nth-child(1) {
     display: grid;
     grid-template-columns: 1fr 40px;
     height: auto;
     padding: 0 0 10px 20px;
     word-wrap: break-word;
-}
+  }
 
-.idDiscussionCreate > button:nth-child(2),
-.idDiscussionThread > div > button {
+  .idDiscussionCreate > button:nth-child(2),
+  .idDiscussionThread > div > button {
     height: 40px;
     float: inline-end;
     color: #cdcfdf;
@@ -677,62 +681,62 @@
     border: 0;
     font-size: 38px;
     cursor: pointer;
-}
+  }
 
-.idDiscussionThread > div:nth-child(2) > a > img {
+  .idDiscussionThread > div:nth-child(2) > a > img {
     width: 60px;
     height: 60px;
     border-radius: 100px;
     margin: 20px 0 0 0;
-}
+  }
 
-.idDiscussionThread > div:nth-child(2) > div {
+  .idDiscussionThread > div:nth-child(2) > div {
     height: max-content;
     padding: 20px 0 0 10px;
     display: inline-grid;
     grid-template-columns: min-content 1fr;
     overflow: hidden;
-}
+  }
 
-.idDiscussionThread > div:nth-child(2) > div > span:nth-child(1) {
+  .idDiscussionThread > div:nth-child(2) > div > span:nth-child(1) {
     font-weight: bold;
     height: 30px;
-}
+  }
 
-.idDiscussionThread > div:nth-child(2) > div > span:nth-child(2) {
+  .idDiscussionThread > div:nth-child(2) > div > span:nth-child(2) {
     opacity: 0.6;
     height: 30px;
     font-size: 80%;
     padding-left: 10px;
-}
+  }
 
-.idDiscussionThread > div:nth-child(2) > div > span:nth-child(3) {
+  .idDiscussionThread > div:nth-child(2) > div > span:nth-child(3) {
     grid-column: 1 / span 2;
     height: max-content;
     word-wrap: break-word;
-}
+  }
 
-.idDiscussionThread > div:nth-child(2) {
+  .idDiscussionThread > div:nth-child(2) {
     display: grid;
     grid-template-columns: 60px 1fr;
     font-size: 20px;
     max-height: 522px;
     overflow-y: auto;
-}
+  }
 
-.idDiscussionSend {
+  .idDiscussionSend {
     height: 48px;
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 80px;
     margin: 10px 0 0 0;
-}
+  }
 
-.idDiscussionSend > input::placeholder {
+  .idDiscussionSend > input::placeholder {
     color: #aaa;
-}
+  }
 
-.idDiscussionSend > input {
+  .idDiscussionSend > input {
     background-color: #2b2e46;
     padding-left: 10px;
     color: white;
@@ -740,18 +744,18 @@
     font-size: 20px;
     border-radius: 16px 0 0 16px;
     font-family: inherit;
-}
+  }
 
-.idDiscussionSend > div {
+  .idDiscussionSend > div {
     background-color: #2b2e46;
     border-radius: 0 16px 16px 0;
-}
+  }
 
-.idDiscussionSend > div > button:hover {
+  .idDiscussionSend > div > button:hover {
     filter: brightness(75%);
-}
+  }
 
-.idDiscussionSend > div > button {
+  .idDiscussionSend > div > button {
     padding: 7px 20px;
     margin: 8px 0;
     font-size: 16px;
@@ -765,109 +769,108 @@
     color: white;
 
     transition: filter 0.2s;
-}
+  }
 
-@media screen and (min-width: 769px) and (max-width: 1024px) {
-
+  @media screen and (min-width: 769px) and (max-width: 1024px) {
     .idCategory {
-        height: 320px;
-        width: 100%;
-        max-width: 100%;
+      height: 320px;
+      width: 100%;
+      max-width: 100%;
     }
 
     .idCategory > p {
-        font-size: 44px;
+      font-size: 44px;
     }
 
     .idHistory {
-        width: 100%;
-        max-width: 100%;
+      width: 100%;
+      max-width: 100%;
     }
 
     .idRecords {
-        height: 232px;
+      height: 232px;
     }
 
     .recordTop,
     .record {
-        font-size: 17px;
+      font-size: 17px;
     }
 
     .idSection4 {
-        grid-template-columns: 1fr 1fr;
-        gap: 18px;
-        margin: 36px 0 0 0;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin: 36px 0 0 0;
     }
 
     .idDifficulty > span:nth-child(2) {
-        font-size: 36px;
+      font-size: 36px;
     }
 
     .idCount > div {
-        font-size: 44px;
+      font-size: 44px;
     }
 
     .idSection5 {
-        margin: 36px 0 18px 0;
+      margin: 36px 0 18px 0;
     }
 
     .idDescription {
-        min-height: 300px;
+      min-height: 300px;
     }
 
     .idDescription > iframe {
-        width: 100%;
-        max-width: 100%;
-        height: 250px;
-        margin: 20px 0;
-        padding: 0;
-        box-sizing: border-box;
+      width: 100%;
+      max-width: 100%;
+      height: 250px;
+      margin: 20px 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
     .idDescription > h3 {
-        font-size: 2.2rem;
+      font-size: 2.2rem;
     }
 
     .idDescriptionText {
-        font-size: 19px;
+      font-size: 19px;
     }
 
     .idSection6 {
-        margin: 36px 0 18px 0;
-        min-height: 540px;
+      margin: 36px 0 18px 0;
+      min-height: 540px;
     }
 
     .idLeaderboardTop {
-        font-size: 18px;
-        padding-left: 50px;
+      font-size: 18px;
+      padding-left: 50px;
     }
 
     .leaderboardRecord {
-        font-size: 18px;
-        padding: 0 0 0 50px;
-        grid-template-columns: 4% 5% 38% 5% 4% 14% 14% 16%;
+      font-size: 18px;
+      padding: 0 0 0 50px;
+      grid-template-columns: 4% 5% 38% 5% 4% 14% 14% 16%;
     }
 
     .leaderboardRecord > div > a > span > img {
-        height: 32px;
+      height: 32px;
     }
 
     .idSection7 {
-        margin: 36px 0 18px 0;
+      margin: 36px 0 18px 0;
     }
 
     .idDiscussionSearch > input,
     .idDiscussionSend > input {
-        font-size: 18px;
+      font-size: 18px;
     }
 
     .idDiscussionThread > div:nth-child(2) {
-        font-size: 18px;
-        max-height: 460px;
+      font-size: 18px;
+      max-height: 460px;
     }
-}
+  }
 
-/*
+  /*
 @media screen and (max-width: 1480px) {
     #section3.summary1 {
         grid-template-columns: auto;
@@ -931,346 +934,345 @@
     }
 } */
 
-@media screen and (max-width: 768px) {
-
+  @media screen and (max-width: 768px) {
     .idHistory {
-        min-width: unset;
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
+      min-width: unset;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
     .idCategory {
-        min-width: unset;
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-        height: 250px;
+      min-width: unset;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      height: 250px;
     }
 
-    .idCategory>span {
-        margin-top: 0;
+    .idCategory > span {
+      margin-top: 0;
     }
 
-    .idCategory>span>button {
-        height: 50px;
+    .idCategory > span > button {
+      height: 50px;
     }
 
     .idSection4 {
-        grid-template-columns: 1fr;
-        width: 100%;
-        gap: 20px;
-        margin: 20px 0 0 0;
+      grid-template-columns: 1fr;
+      width: 100%;
+      gap: 20px;
+      margin: 20px 0 0 0;
     }
 
     .idDifficulty,
     .idCount {
-        min-width: unset;
-        width: 100%;
+      min-width: unset;
+      width: 100%;
     }
 
     .idDescription > iframe {
-        width: 100%;
-        max-width: 100%;
-        height: 250px;
-        margin: 20px 0;
-        padding: 0;
-        box-sizing: border-box;
+      width: 100%;
+      max-width: 100%;
+      height: 250px;
+      margin: 20px 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
     .idSection5 {
-        margin: 20px 0;
-        width: 100%;
-        max-width: 100%;
+      margin: 20px 0;
+      width: 100%;
+      max-width: 100%;
     }
 
     .idDescription {
-        min-height: unset;
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
+      min-height: unset;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
     .idDescriptionText {
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-        width: 100%;
-        box-sizing: border-box;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .idSection6 {
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-        overflow-x: auto;
-        margin: 20px 0 0 0;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow-x: auto;
+      margin: 20px 0 0 0;
     }
 
     .idLeaderboardTop {
-        font-size: 12px;
-        padding-left: 10px;
-        padding-right: 10px;
-        margin: 0 10px;
-        display: flex;
-        justify-content: flex-end;
+      font-size: 12px;
+      padding-left: 10px;
+      padding-right: 10px;
+      margin: 0 10px;
+      display: flex;
+      justify-content: flex-end;
     }
 
     .idLeaderboardTop > span,
     .idLeaderboardTop > div.idRunner {
-        display: none;
+      display: none;
     }
 
     .idSection6 > hr {
-        display: none;
+      display: none;
     }
 
     .leaderboardRecord {
-        font-size: 12px;
-        padding-left: 10px;
-        padding-right: 10px;
-        margin: 10px 10px 0 10px;
-        width: calc(100% - 20px);
-        box-sizing: border-box;
-        grid-template-columns: 10% 0% 60% 10% 5% 15% 0% 0% !important;
-        align-items: center;
+      font-size: 12px;
+      padding-left: 10px;
+      padding-right: 10px;
+      margin: 10px 10px 0 10px;
+      width: calc(100% - 20px);
+      box-sizing: border-box;
+      grid-template-columns: 10% 0% 60% 10% 5% 15% 0% 0% !important;
+      align-items: center;
     }
 
     .leaderboardRecord > div {
-        display: grid;
-        align-items: center;
-        height: 44px;
+      display: grid;
+      align-items: center;
+      height: 44px;
     }
 
     .leaderboardRecord > div > a > span {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        height: 44px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      height: 44px;
     }
 
     .leaderboardRecord > span:nth-child(7),
     .leaderboardRecord > span:nth-child(8) {
-        display: none;
+      display: none;
     }
 
     .leaderboardRecord:last-child {
-        margin: 10px 10px 10px 10px;
+      margin: 10px 10px 10px 10px;
     }
 
     .leaderboardRecord > div > a > span > img {
-        height: 28px;
+      height: 28px;
     }
 
     .leaderboardRecord > span > button:has(img[alt="download"]),
     .leaderboardRecord > span > button:has(img[alt="demo_id"]) {
-        display: none;
+      display: none;
     }
 
     .idSection7 {
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-        margin: 20px 0 0 0;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      margin: 20px 0 0 0;
     }
 
     .idDiscussionSearch {
-        grid-template-columns: 1fr 80px;
-        width: 100%;
-        box-sizing: border-box;
+      grid-template-columns: 1fr 80px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .idDiscussionSearch > input {
-        width: 100%;
-        box-sizing: border-box;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .idDiscussionSearch > div > button {
-        padding: 7px 10px;
-        font-size: 14px;
+      padding: 7px 10px;
+      font-size: 14px;
     }
 
     .idDiscussionPost > button:nth-child(1) {
-        width: 100%;
-        box-sizing: border-box;
-        overflow: hidden;
+      width: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
     }
 
     .idDiscussionCreate {
-        width: 100%;
-        box-sizing: border-box;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .idDiscussionCreate > div > input {
-        width: 100%;
-        box-sizing: border-box;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .idDiscussionThread > div:nth-child(1) {
-        width: 100%;
-        box-sizing: border-box;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .idDiscussionSend {
-        width: 100%;
-        box-sizing: border-box;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .idDiscussionSend > input {
-        width: 100%;
-        box-sizing: border-box;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .mapPageNeighborNavigation {
-        grid-template-columns: 50% 50%;
+      grid-template-columns: 50% 50%;
     }
 
     .mapPageTitle {
-        grid-column: 1 / 3;
+      grid-column: 1 / 3;
     }
-}
+  }
 }
 
 @layer overrides {
-.fullFormRow {
+  .fullFormRow {
     grid-column: 1 / span 2;
-}
+  }
 
-.postActions {
+  .postActions {
     place-items: end;
     grid-column: 1 / span 2;
-}
+  }
 
-.emptyDiscussions {
+  .emptyDiscussions {
     text-align: center;
     display: block;
-}
+  }
 
-.centeredText {
+  .centeredText {
     text-align: center;
-}
+  }
 
-.coopLeaderboardHeader {
+  .coopLeaderboardHeader {
     grid-template-columns: 7.5% 40% 7.5% 15% 15% 15%;
-}
+  }
 
-.soloLeaderboardHeader {
+  .soloLeaderboardHeader {
     grid-template-columns: 7.5% 30% 10% 20% 17.5% 15%;
-}
+  }
 
-.previousPageArrow {
+  .previousPageArrow {
     position: relative;
     left: -5px;
-}
+  }
 
-.nextPageArrow {
+  .nextPageArrow {
     position: relative;
     left: 5px;
     transform: rotate(180deg);
-}
+  }
 
-.coopLeaderboardRecords {
+  .coopLeaderboardRecords {
     grid-template-columns: 3% 4.5% 40% 4% 3.5% 15% 15% 14.5%;
-}
+  }
 
-.soloLeaderboardRecords {
+  .soloLeaderboardRecords {
     grid-template-columns: 3% 4.5% 30% 4% 6% 20% 17% 15%;
-}
+  }
 
-.partnerDemoIcon {
+  .partnerDemoIcon {
     filter: hue-rotate(160deg) contrast(60%) saturate(1000%);
-}
+  }
 
-.hostDemoIcon {
+  .hostDemoIcon {
     filter: hue-rotate(300deg) contrast(60%) saturate(1000%);
-}
+  }
 
-.videoLinks {
+  .videoLinks {
     display: inline-flex;
     flex-direction: row;
-}
+  }
 
-.darkSurface {
+  .darkSurface {
     background-color: #202232;
-}
+  }
 
-.categoryColumns {
+  .categoryColumns {
     grid-template-columns: var(--grid-template-columns);
-}
+  }
 
-.raisedSurface {
+  .raisedSurface {
     background-color: #2b2e46;
-}
+  }
 
-.hiddenContent {
+  .hiddenContent {
     display: none;
-}
+  }
 
-.visibleContent {
+  .visibleContent {
     display: block;
-}
+  }
 
-.selectedRecord {
+  .selectedRecord {
     background-color: #161723;
-}
+  }
 
-.veryEasyText {
+  .veryEasyText {
     color: lime;
-}
+  }
 
-.easyText {
+  .easyText {
     color: green;
-}
+  }
 
-.mediumText {
+  .mediumText {
     color: yellow;
-}
+  }
 
-.hardText {
+  .hardText {
     color: orange;
-}
+  }
 
-.veryHardText {
+  .veryHardText {
     color: red;
-}
+  }
 
-.veryEasyRating {
+  .veryEasyRating {
     background-color: lime;
-}
+  }
 
-.easyRating {
+  .easyRating {
     background-color: green;
-}
+  }
 
-.mediumRating {
+  .mediumRating {
     background-color: yellow;
-}
+  }
 
-.hardRating {
+  .hardRating {
     background-color: orange;
-}
+  }
 
-.veryHardRating {
+  .veryHardRating {
     background-color: red;
-}
+  }
 
-.singleMapNavigation {
+  .singleMapNavigation {
     border-radius: 20px 20px 20px 20px;
-}
+  }
 
-.previousMapNavigation {
+  .previousMapNavigation {
     border-radius: 20px 0px 0px 20px;
-}
+  }
 
-.nextMapNavigation {
+  .nextMapNavigation {
     border-radius: 0px 20px 20px 0px;
     margin-left: 2px;
-}
+  }
 
-.counterpartNavigation {
+  .counterpartNavigation {
     border-radius: 20px;
     margin-left: 8px;
-}
+  }
 }

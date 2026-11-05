@@ -6,7 +6,7 @@ import appStyles from "../App.module.css";
 
 interface MessageDialogLoadProps {
   title: string;
-};
+}
 
 const MessageDialogLoad: React.FC<MessageDialogLoadProps> = ({ title }) => {
   return (
@@ -16,12 +16,11 @@ const MessageDialogLoad: React.FC<MessageDialogLoadProps> = ({ title }) => {
           <span>{title}</span>
         </div>
         <div className={classNames(dialogStyles.dialogElement, dialogStyles.dialogDescription)}>
-          <div  className={dialogStyles.centeredContent}>
+          <div className={dialogStyles.centeredContent}>
             <span className={appStyles.loader}></span>
           </div>
         </div>
-        <div className={classNames(dialogStyles.dialogElement, dialogStyles.dialogBtnsContainer)}>
-        </div>
+        <div className={classNames(dialogStyles.dialogElement, dialogStyles.dialogBtnsContainer)}></div>
       </div>
     </div>
   );
