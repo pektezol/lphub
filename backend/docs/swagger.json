@@ -1276,7 +1276,7 @@
         },
         "/stats/scores": {
             "get": {
-                "description": "Get score logs of every player.",
+                "description": "Get score logs of every player. Scores listed in autorender_overrides are included regardless of filters and limit.",
                 "produces": [
                     "application/json"
                 ],
@@ -1348,6 +1348,68 @@
                     },
                     "400": {
                         "description": "Invalid query parameter",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/stats/statistics": {
+            "get": {
+                "description": "Returns different data according to kind. Overview contains maps, players and runs counts. Insights contains active_all, active_recent, holders, maps, maps_recent and months arrays. History and bests return entries and a more flag, with 20 entries per page.\nPlayer rankings credit both cooperative participants; run counts count each cooperative submission once. World-record holders include ties on portal count and time. Deleted runs are excluded.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stats"
+                ],
+                "summary": "Get community statistics",
+                "parameters": [
+                    {
+                        "minimum": 0,
+                        "type": "integer",
+                        "description": "Game ID; 0 selects all games",
+                        "name": "game_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "overview",
+                            "insights",
+                            "history",
+                            "bests"
+                        ],
+                        "type": "string",
+                        "description": "Statistics to return",
+                        "name": "kind",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "minimum": 0,
+                        "type": "integer",
+                        "description": "Number of entries to skip for history or bests (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Statistics data; shape depends on kind",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid query parameter",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Statistics query failed",
                         "schema": {
                             "$ref": "#/definitions/models.Response"
                         }
@@ -1681,6 +1743,9 @@
         "handlers.MapDiscussion": {
             "type": "object",
             "properties": {
+                "activity_at": {
+                    "type": "string"
+                },
                 "comments": {
                     "type": "array",
                     "items": {
@@ -1698,6 +1763,9 @@
                     "$ref": "#/definitions/models.UserShortWithAvatar"
                 },
                 "id": {
+                    "type": "integer"
+                },
+                "reply_count": {
                     "type": "integer"
                 },
                 "title": {
@@ -2578,10 +2646,10 @@
                 "placement": {
                     "type": "integer"
                 },
-                "total_time_ticks": {
+                "total_score": {
                     "type": "integer"
                 },
-                "total_score": {
+                "total_time_ticks": {
                     "type": "integer"
                 },
                 "user": {

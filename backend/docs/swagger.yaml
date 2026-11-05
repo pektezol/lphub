@@ -126,6 +126,8 @@ definitions:
     type: object
   handlers.MapDiscussion:
     properties:
+      activity_at:
+        type: string
       comments:
         items:
           $ref: '#/definitions/handlers.MapDiscussionComment'
@@ -138,6 +140,8 @@ definitions:
       creator:
         $ref: '#/definitions/models.UserShortWithAvatar'
       id:
+        type: integer
+      reply_count:
         type: integer
       title:
         type: string
@@ -712,9 +716,9 @@ definitions:
     properties:
       placement:
         type: integer
-      total_time_ticks:
-        type: integer
       total_score:
+        type: integer
+      total_time_ticks:
         type: integer
       user:
         $ref: '#/definitions/models.UserShortWithAvatar'
@@ -1511,7 +1515,8 @@ paths:
       - search
   /stats/scores:
     get:
-      description: Get score logs of every player.
+      description: Get score logs of every player. Scores listed in autorender_overrides
+        are included regardless of filters and limit.
       parameters:
       - description: Maximum number of score entries to return (default 100)
         in: query
@@ -1560,6 +1565,51 @@ paths:
           description: Invalid query parameter
           schema:
             $ref: '#/definitions/models.Response'
+      tags:
+      - stats
+  /stats/statistics:
+    get:
+      description: |-
+        Returns different data according to kind. Overview contains maps, players and runs counts. Insights contains active_all, active_recent, holders, maps, maps_recent and months arrays. History and bests return entries and a more flag, with 20 entries per page.
+        Player rankings credit both cooperative participants; run counts count each cooperative submission once. World-record holders include ties on portal count and time. Deleted runs are excluded.
+      parameters:
+      - description: Game ID; 0 selects all games
+        in: query
+        minimum: 0
+        name: game_id
+        required: true
+        type: integer
+      - description: Statistics to return
+        enum:
+        - overview
+        - insights
+        - history
+        - bests
+        in: query
+        name: kind
+        required: true
+        type: string
+      - description: Number of entries to skip for history or bests (default 0)
+        in: query
+        minimum: 0
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Statistics data; shape depends on kind
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Invalid query parameter
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Statistics query failed
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Get community statistics
       tags:
       - stats
   /stats/timeline:
