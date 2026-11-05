@@ -166,7 +166,7 @@ export default function StatisticsInsights({ game }: { game: number }) {
         </div>
         <div>
           <div className={styles.periodSpacer} aria-hidden="true" />
-          <Leaderboard title="World Record Holders" entries={data.holders} unit="records" link="users" />
+          <Leaderboard title="Least Time Record Holders" entries={data.holders} unit="records" link="users" />
         </div>
         <div>
           <div className={styles.periodToggle} aria-label="Map activity period">
