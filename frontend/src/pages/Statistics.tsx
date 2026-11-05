@@ -12,7 +12,7 @@ type Entry = { id: number; map_id: number; map_name: string; user_name: string; 
 type Feed = { entries: Entry[]; more: boolean };
 type Overview = { maps: number; players: number; runs: number };
 
-async function fetchStats<T>(game: number, kind: string, offset = 0): Promise<T> {
+async function fetchStats<T>(game: number, kind: string, offset?: number): Promise<T> {
   const response = await axios.get(url("stats/statistics"), { params: { game_id: game, kind, offset } });
   if (!response.data?.success || !response.data.data) throw new Error("Statistics unavailable");
   return response.data.data as T;
