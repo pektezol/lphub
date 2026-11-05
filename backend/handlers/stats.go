@@ -237,11 +237,25 @@ func Scores(c *gin.Context) {
 		score_count, score_time, score_rank, score_wr_delta, demo_id, record_date
 	FROM combined
 	ORDER BY is_override, record_date DESC;`
-	rows, err := database.DB.Query(sql, maxTicks, wrDelta, startDate, endDate, maxRank, hideObsolete, limit)
+	// The rank join is substantially underestimated by PostgreSQL, which can
+	// otherwise choose nested loops over the entire score history. Scope the
+	// planner setting to this request and restore it when the transaction ends.
+	tx, err := database.DB.BeginTx(c.Request.Context(), nil)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
+	defer tx.Rollback()
+	if _, err = tx.ExecContext(c.Request.Context(), `SET LOCAL enable_nestloop = off`); err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	rows, err := tx.QueryContext(c.Request.Context(), sql, maxTicks, wrDelta, startDate, endDate, maxRank, hideObsolete, limit)
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	defer rows.Close()
 	for rows.Next() {
 		score := ScoresDetails{}
 		err = rows.Scan(&score.Game.ID, &score.Game.Name, &score.Game.IsCoop, &score.Map.ID, &score.Map.Name, &score.User.SteamID, &score.User.UserName, &score.ScoreCount, &score.ScoreTime, &score.ScoreRank, &score.ScoreWRDelta, &score.DemoID, &score.Date)
@@ -250,6 +264,10 @@ func Scores(c *gin.Context) {
 			return
 		}
 		response.Logs = append(response.Logs, score)
+	}
+	if err = rows.Err(); err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
 	}
 	c.JSON(http.StatusOK, models.Response{
 		Success: true,
