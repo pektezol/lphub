@@ -445,6 +445,11 @@ const ProfileView: React.FC<ProfileViewProps> = ({
         return;
       }
 
+      setExpandedRecordIDs((currentExpandedRecordIDs) => {
+        const nextExpandedRecordIDs = new Set(currentExpandedRecordIDs);
+        nextExpandedRecordIDs.delete(mapID);
+        return nextExpandedRecordIDs;
+      });
       await message("Delete Record", "Successfully deleted record.");
       await onProfileRefresh?.();
     } catch {
