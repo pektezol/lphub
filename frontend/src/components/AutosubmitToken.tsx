@@ -3,7 +3,7 @@ import axios from "axios";
 import { url } from "@api/Api";
 
 const AUTOSUBMIT_TOKEN_HELP =
-  "SourceAutoRecord (SAR) plugin version 1.15.7 and later supports autosubmit for LPHUB. Once configured, it checks your personal best after every challenge mode run and uploads the demo to LPHUB when you achieve a new least portals personal best. Click Copy, then open autosubmit.key in your Portal 2 directory. Add lp.portal2.sr on its own line and paste the token on the line immediately below it:\n\nlp.portal2.sr\n<your token>\n\nKeep the token private. Regenerate immediately invalidates the old token; replace it in autosubmit.key with the new token.";
+  "SourceAutoRecord (SAR) version 1.15.7 and later supports LPHUB autosubmit for singleplayer Challenge Mode runs. Click Copy, then open or create autosubmit.key in your Portal 2 directory. Preserve any existing entries and add:\n\nlp.portal2.sr\n<your token>\n\nAfter saving, run these commands in the developer console:\n\nsar_challenge_autosubmit_reload_api_key\nsar_challenge_autostop 1\n\nRecord each run using record <demo_name> or your usual automatic recording setup. When you finish a recorded Challenge Mode run, SAR stops recording, checks your least portals personal best, and uploads the demo if you improve it. An equal portal count with a faster time also counts as an improvement. Existing sar_challenge_autostop values of 2 or 3 also work. Save your preferred setting in autoexec.cfg to apply it each launch.\n\nKeep the token private. Regenerate immediately invalidates the old token; replace it in autosubmit.key, then run sar_challenge_autosubmit_reload_api_key again.";
 
 interface AutosubmitTokenProps {
   token: string;
