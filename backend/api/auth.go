@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"lphub/autosubmit"
 	"lphub/database"
 	"lphub/models"
 
@@ -86,6 +87,32 @@ func IsDemoAuthenticated(c *gin.Context) {
 		subtle.ConstantTimeCompare([]byte(providedToken), []byte(serviceToken)) == 1 {
 		c.Set("service_auth", true)
 		c.Next()
+		return
+	}
+	IsAuthenticated(c)
+}
+
+// NoStore prevents HTTP caches from retaining sensitive responses.
+func NoStore(c *gin.Context) { c.Header("Cache-Control", "no-store"); c.Next() }
+func IsAutosubmitAuthenticated(c *gin.Context) {
+	token := bearerToken(c.GetHeader("Authorization"))
+	var user models.User
+	if !strings.HasPrefix(token, autosubmit.Prefix) || len(token) != len(autosubmit.Prefix)+43 {
+		c.AbortWithStatusJSON(http.StatusOK, models.ErrorResponse("Invalid autosubmit token."))
+		return
+	}
+	err := database.DB.QueryRowContext(c.Request.Context(), `SELECT u.steam_id FROM autosubmit_tokens t JOIN users u ON u.steam_id=t.user_id WHERE t.token_hash=$1`, autosubmit.Hash(token)).Scan(&user.SteamID)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusOK, models.ErrorResponse("Invalid autosubmit token."))
+		return
+	}
+	c.Set("user", user)
+	c.Set("mod", false)
+	c.Next()
+}
+func IsRecordAuthenticated(c *gin.Context) {
+	if strings.HasPrefix(bearerToken(c.GetHeader("Authorization")), autosubmit.Prefix) {
+		IsAutosubmitAuthenticated(c)
 		return
 	}
 	IsAuthenticated(c)

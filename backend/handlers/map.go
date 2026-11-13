@@ -895,14 +895,14 @@ type PersonalBestResponse struct {
 
 // Check personal best
 //
-//	@Description Check whether a score is a personal best for the specified map.
-//	@Tags maps / leaderboards
-//	@Accept json
-//	@Produce json
-//	@Param Authorization header string true "Bearer <JWT>"
-//	@Param request body PersonalBestRequest true "Score and engine map name"
-//	@Success 200 {object} models.Response{data=PersonalBestResponse}
-//	@Router /records/pb [post]
+//	@Description	Check whether a score is a personal best for the specified map.
+//	@Tags	maps / leaderboards
+//	@Accept	json
+//	@Produce	json
+//	@Param	Authorization header string true "Bearer <Steam JWT or autosubmit token>"
+//	@Param	request body PersonalBestRequest true "Score and engine map name"
+//	@Success	200 {object} models.Response{data=PersonalBestResponse}
+//	@Router	/record/pb [post]
 func CheckPersonalBest(c *gin.Context) {
 	var request PersonalBestRequest
 	if err := c.ShouldBindJSON(&request); err != nil {

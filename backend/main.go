@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"lphub/api"
+	"lphub/autosubmit"
 	"lphub/database"
 	_ "lphub/docs"
 
@@ -28,6 +29,9 @@ func main() {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
+	}
+	if _, err := autosubmit.Cipher(); err != nil {
+		log.Fatal(err)
 	}
 	var app *newrelic.Application
 	if os.Getenv("ENV") == "PROD" {

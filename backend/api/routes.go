@@ -18,13 +18,16 @@ func InitRoutes(router *gin.Engine) {
 			c.File("docs/index.html")
 		})
 		// Tokens, login
-		v1.GET("/token", RateLimit, handlers.GetCookie)
-		v1.DELETE("/token", RateLimit, handlers.DeleteCookie)
-		v1.GET("/login", RateLimit, handlers.Login)
+		v1.GET("/token", NoStore, RateLimit, handlers.GetCookie)
+		v1.DELETE("/token", NoStore, RateLimit, handlers.DeleteCookie)
+		v1.GET("/login", NoStore, RateLimit, handlers.Login)
+		v1.GET("/token/autosubmit", NoStore, IsAutosubmitAuthenticated, handlers.VerifyAutosubmitToken)
+		v1.POST("/token/autosubmit", NoStore, IsAuthenticated, handlers.AutosubmitToken)
+		v1.PUT("/token/autosubmit", NoStore, IsAuthenticated, handlers.AutosubmitToken)
 		// Users, profiles
-		v1.GET("/profile", RateLimit, IsAuthenticated, handlers.Profile)
-		v1.PUT("/profile", IsAuthenticated, handlers.UpdateCountryCode)
-		v1.POST("/profile", IsAuthenticated, handlers.UpdateUser)
+		v1.GET("/profile", NoStore, RateLimit, IsAuthenticated, handlers.Profile)
+		v1.PUT("/profile", NoStore, IsAuthenticated, handlers.UpdateCountryCode)
+		v1.POST("/profile", NoStore, IsAuthenticated, handlers.UpdateUser)
 		v1.GET("/users/:userid", handlers.FetchUser)
 		// Maps
 		// - Summary
@@ -37,11 +40,11 @@ func InitRoutes(router *gin.Engine) {
 		// - Leaderboards
 		v1.GET("/maps/:mapid/leaderboards", RateLimit, handlers.FetchMapLeaderboards)
 		v1.OPTIONS("/record", AllowRecordUploadCORS)
-		v1.POST("/record", AllowRecordUploadCORS, IsAuthenticated, handlers.CreateRecordFromDemo)
+		v1.POST("/record", AllowRecordUploadCORS, IsRecordAuthenticated, handlers.CreateRecordFromDemo)
 		v1.OPTIONS("/maps/:mapid/record", AllowRecordUploadCORS)
 		v1.POST("/maps/:mapid/record", AllowRecordUploadCORS, IsAuthenticated, handlers.CreateRecordWithDemo)
 		v1.DELETE("/maps/:mapid/record/:recordid", IsAuthenticated, handlers.DeleteRecord)
-		v1.POST("/records/pb", IsAuthenticated, handlers.CheckPersonalBest)
+		v1.POST("/record/pb", IsRecordAuthenticated, handlers.CheckPersonalBest)
 		v1.PUT("/demos/autorender", IsDemoAuthenticated, handlers.SetAutorenderID)
 		v1.GET("/demos", RateLimit, IsDemoAuthenticated, handlers.DownloadDemoWithID)
 		// - Discussions

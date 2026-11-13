@@ -1513,8 +1513,9 @@ paths:
     post:
       consumes:
       - multipart/form-data
+      description: Post a record using its demo to identify the map.
       parameters:
-      - description: Bearer <JWT>
+      - description: Bearer <Steam JWT or autosubmit token>
         in: header
         name: Authorization
         required: true
@@ -1542,12 +1543,13 @@ paths:
               type: object
       tags:
       - maps / leaderboards
-  /records/pb:
+  /record/pb:
     post:
       consumes:
       - application/json
+      description: Check whether a score is a personal best for the specified map.
       parameters:
-      - description: Bearer <JWT>
+      - description: Bearer <Steam JWT or autosubmit token>
         in: header
         name: Authorization
         required: true
@@ -1690,7 +1692,6 @@ paths:
           description: Statistics query failed
           schema:
             $ref: '#/definitions/models.Response'
-      summary: Get community statistics
       tags:
       - stats
   /stats/timeline:
@@ -1729,6 +1730,71 @@ paths:
       - auth
     get:
       description: Gets the token cookie value from the user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/handlers.LoginResponse'
+              type: object
+      tags:
+      - auth
+  /token/autosubmit:
+    get:
+      description: Verifies an autosubmit token, returning success without account
+        information. Invalid tokens return success false and an error message.
+      parameters:
+      - description: Bearer <autosubmit token>
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      tags:
+      - auth
+    post:
+      description: Retrieves or creates the authenticated user's autosubmit token
+        with POST; regenerates it and invalidates the previous token with PUT.
+      parameters:
+      - description: Bearer <Steam JWT>
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/handlers.LoginResponse'
+              type: object
+      tags:
+      - auth
+    put:
+      description: Retrieves or creates the authenticated user's autosubmit token
+        with POST; regenerates it and invalidates the previous token with PUT.
+      parameters:
+      - description: Bearer <Steam JWT>
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:

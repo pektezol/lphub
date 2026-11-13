@@ -159,15 +159,15 @@ func duplicateRecordExists(tx *stdsql.Tx, lockKey, query string, args ...any) (b
 
 // POST Record from demo
 //
-//	@Description Post a record using its demo to identify the map.
-//	@Tags maps / leaderboards
-//	@Accept mpfd
-//	@Produce json
-//	@Param Authorization header string true "Bearer <JWT>"
-//	@Param host_demo formData file true "Host Demo"
-//	@Param partner_demo formData file false "Partner Demo"
-//	@Success 200 {object} models.Response{data=RecordResponse}
-//	@Router /record [post]
+//	@Description	Post a record using its demo to identify the map.
+//	@Tags	maps / leaderboards
+//	@Accept	mpfd
+//	@Produce	json
+//	@Param	Authorization header string true "Bearer <Steam JWT or autosubmit token>"
+//	@Param	host_demo formData file true "Host Demo"
+//	@Param	partner_demo formData file false "Partner Demo"
+//	@Success	200 {object} models.Response{data=RecordResponse}
+//	@Router	/record [post]
 func CreateRecordFromDemo(c *gin.Context) {
 	CreateRecordWithDemo(c)
 }

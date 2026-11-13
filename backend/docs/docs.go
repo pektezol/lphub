@@ -81,7 +81,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Bearer <JWT>",
+                        "description": "Bearer \u003cJWT\u003e",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -112,7 +112,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Bearer <moderator JWT or DEMO_SERVICE_TOKEN>",
+                        "description": "Bearer \u003cmoderator JWT or DEMO_SERVICE_TOKEN\u003e",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -297,7 +297,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Bearer <JWT>",
+                        "description": "Bearer \u003cJWT\u003e",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -391,7 +391,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Bearer <JWT>",
+                        "description": "Bearer \u003cJWT\u003e",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -492,7 +492,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Bearer <JWT>",
+                        "description": "Bearer \u003cJWT\u003e",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -553,7 +553,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Bearer <JWT>",
+                        "description": "Bearer \u003cJWT\u003e",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -614,7 +614,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Bearer <JWT>",
+                        "description": "Bearer \u003cJWT\u003e",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -656,7 +656,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Bearer <JWT>",
+                        "description": "Bearer \u003cJWT\u003e",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -774,7 +774,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Bearer <JWT>",
+                        "description": "Bearer \u003cJWT\u003e",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -841,7 +841,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Bearer <JWT>",
+                        "description": "Bearer \u003cJWT\u003e",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -907,7 +907,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Bearer <JWT>",
+                        "description": "Bearer \u003cJWT\u003e",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -961,7 +961,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Bearer <JWT>",
+                        "description": "Bearer \u003cJWT\u003e",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1015,7 +1015,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Bearer <JWT>",
+                        "description": "Bearer \u003cJWT\u003e",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1074,7 +1074,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Bearer <JWT>",
+                        "description": "Bearer \u003cJWT\u003e",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1115,7 +1115,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Bearer <JWT>",
+                        "description": "Bearer \u003cJWT\u003e",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1151,7 +1151,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Bearer <JWT>",
+                        "description": "Bearer \u003cJWT\u003e",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1243,6 +1243,7 @@ const docTemplate = `{
         },
         "/record": {
             "post": {
+                "description": "Post a record using its demo to identify the map.",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -1255,7 +1256,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Bearer <JWT>",
+                        "description": "Bearer \u003cSteam JWT or autosubmit token\u003e",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1296,8 +1297,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/records/pb": {
+        "/record/pb": {
             "post": {
+                "description": "Check whether a score is a personal best for the specified map.",
                 "consumes": [
                     "application/json"
                 ],
@@ -1310,7 +1312,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Bearer <JWT>",
+                        "description": "Bearer \u003cSteam JWT or autosubmit token\u003e",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1476,7 +1478,6 @@ const docTemplate = `{
                 "tags": [
                     "stats"
                 ],
-                "summary": "Get community statistics",
                 "parameters": [
                     {
                         "minimum": 0,
@@ -1597,6 +1598,110 @@ const docTemplate = `{
                 ],
                 "tags": [
                     "auth"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handlers.LoginResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/token/autosubmit": {
+            "get": {
+                "description": "Verifies an autosubmit token, returning success without account information. Invalid tokens return success false and an error message.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003cautosubmit token\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Retrieves or creates the authenticated user's autosubmit token with POST; regenerates it and invalidates the previous token with PUT.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003cSteam JWT\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handlers.LoginResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Retrieves or creates the authenticated user's autosubmit token with POST; regenerates it and invalidates the previous token with PUT.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003cSteam JWT\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
                 ],
                 "responses": {
                     "200": {

@@ -249,3 +249,9 @@ FOR EACH ROW EXECUTE FUNCTION log_audit();
 CREATE TRIGGER "records_mp"
 AFTER INSERT OR UPDATE OR DELETE ON "records_mp"
 FOR EACH ROW EXECUTE FUNCTION log_audit();
+
+CREATE TABLE autosubmit_tokens (
+  user_id TEXT PRIMARY KEY REFERENCES users(steam_id) ON DELETE CASCADE,
+  token_hash BYTEA NOT NULL UNIQUE,
+  token_ciphertext BYTEA NOT NULL
+);
