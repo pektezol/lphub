@@ -1,4 +1,5 @@
 import React from "react";
+import AutosubmitToken from "./AutosubmitToken";
 import axios from "axios";
 import { UploadRunContent } from "@customTypes/Content";
 import { SourceDemoParser } from "@nekz/sdp";
@@ -416,6 +417,7 @@ const UploadRunDialog: React.FC<UploadRunDialogProps> = ({ token, open, onClose,
                 </>
               )}
             </div>
+            {token && <AutosubmitToken key={token} token={token} confirm={confirm} />}
             <div className={uploadRunDialogStyles.uploadRunButtonsContainer}>
               <button onClick={_upload_run} disabled={!selectedGame || isUploading}>
                 Submit
