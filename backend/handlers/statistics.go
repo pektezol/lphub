@@ -2,27 +2,27 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/gin-gonic/gin"
 	"lphub/database"
 	"lphub/models"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 // Statistics returns public game statistics.
 //
-// @Summary      Get community statistics
-// @Description  Returns different data according to kind. Overview contains maps, players and runs counts. Insights contains active_all, active_recent, holders, maps, maps_recent and months arrays. History and bests return entries and a more flag, with 20 entries per page.
-// @Description  Player rankings credit both cooperative participants; run counts count each cooperative submission once. World-record holders include ties on portal count and time. Deleted runs are excluded.
-// @Tags         stats
-// @Param        game_id  query  int     true   "Game ID; 0 selects all games"  minimum(0)
-// @Param        kind     query  string  true   "Statistics to return"  Enums(overview, insights, history, bests)
-// @Param        offset   query  int     false  "Number of entries to skip for history or bests (default 0)"  minimum(0)
-// @Produce      json
-// @Success      200  {object}  models.Response  "Statistics data; shape depends on kind"
-// @Failure      400  {object}  models.Response  "Invalid query parameter"
-// @Failure      500  {object}  models.Response  "Statistics query failed"
-// @Router       /stats/statistics [get]
+//	@Description  Returns different data according to kind. Overview contains maps, players and runs counts. Insights contains active_all, active_recent, holders, maps, maps_recent and months arrays. History and bests return entries and a more flag, with 20 entries per page.
+//	@Description  Player rankings credit both cooperative participants; run counts count each cooperative submission once. World-record holders include ties on portal count and time. Deleted runs are excluded.
+//	@Tags         stats
+//	@Param        game_id  query  int     true   "Game ID; 0 selects all games"  minimum(0)
+//	@Param        kind     query  string  true   "Statistics to return"  Enums(overview, insights, history, bests)
+//	@Param        offset   query  int     false  "Number of entries to skip for history or bests (default 0)"  minimum(0)
+//	@Produce      json
+//	@Success      200  {object}  models.Response  "Statistics data; shape depends on kind"
+//	@Failure      400  {object}  models.Response  "Invalid query parameter"
+//	@Failure      500  {object}  models.Response  "Statistics query failed"
+//	@Router       /stats/statistics [get]
 func Statistics(c *gin.Context) {
 	game, err := strconv.Atoi(c.Query("game_id"))
 	if err != nil || game < 0 {

@@ -157,6 +157,21 @@ func duplicateRecordExists(tx *stdsql.Tx, lockKey, query string, args ...any) (b
 	return exists, nil
 }
 
+// POST Record from demo
+//
+//	@Description Post a record using its demo to identify the map.
+//	@Tags maps / leaderboards
+//	@Accept mpfd
+//	@Produce json
+//	@Param Authorization header string true "JWT Token"
+//	@Param host_demo formData file true "Host Demo"
+//	@Param partner_demo formData file false "Partner Demo"
+//	@Success 200 {object} models.Response{data=RecordResponse}
+//	@Router /record [post]
+func CreateRecordFromDemo(c *gin.Context) {
+	CreateRecordWithDemo(c)
+}
+
 // POST Record
 //
 //	@Description	Post record with demo of a specific map.
@@ -181,11 +196,41 @@ func CreateRecordWithDemo(c *gin.Context) {
 		return
 	}
 
-	id := c.Param("mapid")
-	mapID, err := strconv.Atoi(id)
-	if err != nil {
+	// Get record request
+	var record RecordRequest
+	if err := c.ShouldBind(&record); err != nil {
+		var maxBytesErr *http.MaxBytesError
+		if errors.As(err, &maxBytesErr) {
+			c.JSON(http.StatusRequestEntityTooLarge, models.ErrorResponse("Request body exceeds the 256 MiB limit."))
+			return
+		}
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
+	}
+
+	var mapID int
+	var hostParsed *parser.Result
+	if id := c.Param("mapid"); id != "" {
+		var err error
+		mapID, err = strconv.Atoi(id)
+		if err != nil {
+			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+			return
+		}
+	} else {
+		f, err := record.HostDemo.Open()
+		if err != nil {
+			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+			return
+		}
+		result, err := parser.ProcessDemo(f)
+		f.Close()
+		if err != nil {
+			c.JSON(http.StatusOK, models.ErrorResponse("Error while processing demo: "+err.Error()))
+			return
+		}
+		mapID = result.MapID
+		hostParsed = &result
 	}
 	user, _ := c.Get("user")
 	// Check if map is sp or mp
@@ -196,24 +241,13 @@ func CreateRecordWithDemo(c *gin.Context) {
 	FROM maps m
 	INNER JOIN games g ON m.game_id = g.id
 	WHERE m.id = $1`
-	err = database.DB.QueryRow(sql, mapID).Scan(&isCoop, &isDisabled, &engineMapName)
+	err := database.DB.QueryRow(sql, mapID).Scan(&isCoop, &isDisabled, &engineMapName)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
 	if isDisabled {
 		c.JSON(http.StatusOK, models.ErrorResponse("Map is not available for competitive boards."))
-		return
-	}
-	// Get record request
-	var record RecordRequest
-	if err := c.ShouldBind(&record); err != nil {
-		var maxBytesErr *http.MaxBytesError
-		if errors.As(err, &maxBytesErr) {
-			c.JSON(http.StatusRequestEntityTooLarge, models.ErrorResponse("Request body exceeds the 256 MiB limit."))
-			return
-		}
-		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
 	if isCoop && record.PartnerDemo == nil {
@@ -242,16 +276,21 @@ func CreateRecordWithDemo(c *gin.Context) {
 	for i, header := range demoFileHeaders {
 		uuid := uuid.New().String()
 		// Upload & insert into demos
-		f, err := header.Open()
-		if err != nil {
-			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-			return
-		}
-		defer f.Close()
-		parserResult, err := parser.ProcessDemo(f)
-		if err != nil {
-			c.JSON(http.StatusOK, models.ErrorResponse("Error while processing demo: "+err.Error()))
-			return
+		var parserResult parser.Result
+		if i == 0 && hostParsed != nil {
+			parserResult = *hostParsed
+		} else {
+			f, err := header.Open()
+			if err != nil {
+				c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+				return
+			}
+			parserResult, err = parser.ProcessDemo(f)
+			f.Close()
+			if err != nil {
+				c.JSON(http.StatusOK, models.ErrorResponse("Error while processing demo: "+err.Error()))
+				return
+			}
 		}
 		parserResults[i] = parserResult
 		if mapID != parserResult.MapID {

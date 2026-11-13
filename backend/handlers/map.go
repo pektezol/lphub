@@ -4,6 +4,7 @@ import (
 	stdsql "database/sql"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"lphub/database"
@@ -881,4 +882,62 @@ func FetchChapterMaps(c *gin.Context) {
 			Maps:    maps,
 		},
 	})
+}
+
+type PersonalBestRequest struct {
+	PortalCount   *int   `json:"portal_count" binding:"required"`
+	ScoreTime     *int   `json:"score_time" binding:"required"`
+	EngineMapName string `json:"engine_map_name" binding:"required"`
+}
+type PersonalBestResponse struct {
+	IsPersonalBest bool `json:"is_personal_best"`
+}
+
+// Check personal best
+//
+//	@Description Check whether a score is a personal best for the specified map.
+//	@Tags maps / leaderboards
+//	@Accept json
+//	@Produce json
+//	@Param Authorization header string true "JWT Token"
+//	@Param request body PersonalBestRequest true "Score and engine map name"
+//	@Success 200 {object} models.Response{data=PersonalBestResponse}
+//	@Router /records/pb [post]
+func CheckPersonalBest(c *gin.Context) {
+	var request PersonalBestRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	request.EngineMapName = strings.TrimSpace(request.EngineMapName)
+	if request.EngineMapName == "" || *request.PortalCount < 0 || *request.ScoreTime < 0 {
+		c.JSON(http.StatusOK, models.ErrorResponse("Invalid map name or score."))
+		return
+	}
+	var mapID int
+	var isCoop, disabled bool
+	err := database.DB.QueryRowContext(c.Request.Context(), `SELECT m.id, g.is_coop, m.is_disabled FROM maps m JOIN games g ON g.id = m.game_id WHERE m.engine_map_name = $1`, request.EngineMapName).Scan(&mapID, &isCoop, &disabled)
+	if err == stdsql.ErrNoRows {
+		c.JSON(http.StatusOK, models.ErrorResponse("Map not found."))
+		return
+	}
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	if disabled {
+		c.JSON(http.StatusOK, models.ErrorResponse("Map is not available for competitive boards."))
+		return
+	}
+	user := c.MustGet("user").(models.User)
+	query := `SELECT EXISTS (SELECT 1 FROM records_sp WHERE map_id = $1 AND user_id = $2 AND NOT is_deleted AND (score_count, score_time) <= ($3, $4))`
+	if isCoop {
+		query = `SELECT EXISTS (SELECT 1 FROM records_mp WHERE map_id = $1 AND (host_id = $2 OR partner_id = $2) AND NOT is_deleted AND (score_count, score_time) <= ($3, $4))`
+	}
+	var exists bool
+	if err := database.DB.QueryRowContext(c.Request.Context(), query, mapID, user.SteamID, *request.PortalCount, *request.ScoreTime).Scan(&exists); err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	c.JSON(http.StatusOK, models.Response{Success: true, Message: "Successfully checked personal best.", Data: PersonalBestResponse{IsPersonalBest: !exists}})
 }

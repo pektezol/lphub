@@ -1235,6 +1235,112 @@
                 }
             }
         },
+        "/record": {
+            "post": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "maps / leaderboards"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "JWT Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Host Demo",
+                        "name": "host_demo",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Partner Demo",
+                        "name": "partner_demo",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handlers.RecordResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/records/pb": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "maps / leaderboards"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "JWT Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Score and engine map name",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.PersonalBestRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handlers.PersonalBestResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/search": {
             "get": {
                 "description": "Get all user and map data matching to the query.",
@@ -1858,6 +1964,33 @@
                 },
                 "summary": {
                     "$ref": "#/definitions/models.MapSummary"
+                }
+            }
+        },
+        "handlers.PersonalBestRequest": {
+            "type": "object",
+            "required": [
+                "engine_map_name",
+                "portal_count",
+                "score_time"
+            ],
+            "properties": {
+                "engine_map_name": {
+                    "type": "string"
+                },
+                "portal_count": {
+                    "type": "integer"
+                },
+                "score_time": {
+                    "type": "integer"
+                }
+            }
+        },
+        "handlers.PersonalBestResponse": {
+            "type": "object",
+            "properties": {
+                "is_personal_best": {
+                    "type": "boolean"
                 }
             }
         },
