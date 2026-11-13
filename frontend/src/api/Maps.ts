@@ -81,7 +81,7 @@ export const post_map_discussion = async (
     },
     {
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       },
     },
   );
@@ -101,7 +101,7 @@ export const post_map_discussion_comment = async (
     },
     {
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       },
     },
   );
@@ -111,7 +111,7 @@ export const post_map_discussion_comment = async (
 export const delete_map_discussion = async (token: string, map_id: string, discussion_id: number): Promise<boolean> => {
   const response = await axios.delete(url(`maps/${map_id}/discussions/${discussion_id}`), {
     headers: {
-      Authorization: token,
+      Authorization: `Bearer ${token}`,
     },
   });
   return response.data.success;
@@ -130,7 +130,7 @@ export const post_record = async (
       : { host_demo: run.host_demo };
   const response = await axios.postForm<RecordUploadResult>(recordUploadUrl(`maps/${map_id}/record`), formData, {
     headers: {
-      Authorization: token,
+      Authorization: `Bearer ${token}`,
     },
     onUploadProgress: (event) => {
       if (!onUploadProgress || !event.total) {
@@ -146,7 +146,7 @@ export const post_record = async (
 export const delete_map_record = async (token: string, map_id: number, record_id: number): Promise<boolean> => {
   const response = await axios.delete(url(`maps/${map_id}/record/${record_id}`), {
     headers: {
-      Authorization: token,
+      Authorization: `Bearer ${token}`,
     },
   });
   return response.data.success;
@@ -155,7 +155,7 @@ export const delete_map_record = async (token: string, map_id: number, record_id
 export const download_demo = async (token: string, demo_id: string): Promise<[boolean, string]> => {
   const response = await axios.get(url(`demos?uuid=${demo_id}`), {
     headers: {
-      Authorization: token,
+      Authorization: `Bearer ${token}`,
     },
     responseType: "blob",
   });

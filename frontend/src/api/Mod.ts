@@ -10,7 +10,7 @@ export const put_map_image = async (token: string, map_id: string, image: string
     },
     {
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       },
     },
   );
@@ -25,7 +25,7 @@ export const put_map_difficulty = async (token: string, map_id: string, difficul
     },
     {
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       },
     },
   );
@@ -45,7 +45,7 @@ export const post_map_summary = async (token: string, map_id: string, content: M
     },
     {
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       },
     },
   );
@@ -65,7 +65,7 @@ export const put_map_summary = async (token: string, map_id: string, content: Mo
     },
     {
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       },
     },
   );
@@ -78,7 +78,7 @@ export const delete_map_summary = async (token: string, map_id: string, route_id
       route_id: route_id,
     },
     headers: {
-      Authorization: token,
+      Authorization: `Bearer ${token}`,
     },
   });
   return response.data.success;
