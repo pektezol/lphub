@@ -16,10 +16,27 @@ type Entry = {
   activity: string;
   replies: number;
 };
+type DiscussionPage = { discussions: Entry[]; more: boolean };
+let firstPage: DiscussionPage | undefined;
+let firstPageRequest: Promise<DiscussionPage> | undefined;
+
+function fetchFirstPage(): Promise<DiscussionPage> {
+  if (firstPage) return Promise.resolve(firstPage);
+  return (firstPageRequest ??= axios
+    .get(url("discussions"), { params: { q: "" } })
+    .then((response) => {
+      firstPage = response.data;
+      return response.data as DiscussionPage;
+    })
+    .finally(() => {
+      firstPageRequest = undefined;
+    }));
+}
+
 export default function DiscussionFeed({ token }: { token?: string }) {
   const [q, S] = React.useState("");
-  const [rows, R] = React.useState<Entry[]>([]);
-  const [more, M] = React.useState(false);
+  const [rows, R] = React.useState<Entry[]>(firstPage?.discussions ?? []);
+  const [more, M] = React.useState(firstPage?.more ?? false);
   const [error, E] = React.useState(false);
   const [loading, L] = React.useState(false);
   const [picker, P] = React.useState(false);
@@ -27,15 +44,17 @@ export default function DiscussionFeed({ token }: { token?: string }) {
   const [maps, A] = React.useState<Search["maps"]>([]);
   React.useEffect(() => {
     let live = true;
-    L(true);
-    R([]);
-    M(false);
-    axios
-      .get(url("discussions"), { params: { q } })
+    L(!(!q && firstPage));
+    R(!q && firstPage ? firstPage.discussions : []);
+    M(!q && firstPage ? firstPage.more : false);
+    const request = q
+      ? axios.get(url("discussions"), { params: { q } }).then((response) => response.data as DiscussionPage)
+      : fetchFirstPage();
+    request
       .then((r) => {
         if (live) {
-          R(r.data.discussions);
-          M(r.data.more);
+          R(r.discussions);
+          M(r.more);
           E(false);
         }
       })

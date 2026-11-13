@@ -46,17 +46,20 @@ const getLeaderboardForCategory = (
   return rankings.rankings_overall;
 };
 
+const rankingsCache = new Map<LeaderboardTypes, Ranking | SteamRanking>();
+const rankingsRequests = new Map<LeaderboardTypes, Promise<Ranking | SteamRanking>>();
+
 const Rankings: React.FC = () => {
-  const [leaderboardData, setLeaderboardData] = React.useState<Ranking | SteamRanking>();
+  const [leaderboardData, setLeaderboardData] = React.useState<Ranking | SteamRanking | undefined>(
+    rankingsCache.get(LeaderboardTypes.official),
+  );
   const [currentRankingType, setCurrentRankingType] = React.useState<LeaderboardTypes>(LeaderboardTypes.official);
   const [currentLeaderboardType, setCurrentLeaderboardType] = React.useState<RankingCategories>(
     RankingCategories.rankings_singleplayer,
   );
-  const [isLoading, setIsLoading] = React.useState(true);
+  const [isLoading, setIsLoading] = React.useState(!rankingsCache.has(LeaderboardTypes.official));
   const [hasLoadError, setHasLoadError] = React.useState(false);
   const requestId = React.useRef(0);
-  const rankingsCache = React.useRef(new Map<LeaderboardTypes, Ranking | SteamRanking>());
-  const rankingsRequests = React.useRef(new Map<LeaderboardTypes, Promise<Ranking | SteamRanking>>());
 
   const fetchRankings = React.useCallback(async (leaderboardType: LeaderboardTypes) => {
     const currentRequestId = ++requestId.current;
@@ -71,7 +74,7 @@ const Rankings: React.FC = () => {
     }
     setHasLoadError(false);
 
-    const cached = rankingsCache.current.get(leaderboardType);
+    const cached = rankingsCache.get(leaderboardType);
     if (cached) {
       setLeaderboardData(cached);
       setIsLoading(false);
@@ -81,19 +84,19 @@ const Rankings: React.FC = () => {
     setIsLoading(true);
 
     try {
-      let request = rankingsRequests.current.get(leaderboardType);
+      let request = rankingsRequests.get(leaderboardType);
       if (!request) {
         request = (
           leaderboardType === LeaderboardTypes.official ? API.get_official_rankings() : API.get_unofficial_rankings()
         )
           .then((rankings) => {
-            rankingsCache.current.set(leaderboardType, rankings);
+            rankingsCache.set(leaderboardType, rankings);
             return rankings;
           })
           .finally(() => {
-            rankingsRequests.current.delete(leaderboardType);
+            rankingsRequests.delete(leaderboardType);
           });
-        rankingsRequests.current.set(leaderboardType, request);
+        rankingsRequests.set(leaderboardType, request);
       }
       const rankings = await request;
 

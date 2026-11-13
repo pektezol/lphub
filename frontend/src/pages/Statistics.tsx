@@ -1,8 +1,7 @@
 import React from "react";
-import axios from "axios";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
-import { url } from "@api/Api";
+import { fetchStats } from "@api/statisticsCache";
 import { Game } from "@customTypes/Game";
 import styles from "@css/Statistics.module.css";
 import StatisticsInsights from "@components/StatisticsInsights";
@@ -20,12 +19,6 @@ type Entry = {
 };
 type Feed = { entries: Entry[]; more: boolean };
 type Overview = { maps: number; players: number; runs: number };
-
-async function fetchStats<T>(game: number, kind: string, offset?: number): Promise<T> {
-  const response = await axios.get(url("stats/statistics"), { params: { game_id: game, kind, offset } });
-  if (!response.data?.success || !response.data.data) throw new Error("Statistics unavailable");
-  return response.data.data as T;
-}
 
 function Activity({ game, kind, title }: { game: number; kind: "history" | "bests"; title: string }) {
   const [feed, setFeed] = React.useState<Feed>({ entries: [], more: false });

@@ -1,8 +1,7 @@
 import React from "react";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { url } from "@api/Api";
+import { fetchStats } from "@api/statisticsCache";
 import { UserIcon } from "@images/Images";
 import styles from "@css/Statistics.module.css";
 
@@ -88,11 +87,9 @@ export default function StatisticsInsights({ game }: { game: number }) {
     let active = true;
     setData(undefined);
     setError(false);
-    axios
-      .get(url("stats/statistics"), { params: { game_id: game, kind: "insights" } })
+    fetchStats<Insights>(game, "insights")
       .then((response) => {
-        if (!response.data?.success || !response.data.data) throw new Error("Statistics unavailable");
-        if (active) setData(response.data.data);
+        if (active) setData(response);
       })
       .catch(() => {
         if (active) setError(true);
