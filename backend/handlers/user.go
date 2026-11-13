@@ -83,7 +83,7 @@ type ScoreResponse struct {
 //	@Tags			users
 //	@Accept			json
 //	@Produce		json
-//	@Param			Authorization	header		string	true	"JWT Token"
+//	@Param			Authorization	header		string	true	"Bearer <JWT>"
 //	@Success		200				{object}	models.Response{data=ProfileResponse}
 //	@Router			/profile [get]
 func Profile(c *gin.Context) {
@@ -157,7 +157,7 @@ func respondProfile(c *gin.Context, user models.User, links models.Links, ownPro
 //	@Tags			users
 //	@Accept			json
 //	@Produce		json
-//	@Param			Authorization	header		string	true	"JWT Token"
+//	@Param			Authorization	header		string	true	"Bearer <JWT>"
 //	@Success		200				{object}	models.Response{data=ProfileResponse}
 //	@Router			/profile [post]
 func UpdateUser(c *gin.Context) {
@@ -203,7 +203,7 @@ func UpdateUser(c *gin.Context) {
 //	@Tags			users
 //	@Accept			json
 //	@Produce		json
-//	@Param			Authorization	header		string	true	"JWT Token"
+//	@Param			Authorization	header		string	true	"Bearer <JWT>"
 //	@Param			country_code	query		string	true	"Country Code [XX]"
 //	@Success		200				{object}	models.Response
 //	@Router			/profile [put]

@@ -155,7 +155,7 @@ func FetchMapDiscussion(c *gin.Context) {
 //	@Description	Create map discussion with specified map id.
 //	@Tags			maps / discussions
 //	@Produce		json
-//	@Param			Authorization	header		string						true	"JWT Token"
+//	@Param			Authorization	header		string						true	"Bearer <JWT>"
 //	@Param			mapid			path		int							true	"Map ID"
 //	@Param			request			body		CreateMapDiscussionRequest	true	"Body"
 //	@Success		200				{object}	models.Response{data=CreateMapDiscussionRequest}
@@ -201,7 +201,7 @@ func CreateMapDiscussion(c *gin.Context) {
 //	@Description	Create map discussion comment with specified map id.
 //	@Tags			maps / discussions
 //	@Produce		json
-//	@Param			Authorization	header		string								true	"JWT Token"
+//	@Param			Authorization	header		string								true	"Bearer <JWT>"
 //	@Param			mapid			path		int									true	"Map ID"
 //	@Param			discussionid	path		int									true	"Discussion ID"
 //	@Param			request			body		CreateMapDiscussionCommentRequest	true	"Body"
@@ -259,7 +259,7 @@ func CreateMapDiscussionComment(c *gin.Context) {
 //	@Description	Edit map discussion with specified map id.
 //	@Tags			maps / discussions
 //	@Produce		json
-//	@Param			Authorization	header		string						true	"JWT Token"
+//	@Param			Authorization	header		string						true	"Bearer <JWT>"
 //	@Param			mapid			path		int							true	"Map ID"
 //	@Param			discussionid	path		int							true	"Discussion ID"
 //	@Param			request			body		EditMapDiscussionRequest	true	"Body"
@@ -319,7 +319,7 @@ func EditMapDiscussion(c *gin.Context) {
 //	@Description	Delete map discussion with specified map id.
 //	@Tags			maps / discussions
 //	@Produce		json
-//	@Param			Authorization	header		string	true	"JWT Token"
+//	@Param			Authorization	header		string	true	"Bearer <JWT>"
 //	@Param			mapid			path		int		true	"Map ID"
 //	@Param			discussionid	path		int		true	"Discussion ID"
 //	@Success		200				{object}	models.Response

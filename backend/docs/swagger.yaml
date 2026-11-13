@@ -801,7 +801,7 @@ paths:
         name: uuid
         required: true
         type: string
-      - description: JWT token
+      - description: Bearer <JWT>
         in: header
         name: Authorization
         required: true
@@ -822,7 +822,7 @@ paths:
       description: Set the auto-rendered video ID for a record demo, keeping cooperative
         host and partner IDs separate.
       parameters:
-      - description: Moderator JWT or DEMO_SERVICE_TOKEN
+      - description: Bearer <moderator JWT or DEMO_SERVICE_TOKEN>
         in: header
         name: Authorization
         required: true
@@ -931,7 +931,7 @@ paths:
     put:
       description: Edit map difficulty with specified map id.
       parameters:
-      - description: JWT Token
+      - description: Bearer <JWT>
         in: header
         name: Authorization
         required: true
@@ -987,7 +987,7 @@ paths:
     post:
       description: Create map discussion with specified map id.
       parameters:
-      - description: JWT Token
+      - description: Bearer <JWT>
         in: header
         name: Authorization
         required: true
@@ -1021,7 +1021,7 @@ paths:
     delete:
       description: Delete map discussion with specified map id.
       parameters:
-      - description: JWT Token
+      - description: Bearer <JWT>
         in: header
         name: Authorization
         required: true
@@ -1075,7 +1075,7 @@ paths:
     post:
       description: Create map discussion comment with specified map id.
       parameters:
-      - description: JWT Token
+      - description: Bearer <JWT>
         in: header
         name: Authorization
         required: true
@@ -1113,7 +1113,7 @@ paths:
     put:
       description: Edit map discussion with specified map id.
       parameters:
-      - description: JWT Token
+      - description: Bearer <JWT>
         in: header
         name: Authorization
         required: true
@@ -1152,7 +1152,7 @@ paths:
     put:
       description: Edit map image with specified map id.
       parameters:
-      - description: JWT Token
+      - description: Bearer <JWT>
         in: header
         name: Authorization
         required: true
@@ -1224,7 +1224,7 @@ paths:
         name: mapid
         required: true
         type: integer
-      - description: JWT Token
+      - description: Bearer <JWT>
         in: header
         name: Authorization
         required: true
@@ -1266,7 +1266,7 @@ paths:
         name: recordid
         required: true
         type: integer
-      - description: JWT Token
+      - description: Bearer <JWT>
         in: header
         name: Authorization
         required: true
@@ -1284,7 +1284,7 @@ paths:
     delete:
       description: Delete map summary with specified map id.
       parameters:
-      - description: JWT Token
+      - description: Bearer <JWT>
         in: header
         name: Authorization
         required: true
@@ -1339,7 +1339,7 @@ paths:
     post:
       description: Create map summary with specified map id.
       parameters:
-      - description: JWT Token
+      - description: Bearer <JWT>
         in: header
         name: Authorization
         required: true
@@ -1372,7 +1372,7 @@ paths:
     put:
       description: Edit map summary with specified map id.
       parameters:
-      - description: JWT Token
+      - description: Bearer <JWT>
         in: header
         name: Authorization
         required: true
@@ -1408,7 +1408,7 @@ paths:
       - application/json
       description: Get profile page of session user.
       parameters:
-      - description: JWT Token
+      - description: Bearer <JWT>
         in: header
         name: Authorization
         required: true
@@ -1432,7 +1432,7 @@ paths:
       - application/json
       description: Refresh the session user's profile details from Steam.
       parameters:
-      - description: JWT Token
+      - description: Bearer <JWT>
         in: header
         name: Authorization
         required: true
@@ -1456,7 +1456,7 @@ paths:
       - application/json
       description: Update country code of session user.
       parameters:
-      - description: JWT Token
+      - description: Bearer <JWT>
         in: header
         name: Authorization
         required: true
@@ -1514,7 +1514,7 @@ paths:
       consumes:
       - multipart/form-data
       parameters:
-      - description: JWT Token
+      - description: Bearer <JWT>
         in: header
         name: Authorization
         required: true
@@ -1547,7 +1547,7 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: JWT Token
+      - description: Bearer <JWT>
         in: header
         name: Authorization
         required: true

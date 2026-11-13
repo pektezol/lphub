@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"lphub/database"
@@ -14,8 +15,16 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
+func bearerToken(header string) string {
+	parts := strings.Fields(header)
+	if len(parts) != 2 || !strings.EqualFold(parts[0], "Bearer") {
+		return ""
+	}
+	return parts[1]
+}
+
 func IsAuthenticated(c *gin.Context) {
-	tokenString := c.GetHeader("Authorization")
+	tokenString := bearerToken(c.GetHeader("Authorization"))
 	// Validate token
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -72,7 +81,7 @@ func IsAuthenticated(c *gin.Context) {
 // accepted on routes that explicitly use this middleware.
 func IsDemoAuthenticated(c *gin.Context) {
 	serviceToken := os.Getenv("DEMO_SERVICE_TOKEN")
-	providedToken := c.GetHeader("Authorization")
+	providedToken := bearerToken(c.GetHeader("Authorization"))
 	if serviceToken != "" && len(providedToken) == len(serviceToken) &&
 		subtle.ConstantTimeCompare([]byte(providedToken), []byte(serviceToken)) == 1 {
 		c.Set("service_auth", true)

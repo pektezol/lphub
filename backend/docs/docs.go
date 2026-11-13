@@ -81,7 +81,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "JWT token",
+                        "description": "Bearer <JWT>",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -112,7 +112,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Moderator JWT or DEMO_SERVICE_TOKEN",
+                        "description": "Bearer <moderator JWT or DEMO_SERVICE_TOKEN>",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -297,7 +297,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "JWT Token",
+                        "description": "Bearer <JWT>",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -391,7 +391,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "JWT Token",
+                        "description": "Bearer <JWT>",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -492,7 +492,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "JWT Token",
+                        "description": "Bearer <JWT>",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -553,7 +553,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "JWT Token",
+                        "description": "Bearer <JWT>",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -614,7 +614,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "JWT Token",
+                        "description": "Bearer <JWT>",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -656,7 +656,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "JWT Token",
+                        "description": "Bearer <JWT>",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -774,7 +774,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "JWT Token",
+                        "description": "Bearer <JWT>",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -841,7 +841,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "JWT Token",
+                        "description": "Bearer <JWT>",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -907,7 +907,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "JWT Token",
+                        "description": "Bearer <JWT>",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -961,7 +961,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "JWT Token",
+                        "description": "Bearer <JWT>",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1015,7 +1015,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "JWT Token",
+                        "description": "Bearer <JWT>",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1074,7 +1074,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "JWT Token",
+                        "description": "Bearer <JWT>",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1115,7 +1115,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "JWT Token",
+                        "description": "Bearer <JWT>",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1151,7 +1151,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "JWT Token",
+                        "description": "Bearer <JWT>",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1255,7 +1255,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "JWT Token",
+                        "description": "Bearer <JWT>",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -1310,7 +1310,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "JWT Token",
+                        "description": "Bearer <JWT>",
                         "name": "Authorization",
                         "in": "header",
                         "required": true

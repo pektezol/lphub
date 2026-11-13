@@ -46,7 +46,7 @@ const maxRecordRequestBodyBytes = 256 << 20
 //	@Tags			demo
 //	@Accept			json
 //	@Produce		json
-//	@Param			Authorization	header	string			true	"Moderator JWT or DEMO_SERVICE_TOKEN"
+//	@Param			Authorization	header	string			true	"Bearer <moderator JWT or DEMO_SERVICE_TOKEN>"
 //	@Param			request			body	SetAutorenderIDRequest	true	"Demo and autorender IDs"
 //	@Success		200				{object}	models.Response{data=SetAutorenderIDRequest}
 //	@Router			/demos/autorender [put]
@@ -163,7 +163,7 @@ func duplicateRecordExists(tx *stdsql.Tx, lockKey, query string, args ...any) (b
 //	@Tags maps / leaderboards
 //	@Accept mpfd
 //	@Produce json
-//	@Param Authorization header string true "JWT Token"
+//	@Param Authorization header string true "Bearer <JWT>"
 //	@Param host_demo formData file true "Host Demo"
 //	@Param partner_demo formData file false "Partner Demo"
 //	@Success 200 {object} models.Response{data=RecordResponse}
@@ -179,7 +179,7 @@ func CreateRecordFromDemo(c *gin.Context) {
 //	@Accept			mpfd
 //	@Produce		json
 //	@Param			mapid			path		int		true	"Map ID"
-//	@Param			Authorization	header		string	true	"JWT Token"
+//	@Param			Authorization	header		string	true	"Bearer <JWT>"
 //	@Param			host_demo		formData	file	true	"Host Demo"
 //	@Param			partner_demo	formData	file	false	"Partner Demo"
 //	@Success		200				{object}	models.Response{data=RecordResponse}
@@ -564,7 +564,7 @@ func CreateRecordWithDemo(c *gin.Context) {
 //	@Produce		json
 //	@Param			mapid			path		int		true	"Map ID"
 //	@Param			recordid		path		int		true	"Record ID"
-//	@Param			Authorization	header		string	true	"JWT Token"
+//	@Param			Authorization	header		string	true	"Bearer <JWT>"
 //	@Success		200				{object}	models.Response
 //	@Router			/maps/{mapid}/record/{recordid} [delete]
 func DeleteRecord(c *gin.Context) {
@@ -658,7 +658,7 @@ func DeleteRecord(c *gin.Context) {
 //	@Accept			json
 //	@Produce		octet-stream
 //	@Param			uuid	query	string	true	"Demo UUID"
-//	@Param			Authorization	header	string	true	"JWT token"
+//	@Param			Authorization	header	string	true	"Bearer <JWT>"
 //	@Success		200		{file}	binary	"Demo File"
 //	@Router			/demos [get]
 func DownloadDemoWithID(c *gin.Context) {

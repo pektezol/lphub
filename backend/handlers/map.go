@@ -899,7 +899,7 @@ type PersonalBestResponse struct {
 //	@Tags maps / leaderboards
 //	@Accept json
 //	@Produce json
-//	@Param Authorization header string true "JWT Token"
+//	@Param Authorization header string true "Bearer <JWT>"
 //	@Param request body PersonalBestRequest true "Score and engine map name"
 //	@Success 200 {object} models.Response{data=PersonalBestResponse}
 //	@Router /records/pb [post]

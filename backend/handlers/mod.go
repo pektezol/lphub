@@ -47,7 +47,7 @@ type EditMapDifficultyRequest struct {
 //	@Description	Create map summary with specified map id.
 //	@Tags			maps / summary
 //	@Produce		json
-//	@Param			Authorization	header		string					true	"JWT Token"
+//	@Param			Authorization	header		string					true	"Bearer <JWT>"
 //	@Param			mapid			path		int						true	"Map ID"
 //	@Param			request			body		CreateMapSummaryRequest	true	"Body"
 //	@Success		200				{object}	models.Response{data=CreateMapSummaryRequest}
@@ -123,7 +123,7 @@ func CreateMapSummary(c *gin.Context) {
 //	@Description	Edit map summary with specified map id.
 //	@Tags			maps / summary
 //	@Produce		json
-//	@Param			Authorization	header		string					true	"JWT Token"
+//	@Param			Authorization	header		string					true	"Bearer <JWT>"
 //	@Param			mapid			path		int						true	"Map ID"
 //	@Param			request			body		EditMapSummaryRequest	true	"Body"
 //	@Success		200				{object}	models.Response{data=EditMapSummaryRequest}
@@ -178,7 +178,7 @@ func EditMapSummary(c *gin.Context) {
 //	@Description	Delete map summary with specified map id.
 //	@Tags			maps / summary
 //	@Produce		json
-//	@Param			Authorization	header		string					true	"JWT Token"
+//	@Param			Authorization	header		string					true	"Bearer <JWT>"
 //	@Param			mapid			path		int						true	"Map ID"
 //	@Param			request			body		DeleteMapSummaryRequest	true	"Body"
 //	@Success		200				{object}	models.Response{data=DeleteMapSummaryRequest}
@@ -233,7 +233,7 @@ func DeleteMapSummary(c *gin.Context) {
 //	@Description	Edit map image with specified map id.
 //	@Tags			maps / summary
 //	@Produce		json
-//	@Param			Authorization	header		string				true	"JWT Token"
+//	@Param			Authorization	header		string				true	"Bearer <JWT>"
 //	@Param			mapid			path		int					true	"Map ID"
 //	@Param			request			body		EditMapImageRequest	true	"Body"
 //	@Success		200				{object}	models.Response{data=EditMapImageRequest}
@@ -275,7 +275,7 @@ func EditMapImage(c *gin.Context) {
 //	@Description	Edit map difficulty with specified map id.
 //	@Tags			maps / summary
 //	@Produce		json
-//	@Param			Authorization	header		string					true	"JWT Token"
+//	@Param			Authorization	header		string					true	"Bearer <JWT>"
 //	@Param			mapid			path		int					true	"Map ID"
 //	@Param			request			body		EditMapDifficultyRequest	true	"Body"
 //	@Success		200			{object}	models.Response{data=EditMapDifficultyRequest}
