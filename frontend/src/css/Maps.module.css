@@ -1223,7 +1223,7 @@
   }
 
   .easyText {
-    color: green;
+    color: #32cd32;
   }
 
   .mediumText {
@@ -1238,23 +1238,23 @@
     color: red;
   }
 
-  .veryEasyRating {
+  .veryEasyRating .difficultyRating:nth-child(-n + 1) {
     background-color: lime;
   }
 
-  .easyRating {
-    background-color: green;
+  .easyRating .difficultyRating:nth-child(-n + 2) {
+    background-color: #32cd32;
   }
 
-  .mediumRating {
+  .mediumRating .difficultyRating:nth-child(-n + 3) {
     background-color: yellow;
   }
 
-  .hardRating {
+  .hardRating .difficultyRating:nth-child(-n + 4) {
     background-color: orange;
   }
 
-  .veryHardRating {
+  .veryHardRating .difficultyRating:nth-child(-n + 5) {
     background-color: red;
   }
 

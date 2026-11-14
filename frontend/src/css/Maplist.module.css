@@ -130,23 +130,23 @@
   }
 
   .difficultyBar div.one .difficultyPoint:nth-child(1) {
-    background-color: #51c355;
+    background-color: lime;
   }
 
   .difficultyBar div.two .difficultyPoint:nth-child(-n + 2) {
-    background-color: #8ac93a;
+    background-color: #32cd32;
   }
 
   .difficultyBar div.three .difficultyPoint:nth-child(-n + 3) {
-    background-color: #8ac93a;
+    background-color: yellow;
   }
 
   .difficultyBar div.four .difficultyPoint:nth-child(-n + 4) {
-    background-color: #c35f51;
+    background-color: orange;
   }
 
   .difficultyBar div.five .difficultyPoint:nth-child(-n + 5) {
-    background-color: #dd422e;
+    background-color: red;
   }
 
   .dropdown {

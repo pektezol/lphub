@@ -335,32 +335,22 @@ const Summary: React.FC<SummaryProps> = ({ selectedRun, setSelectedRun, data }) 
               {data.map.difficulty > 8 && data.map.difficulty <= 10 && (
                 <span className={mapsStyles.veryHardText}>Very Hard</span>
               )}
-              <div>
-                {data.map.difficulty <= 2 ? (
-                  <div className={classNames(mapsStyles.difficultyRating, mapsStyles.veryEasyRating)}></div>
-                ) : (
-                  <div className={mapsStyles.difficultyRating}></div>
-                )}
-                {data.map.difficulty > 2 && data.map.difficulty <= 4 ? (
-                  <div className={classNames(mapsStyles.difficultyRating, mapsStyles.easyRating)}></div>
-                ) : (
-                  <div className={mapsStyles.difficultyRating}></div>
-                )}
-                {data.map.difficulty > 4 && data.map.difficulty <= 6 ? (
-                  <div className={classNames(mapsStyles.difficultyRating, mapsStyles.mediumRating)}></div>
-                ) : (
-                  <div className={mapsStyles.difficultyRating}></div>
-                )}
-                {data.map.difficulty > 6 && data.map.difficulty <= 8 ? (
-                  <div className={classNames(mapsStyles.difficultyRating, mapsStyles.hardRating)}></div>
-                ) : (
-                  <div className={mapsStyles.difficultyRating}></div>
-                )}
-                {data.map.difficulty > 8 && data.map.difficulty <= 10 ? (
-                  <div className={classNames(mapsStyles.difficultyRating, mapsStyles.veryHardRating)}></div>
-                ) : (
-                  <div className={mapsStyles.difficultyRating}></div>
-                )}
+              <div
+                className={
+                  data.map.difficulty <= 2
+                    ? mapsStyles.veryEasyRating
+                    : data.map.difficulty <= 4
+                      ? mapsStyles.easyRating
+                      : data.map.difficulty <= 6
+                        ? mapsStyles.mediumRating
+                        : data.map.difficulty <= 8
+                          ? mapsStyles.hardRating
+                          : mapsStyles.veryHardRating
+                }
+              >
+                {Array.from({ length: 5 }, (_, index) => (
+                  <div key={index} className={mapsStyles.difficultyRating}></div>
+                ))}
               </div>
             </div>
             <div id="count" className={mapsStyles.idCount}>
