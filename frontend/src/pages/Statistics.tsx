@@ -106,6 +106,16 @@ function Activity({ game, kind, title }: { game: number; kind: "history" | "best
 
 export default function Statistics({ games }: { games: Game[] }) {
   const [game, setGame] = React.useState<number>(0);
+  const gameDropdown = React.useRef<HTMLDetailsElement>(null);
+  React.useEffect(() => {
+    const closeOnOutsideClick = (event: PointerEvent) => {
+      if (event.target instanceof Node && !gameDropdown.current?.contains(event.target)) {
+        gameDropdown.current?.removeAttribute("open");
+      }
+    };
+    document.addEventListener("pointerdown", closeOnOutsideClick);
+    return () => document.removeEventListener("pointerdown", closeOnOutsideClick);
+  }, []);
   const [overview, setOverview] = React.useState<Overview>();
   const [error, setError] = React.useState(false);
   React.useEffect(() => {
@@ -131,17 +141,44 @@ export default function Statistics({ games }: { games: Game[] }) {
       </Helmet>
       <div className={styles.content}>
         <section className={styles.overview} aria-label="Community overview">
-          <label className={styles.gamePicker}>
+          <div className={styles.gamePicker}>
             <span>SELECT GAME</span>
-            <select value={game} onChange={(event) => setGame(Number(event.target.value))}>
-              <option value={0}>All Games</option>
-              {games.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
-          </label>
+            <details
+              ref={gameDropdown}
+              className={styles.gameDropdown}
+              onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) event.currentTarget.open = false;
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "Escape") {
+                  event.currentTarget.open = false;
+                  event.currentTarget.querySelector("summary")?.focus();
+                }
+              }}
+            >
+              <summary aria-label={`Select game: ${games.find((item) => item.id === game)?.name ?? "All Games"}`}>
+                {games.find((item) => item.id === game)?.name ?? "All Games"}
+              </summary>
+              <div className={styles.gameOptions}>
+                {[{ id: 0, name: "All Games" }, ...games].map((item) => (
+                  <button
+                    type="button"
+                    key={item.id}
+                    aria-pressed={game === item.id}
+                    onClick={() => {
+                      setGame(item.id);
+                      if (gameDropdown.current) {
+                        gameDropdown.current.open = false;
+                        gameDropdown.current.querySelector("summary")?.focus();
+                      }
+                    }}
+                  >
+                    {item.name}
+                  </button>
+                ))}
+              </div>
+            </details>
+          </div>
           {error ? (
             <p>Could not load community statistics.</p>
           ) : overview ? (

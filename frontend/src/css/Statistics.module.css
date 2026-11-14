@@ -24,7 +24,7 @@
     background: #202232;
     border-radius: 20px;
   }
-  .gamePicker select {
+  .gameDropdown summary {
     box-sizing: border-box;
     width: 100%;
     margin-top: 8px;
@@ -37,6 +37,62 @@
       18px BarlowSemiCondensed-SemiBold,
       sans-serif;
     cursor: pointer;
+  }
+  .gameDropdown {
+    position: relative;
+  }
+  .gameDropdown summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    list-style: none;
+    user-select: none;
+  }
+  .gameDropdown summary::-webkit-details-marker {
+    display: none;
+  }
+  .gameDropdown summary::after {
+    content: "";
+    flex-shrink: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 7px solid currentColor;
+  }
+  .gameOptions {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
+    background: #222538;
+    border-radius: 10px;
+  }
+  .gameDropdown .gameOptions button {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 8px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: #fff;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  .gameDropdown .gameOptions button:hover,
+  .gameDropdown .gameOptions button:focus-visible,
+  .gameDropdown .gameOptions button[aria-pressed="true"] {
+    background: #414669;
+  }
+  .overview > .gamePicker {
+    overflow: visible;
+  }
+  .overview > .gamePicker::after {
+    display: none;
   }
   .overview {
     display: grid;
@@ -97,10 +153,10 @@
     display: grid;
     grid-template-columns: 1fr auto 1fr;
   }
-  .chartHeader > div {
+  .chartHeader > div:first-child {
     grid-column: 2;
   }
-  .chartHeader > label {
+  .chartHeader > .chartPicker {
     grid-column: 3;
     justify-self: end;
   }
@@ -187,7 +243,7 @@
   .panel button:hover {
     background: #414562;
   }
-  .page :is(a, button, select):focus-visible {
+  .page :is(a, button, select, summary):focus-visible {
     outline: 2px solid #b1b8ed;
     outline-offset: 3px;
   }
@@ -246,7 +302,7 @@
     height: 240px;
     font-size: 14px;
   }
-  .chartPicker select {
+  .chartPicker summary {
     color: #fff;
     background: #30334e;
     border: 1px solid #555a7b;
@@ -365,7 +421,7 @@
     .chart {
       height: 200px;
     }
-    .chartPicker select {
+    .chartPicker summary {
       max-width: 135px;
     }
   }

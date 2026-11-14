@@ -83,6 +83,21 @@ export default function StatisticsInsights({ game }: { game: number }) {
   const [recent, setRecent] = React.useState(false);
   const [recentMaps, setRecentMaps] = React.useState(false);
   const [range, setRange] = React.useState(12);
+  const rangeDropdown = React.useRef<HTMLDetailsElement>(null);
+  const ranges = [
+    { value: 12, label: "Last 12 Months" },
+    { value: 36, label: "Last 3 Years" },
+    { value: 0, label: "All Time" },
+  ];
+  React.useEffect(() => {
+    const closeOnOutsideClick = (event: PointerEvent) => {
+      if (event.target instanceof Node && !rangeDropdown.current?.contains(event.target)) {
+        rangeDropdown.current?.removeAttribute("open");
+      }
+    };
+    document.addEventListener("pointerdown", closeOnOutsideClick);
+    return () => document.removeEventListener("pointerdown", closeOnOutsideClick);
+  }, []);
   React.useEffect(() => {
     let active = true;
     setData(undefined);
@@ -119,14 +134,43 @@ export default function StatisticsInsights({ game }: { game: number }) {
           <div>
             <h2>Runs Over Time</h2>
           </div>
-          <label className={styles.chartPicker}>
-            <span className={styles.srOnly}>Activity date range</span>
-            <select value={range} onChange={(event) => setRange(Number(event.target.value))}>
-              <option value={12}>Last 12 Months</option>
-              <option value={36}>Last 3 Years</option>
-              <option value={0}>All Time</option>
-            </select>
-          </label>
+          <div className={styles.chartPicker}>
+            <details
+              ref={rangeDropdown}
+              className={styles.gameDropdown}
+              onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) event.currentTarget.open = false;
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "Escape") {
+                  event.currentTarget.open = false;
+                  event.currentTarget.querySelector("summary")?.focus();
+                }
+              }}
+            >
+              <summary aria-label={`Activity date range: ${ranges.find((item) => item.value === range)?.label}`}>
+                {ranges.find((item) => item.value === range)?.label}
+              </summary>
+              <div className={styles.gameOptions}>
+                {ranges.map((item) => (
+                  <button
+                    type="button"
+                    key={item.value}
+                    aria-pressed={range === item.value}
+                    onClick={() => {
+                      setRange(item.value);
+                      if (rangeDropdown.current) {
+                        rangeDropdown.current.open = false;
+                        rangeDropdown.current.querySelector("summary")?.focus();
+                      }
+                    }}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </details>
+          </div>
         </div>
         {chart.length ? (
           <div className={styles.chart}>
