@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"compress/gzip"
 	"context"
 	stdsql "database/sql"
 	"errors"
@@ -511,12 +512,13 @@ func CreateRecordWithDemo(c *gin.Context) {
 		}
 	}
 	// Everything is good, upload the demo files.
-	client, err := b2.NewClient(context.Background(), os.Getenv("B2_KEY_ID"), os.Getenv("B2_API_KEY"))
+	ctx := c.Request.Context()
+	client, err := b2.NewClient(ctx, os.Getenv("B2_KEY_ID"), os.Getenv("B2_API_KEY"))
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	bucket, err := client.Bucket(context.Background(), os.Getenv("B2_BUCKET_NAME"))
+	bucket, err := client.Bucket(ctx, os.Getenv("B2_BUCKET_NAME"))
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
@@ -534,11 +536,19 @@ func CreateRecordWithDemo(c *gin.Context) {
 		} else if i == 1 {
 			objectName = partnerDemoUUID + ".dem"
 		}
-		obj := bucket.Object(objectName)
-		writer := obj.NewWriter(context.Background())
-		defer writer.Close()
-		_, err = io.Copy(writer, f)
+		uploadCtx, cancel := context.WithCancel(ctx)
+		writer := bucket.Object(objectName + ".gz").NewWriter(uploadCtx)
+		compressed := gzip.NewWriter(writer)
+		_, err = io.Copy(compressed, f)
+		if err == nil {
+			err = compressed.Close()
+		}
 		if err != nil {
+			cancel()
+		}
+		closeErr := writer.Close()
+		cancel()
+		if err = errors.Join(err, closeErr); err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
 		}
@@ -704,42 +714,66 @@ func DownloadDemoWithID(c *gin.Context) {
 		localPath = os.Getenv("LOCAL_DEMOS_PATH")
 	}
 
-	fileName := uuid + ".dem"
-	if localPath == "" {
-		url := os.Getenv("B2_DOWNLOAD_URL") + fileName
-		output, err := os.Create(fileName)
-		if err != nil {
-			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-			return
-		}
-		defer os.Remove(fileName)
-		defer output.Close()
-		response, err := http.Get(url)
-		if err != nil {
-			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-			return
-		}
-		defer response.Body.Close()
-		_, err = io.Copy(output, response.Body)
-		if err != nil {
-			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-			return
-		}
+	fileName := checkedUUID + ".dem"
+	if localPath != "" {
+		setDemoDownloadHeaders(c, fileName)
+		c.File(localPath + fileName)
+		return
 	}
 
-	// Downloaded file
+	response, compressed, err := fetchStoredDemo(c.Request.Context(), os.Getenv("B2_DOWNLOAD_URL")+fileName)
+	if err != nil {
+		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+		return
+	}
+	defer response.Body.Close()
+
+	var body io.Reader = response.Body
+	if compressed {
+		decoded, err := gzip.NewReader(response.Body)
+		if err != nil {
+			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
+			return
+		}
+		defer decoded.Close()
+		body = decoded
+	} else if response.ContentLength >= 0 {
+		c.Header("Content-Length", strconv.FormatInt(response.ContentLength, 10))
+	}
+
+	setDemoDownloadHeaders(c, fileName)
+	if _, err := io.Copy(c.Writer, body); err != nil {
+		log.Printf("stream demo %s: %v", checkedUUID, err)
+	}
+}
+
+func setDemoDownloadHeaders(c *gin.Context, fileName string) {
 	c.Header("Content-Description", "File Transfer")
 	c.Header("Content-Transfer-Encoding", "binary")
 	c.Header("Content-Disposition", "attachment; filename="+fileName)
 	c.Header("Content-Type", "application/octet-stream")
+}
 
-	if localPath == "" {
-		c.File(fileName)
-	} else {
-		c.File(localPath + fileName)
+func fetchStoredDemo(ctx context.Context, url string) (*http.Response, bool, error) {
+	for _, suffix := range []string{".gz", ""} {
+		request, err := http.NewRequestWithContext(ctx, http.MethodGet, url+suffix, nil)
+		if err != nil {
+			return nil, false, err
+		}
+		request.Header.Set("Accept-Encoding", "identity")
+		response, err := http.DefaultClient.Do(request)
+		if err != nil {
+			return nil, false, err
+		}
+		if response.StatusCode == http.StatusOK {
+			return response, suffix == ".gz", nil
+		}
+		response.Body.Close()
+		if suffix == "" || response.StatusCode != http.StatusNotFound {
+			return nil, false, fmt.Errorf("demo storage returned %s", response.Status)
+		}
 	}
-
-	// c.FileAttachment()
+	return nil, false, errors.New("demo not found")
 }
 
 // Convert from SteamID64 to Legacy SteamID bits
