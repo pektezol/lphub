@@ -513,12 +513,7 @@ func CreateRecordWithDemo(c *gin.Context) {
 	}
 	// Everything is good, upload the demo files.
 	ctx := c.Request.Context()
-	client, err := b2.NewClient(ctx, os.Getenv("B2_KEY_ID"), os.Getenv("B2_API_KEY"))
-	if err != nil {
-		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
-		return
-	}
-	bucket, err := client.Bucket(ctx, os.Getenv("B2_BUCKET_NAME"))
+	bucket, err := demoBucket(ctx)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
@@ -721,24 +716,24 @@ func DownloadDemoWithID(c *gin.Context) {
 		return
 	}
 
-	response, compressed, err := fetchStoredDemo(c.Request.Context(), os.Getenv("B2_DOWNLOAD_URL")+fileName)
+	reader, size, compressed, err := fetchStoredDemo(c.Request.Context(), fileName)
 	if err != nil {
 		c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 		return
 	}
-	defer response.Body.Close()
+	defer reader.Close()
 
-	var body io.Reader = response.Body
+	var body io.Reader = reader
 	if compressed {
-		decoded, err := gzip.NewReader(response.Body)
+		decoded, err := gzip.NewReader(reader)
 		if err != nil {
 			c.JSON(http.StatusOK, models.ErrorResponse(err.Error()))
 			return
 		}
 		defer decoded.Close()
 		body = decoded
-	} else if response.ContentLength >= 0 {
-		c.Header("Content-Length", strconv.FormatInt(response.ContentLength, 10))
+	} else {
+		c.Header("Content-Length", strconv.FormatInt(size, 10))
 	}
 
 	setDemoDownloadHeaders(c, fileName)
@@ -754,26 +749,31 @@ func setDemoDownloadHeaders(c *gin.Context, fileName string) {
 	c.Header("Content-Type", "application/octet-stream")
 }
 
-func fetchStoredDemo(ctx context.Context, url string) (*http.Response, bool, error) {
-	for _, suffix := range []string{".gz", ""} {
-		request, err := http.NewRequestWithContext(ctx, http.MethodGet, url+suffix, nil)
-		if err != nil {
-			return nil, false, err
-		}
-		request.Header.Set("Accept-Encoding", "identity")
-		response, err := http.DefaultClient.Do(request)
-		if err != nil {
-			return nil, false, err
-		}
-		if response.StatusCode == http.StatusOK {
-			return response, suffix == ".gz", nil
-		}
-		response.Body.Close()
-		if suffix == "" || response.StatusCode != http.StatusNotFound {
-			return nil, false, fmt.Errorf("demo storage returned %s", response.Status)
-		}
+func demoBucket(ctx context.Context) (*b2.Bucket, error) {
+	client, err := b2.NewClient(ctx, os.Getenv("B2_KEY_ID"), os.Getenv("B2_API_KEY"))
+	if err != nil {
+		return nil, err
 	}
-	return nil, false, errors.New("demo not found")
+	return client.Bucket(ctx, os.Getenv("B2_BUCKET_NAME"))
+}
+
+func fetchStoredDemo(ctx context.Context, fileName string) (*b2.Reader, int64, bool, error) {
+	bucket, err := demoBucket(ctx)
+	if err != nil {
+		return nil, 0, false, err
+	}
+	for _, suffix := range []string{".gz", ""} {
+		object := bucket.Object(fileName + suffix)
+		attrs, err := object.Attrs(ctx)
+		if b2.IsNotExist(err) {
+			continue
+		}
+		if err != nil {
+			return nil, 0, false, err
+		}
+		return object.NewReader(ctx), attrs.Size, suffix == ".gz", nil
+	}
+	return nil, 0, false, errors.New("demo not found")
 }
 
 // Convert from SteamID64 to Legacy SteamID bits
